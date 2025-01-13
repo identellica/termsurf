@@ -1,5 +1,6 @@
 use cef::{execute_process, library_loader};
 use cef::{rc::*, *};
+use cef_sys::cef_sandbox_destroy;
 
 struct DemoApp(*mut RcImpl<cef_sys::_cef_app_t, Self>);
 
@@ -36,16 +37,20 @@ impl Rc for DemoApp {
 }
 
 fn main() {
+    let args = cef::args::Args::new(std::env::args());
+    let sandbox = sandbox_initialize(args.as_main_args().argc, args.as_main_args().argv);
     #[cfg(target_os = "macos")]
     {
+
         let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), true);
         assert!(loader.load());
+
     }
 
-    let args = cef::args::Args::new(std::env::args());
     execute_process(
         Some(args.as_main_args()),
         None::<&mut DemoApp>,
         std::ptr::null_mut(),
     );
+    sandbox_destroy(sandbox.cast());
 }

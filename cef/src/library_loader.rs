@@ -9,8 +9,8 @@ impl LibraryLoader {
         "Chromium Embedded Framework.framework/Chromium Embedded Framework";
 
     pub fn new(path: &std::path::Path, helper: bool) -> Self {
-        let resolver = if helper { "../../.." } else { "../Frameworks" };
-        let path = path.join(resolver).join(Self::FRAMEWORK_PATH);
+        let resolver = if helper { "../../.." } else { "../../Frameworks" };
+        let path = path.join(resolver).join(Self::FRAMEWORK_PATH).canonicalize().unwrap();
 
         Self { path }
     }

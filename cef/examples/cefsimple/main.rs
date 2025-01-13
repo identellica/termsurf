@@ -224,6 +224,14 @@ fn main() {
     let args = Args::new(std::env::args());
 
     let cmd = command_line_create().unwrap();
+    #[cfg(not(target_os = "windows"))]
+    cmd.init_from_argv(args.as_main_args().argc, args.as_main_args().argv.cast());
+
+    /* cmd must be init'ed from string on windows
+    #[cfg(target_os = "windows")]
+    cmd.init_from_string();
+    */
+
     let is_browser_process = cmd.has_switch(Some(&"type".into())) != 1;
 
     let mut app = DemoApp::new();
