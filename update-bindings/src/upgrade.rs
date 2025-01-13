@@ -29,7 +29,9 @@ pub fn download(target: &str) -> PathBuf {
     assert!(TARGETS.contains(&target), "unsupported target {target}");
     let (os, arch) = target_to_os_arch(target);
     let cef_path = dirs::get_cef_root(os, arch);
-    download_prebuilt_cef(target, &cef_path)
+    let archive_dir = download_prebuilt_cef(target, &cef_path);
+    build_cef_dll_wrapper(&cef_path, &archive_dir, os);
+    archive_dir
 }
 
 pub fn sys_bindgen(target: &str) -> crate::Result<()> {
@@ -199,6 +201,48 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
 
     bindings.write_to_file(&sys_bindings)?;
     Ok(())
+}
+
+fn build_cef_dll_wrapper(cef_path: &Path, archive_dir: &Path, os: &str) {
+    if os != "macos" {
+        return;
+    }
+
+    let lib_name = format!(
+        "libcef_dll_wrapper.{}",
+        if os == "windows" { "lib" } else { "a" }
+    );
+    if cef_path.join(&lib_name).exists() {
+        println!("cef: {lib_name} already exists, skip building");
+        return;
+    }
+
+    let build_dir = archive_dir.join("build");
+    fs::create_dir_all(&build_dir).unwrap();
+
+    Command::new("cmake")
+        .current_dir(&build_dir)
+        .args([
+            "-G",
+            "Ninja",
+            "-DCMAKE_OBJECT_PATH_MAX=500",
+            "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+            "..",
+        ])
+        .output()
+        .unwrap();
+
+    Command::new("ninja")
+        .current_dir(&build_dir)
+        .arg("libcef_dll_wrapper")
+        .output()
+        .unwrap();
+
+    fs::copy(
+        build_dir.join("libcef_dll_wrapper").join(&lib_name),
+        cef_path.join(&lib_name),
+    )
+    .unwrap();
 }
 
 fn copy_directory(src: &Path, dst: &Path) {

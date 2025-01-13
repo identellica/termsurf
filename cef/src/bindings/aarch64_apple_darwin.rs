@@ -60649,6 +60649,48 @@ impl Default for TaskType {
     }
 }
 
+/// See [cef_load_library] for more documentation.
+pub fn load_library(path: Option<&::std::os::raw::c_char>) -> ::std::os::raw::c_int {
+    unsafe {
+        let arg_path = path;
+        let arg_path = arg_path.map(std::ptr::from_ref).unwrap_or(std::ptr::null());
+        let result = cef_load_library(arg_path);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_unload_library] for more documentation.
+pub fn unload_library() -> ::std::os::raw::c_int {
+    unsafe {
+        let result = cef_unload_library();
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_sandbox_initialize] for more documentation.
+pub fn sandbox_initialize(
+    argc: ::std::os::raw::c_int,
+    argv: *mut *mut ::std::os::raw::c_char,
+) -> *mut ::std::os::raw::c_void {
+    unsafe {
+        let (arg_argc, arg_argv) = (argc, argv);
+        let arg_argc = arg_argc;
+        let arg_argv = arg_argv as *mut _;
+        let result = cef_sandbox_initialize(arg_argc, arg_argv);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_sandbox_destroy] for more documentation.
+pub fn sandbox_destroy(sandbox_context: *mut u8) {
+    unsafe {
+        let arg_sandbox_context = sandbox_context;
+        let arg_sandbox_context = arg_sandbox_context as *mut _;
+        let result = cef_sandbox_destroy(arg_sandbox_context);
+        result.as_wrapper()
+    }
+}
+
 /// See [cef_string_wide_set] for more documentation.
 pub fn string_wide_set(
     src: Option<&[wchar_t]>,

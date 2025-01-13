@@ -215,6 +215,12 @@ impl ImplWindowDelegate for DemoWindowDelegate {
 
 // FIXME: Rewrite this demo based on cef/tests/cefsimple
 fn main() {
+    #[cfg(target_os = "macos")]
+    {
+        let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
+        assert!(loader.load());
+    }
+
     let args = Args::new(std::env::args());
 
     let cmd = command_line_create().unwrap();
@@ -225,7 +231,7 @@ fn main() {
     let ret = execute_process(
         Some(args.as_main_args()),
         Some(&mut app),
-        std::ptr::null_mut()
+        std::ptr::null_mut(),
     );
 
     if is_browser_process {
