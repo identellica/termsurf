@@ -5,6 +5,7 @@ serde = { version = "1", features = [ "derive" ] }
 plist = "1"
 ---
 
+// TODO: rewrite this script to a bundle tool
 use serde::Serialize;
 use std::process::{Command, Stdio};
 use std::path::{Path, PathBuf};
@@ -48,6 +49,7 @@ struct InfoPlist {
 const EXEC_PATH: &str = "Contents/MacOS";
 const FRAMEWORKS_PATH: &str = "Contents/Frameworks";
 const RESOURCES_PATH: &str = "Contents/Resources";
+const FRAMEWORK: &str = "Chromium Embedded Framework.framework";
 const HELPERS: &[&str] = &[
     "cefsimple Helper (GPU)",
     "cefsimple Helper (Renderer)",
@@ -70,15 +72,16 @@ fn create_app(app_path: &Path, exec_name: &str, bin: &Path) -> PathBuf {
     app_path
 }
 
+// See https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage.md#markdown-header-macos
 fn bundle(app_path: &Path) {
     let example_path = PathBuf::from("target/debug/examples/");
     let main_app_path = create_app(&app_path, "cefsimple", &example_path.join("cefsimple"));
     let cef_path = PathBuf::from(std::env::var("CEF_PATH").unwrap());
-    let to = main_app_path.join(FRAMEWORKS_PATH).join("Chromium Embedded Framework.framework");
+    let to = main_app_path.join(FRAMEWORKS_PATH).join(FRAMEWORK);
     if to.exists() { fs::remove_dir_all(&to).unwrap(); }
-    copy_directory(&cef_path.join("Chromium Embedded Framework.framework"), &to);
+    copy_directory(&cef_path.join(FRAMEWORK), &to);
     HELPERS.iter().for_each(|helper| {
-        create_app(&app_path.join(FRAMEWORKS_PATH), helper, &example_path.join("cefsimple_helper"));
+        create_app(&main_app_path.join(FRAMEWORKS_PATH), helper, &example_path.join("cefsimple_helper"));
     });
 }
 

@@ -70,16 +70,17 @@ impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
 
     // The real lifespan of cef starts from `on_context_initialized`, so all the cef objects should be manipulated after that.
     fn on_context_initialized(&self) {
+        println!("cef context intiialized");
         let mut client = DemoClient::new();
         let url = CefString::from(&CefStringUtf8::from("https://www.google.com"));
 
-        browser_view_create(
+        browser_host_create_browser_sync(
+            Some(&Default::default()),
             Some(&mut client),
             Some(&url),
             Some(&Default::default()),
             Option::<&mut DictionaryValue>::None,
             Option::<&mut RequestContext>::None,
-            Option::<&mut BrowserViewDelegate>::None,
         )
         .expect("Failed to create browser view");
     }
@@ -243,19 +244,30 @@ fn main() {
     );
 
     if is_browser_process {
+        println!("launch browser process");
         assert!(ret == -1, "cannot execute browser process");
     } else {
+        let process_type = cmd
+            .get_switch_value(Some(&"type".into()))
+            .as_ref()
+            .map(CefStringUtf8::from)
+            .unwrap();
+        println!("launch process {process_type}");
         assert!(ret >= 0, "cannot execute non-browser process");
         // non-browser process does not initialize cef
         return;
     }
-
-    dbg!(initialize(
-        Some(args.as_main_args()),
-        Some(&Default::default()),
-        Some(&mut app),
-        std::ptr::null_mut()
-    ));
+    let mut settings = Settings::default();
+    settings.no_sandbox = true as _;
+    assert_eq!(
+        initialize(
+            Some(args.as_main_args()),
+            Some(&settings),
+            Some(&mut app),
+            std::ptr::null_mut()
+        ),
+        1
+    );
 
     run_message_loop();
     shutdown();
