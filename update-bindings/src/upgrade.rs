@@ -140,7 +140,7 @@ fn extract_and_organize(
 
     copy_directory(&archive_dir.join("include"), &cef_path.join("include"));
 
-    println!("cef: extracted into {:?}", cef_path);
+    println!("cef: extracted into CEF_PATH={:?}", cef_path);
     archive_dir
 }
 

@@ -6,8 +6,8 @@ Use CEF in Rust.
 
 | Target | Linux | macOS | Windows |
 | ------ | ----- | ----- | ------- |
-| x86_64 | ✅    | ❎     | ❎      |
-| ARM64  | ✅    | ❎     | ❎      |
+| x86_64 | ✅    | ✅    | ✅      |
+| ARM64  | ✅    | ✅    | ✅      |
 
 ## Usage
 
@@ -53,26 +53,25 @@ flatpak-builder --user --install --force-clean target app.example.demo.yml
 flatpak run app.example.demo
 ```
 
+### macOS
+
+- Download cef prebuilts with `update-bindings`, it should print out the extracted `CEF_PATH` on success.
+
+```
+cargo run -p update-bindings --bindgen --download
+```
+
+- Build and run the cefsimple application
+
+```
+export CEF_PATH=<path>
+
+./cef/examples/cefsimple/bundle_script.rs
+
+open target/debug/examples/cefsimple.app
+```
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-## Roadmap
-
-Cef-rs is looking for the best approach to use CEF. On Linux, this is achived by using same local share directory or same flatpak runtime.
-So every application can share the same library. We are looking for the similar methods on macOS and Windows.
-Welcome to open feature requests if the feature you look for isn't listed below.
-But please understand that some requests might result into not planned.
-
-### Planned
-
-- [x] Add Linux ARM64 target
-- [ ] Add macOS ARM64 target
-- [ ] Add Windows x86_64 target
-
-### Not Planned
-
-- Other package formats on Linux.
-- Add all possible ergonomic interfaces (ie. builder types for attributes and settings.)
-- Provide tools to bundle and distribute application.
 
