@@ -16,7 +16,7 @@ authors = [
     "Bill Avery <wravery@gmail.com>",
     "csmoe <csmoe@msn.com>",
 ]
-repository = "https://github.com/wusyong/cef-rs"
+repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
 cef-sys = { package = "libcef-sys", version = "131.3.4", path = "sys" }
