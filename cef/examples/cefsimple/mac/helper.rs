@@ -38,16 +38,17 @@ impl Rc for DemoApp {
 
 fn main() {
     let args = cef::args::Args::new(std::env::args());
-    //let sandbox = sandbox_initialize(args.as_main_args().argc, args.as_main_args().argv);
+    let sandbox = sandbox_initialize(args.as_main_args().argc, args.as_main_args().argv);
+
     #[cfg(target_os = "macos")]
-    {
-        let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), true);
-        assert!(loader.load());
-    }
+    let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), true);
+    #[cfg(target_os = "macos")]
+    assert!(loader.load());
+
     execute_process(
         Some(args.as_main_args()),
         None::<&mut DemoApp>,
         std::ptr::null_mut(),
     );
-    //sandbox_destroy(sandbox.cast());
+    sandbox_destroy(sandbox.cast());
 }

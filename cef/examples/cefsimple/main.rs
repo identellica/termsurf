@@ -217,10 +217,9 @@ impl ImplWindowDelegate for DemoWindowDelegate {
 // FIXME: Rewrite this demo based on cef/tests/cefsimple
 fn main() {
     #[cfg(target_os = "macos")]
-    {
-        let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
-        assert!(loader.load());
-    }
+    let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
+    #[cfg(target_os = "macos")]
+    assert!(loader.load());
 
     let args = Args::new(std::env::args());
 

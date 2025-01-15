@@ -140,6 +140,16 @@ fn extract_and_organize(
 
     copy_directory(&archive_dir.join("include"), &cef_path.join("include"));
 
+    // rename cef_sandbox.a to libcef_sandbox.a, since we cannot link the library without lib
+    // prefix, see https://www.reddit.com/r/rust/comments/dzj650/linking_against_lib_which_file_name_doesnt_start
+    if matches!(os, "macos") {
+        std::fs::copy(
+            cef_path.join("cef_sandbox.a"),
+            cef_path.join("libcef_sandbox.a"),
+        )
+        .unwrap();
+    }
+
     println!("cef: extracted into CEF_PATH={:?}", cef_path);
     archive_dir
 }
