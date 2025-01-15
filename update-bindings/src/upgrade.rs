@@ -62,7 +62,11 @@ fn download_prebuilt_cef(target: &str, cef_path: &Path) -> PathBuf {
         .unwrap()
         .iter()
         .find_map(|v| {
-            if v["channel"].as_str() == Some("stable") {
+            let channel = v["channel"].as_str()?;
+            let cef_version = v["cef_version"].as_str()?;
+            if channel == "stable"
+                && cef_version.starts_with(concat!(env!("CARGO_PKG_VERSION"), "+"))
+            {
                 v["files"].as_array().unwrap().iter().find_map(|f| {
                     if f["type"].as_str() == Some("minimal") {
                         Some((f["name"].as_str().unwrap(), f["sha1"].as_str().unwrap()))
