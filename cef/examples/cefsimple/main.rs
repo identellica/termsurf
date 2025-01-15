@@ -1,71 +1,104 @@
 use cef::{args::Args, rc::*, *};
+use std::sync::{Arc, Mutex};
 
-struct DemoApp(*mut RcImpl<cef_sys::_cef_app_t, Self>);
+struct DemoApp {
+    object: *mut RcImpl<cef_sys::_cef_app_t, Self>,
+    window: Arc<Mutex<Option<Window>>>,
+}
 
 impl DemoApp {
-    fn new() -> App {
-        App::new(Self(std::ptr::null_mut()))
+    fn new(window: Arc<Mutex<Option<Window>>>) -> App {
+        App::new(Self {
+            object: std::ptr::null_mut(),
+            window,
+        })
     }
 }
 
 impl WrapApp for DemoApp {
     fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_app_t, Self>) {
-        self.0 = object;
+        self.object = object;
     }
 }
 
 impl Clone for DemoApp {
     fn clone(&self) -> Self {
-        unsafe {
-            let rc_impl = &mut *self.0;
+        let object = unsafe {
+            let rc_impl = &mut *self.object;
             rc_impl.interface.add_ref();
-        }
+            self.object
+        };
+        let window = self.window.clone();
 
-        Self(self.0)
+        Self { object, window }
     }
 }
 
 impl Rc for DemoApp {
     fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
         unsafe {
-            let base = &*self.0;
+            let base = &*self.object;
             std::mem::transmute(&base.cef_object)
         }
     }
 }
 
-struct DemoBrowserProcessHandler(*mut RcImpl<cef_sys::cef_browser_process_handler_t, Self>);
-impl DemoBrowserProcessHandler {
-    fn new() -> Self {
-        Self(std::ptr::null_mut())
+impl ImplApp for DemoApp {
+    fn get_raw(&self) -> *mut cef_sys::_cef_app_t {
+        self.object as *mut cef_sys::_cef_app_t
+    }
+
+    fn get_browser_process_handler(&self) -> Option<BrowserProcessHandler> {
+        Some(DemoBrowserProcessHandler::new(self.window.clone()))
     }
 }
+
+struct DemoBrowserProcessHandler {
+    object: *mut RcImpl<cef_sys::cef_browser_process_handler_t, Self>,
+    window: Arc<Mutex<Option<Window>>>,
+}
+
+impl DemoBrowserProcessHandler {
+    fn new(window: Arc<Mutex<Option<Window>>>) -> BrowserProcessHandler {
+        BrowserProcessHandler::new(Self {
+            object: std::ptr::null_mut(),
+            window,
+        })
+    }
+}
+
 impl Rc for DemoBrowserProcessHandler {
     fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
         unsafe {
-            let base = &*self.0;
+            let base = &*self.object;
             std::mem::transmute(&base.cef_object)
         }
     }
 }
+
 impl WrapBrowserProcessHandler for DemoBrowserProcessHandler {
     fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_browser_process_handler_t, Self>) {
-        self.0 = object;
+        self.object = object;
     }
 }
+
 impl Clone for DemoBrowserProcessHandler {
     fn clone(&self) -> Self {
-        unsafe {
-            let rc = &mut *self.0;
-            rc.interface.add_ref();
-            Self(self.0)
-        }
+        let object = unsafe {
+            let rc_impl = &mut *self.object;
+            rc_impl.interface.add_ref();
+            rc_impl
+        };
+
+        let window = self.window.clone();
+
+        Self { object, window }
     }
 }
 
 impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
     fn get_raw(&self) -> *mut cef_sys::_cef_browser_process_handler_t {
-        self.0.cast()
+        self.object.cast()
     }
 
     // The real lifespan of cef starts from `on_context_initialized`, so all the cef objects should be manipulated after that.
@@ -74,25 +107,22 @@ impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
         let mut client = DemoClient::new();
         let url = CefString::from(&CefStringUtf8::from("https://www.google.com"));
 
-        browser_host_create_browser_sync(
-            Some(&Default::default()),
+        let browser_view = browser_view_create(
             Some(&mut client),
             Some(&url),
             Some(&Default::default()),
             Option::<&mut DictionaryValue>::None,
             Option::<&mut RequestContext>::None,
+            Option::<&mut BrowserViewDelegate>::None,
         )
         .expect("Failed to create browser view");
-    }
-}
 
-impl ImplApp for DemoApp {
-    fn get_raw(&self) -> *mut cef_sys::_cef_app_t {
-        self.0 as *mut cef_sys::_cef_app_t
-    }
-
-    fn get_browser_process_handler(&self) -> Option<BrowserProcessHandler> {
-        BrowserProcessHandler::new(DemoBrowserProcessHandler::new()).into()
+        let mut delegate = DemoWindowDelegate::new(browser_view);
+        if let Ok(mut window) = self.window.lock() {
+            *window = Some(
+                window_create_top_level(Some(&mut delegate)).expect("Failed to create window"),
+            );
+        }
     }
 }
 
@@ -234,7 +264,8 @@ fn main() {
 
     let is_browser_process = cmd.has_switch(Some(&"type".into())) != 1;
 
-    let mut app = DemoApp::new();
+    let window = Arc::new(Mutex::new(None));
+    let mut app = DemoApp::new(window.clone());
 
     let ret = execute_process(
         Some(args.as_main_args()),
@@ -269,5 +300,10 @@ fn main() {
     );
 
     run_message_loop();
+
+    let window = window.lock().expect("Failed to lock window");
+    let window = window.as_ref().expect("Window is None");
+    assert!(window.has_one_ref());
+
     shutdown();
 }
