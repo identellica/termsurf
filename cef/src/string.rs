@@ -272,6 +272,11 @@ impl Into<*const _cef_string_utf16_t> for &CefStringUtf16 {
         data.map(ptr::from_ref).unwrap_or(ptr::null())
     }
 }
+impl From<&str> for CefStringUtf16 {
+    fn from(value: &str) -> Self {
+        Self::from(&CefStringUtf8::from(value))
+    }
+}
 
 impl From<&CefStringUtf8> for CefStringUtf16 {
     fn from(value: &CefStringUtf8) -> Self {

@@ -20,3 +20,12 @@ cef-sys.workspace = true
 [dev-dependencies]
 winit.workspace = true
 
+[[example]]
+name = "cefsimple"
+crate-type = [ "bin" ]
+path = "examples/cefsimple/main.rs"
+
+[[example]]
+name = "cefsimple_helper"
+crate-type = [ "bin" ]
+path = "examples/cefsimple/mac/helper.rs"

@@ -34,9 +34,65 @@ impl Rc for DemoApp {
     }
 }
 
+struct DemoBrowserProcessHandler(*mut RcImpl<cef_sys::cef_browser_process_handler_t, Self>);
+impl DemoBrowserProcessHandler {
+    fn new() -> Self {
+        Self(std::ptr::null_mut())
+    }
+}
+impl Rc for DemoBrowserProcessHandler {
+    fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
+        unsafe {
+            let base = &*self.0;
+            std::mem::transmute(&base.cef_object)
+        }
+    }
+}
+impl WrapBrowserProcessHandler for DemoBrowserProcessHandler {
+    fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_browser_process_handler_t, Self>) {
+        self.0 = object;
+    }
+}
+impl Clone for DemoBrowserProcessHandler {
+    fn clone(&self) -> Self {
+        unsafe {
+            let rc = &mut *self.0;
+            rc.interface.add_ref();
+            Self(self.0)
+        }
+    }
+}
+
+impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
+    fn get_raw(&self) -> *mut cef_sys::_cef_browser_process_handler_t {
+        self.0.cast()
+    }
+
+    // The real lifespan of cef starts from `on_context_initialized`, so all the cef objects should be manipulated after that.
+    fn on_context_initialized(&self) {
+        println!("cef context intiialized");
+        let mut client = DemoClient::new();
+        let url = CefString::from(&CefStringUtf8::from("https://www.google.com"));
+
+        browser_host_create_browser_sync(
+            Some(&Default::default()),
+            Some(&mut client),
+            Some(&url),
+            Some(&Default::default()),
+            Option::<&mut DictionaryValue>::None,
+            Option::<&mut RequestContext>::None,
+        )
+        .expect("Failed to create browser view");
+    }
+}
+
 impl ImplApp for DemoApp {
     fn get_raw(&self) -> *mut cef_sys::_cef_app_t {
         self.0 as *mut cef_sys::_cef_app_t
+    }
+
+    fn get_browser_process_handler(&self) -> Option<BrowserProcessHandler> {
+        BrowserProcessHandler::new(DemoBrowserProcessHandler::new()).into()
     }
 }
 
@@ -158,49 +214,60 @@ impl ImplWindowDelegate for DemoWindowDelegate {
     }
 }
 
+// FIXME: Rewrite this demo based on cef/tests/cefsimple
 fn main() {
+    #[cfg(target_os = "macos")]
+    let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
+    #[cfg(target_os = "macos")]
+    assert!(loader.load());
+
     let args = Args::new(std::env::args());
-    // dbg!(&args);
+
+    let cmd = command_line_create().unwrap();
+    #[cfg(not(target_os = "windows"))]
+    cmd.init_from_argv(args.as_main_args().argc, args.as_main_args().argv.cast());
+
+    /* cmd must be init'ed from string on windows
+    #[cfg(target_os = "windows")]
+    cmd.init_from_string();
+    */
+
+    let is_browser_process = cmd.has_switch(Some(&"type".into())) != 1;
+
     let mut app = DemoApp::new();
-    dbg!(initialize(
+
+    let ret = execute_process(
         Some(args.as_main_args()),
-        Some(&Default::default()),
         Some(&mut app),
-        std::ptr::null_mut()
-    ));
-    {
-        dbg!(execute_process(
+        std::ptr::null_mut(),
+    );
+
+    if is_browser_process {
+        println!("launch browser process");
+        assert!(ret == -1, "cannot execute browser process");
+    } else {
+        let process_type = cmd
+            .get_switch_value(Some(&"type".into()))
+            .as_ref()
+            .map(CefStringUtf8::from)
+            .unwrap();
+        println!("launch process {process_type}");
+        assert!(ret >= 0, "cannot execute non-browser process");
+        // non-browser process does not initialize cef
+        return;
+    }
+    let mut settings = Settings::default();
+    settings.no_sandbox = true as _;
+    assert_eq!(
+        initialize(
             Some(args.as_main_args()),
+            Some(&settings),
             Some(&mut app),
             std::ptr::null_mut()
-        ));
+        ),
+        1
+    );
 
-        // let window_info = WindowInfo::new();
-        let mut client = DemoClient::new();
-        let url = CefString::from(&CefStringUtf8::from("https://www.google.com"));
-
-        let browser_view = browser_view_create(
-            Some(&mut client),
-            Some(&url),
-            Some(&Default::default()),
-            Option::<&mut DictionaryValue>::None,
-            Option::<&mut RequestContext>::None,
-            Option::<&mut BrowserViewDelegate>::None,
-        )
-        .expect("Failed to create browser view");
-        let mut delegate = DemoWindowDelegate::new(browser_view);
-
-        let x = window_create_top_level(Some(&mut delegate)).expect("Failed to create window");
-        // dbg!(cef::create_browser(
-        //     window_info,
-        //     Some(client),
-        //     url,
-        //     browser_settings
-        // ));
-
-        run_message_loop();
-        dbg!(x.has_one_ref());
-    }
-
+    run_message_loop();
     shutdown();
 }

@@ -1,3 +1,15 @@
+#ifndef CEF_RUST_SYS_WRAPPER_H
+#define CEF_RUST_SYS_WRAPPER_H
+
+#ifdef __APPLE__
+#include "include/wrapper/cef_library_loader.h"
+#include "include/cef_sandbox_mac.h"
+#endif
+
+#ifdef _WIN32
+#include "include/cef_sandbox_win.h"
+#endif
+
 #include "include/capi/cef_base_capi.h"
 
 #include "include/capi/cef_app_capi.h"
@@ -18,3 +30,5 @@
 #include "include/capi/views/cef_scroll_view_capi.h"
 
 #include "include/capi/views/cef_window_capi.h"
+
+#endif

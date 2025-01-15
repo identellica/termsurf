@@ -1,5 +1,7 @@
 #[cfg(not(feature = "dox"))]
 fn main() -> Result<(), String> {
+    println!("cargo::rerun-if-changed=build.rs");
+
     let path = std::env::var("FLATPAK")
         .map(|_| String::from("/usr/lib"))
         .or_else(|_| std::env::var("CEF_PATH"))
@@ -11,6 +13,9 @@ fn main() -> Result<(), String> {
         })
         .map_err(|e| format!("Couldn't get the path of shared library: {e}"))?;
 
+    let path = std::path::PathBuf::from(path).canonicalize().unwrap();
+    let path = path.display();
+    println!("cargo::rerun-if-changed={path}");
     println!("cargo::rustc-link-search={path}");
 
     match std::env::var("CARGO_CFG_TARGET_OS").as_deref() {
@@ -23,10 +28,10 @@ fn main() -> Result<(), String> {
         Ok("macos") => {
             println!("cargo::rustc-link-lib=framework=AppKit");
 
-            // println!("cargo::rustc-link-search={path}/Chromium Embedded Framework.framework");
-            println!("cargo::rustc-link-arg={path}/Chromium Embedded Framework.framework/Chromium Embedded Framework");
+            println!("cargo::rustc-link-lib=static=cef_dll_wrapper");
 
-            println!("cargo::rustc-link-arg={path}/cef_sandbox.a");
+            println!("cargo::rustc-link-lib=cef_sandbox");
+            println!("cargo::rustc-link-lib=sandbox");
         }
         os => unimplemented!("unknown target {}", os.unwrap_or("(unset)")),
     }
