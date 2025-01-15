@@ -21,4 +21,3 @@ repository = "https://github.com/tauri-apps/cef-rs"
 [workspace.dependencies]
 cef-sys = { package = "libcef-sys", version = "131.3.4", path = "sys" }
 winit = "0.30"
-
