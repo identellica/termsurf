@@ -235,12 +235,31 @@ impl ImplWindowDelegate for DemoWindowDelegate {
         }
     }
 
-    fn can_close(&self, _window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn on_window_destroyed(&self, _window: Option<&mut impl ImplWindow>) {
+        quit_message_loop();
+    }
+
+    fn with_standard_window_buttons(
+        &self,
+        _window: Option<&mut impl ImplWindow>,
+    ) -> ::std::os::raw::c_int {
         1
     }
 
-    fn on_window_destroyed(&self, _window: Option<&mut impl ImplWindow>) {
-        quit_message_loop();
+    fn can_resize(&self, _window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+        1
+    }
+
+    fn can_maximize(&self, _window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+        1
+    }
+
+    fn can_minimize(&self, _window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+        1
+    }
+
+    fn can_close(&self, _window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+        1
     }
 }
 
