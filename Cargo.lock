@@ -502,6 +502,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 
 [[package]]
+name = "download-cef"
+version = "1.0.0"
+dependencies = [
+ "bzip2",
+ "indicatif",
+ "serde",
+ "sha1_smol",
+ "tar",
+ "thiserror 2.0.11",
+ "ureq",
+]
+
+[[package]]
 name = "dpi"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1795,19 +1808,14 @@ name = "update-bindings"
 version = "131.3.4"
 dependencies = [
  "bindgen",
- "bzip2",
  "clap",
  "convert_case",
- "indicatif",
+ "download-cef",
  "proc-macro2",
  "quote",
  "regex",
- "serde_json",
- "sha1_smol",
  "syn",
- "tar",
  "thiserror 2.0.11",
- "ureq",
 ]
 
 [[package]]

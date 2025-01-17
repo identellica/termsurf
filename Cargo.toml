@@ -2,6 +2,7 @@
 resolver = "2"
 
 members = [
+    "download-cef",
     "update-bindings",
     "sys",
     "cef",
@@ -20,4 +21,7 @@ repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
 cef-sys = { package = "libcef-sys", version = "131.3.4", path = "sys" }
+download-cef = { version = "1.0.0", path = "download-cef" }
+serde = { version = "1.0", features = [ "derive" ] }
+thiserror = "2.0"
 winit = "0.30"
