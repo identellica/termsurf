@@ -2,6 +2,7 @@ use bzip2::bufread::BzDecoder;
 use serde::Deserialize;
 use sha1_smol::Sha1;
 use std::{
+    fmt::{self, Display},
     fs::{self, File},
     io::BufReader,
     path::{Path, PathBuf},
@@ -230,8 +231,10 @@ where
         .map(PathBuf::from)
         .ok_or(Error::InvalidArchiveFile(extracted_dir))?;
 
-    let (os, arch) = target_to_os_arch(target)?;
-    let cef_dir = location.as_ref().join(format!("cef_{os}_{arch}"));
+    let os_and_arch = OsAndArch::try_from(target)?;
+    let OsAndArch { os, arch } = os_and_arch;
+    let cef_dir = os_and_arch.to_string();
+    let cef_dir = location.as_ref().join(cef_dir);
 
     if cef_dir.exists() {
         let old_dir = location.as_ref().join(format!("old_{os}_{arch}"));
@@ -241,8 +244,8 @@ where
         fs::rename(&cef_dir, &old_dir)?;
         fs::remove_dir_all(old_dir)?;
     }
-    let release_dir = extracted_dir.join("Release");
-    fs::rename(&release_dir, &cef_dir)?;
+    const RELEASE_DIR: &str = "Release";
+    fs::rename(extracted_dir.join(RELEASE_DIR), &cef_dir)?;
 
     if os != "macos" {
         let resources = extracted_dir.join("Resources");
@@ -253,10 +256,14 @@ where
         }
     }
 
-    let include_dir = extracted_dir.join("include");
-    fs::rename(&include_dir, cef_dir.join("include"))?;
-    let libcef_dll_dir = extracted_dir.join("libcef_dll");
-    fs::rename(&libcef_dll_dir, cef_dir.join("libcef_dll"))?;
+    const CMAKE_LISTS_TXT: &str = "CMakeLists.txt";
+    fs::rename(extracted_dir.join(CMAKE_LISTS_TXT), cef_dir.join(CMAKE_LISTS_TXT))?;
+    const CMAKE_DIR: &str = "cmake";
+    fs::rename(extracted_dir.join(CMAKE_DIR), cef_dir.join(CMAKE_DIR))?;
+    const INCLUDE_DIR: &str = "include";
+    fs::rename(extracted_dir.join(INCLUDE_DIR), cef_dir.join(INCLUDE_DIR))?;
+    const LIBCEF_DLL_DIR: &str = "libcef_dll";
+    fs::rename(extracted_dir.join(LIBCEF_DLL_DIR), cef_dir.join(LIBCEF_DLL_DIR))?;
 
     if show_progress {
         println!("Moved contents to: {}", cef_dir.display());
@@ -293,17 +300,61 @@ fn calculate_file_sha1(path: &Path) -> String {
     sha1.digest().to_string()
 }
 
-fn target_to_os_arch(target: &str) -> Result<(&str, &str)> {
-    match target {
-        "aarch64-apple-darwin" => Ok(("macos", "aarch64")),
-        "x86_64-apple-darwin" => Ok(("macos", "x86_64")),
-        "i686-pc-windows-msvc" => Ok(("windows", "x86")),
-        "x86_64-pc-windows-msvc" => Ok(("windows", "x86_64")),
-        "aarch64-pc-windows-msvc" => Ok(("windows", "aarch64")),
-        "x86_64-unknown-linux-gnu" => Ok(("linux", "x86_64")),
-        "i686-unknown-linux-gnu" => Ok(("linux", "x86")),
-        "arm-unknown-linux-gnueabi" => Ok(("linux", "arm")),
-        "aarch64-unknown-linux-gnu" => Ok(("linux", "aarch64")),
-        v => Err(Error::UnsupportedTarget(v.to_string())),
+pub struct OsAndArch {
+    pub os: &'static str,
+    pub arch: &'static str,
+}
+
+impl Display for OsAndArch {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let os = self.os;
+        let arch = self.arch;
+        write!(f, "cef_{os}_{arch}")
+    }
+}
+
+impl TryFrom<&str> for OsAndArch {
+    type Error = Error;
+
+    fn try_from(target: &str) -> Result<Self> {
+        match target {
+            "aarch64-apple-darwin" => Ok(OsAndArch {
+                os: "macos",
+                arch: "aarch64",
+            }),
+            "x86_64-apple-darwin" => Ok(OsAndArch {
+                os: "macos",
+                arch: "x86_64",
+            }),
+            "x86_64-pc-windows-msvc" => Ok(OsAndArch {
+                os: "windows",
+                arch: "x86_64",
+            }),
+            "aarch64-pc-windows-msvc" => Ok(OsAndArch {
+                os: "windows",
+                arch: "aarch64",
+            }),
+            "i686-pc-windows-msvc" => Ok(OsAndArch {
+                os: "windows",
+                arch: "x86",
+            }),
+            "x86_64-unknown-linux-gnu" => Ok(OsAndArch {
+                os: "linux",
+                arch: "x86_64",
+            }),
+            "i686-unknown-linux-gnu" => Ok(OsAndArch {
+                os: "linux",
+                arch: "x86",
+            }),
+            "aarch64-unknown-linux-gnu" => Ok(OsAndArch {
+                os: "linux",
+                arch: "aarch64",
+            }),
+            "arm-unknown-linux-gnueabi" => Ok(OsAndArch {
+                os: "linux",
+                arch: "arm",
+            }),
+            v => Err(Error::UnsupportedTarget(v.to_string())),
+        }
     }
 }

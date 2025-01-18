@@ -1,6 +1,6 @@
 //! String module
 
-use cef_sys::{
+use cef_dll_sys::{
     _cef_string_list_t, _cef_string_map_t, _cef_string_multimap_t, _cef_string_utf16_t,
     _cef_string_utf8_t, _cef_string_wide_t,
 };
@@ -89,10 +89,10 @@ impl Drop for CefStringUtf8 {
                 CefStringData::UserFree(value) => {
                     value
                         .as_mut()
-                        .map(|value| cef_sys::cef_string_userfree_utf8_free(value));
+                        .map(|value| cef_dll_sys::cef_string_userfree_utf8_free(value));
                 }
                 CefStringData::Clear(value) => {
-                    cef_sys::cef_string_utf8_clear(value);
+                    cef_dll_sys::cef_string_utf8_clear(value);
                 }
                 _ => {}
             }
@@ -104,9 +104,9 @@ impl From<&str> for CefStringUtf8 {
     fn from(value: &str) -> Self {
         Self(
             unsafe {
-                let cef_string = cef_sys::cef_string_userfree_utf8_alloc();
+                let cef_string = cef_dll_sys::cef_string_userfree_utf8_alloc();
                 if !cef_string.is_null() {
-                    cef_sys::cef_string_utf8_set(
+                    cef_dll_sys::cef_string_utf8_set(
                         value.as_bytes().as_ptr() as *const _,
                         value.as_bytes().len(),
                         cef_string,
@@ -153,7 +153,7 @@ impl From<&CefStringUtf16> for CefStringUtf8 {
                 let value: *const _cef_string_utf16_t = value.into();
                 if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
                 {
-                    cef_sys::cef_string_utf16_to_utf8(str_, length, cef_string);
+                    cef_dll_sys::cef_string_utf16_to_utf8(str_, length, cef_string);
                 }
                 cef_string
             }
@@ -170,7 +170,7 @@ impl From<&CefStringWide> for CefStringUtf8 {
                 let value: *const _cef_string_wide_t = value.into();
                 if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
                 {
-                    cef_sys::cef_string_wide_to_utf8(str_, length, cef_string);
+                    cef_dll_sys::cef_string_wide_to_utf8(str_, length, cef_string);
                 }
                 cef_string
             }
@@ -237,10 +237,10 @@ impl Drop for CefStringUtf16 {
                 CefStringData::UserFree(value) => {
                     value
                         .as_mut()
-                        .map(|value| cef_sys::cef_string_userfree_utf16_free(value));
+                        .map(|value| cef_dll_sys::cef_string_userfree_utf16_free(value));
                 }
                 CefStringData::Clear(value) => {
-                    cef_sys::cef_string_utf16_clear(value);
+                    cef_dll_sys::cef_string_utf16_clear(value);
                 }
                 _ => {}
             }
@@ -286,7 +286,7 @@ impl From<&CefStringUtf8> for CefStringUtf16 {
                 let value: *const _cef_string_utf8_t = value.into();
                 if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
                 {
-                    cef_sys::cef_string_utf8_to_utf16(str_, length, &mut cef_string);
+                    cef_dll_sys::cef_string_utf8_to_utf16(str_, length, &mut cef_string);
                 }
                 cef_string
             }
@@ -303,7 +303,7 @@ impl From<&CefStringWide> for CefStringUtf16 {
                 let value: *const _cef_string_wide_t = value.into();
                 if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
                 {
-                    cef_sys::cef_string_wide_to_utf16(str_, length, &mut cef_string);
+                    cef_dll_sys::cef_string_wide_to_utf16(str_, length, &mut cef_string);
                 }
                 cef_string
             }
@@ -349,10 +349,10 @@ impl Drop for CefStringWide {
                 CefStringData::UserFree(value) => {
                     value
                         .as_mut()
-                        .map(|value| cef_sys::cef_string_userfree_wide_free(value));
+                        .map(|value| cef_dll_sys::cef_string_userfree_wide_free(value));
                 }
                 CefStringData::Clear(value) => {
-                    cef_sys::cef_string_wide_clear(value);
+                    cef_dll_sys::cef_string_wide_clear(value);
                 }
                 _ => {}
             }
@@ -393,7 +393,7 @@ impl From<&CefStringUtf8> for CefStringWide {
                 let value: *const _cef_string_utf8_t = value.into();
                 if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
                 {
-                    cef_sys::cef_string_utf8_to_wide(str_, length, &mut cef_string);
+                    cef_dll_sys::cef_string_utf8_to_wide(str_, length, &mut cef_string);
                 }
                 cef_string
             }
@@ -410,7 +410,7 @@ impl From<&CefStringUtf16> for CefStringWide {
                 let value: *const _cef_string_utf16_t = value.into();
                 if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
                 {
-                    cef_sys::cef_string_utf16_to_wide(str_, length, &mut cef_string);
+                    cef_dll_sys::cef_string_utf16_to_wide(str_, length, &mut cef_string);
                 }
                 cef_string
             }
@@ -453,7 +453,7 @@ impl Drop for CefStringList {
         unsafe {
             self.0
                 .as_mut()
-                .map(|value| cef_sys::cef_string_list_free(value));
+                .map(|value| cef_dll_sys::cef_string_list_free(value));
         }
     }
 }
@@ -477,11 +477,11 @@ impl IntoIterator for CefStringList {
     fn into_iter(self) -> Self::IntoIter {
         let list = unsafe { self.0.as_mut() };
         list.map(|list| {
-            let count = unsafe { cef_sys::cef_string_list_size(list) };
+            let count = unsafe { cef_dll_sys::cef_string_list_size(list) };
             (0..count)
                 .filter_map(|i| unsafe {
                     let mut value = mem::zeroed();
-                    (cef_sys::cef_string_list_value(list, i, &mut value) > 0).then_some(value)
+                    (cef_dll_sys::cef_string_list_value(list, i, &mut value) > 0).then_some(value)
                 })
                 .map(|value| {
                     CefStringUtf8::from(&CefString::from(ptr::from_ref(&value))).to_string()
@@ -501,7 +501,7 @@ impl Drop for CefStringMap {
         unsafe {
             self.0
                 .as_mut()
-                .map(|value| cef_sys::cef_string_map_free(value));
+                .map(|value| cef_dll_sys::cef_string_map_free(value));
         }
     }
 }
@@ -525,13 +525,13 @@ impl IntoIterator for CefStringMap {
     fn into_iter(self) -> Self::IntoIter {
         let map = unsafe { self.0.as_mut() };
         map.map(|map| {
-            let count = unsafe { cef_sys::cef_string_map_size(map) };
+            let count = unsafe { cef_dll_sys::cef_string_map_size(map) };
             (0..count)
                 .filter_map(|i| unsafe {
                     let mut key = mem::zeroed();
                     let mut value = mem::zeroed();
-                    (cef_sys::cef_string_map_key(map, i, &mut key) > 0
-                        && cef_sys::cef_string_map_value(map, i, &mut value) > 0)
+                    (cef_dll_sys::cef_string_map_key(map, i, &mut key) > 0
+                        && cef_dll_sys::cef_string_map_value(map, i, &mut value) > 0)
                         .then_some((key, value))
                 })
                 .map(|(key, value)| {
@@ -555,7 +555,7 @@ impl Drop for CefStringMultimap {
         unsafe {
             self.0
                 .as_mut()
-                .map(|value| cef_sys::cef_string_multimap_free(value));
+                .map(|value| cef_dll_sys::cef_string_multimap_free(value));
         }
     }
 }

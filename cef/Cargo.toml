@@ -9,16 +9,13 @@ authors.workspace = true
 repository.workspace = true
 
 [features]
-dox = ["cef-sys/dox"]
+dox = ["cef-dll-sys/dox"]
 
 [package.metadata.docs.rs]
 features = [ "dox" ]
 
 [dependencies]
-cef-sys.workspace = true
-
-[dev-dependencies]
-winit.workspace = true
+cef-dll-sys.workspace = true
 
 [[example]]
 name = "cefsimple"
