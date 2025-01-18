@@ -1,39 +1,78 @@
 #[cfg(not(feature = "dox"))]
-fn main() -> Result<(), String> {
+fn main() -> anyhow::Result<()> {
+    use download_cef::OsAndArch;
+    use std::{env, fs, path::PathBuf};
+
     println!("cargo::rerun-if-changed=build.rs");
 
-    let path = std::env::var("FLATPAK")
+    let target = env::var("TARGET")?;
+    let os_arch = OsAndArch::try_from(target.as_str())?;
+
+    println!("cargo::rerun-if-env-changed=FLATPAK");
+    println!("cargo::rerun-if-env-changed=CEF_PATH");
+    let cef_path_env = env::var("FLATPAK")
         .map(|_| String::from("/usr/lib"))
-        .or_else(|_| std::env::var("CEF_PATH"))
-        .or_else(|_| {
-            std::env::var("HOME").map(|mut val| {
-                val.push_str("/.local/share/cef");
-                val
-            })
-        })
-        .map_err(|e| format!("Couldn't get the path of shared library: {e}"))?;
+        .or_else(|_| env::var("CEF_PATH"));
 
-    let path = std::path::PathBuf::from(path).canonicalize().unwrap();
-    let path = path.display();
-    println!("cargo::rerun-if-changed={path}");
-    println!("cargo::rustc-link-search={path}");
+    let cef_dir = match cef_path_env {
+        Ok(cef_path) => {
+            // Allow overriding the CEF path with environment variables.
+            println!("Using CEF path from environment: {cef_path}");
+            PathBuf::from(cef_path).canonicalize()?
+        }
+        Err(_) => {
+            let out_dir = PathBuf::from(env::var("OUT_DIR")?);
+            let cef_dir = os_arch.to_string();
+            let cef_dir = out_dir.join(&cef_dir);
 
-    match std::env::var("CARGO_CFG_TARGET_OS").as_deref() {
-        Ok("linux") => {
+            if !fs::exists(&cef_dir)? {
+                let cef_version = env::var("CARGO_PKG_VERSION")?;
+                let archive =
+                    download_cef::download_target_archive(&target, &cef_version, &out_dir, false)?;
+                let extracted_dir =
+                    download_cef::extract_target_archive(&target, &archive, &out_dir, false)?;
+                if extracted_dir != cef_dir {
+                    return Err(anyhow::anyhow!(
+                        "extracted dir {extracted_dir:?} does not match cef_dir {cef_dir:?}",
+                    ));
+                }
+            }
+
+            cef_dir
+        }
+    };
+
+    let cef_dir = cef_dir.display().to_string();
+
+    println!("cargo::metadata=CEF_DIR={cef_dir}");
+    println!("cargo::rustc-link-search=native={cef_dir}");
+
+    match os_arch.os {
+        "linux" => {
             println!("cargo::rustc-link-lib=dylib=cef");
         }
-        Ok("windows") => {
+        "windows" => {
             println!("cargo::rustc-link-lib=dylib=libcef");
+            println!("cargo::rustc-link-lib=static=cef_sandbox");
         }
-        Ok("macos") => {
+        "macos" => {
             println!("cargo::rustc-link-lib=framework=AppKit");
 
+            let build_dir = cmake::Config::new(&cef_dir)
+                .generator("Ninja")
+                .profile("RelWithDebInfo")
+                .define("CMAKE_OBJECT_PATH_MAX", "500")
+                .build_target("libcef_dll_wrapper")
+                .build()
+                .display()
+                .to_string();
+            println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
             println!("cargo::rustc-link-lib=static=cef_dll_wrapper");
 
-            println!("cargo::rustc-link-lib=cef_sandbox");
+            println!("cargo::rustc-link-arg={cef_dir}/cef_sandbox.a");
             println!("cargo::rustc-link-lib=sandbox");
         }
-        os => unimplemented!("unknown target {}", os.unwrap_or("(unset)")),
+        os => unimplemented!("unknown target {os}"),
     }
 
     Ok(())

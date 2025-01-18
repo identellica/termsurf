@@ -5,7 +5,7 @@
     unused_variables
 )]
 use crate::rc::{ConvertParam, ConvertReturnValue, Rc, RcImpl, RefGuard, WrapParamRef};
-use cef_sys::*;
+use cef_dll_sys::*;
 
 /// Perform the conversion between CEF and Rust types in field initializers.
 fn init_array_field<T, U, const N: usize>(mut value: [U; N]) -> [T; N]

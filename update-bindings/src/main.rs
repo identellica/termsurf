@@ -65,10 +65,7 @@ fn main() -> Result<()> {
 
     if args.bindgen {
         if args.download {
-            let archive_dir = upgrade::download(target);
-            if archive_dir.exists() {
-                fs::remove_dir_all(archive_dir).unwrap();
-            }
+            let _ = upgrade::download(target);
         }
 
         upgrade::sys_bindgen(target)?;

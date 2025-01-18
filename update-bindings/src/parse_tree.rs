@@ -1531,7 +1531,7 @@ impl<'a> ParseTree<'a> {
             use crate::rc::{
                 ConvertParam, ConvertReturnValue, Rc, RcImpl, RefGuard, WrapParamRef,
             };
-            use cef_sys::*;
+            use cef_dll_sys::*;
         }
         .to_string();
         writeln!(f, "{header}")?;

@@ -2,7 +2,7 @@ use cef::{args::Args, rc::*, *};
 use std::sync::{Arc, Mutex};
 
 struct DemoApp {
-    object: *mut RcImpl<cef_sys::_cef_app_t, Self>,
+    object: *mut RcImpl<cef_dll_sys::_cef_app_t, Self>,
     window: Arc<Mutex<Option<Window>>>,
 }
 
@@ -16,7 +16,7 @@ impl DemoApp {
 }
 
 impl WrapApp for DemoApp {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_app_t, Self>) {
+    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_app_t, Self>) {
         self.object = object;
     }
 }
@@ -35,7 +35,7 @@ impl Clone for DemoApp {
 }
 
 impl Rc for DemoApp {
-    fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
+    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
         unsafe {
             let base = &*self.object;
             std::mem::transmute(&base.cef_object)
@@ -44,8 +44,8 @@ impl Rc for DemoApp {
 }
 
 impl ImplApp for DemoApp {
-    fn get_raw(&self) -> *mut cef_sys::_cef_app_t {
-        self.object as *mut cef_sys::_cef_app_t
+    fn get_raw(&self) -> *mut cef_dll_sys::_cef_app_t {
+        self.object as *mut cef_dll_sys::_cef_app_t
     }
 
     fn get_browser_process_handler(&self) -> Option<BrowserProcessHandler> {
@@ -54,7 +54,7 @@ impl ImplApp for DemoApp {
 }
 
 struct DemoBrowserProcessHandler {
-    object: *mut RcImpl<cef_sys::cef_browser_process_handler_t, Self>,
+    object: *mut RcImpl<cef_dll_sys::cef_browser_process_handler_t, Self>,
     window: Arc<Mutex<Option<Window>>>,
 }
 
@@ -68,7 +68,7 @@ impl DemoBrowserProcessHandler {
 }
 
 impl Rc for DemoBrowserProcessHandler {
-    fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
+    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
         unsafe {
             let base = &*self.object;
             std::mem::transmute(&base.cef_object)
@@ -77,7 +77,7 @@ impl Rc for DemoBrowserProcessHandler {
 }
 
 impl WrapBrowserProcessHandler for DemoBrowserProcessHandler {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_browser_process_handler_t, Self>) {
+    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_browser_process_handler_t, Self>) {
         self.object = object;
     }
 }
@@ -97,7 +97,7 @@ impl Clone for DemoBrowserProcessHandler {
 }
 
 impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
-    fn get_raw(&self) -> *mut cef_sys::_cef_browser_process_handler_t {
+    fn get_raw(&self) -> *mut cef_dll_sys::_cef_browser_process_handler_t {
         self.object.cast()
     }
 
@@ -126,7 +126,7 @@ impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
     }
 }
 
-struct DemoClient(*mut RcImpl<cef_sys::_cef_client_t, Self>);
+struct DemoClient(*mut RcImpl<cef_dll_sys::_cef_client_t, Self>);
 
 impl DemoClient {
     fn new() -> Client {
@@ -135,7 +135,7 @@ impl DemoClient {
 }
 
 impl WrapClient for DemoClient {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_client_t, Self>) {
+    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_client_t, Self>) {
         self.0 = object;
     }
 }
@@ -152,7 +152,7 @@ impl Clone for DemoClient {
 }
 
 impl Rc for DemoClient {
-    fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
+    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
         unsafe {
             let base = &*self.0;
             std::mem::transmute(&base.cef_object)
@@ -161,13 +161,13 @@ impl Rc for DemoClient {
 }
 
 impl ImplClient for DemoClient {
-    fn get_raw(&self) -> *mut cef_sys::_cef_client_t {
-        self.0 as *mut cef_sys::_cef_client_t
+    fn get_raw(&self) -> *mut cef_dll_sys::_cef_client_t {
+        self.0 as *mut cef_dll_sys::_cef_client_t
     }
 }
 
 struct DemoWindowDelegate {
-    base: *mut RcImpl<cef_sys::_cef_window_delegate_t, Self>,
+    base: *mut RcImpl<cef_dll_sys::_cef_window_delegate_t, Self>,
     browser_view: BrowserView,
 }
 
@@ -181,7 +181,7 @@ impl DemoWindowDelegate {
 }
 
 impl WrapWindowDelegate for DemoWindowDelegate {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_window_delegate_t, Self>) {
+    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_window_delegate_t, Self>) {
         self.base = object;
     }
 }
@@ -201,7 +201,7 @@ impl Clone for DemoWindowDelegate {
 }
 
 impl Rc for DemoWindowDelegate {
-    fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
+    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
         unsafe {
             let base = &*self.base;
             std::mem::transmute(&base.cef_object)
@@ -219,8 +219,8 @@ impl ImplViewDelegate for DemoWindowDelegate {
         // view.as_panel().map(|x| x.as_window().map(|w| w.close()));
     }
 
-    fn get_raw(&self) -> *mut cef_sys::_cef_view_delegate_t {
-        self.base as *mut cef_sys::_cef_view_delegate_t
+    fn get_raw(&self) -> *mut cef_dll_sys::_cef_view_delegate_t {
+        self.base as *mut cef_dll_sys::_cef_view_delegate_t
     }
 }
 

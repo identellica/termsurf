@@ -1,6 +1,7 @@
 [package]
-name = "libcef-sys"
+name = "cef-dll-sys"
 description = "cef-rs sys crate"
+links = "cef_dll_wrapper"
 
 version.workspace = true
 edition.workspace = true
@@ -9,7 +10,6 @@ authors.workspace = true
 repository.workspace = true
 
 [lib]
-name = "cef_sys"
 doctest = false
 
 [features]
@@ -18,5 +18,7 @@ dox = []
 [package.metadata.docs.rs]
 features = [ "dox" ]
 
-[dev-dependencies]
-winit.workspace = true
+[build-dependencies]
+anyhow.workspace = true
+cmake.workspace = true
+download-cef.workspace = true

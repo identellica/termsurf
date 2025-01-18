@@ -1,18 +1,18 @@
 use cef::{execute_process, library_loader};
 use cef::{rc::*, *};
-use cef_sys::cef_sandbox_destroy;
+use cef_dll_sys::cef_sandbox_destroy;
 
-struct DemoApp(*mut RcImpl<cef_sys::_cef_app_t, Self>);
+struct DemoApp(*mut RcImpl<cef_dll_sys::_cef_app_t, Self>);
 
 impl WrapApp for DemoApp {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_sys::_cef_app_t, Self>) {
+    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_app_t, Self>) {
         self.0 = object;
     }
 }
 
 impl ImplApp for DemoApp {
-    fn get_raw(&self) -> *mut cef_sys::_cef_app_t {
-        self.0 as *mut cef_sys::_cef_app_t
+    fn get_raw(&self) -> *mut cef_dll_sys::_cef_app_t {
+        self.0 as *mut cef_dll_sys::_cef_app_t
     }
 }
 
@@ -28,7 +28,7 @@ impl Clone for DemoApp {
 }
 
 impl Rc for DemoApp {
-    fn as_base(&self) -> &cef_sys::cef_base_ref_counted_t {
+    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
         unsafe {
             let base = &*self.0;
             std::mem::transmute(&base.cef_object)

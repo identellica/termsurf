@@ -31,13 +31,13 @@
 //! Finally, define a method called `from_raw`. For more implementation details, please see the
 //! documentation of [`RefGuard`].
 //!
-//! [`cef_settings_t`]: cef_sys::cef_settings_t
-//! [`cef_window_delegate_t`]: cef_sys::cef_window_delegate_t
+//! [`cef_settings_t`]: cef_dll_sys::cef_settings_t
+//! [`cef_window_delegate_t`]: cef_dll_sys::cef_window_delegate_t
 //! [`Settings`]: crate::Settings
 //! [`WindowDelegate`]: crate::WindowDelegate
 //! [`WindowDelegate::on_window_created`]: crate::WindowDelegate::on_window_created
 //! [`into_raw`]: crate::WindowDelegate::into_raw
-//! [`cef_window_t`]: cef_sys::cef_window_t
+//! [`cef_window_t`]: cef_dll_sys::cef_window_t
 //! [`Window`]: crate::Window
 
 use std::{
@@ -47,7 +47,7 @@ use std::{
     sync::atomic::{fence, AtomicUsize, Ordering},
 };
 
-use cef_sys::cef_base_ref_counted_t;
+use cef_dll_sys::cef_base_ref_counted_t;
 
 /// Reference counted trait for types has [`cef_base_ref_counted_t`].
 pub trait Rc {

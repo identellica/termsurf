@@ -11,4 +11,4 @@ pub mod library_loader;
 mod bindings;
 pub use bindings::*;
 
-pub use cef_sys as sys;
+pub use cef_dll_sys as sys;
