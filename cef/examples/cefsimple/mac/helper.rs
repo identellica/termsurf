@@ -1,6 +1,5 @@
 use cef::{execute_process, library_loader};
 use cef::{rc::*, *};
-use cef_dll_sys::cef_sandbox_destroy;
 
 struct DemoApp(*mut RcImpl<cef_dll_sys::_cef_app_t, Self>);
 

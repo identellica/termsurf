@@ -19,14 +19,14 @@ Use CEF in Rust.
 
 - Copy files to `.local`:
 
-```
+```cmd
 cp -r Resources ~/.local/share/cef
 cp -r Release ~/.local/share/cef
 ```
 
 - Build and run the application with `LD_LIBRARY_PATH` (or you can also add rpath to your cargo config or build script):
 
-```
+```cmd
 LD_LIBRARY_PATH=~/.local/share/cef cargo r --example demo
 ```
 
@@ -34,7 +34,7 @@ LD_LIBRARY_PATH=~/.local/share/cef cargo r --example demo
 
 - Install flatpak runtime & sdk:
 
-```
+```cmd
 flatpak install flathub dev.crabnebula.Platform
 flatpak install flathub dev.crabnebula.Sdk
 ```
@@ -45,7 +45,7 @@ flatpak install flathub dev.crabnebula.Sdk
 
 - Build the flatpak application and run:
 
-```
+```cmd
 cargo b --example demo
 python3 ./flatpak-cargo-generator.py ./Cargo.lock -o cargo-sources.json
 touch run.sh
@@ -57,13 +57,13 @@ flatpak run app.example.demo
 
 - Download cef prebuilts with `update-bindings`, it should print out the extracted `CEF_PATH` on success.
 
-```
+```cmd
 cargo run -p update-bindings --bindgen --download
 ```
 
 - Build and run the cefsimple application
 
-```
+```cmd
 export CEF_PATH=<path>
 
 ./cef/examples/cefsimple/bundle_script.rs

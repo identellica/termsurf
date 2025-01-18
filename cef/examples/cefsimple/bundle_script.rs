@@ -1,6 +1,7 @@
 #!/usr/bin/env -S RUSTFLAGS=-Copt-level=3 cargo +nightly -Zscript
 ---cargo
 [dependencies]
+cef-dll-sys = { path = "../../../sys" }
 serde = { version = "1", features = [ "derive" ] }
 plist = "1"
 ---
@@ -76,7 +77,7 @@ fn create_app(app_path: &Path, exec_name: &str, bin: &Path) -> PathBuf {
 fn bundle(app_path: &Path) {
     let example_path = PathBuf::from("target/debug/examples/");
     let main_app_path = create_app(&app_path, "cefsimple", &example_path.join("cefsimple"));
-    let cef_path = PathBuf::from(std::env::var("CEF_PATH").unwrap());
+    let cef_path = cef_dll_sys::get_cef_dir().unwrap();
     let to = main_app_path.join(FRAMEWORKS_PATH).join(FRAMEWORK);
     if to.exists() { fs::remove_dir_all(&to).unwrap(); }
     copy_directory(&cef_path.join(FRAMEWORK), &to);

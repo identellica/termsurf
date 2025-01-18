@@ -36,6 +36,13 @@ fn main() -> anyhow::Result<()> {
                         "extracted dir {extracted_dir:?} does not match cef_dir {cef_dir:?}",
                     ));
                 }
+
+                if os_arch.os == "macos" {
+                    fs::rename(
+                        cef_dir.join("cef_sandbox.a"),
+                        cef_dir.join("libcef_sandbox.a"),
+                    )?;
+                }
             }
 
             cef_dir
@@ -62,14 +69,15 @@ fn main() -> anyhow::Result<()> {
                 .generator("Ninja")
                 .profile("RelWithDebInfo")
                 .define("CMAKE_OBJECT_PATH_MAX", "500")
-                .build_target("libcef_dll_wrapper")
+                .no_build_target(true)
+                .no_default_flags(true)
                 .build()
                 .display()
                 .to_string();
             println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
             println!("cargo::rustc-link-lib=static=cef_dll_wrapper");
 
-            println!("cargo::rustc-link-arg={cef_dir}/cef_sandbox.a");
+            println!("cargo::rustc-link-lib=static=cef_sandbox");
             println!("cargo::rustc-link-lib=sandbox");
         }
         os => unimplemented!("unknown target {os}"),
