@@ -17,6 +17,9 @@ features = [ "dox" ]
 [dependencies]
 cef-dll-sys.workspace = true
 
+[target.'cfg(target_os = "windows")'.dependencies.windows-sys]
+workspace = true
+
 [[example]]
 name = "cefsimple"
 crate-type = [ "bin" ]

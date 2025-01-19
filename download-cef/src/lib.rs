@@ -257,13 +257,19 @@ where
     }
 
     const CMAKE_LISTS_TXT: &str = "CMakeLists.txt";
-    fs::rename(extracted_dir.join(CMAKE_LISTS_TXT), cef_dir.join(CMAKE_LISTS_TXT))?;
+    fs::rename(
+        extracted_dir.join(CMAKE_LISTS_TXT),
+        cef_dir.join(CMAKE_LISTS_TXT),
+    )?;
     const CMAKE_DIR: &str = "cmake";
     fs::rename(extracted_dir.join(CMAKE_DIR), cef_dir.join(CMAKE_DIR))?;
     const INCLUDE_DIR: &str = "include";
     fs::rename(extracted_dir.join(INCLUDE_DIR), cef_dir.join(INCLUDE_DIR))?;
     const LIBCEF_DLL_DIR: &str = "libcef_dll";
-    fs::rename(extracted_dir.join(LIBCEF_DLL_DIR), cef_dir.join(LIBCEF_DLL_DIR))?;
+    fs::rename(
+        extracted_dir.join(LIBCEF_DLL_DIR),
+        cef_dir.join(LIBCEF_DLL_DIR),
+    )?;
 
     if show_progress {
         println!("Moved contents to: {}", cef_dir.display());

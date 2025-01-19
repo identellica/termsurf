@@ -1,4 +1,4 @@
-use cef::{args::Args, rc::*, *};
+use cef::{args::Args, rc::*, sandbox_info::SandboxInfo, *};
 use std::sync::{Arc, Mutex};
 
 struct DemoApp {
@@ -266,20 +266,16 @@ impl ImplWindowDelegate for DemoWindowDelegate {
 // FIXME: Rewrite this demo based on cef/tests/cefsimple
 fn main() {
     #[cfg(target_os = "macos")]
-    let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
-    #[cfg(target_os = "macos")]
-    assert!(loader.load());
+    let _loader = {
+        let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
+        assert!(loader.load());
+        loader
+    };
 
-    let args = Args::new(std::env::args());
+    let args = Args::new();
+    let cmd = args.as_cmd_line().unwrap();
 
-    let cmd = command_line_create().unwrap();
-    #[cfg(not(target_os = "windows"))]
-    cmd.init_from_argv(args.as_main_args().argc, args.as_main_args().argv.cast());
-
-    /* cmd must be init'ed from string on windows
-    #[cfg(target_os = "windows")]
-    cmd.init_from_string();
-    */
+    let sandbox = SandboxInfo::new();
 
     let is_browser_process = cmd.has_switch(Some(&"type".into())) != 1;
 
@@ -289,7 +285,7 @@ fn main() {
     let ret = execute_process(
         Some(args.as_main_args()),
         Some(&mut app),
-        std::ptr::null_mut(),
+        sandbox.as_mut_ptr(),
     );
 
     if is_browser_process {
@@ -306,14 +302,13 @@ fn main() {
         // non-browser process does not initialize cef
         return;
     }
-    let mut settings = Settings::default();
-    settings.no_sandbox = true as _;
+    let settings = Settings::default();
     assert_eq!(
         initialize(
             Some(args.as_main_args()),
             Some(&settings),
             Some(&mut app),
-            std::ptr::null_mut()
+            sandbox.as_mut_ptr()
         ),
         1
     );
