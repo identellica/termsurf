@@ -6,12 +6,6 @@ on:
 jobs:
   update-bindings:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - x86_64-unknown-linux-gnu
-          - aarch64-unknown-linux-gnu
-          - arm-unknown-linux-gnueabi
 
     steps:
       - uses: actions/checkout@v4.1.3
@@ -22,4 +16,19 @@ jobs:
           sudo apt-get install -yq gcc-14-aarch64-linux-gnu gcc-14-arm-linux-gnueabi
 
       - name: Update Bindings
-        run: cargo run -p update-bindings -- -b -d ${{ matrix.target }}
+        run: |
+          cargo run -p update-bindings -- -b -d x86_64-unknown-linux-gnu
+          cargo run -p update-bindings -- -b -d aarch64-unknown-linux-gnu
+          cargo run -p update-bindings -- -b -d arm-unknown-linux-gnueabi
+
+      - name: Push Changes
+        run: |
+          git switch -c update-linux
+          git add sys/src/bindings/x86_64-unknown-linux-gnu.rs
+          git add sys/src/bindings/aarch64-unknown-linux-gnu.rs
+          git add sys/src/bindings/arm-unknown-linux-gnueabi.rs
+          git add cef/src/bindings/x86_64-unknown-linux-gnu.rs
+          git add cef/src/bindings/aarch64-unknown-linux-gnu.rs
+          git add cef/src/bindings/arm-unknown-linux-gnueabi.rs
+          git commit -m 'chore: update linux bindings'
+          git push --force -u origin update-linux
