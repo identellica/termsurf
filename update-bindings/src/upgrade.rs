@@ -15,7 +15,6 @@ const TARGETS: &[&str] = &[
     "i686-pc-windows-msvc",
     // linux
     "x86_64-unknown-linux-gnu",
-    "i686-unknown-linux-gnu",
     "arm-unknown-linux-gnueabi",
     "aarch64-unknown-linux-gnu",
 ];
@@ -155,7 +154,6 @@ fn target_to_os_arch(target: &str) -> (&str, &str) {
         "x86_64-pc-windows-msvc" => ("windows", "x86_64"),
         "aarch64-pc-windows-msvc" => ("windows", "aarch64"),
         "x86_64-unknown-linux-gnu" => ("linux", "x86_64"),
-        "i686-unknown-linux-gnu" => ("linux", "x86"),
         "arm-unknown-linux-gnueabi" => ("linux", "arm"),
         "aarch64-unknown-linux-gnu" => ("linux", "aarch64"),
         v => panic!("unsupported {v:?}"),
