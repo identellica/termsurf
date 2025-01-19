@@ -1,3 +1,5 @@
+name: Update bindings for macOS
+
 on:
   push:
     branches:

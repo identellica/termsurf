@@ -1,3 +1,5 @@
+name: Rust validation
+
 on:
   push:
     branches:
