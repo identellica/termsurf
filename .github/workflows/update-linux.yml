@@ -13,4 +13,4 @@ jobs:
           - aarch64-unknown-linux-gnu
           - arm-unknown-linux-gnueabi
     steps:
-      - run: cargo run -p update-bindings -b -d ${{ matrix.target }}
+      - run: cargo run -p update-bindings -- -b -d ${{ matrix.target }}
