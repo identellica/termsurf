@@ -24,11 +24,11 @@ jobs:
       - name: Push Changes
         run: |
           git switch -c update-linux
-          git add sys/src/bindings/x86_64-unknown-linux-gnu.rs
-          git add sys/src/bindings/aarch64-unknown-linux-gnu.rs
-          git add sys/src/bindings/arm-unknown-linux-gnueabi.rs
-          git add cef/src/bindings/x86_64-unknown-linux-gnu.rs
-          git add cef/src/bindings/aarch64-unknown-linux-gnu.rs
-          git add cef/src/bindings/arm-unknown-linux-gnueabi.rs
+          git add sys/src/bindings/x86_64_unknown_linux_gnu.rs
+          git add sys/src/bindings/aarch64_unknown_linux_gnu.rs
+          git add sys/src/bindings/arm_unknown_linux_gnueabi.rs
+          git add cef/src/bindings/x86_64_unknown_linux_gnu.rs
+          git add cef/src/bindings/aarch64_unknown_linux_gnu.rs
+          git add cef/src/bindings/arm_unknown_linux_gnueabi.rs
           git commit -m 'chore: update linux bindings'
           git push --force -u origin update-linux
