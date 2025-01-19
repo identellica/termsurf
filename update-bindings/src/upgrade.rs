@@ -10,13 +10,13 @@ const TARGETS: &[&str] = &[
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",
     // windows
-    "aarch64-pc-windows-msvc",
     "x86_64-pc-windows-msvc",
+    "aarch64-pc-windows-msvc",
     "i686-pc-windows-msvc",
     // linux
     "x86_64-unknown-linux-gnu",
-    "arm-unknown-linux-gnueabi",
     "aarch64-unknown-linux-gnu",
+    "arm-unknown-linux-gnueabi",
 ];
 
 pub fn download(target: &str) -> PathBuf {
@@ -150,12 +150,12 @@ fn target_to_os_arch(target: &str) -> (&str, &str) {
     match target {
         "aarch64-apple-darwin" => ("macos", "aarch64"),
         "x86_64-apple-darwin" => ("macos", "x86_64"),
-        "i686-pc-windows-msvc" => ("windows", "x86"),
         "x86_64-pc-windows-msvc" => ("windows", "x86_64"),
         "aarch64-pc-windows-msvc" => ("windows", "aarch64"),
+        "i686-pc-windows-msvc" => ("windows", "x86"),
         "x86_64-unknown-linux-gnu" => ("linux", "x86_64"),
-        "arm-unknown-linux-gnueabi" => ("linux", "arm"),
         "aarch64-unknown-linux-gnu" => ("linux", "aarch64"),
+        "arm-unknown-linux-gnueabi" => ("linux", "arm"),
         v => panic!("unsupported {v:?}"),
     }
 }
