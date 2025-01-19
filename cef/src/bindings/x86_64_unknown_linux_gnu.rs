@@ -257,6 +257,64 @@ impl Default for Insets {
     }
 }
 
+/// See [_cef_accelerated_paint_info_common_t] for more documentation.
+#[derive(Clone)]
+pub struct AcceleratedPaintInfoCommon {
+    pub timestamp: u64,
+    pub coded_size: Size,
+    pub visible_rect: Rect,
+    pub content_rect: Rect,
+    pub source_size: Size,
+    pub capture_update_rect: Rect,
+    pub region_capture_rect: Rect,
+    pub capture_counter: u64,
+    pub has_capture_update_rect: u8,
+    pub has_region_capture_rect: u8,
+    pub has_source_size: u8,
+    pub has_capture_counter: u8,
+}
+impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
+    fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
+        Self {
+            timestamp: value.timestamp.into(),
+            coded_size: value.coded_size.into(),
+            visible_rect: value.visible_rect.into(),
+            content_rect: value.content_rect.into(),
+            source_size: value.source_size.into(),
+            capture_update_rect: value.capture_update_rect.into(),
+            region_capture_rect: value.region_capture_rect.into(),
+            capture_counter: value.capture_counter.into(),
+            has_capture_update_rect: value.has_capture_update_rect.into(),
+            has_region_capture_rect: value.has_region_capture_rect.into(),
+            has_source_size: value.has_source_size.into(),
+            has_capture_counter: value.has_capture_counter.into(),
+        }
+    }
+}
+impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
+    fn into(self) -> _cef_accelerated_paint_info_common_t {
+        _cef_accelerated_paint_info_common_t {
+            timestamp: self.timestamp.into(),
+            coded_size: self.coded_size.into(),
+            visible_rect: self.visible_rect.into(),
+            content_rect: self.content_rect.into(),
+            source_size: self.source_size.into(),
+            capture_update_rect: self.capture_update_rect.into(),
+            region_capture_rect: self.region_capture_rect.into(),
+            capture_counter: self.capture_counter.into(),
+            has_capture_update_rect: self.has_capture_update_rect.into(),
+            has_region_capture_rect: self.has_region_capture_rect.into(),
+            has_source_size: self.has_source_size.into(),
+            has_capture_counter: self.has_capture_counter.into(),
+        }
+    }
+}
+impl Default for AcceleratedPaintInfoCommon {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [_cef_main_args_t] for more documentation.
 #[derive(Clone)]
 pub struct MainArgs {
@@ -376,6 +434,7 @@ pub struct AcceleratedPaintInfo {
     pub plane_count: ::std::os::raw::c_int,
     pub modifier: u64,
     pub format: ColorType,
+    pub extra: AcceleratedPaintInfoCommon,
 }
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
@@ -384,6 +443,7 @@ impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
             plane_count: value.plane_count.into(),
             modifier: value.modifier.into(),
             format: value.format.into(),
+            extra: value.extra.into(),
         }
     }
 }
@@ -394,6 +454,7 @@ impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
             plane_count: self.plane_count.into(),
             modifier: self.modifier.into(),
             format: self.format.into(),
+            extra: self.extra.into(),
         }
     }
 }
