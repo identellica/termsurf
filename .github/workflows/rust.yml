@@ -1,0 +1,35 @@
+name: Rust validation
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4.1.3
+
+      - name: Check fmt
+        run: cargo fmt --check
+      - name: Build
+        run: |
+          ${{ matrix.os == 'macos-latest' && 'brew install ninja'
+            || (matrix.os == 'windows-latest' && 'choco install ninja'
+            || 'echo "ninja already installed"') }}
+          cargo build --verbose
+      - name: Run tests
+        run: cargo test --verbose

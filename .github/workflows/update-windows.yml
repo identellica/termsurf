@@ -1,3 +1,5 @@
+name: Update bindings for Windows
+
 on:
   push:
     branches:
