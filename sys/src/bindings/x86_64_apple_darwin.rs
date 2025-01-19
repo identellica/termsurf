@@ -831,6 +831,78 @@ pub enum cef_color_type_t {
     #[doc = "\n BGRA with 8 bits per pixel (32bits total).\n"]
     CEF_COLOR_TYPE_BGRA_8888 = 1,
 }
+#[doc = "\n Structure containing shared texture common metadata.\n For documentation on each field, please refer to\n src/media/base/video_frame_metadata.h for actual details.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_accelerated_paint_info_common_t {
+    #[doc = "\n Timestamp of the frame in microseconds since capture start.\n"]
+    pub timestamp: u64,
+    #[doc = "\n The full dimensions of the video frame.\n"]
+    pub coded_size: cef_size_t,
+    #[doc = "\n The visible area of the video frame.\n"]
+    pub visible_rect: cef_rect_t,
+    #[doc = "\n The region of the video frame that capturer would like to populate.\n"]
+    pub content_rect: cef_rect_t,
+    #[doc = "\n Full size of the source frame.\n"]
+    pub source_size: cef_size_t,
+    #[doc = "\n Updated area of frame, can be considered as the `dirty` area.\n"]
+    pub capture_update_rect: cef_rect_t,
+    #[doc = "\n May reflects where the frame's contents originate from if region\n capture is used internally.\n"]
+    pub region_capture_rect: cef_rect_t,
+    #[doc = "\n The increamental counter of the frame.\n"]
+    pub capture_counter: u64,
+    #[doc = "\n Optional flag of capture_update_rect\n"]
+    pub has_capture_update_rect: u8,
+    #[doc = "\n Optional flag of region_capture_rect\n"]
+    pub has_region_capture_rect: u8,
+    #[doc = "\n Optional flag of source_size\n"]
+    pub has_source_size: u8,
+    #[doc = "\n Optional flag of capture_counter\n"]
+    pub has_capture_counter: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_accelerated_paint_info_common_t"]
+        [::std::mem::size_of::<_cef_accelerated_paint_info_common_t>() - 104usize];
+    ["Alignment of _cef_accelerated_paint_info_common_t"]
+        [::std::mem::align_of::<_cef_accelerated_paint_info_common_t>() - 8usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::timestamp"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, timestamp) - 0usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::coded_size"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, coded_size) - 8usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::visible_rect"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, visible_rect) - 16usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::content_rect"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, content_rect) - 32usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::source_size"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, source_size) - 48usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::capture_update_rect"][::std::mem::offset_of!(
+        _cef_accelerated_paint_info_common_t,
+        capture_update_rect
+    ) - 56usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::region_capture_rect"][::std::mem::offset_of!(
+        _cef_accelerated_paint_info_common_t,
+        region_capture_rect
+    ) - 72usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::capture_counter"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, capture_counter) - 88usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::has_capture_update_rect"][::std::mem::offset_of!(
+        _cef_accelerated_paint_info_common_t,
+        has_capture_update_rect
+    ) - 96usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::has_region_capture_rect"][::std::mem::offset_of!(
+        _cef_accelerated_paint_info_common_t,
+        has_region_capture_rect
+    ) - 97usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::has_source_size"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, has_source_size) - 98usize];
+    ["Offset of field: _cef_accelerated_paint_info_common_t::has_capture_counter"][::std::mem::offset_of!(
+        _cef_accelerated_paint_info_common_t,
+        has_capture_counter
+    ) - 99usize];
+};
+#[doc = "\n Structure containing shared texture common metadata.\n For documentation on each field, please refer to\n src/media/base/video_frame_metadata.h for actual details.\n"]
+pub type cef_accelerated_paint_info_common_t = _cef_accelerated_paint_info_common_t;
 #[repr(u32)]
 #[non_exhaustive]
 #[doc = "\n CEF supports both a Chrome runtime style (based on the Chrome UI layer) and\n an Alloy runtime style (based on the Chromium content layer). Chrome style\n provides the full Chrome UI and browser functionality whereas Alloy style\n provides less default browser functionality but adds additional client\n callbacks and support for windowless (off-screen) rendering. The style type\n is individually configured for each window/browser at creation time and\n different styles can be mixed during runtime. For additional comparative\n details on runtime styles see\n https://bitbucket.org/chromiumembedded/cef/wiki/Architecture.md#markdown-header-cef3\n\n Windowless rendering will always use Alloy style. Windowed rendering with a\n default window or client-provided parent window can configure the style via\n CefWindowInfo.runtime_style. Windowed rendering with the Views framework can\n configure the style via CefWindowDelegate::GetWindowRuntimeStyle and\n CefBrowserViewDelegate::GetBrowserRuntimeStyle. Alloy style Windows with the\n Views framework can host only Alloy style BrowserViews but Chrome style\n Windows can host both style BrowserViews. Additionally, a Chrome style\n Window can host at most one Chrome style BrowserView but potentially\n multiple Alloy style BrowserViews. See CefWindowInfo.runtime_style\n documentation for any additional platform-specific limitations.\n"]
@@ -916,17 +988,21 @@ pub struct _cef_accelerated_paint_info_t {
     pub shared_texture_io_surface: *mut ::std::os::raw::c_void,
     #[doc = "\n The pixel format of the texture.\n"]
     pub format: cef_color_type_t,
+    #[doc = "\n The extra common info.\n"]
+    pub extra: cef_accelerated_paint_info_common_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of _cef_accelerated_paint_info_t"]
-        [::std::mem::size_of::<_cef_accelerated_paint_info_t>() - 16usize];
+        [::std::mem::size_of::<_cef_accelerated_paint_info_t>() - 120usize];
     ["Alignment of _cef_accelerated_paint_info_t"]
         [::std::mem::align_of::<_cef_accelerated_paint_info_t>() - 8usize];
     ["Offset of field: _cef_accelerated_paint_info_t::shared_texture_io_surface"]
         [::std::mem::offset_of!(_cef_accelerated_paint_info_t, shared_texture_io_surface) - 0usize];
     ["Offset of field: _cef_accelerated_paint_info_t::format"]
         [::std::mem::offset_of!(_cef_accelerated_paint_info_t, format) - 8usize];
+    ["Offset of field: _cef_accelerated_paint_info_t::extra"]
+        [::std::mem::offset_of!(_cef_accelerated_paint_info_t, extra) - 16usize];
 };
 #[doc = "\n Structure containing shared texture information for the OnAcceleratedPaint\n callback. Resources will be released to the underlying pool for reuse when\n the callback returns from client code.\n"]
 pub type cef_accelerated_paint_info_t = _cef_accelerated_paint_info_t;
