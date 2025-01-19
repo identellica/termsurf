@@ -78,6 +78,7 @@ fn main() -> anyhow::Result<()> {
                 "shlwapi.lib",
                 "user32.lib",
                 "version.lib",
+                "wbemuuid.lib",
                 "winmm.lib",
             ]
             .join(" ");
