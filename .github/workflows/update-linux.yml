@@ -2,8 +2,6 @@ on:
   push:
     branches:
       - dev
-    paths:
-      - /Cargo.toml
 
 jobs:
   update-bindings:
@@ -15,4 +13,4 @@ jobs:
           - aarch64-unknown-linux-gnu
           - arm-unknown-linux-gnueabi
     steps:
-      - run: echo ${{ matrix.target }}
+      - run: cargo run -p update-bindings -b -d ${{ matrix.target }}
