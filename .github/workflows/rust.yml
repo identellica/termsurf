@@ -26,6 +26,12 @@ jobs:
       - name: Install ninja
         if: ${{ matrix.os == 'macos-latest' }}
         run: brew install ninja
+      - name: Find ninja
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          $ninja = $(&"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -find **\ninja.exe)
+          $ninjaDir = $(Get-Item $ninja).Directory.FullName
+          echo "PATH=$ninjaDir;$env:PATH" >> $env:GITHUB_ENV
       - name: Build
         run: cargo build --verbose
       - name: Run tests
