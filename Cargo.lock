@@ -142,7 +142,7 @@ dependencies = [
 
 [[package]]
 name = "cef"
-version = "131.3.4"
+version = "132.3.1"
 dependencies = [
  "cef-dll-sys",
  "windows-sys 0.59.0",
@@ -150,7 +150,7 @@ dependencies = [
 
 [[package]]
 name = "cef-dll-sys"
-version = "131.3.4"
+version = "132.3.1"
 dependencies = [
  "anyhow",
  "cmake",
@@ -959,7 +959,7 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 
 [[package]]
 name = "update-bindings"
-version = "131.3.4"
+version = "132.3.1"
 dependencies = [
  "bindgen",
  "clap",
