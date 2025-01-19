@@ -12,5 +12,8 @@ jobs:
           - x86_64-unknown-linux-gnu
           - aarch64-unknown-linux-gnu
           - arm-unknown-linux-gnueabi
+
     steps:
+      - uses: actions/checkout@v4.1.3
+
       - run: cargo run -p update-bindings -- -b -d ${{ matrix.target }}
