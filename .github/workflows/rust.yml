@@ -23,17 +23,10 @@ jobs:
 
       - name: Check fmt
         run: cargo fmt --check
-      - name: Install ninja
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: brew install ninja
-      - name: Find ninja
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          $ninja = $(&"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -find "**\ninja.exe")
-          echo "::debug::Found: $ninja"
-          $ninjaDir = $(Get-Item $ninja).Directory.FullName
-          echo "PATH=$ninjaDir;$env:PATH" >> $env:GITHUB_ENV
       - name: Build
-        run: cargo build --verbose
+        run: |
+          ${{ matrix.os == 'macos-latest' && 'brew install ninja' }}
+          ${{ matrix.os == 'windows-latest' && 'choco install ninja' }}
+          cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
