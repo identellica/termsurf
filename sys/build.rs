@@ -54,22 +54,53 @@ fn main() -> anyhow::Result<()> {
     println!("cargo::metadata=CEF_DIR={cef_dir}");
     println!("cargo::rustc-link-search=native={cef_dir}");
 
+    let mut cef_dll_wrapper = cmake::Config::new(&cef_dir);
+    cef_dll_wrapper
+        .generator("Ninja")
+        .profile("RelWithDebInfo")
+        .no_build_target(true);
+
     match os_arch.os {
         "linux" => {
             println!("cargo::rustc-link-lib=dylib=cef");
         }
         "windows" => {
+            let sdk_libs = [
+                "comctl32.lib",
+                "delayimp.lib",
+                "mincore.lib",
+                "powrprof.lib",
+                "propsys.lib",
+                "runtimeobject.lib",
+                "setupapi.lib",
+                "shcore.lib",
+                "shell32.lib",
+                "shlwapi.lib",
+                "user32.lib",
+                "version.lib",
+                "winmm.lib",
+            ]
+            .join(" ");
+
+            let build_dir = cef_dll_wrapper
+                .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded")
+                .define("CMAKE_OBJECT_PATH_MAX", "500")
+                .define("CMAKE_STATIC_LINKER_FLAGS", &sdk_libs)
+                .build()
+                .display()
+                .to_string();
+
+            println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
+            println!("cargo::rustc-link-lib=static=libcef_dll_wrapper");
+
             println!("cargo::rustc-link-lib=dylib=libcef");
+
             println!("cargo::rustc-link-lib=static=cef_sandbox");
         }
         "macos" => {
             println!("cargo::rustc-link-lib=framework=AppKit");
 
-            let build_dir = cmake::Config::new(&cef_dir)
-                .generator("Ninja")
-                .profile("RelWithDebInfo")
-                .define("CMAKE_OBJECT_PATH_MAX", "500")
-                .no_build_target(true)
+            let build_dir = cef_dll_wrapper
                 .no_default_flags(true)
                 .build()
                 .display()

@@ -15697,6 +15697,24 @@ impl Default for TaskType {
     }
 }
 
+/// See [cef_sandbox_info_create] for more documentation.
+pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
+    unsafe {
+        let result = cef_sandbox_info_create();
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_sandbox_info_destroy] for more documentation.
+pub fn sandbox_info_destroy(sandbox_info: *mut u8) {
+    unsafe {
+        let arg_sandbox_info = sandbox_info;
+        let arg_sandbox_info = arg_sandbox_info as *mut _;
+        let result = cef_sandbox_info_destroy(arg_sandbox_info);
+        result.as_wrapper()
+    }
+}
+
 /// See [cef_string_wide_set] for more documentation.
 pub fn string_wide_set(
     src: Option<&[wchar_t]>,

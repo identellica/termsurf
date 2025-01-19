@@ -145,6 +145,7 @@ name = "cef"
 version = "131.3.4"
 dependencies = [
  "cef-dll-sys",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
