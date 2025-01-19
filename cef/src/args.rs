@@ -56,12 +56,10 @@ impl Args {
             .iter()
             .map(|arg| arg.as_ptr())
             .collect::<Vec<*const c_char>>();
-        let cmd_line = command_line_create().map(|cmd_line| {
-            if !_argv.is_empty() {
-                cmd_line.init_from_argv(_argv.len() as i32, _argv.as_ptr());
-            }
-            cmd_line
-        });
+        let main_args = MainArgs {
+            argc: _argv.len() as i32,
+            argv: _argv.as_ptr() as *mut *mut _,
+        };
         let cmd_line = command_line_create().map(|cmd_line| {
             if !_argv.is_empty() {
                 cmd_line.init_from_argv(_argv.len() as i32, _argv.as_ptr());
