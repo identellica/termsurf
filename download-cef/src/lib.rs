@@ -46,8 +46,8 @@ pub const LINUX_TARGETS: &[&str] = &[
 pub const MACOS_TARGETS: &[&str] = &["aarch64-apple-darwin", "x86_64-apple-darwin"];
 
 pub const WINDOWS_TARGETS: &[&str] = &[
-    "aarch64-pc-windows-msvc",
     "x86_64-pc-windows-msvc",
+    "aarch64-pc-windows-msvc",
     "i686-pc-windows-msvc",
 ];
 
@@ -57,12 +57,12 @@ const URL: &str = "https://cef-builds.spotifycdn.com";
 struct CefIndex {
     macosarm64: CefPlatform,
     macosx64: CefPlatform,
-    windows32: CefPlatform,
     windows64: CefPlatform,
     windowsarm64: CefPlatform,
+    windows32: CefPlatform,
     linux64: CefPlatform,
-    linuxarm: CefPlatform,
     linuxarm64: CefPlatform,
+    linuxarm: CefPlatform,
 }
 
 impl CefIndex {
@@ -70,12 +70,12 @@ impl CefIndex {
         match target {
             "aarch64-apple-darwin" => Ok(&self.macosarm64),
             "x86_64-apple-darwin" => Ok(&self.macosx64),
-            "i686-pc-windows-msvc" => Ok(&self.windows32),
             "x86_64-pc-windows-msvc" => Ok(&self.windows64),
             "aarch64-pc-windows-msvc" => Ok(&self.windowsarm64),
+            "i686-pc-windows-msvc" => Ok(&self.windows32),
             "x86_64-unknown-linux-gnu" => Ok(&self.linux64),
-            "arm-unknown-linux-gnueabi" => Ok(&self.linuxarm),
             "aarch64-unknown-linux-gnu" => Ok(&self.linuxarm64),
+            "arm-unknown-linux-gnueabi" => Ok(&self.linuxarm),
             v => Err(Error::UnsupportedTarget(v.to_string())),
         }
     }
