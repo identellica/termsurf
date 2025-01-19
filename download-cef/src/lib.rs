@@ -39,7 +39,6 @@ const DOWNLOAD_TEMPLATE: &str = "{msg} {spinner:.green} [{elapsed_precise}] [{wi
 
 pub const LINUX_TARGETS: &[&str] = &[
     "x86_64-unknown-linux-gnu",
-    "i686-unknown-linux-gnu",
     "arm-unknown-linux-gnueabi",
     "aarch64-unknown-linux-gnu",
 ];
@@ -61,7 +60,6 @@ struct CefIndex {
     windows32: CefPlatform,
     windows64: CefPlatform,
     windowsarm64: CefPlatform,
-    linux32: CefPlatform,
     linux64: CefPlatform,
     linuxarm: CefPlatform,
     linuxarm64: CefPlatform,
@@ -75,7 +73,6 @@ impl CefIndex {
             "i686-pc-windows-msvc" => Ok(&self.windows32),
             "x86_64-pc-windows-msvc" => Ok(&self.windows64),
             "aarch64-pc-windows-msvc" => Ok(&self.windowsarm64),
-            "i686-unknown-linux-gnu" => Ok(&self.linux32),
             "x86_64-unknown-linux-gnu" => Ok(&self.linux64),
             "arm-unknown-linux-gnueabi" => Ok(&self.linuxarm),
             "aarch64-unknown-linux-gnu" => Ok(&self.linuxarm64),
@@ -347,10 +344,6 @@ impl TryFrom<&str> for OsAndArch {
             "x86_64-unknown-linux-gnu" => Ok(OsAndArch {
                 os: "linux",
                 arch: "x86_64",
-            }),
-            "i686-unknown-linux-gnu" => Ok(OsAndArch {
-                os: "linux",
-                arch: "x86",
             }),
             "aarch64-unknown-linux-gnu" => Ok(OsAndArch {
                 os: "linux",

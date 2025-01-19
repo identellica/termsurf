@@ -1,0 +1,18 @@
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - /Cargo.toml
+
+jobs:
+  update-bindings:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - aarch64-unknown-linux-gnu
+          - arm-unknown-linux-gnueabi
+    steps:
+      - run: echo ${{ matrix.target }}
