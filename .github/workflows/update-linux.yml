@@ -29,6 +29,9 @@ jobs:
         run: |
           git config user.name "tauri"
           git config user.email "tauri-bot@users.noreply.github.com"
-          git switch -c update-linux
-          git commit -am 'chore: update linux bindings'
-          git push --force -u origin update-linux
+          git add .
+          git commit -m 'chore: update linux bindings'
+          if [ $? -eq 0 ]; then
+            git switch -c update-linux
+            git push --force -u origin update-linux
+          fi
