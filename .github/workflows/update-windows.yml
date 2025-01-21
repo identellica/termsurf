@@ -31,5 +31,6 @@ jobs:
             git switch -c update-windows
             git push --force -u origin update-windows
           } else {
-            echo No changes to commit.
+            echo "::debug::No changes to commit."
+            $LASTEXITCODE = 0
           }
