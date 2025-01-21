@@ -20,9 +20,15 @@ jobs:
           cargo run -p update-bindings -- -b -d x86_64-apple-darwin
 
       - name: Push Changes
+        shell: bash {0}
         run: |
           git config user.name "tauri"
           git config user.email "tauri-bot@users.noreply.github.com"
-          git switch -c update-macos
-          git commit -am 'chore: update macos bindings'
-          git push --force -u origin update-macos
+          git add .
+          git commit -m 'chore: update macos bindings'
+          if [ $? -eq 0 ]; then
+            git switch -c update-macos
+            git push --force -u origin update-macos
+          else
+            echo "::debug::No changes to commit."
+          fi
