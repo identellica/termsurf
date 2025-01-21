@@ -26,6 +26,7 @@ jobs:
           cargo run -p update-bindings -- -b -d arm-unknown-linux-gnueabi
 
       - name: Push Changes
+        shell: bash {0}
         run: |
           git config user.name "tauri"
           git config user.email "tauri-bot@users.noreply.github.com"
@@ -35,4 +36,6 @@ jobs:
           if [ $? -eq 0 ]; then
             git switch -c update-linux
             git push --force -u origin update-linux
+          else
+            echo No changes to commit.
           fi
