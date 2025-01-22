@@ -30,7 +30,10 @@ impl LibraryLoader {
 
     fn load_library(name: &std::path::Path) -> bool {
         use std::os::unix::ffi::OsStrExt;
-        unsafe { load_library(Some(&*name.as_os_str().as_bytes().as_ptr().cast())) == 1 }
+        let Ok(name) = std::ffi::CString::new(name.as_os_str().as_bytes()) else {
+            return false;
+        };
+        unsafe { load_library(Some(&*name.as_ptr().cast())) == 1 }
     }
 }
 

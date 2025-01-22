@@ -1,0 +1,17 @@
+[package]
+name = "export-cef-dir"
+publish = false
+
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+cef-dll-sys.workspace = true
+clap.workspace = true
+
+[build-dependencies]
+anyhow.workspace = true

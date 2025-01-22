@@ -18,7 +18,7 @@ fn main() -> anyhow::Result<()> {
         Ok(cef_path) => {
             // Allow overriding the CEF path with environment variables.
             println!("Using CEF path from environment: {cef_path}");
-            PathBuf::from(cef_path).canonicalize()?
+            PathBuf::from(cef_path)
         }
         Err(_) => {
             let out_dir = PathBuf::from(env::var("OUT_DIR")?);

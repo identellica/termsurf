@@ -4,6 +4,7 @@ resolver = "2"
 members = [
     "download-cef",
     "update-bindings",
+    "export-cef-dir",
     "sys",
     "cef",
 ]
