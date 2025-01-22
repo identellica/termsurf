@@ -71,10 +71,3 @@ jobs:
 
       - name: Run tests
         run: cargo test --verbose
-
-      - name: Export CEF
-        if: ${{ !steps.cache-cef.outputs.cache-hit }}
-        run: |
-          cargo run -p export-cef-dir -- "${{ matrix.os == 'windows-latest'
-            && '$env:USERPROFILE' || '$HOME'
-          }}/.local/share/cef"
