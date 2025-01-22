@@ -77,11 +77,10 @@ mod test {
                     .join(FRAMEWORK_PATH)
                     .canonicalize()
                     .expect("failed to get framework path");
+                let framework_dir = std::ffi::CString::new(framework_dir.as_os_str().as_bytes())
+                    .expect("invalid path");
 
-                assert_eq!(
-                    cef_load_library(framework_dir.as_os_str().as_bytes().as_ptr().cast()),
-                    1
-                );
+                assert_eq!(cef_load_library(framework_dir.as_ptr().cast()), 1);
             }
 
             assert_eq!(cef_initialize(null(), null(), null_mut(), null_mut()), 0);
