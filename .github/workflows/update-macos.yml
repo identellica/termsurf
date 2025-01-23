@@ -38,7 +38,7 @@ jobs:
             git switch -c update-macos
             git push --force -u origin update-macos
             gh api graphql \
-              -F githubRepository=${GIT_REPOSITORY} \
+              -F githubRepository=${GITHUB_REPOSITORY} \
               -F branchName=update-macos \
               -F expectedHeadOid=$(git rev-parse HEAD) \
               -F 'commitMessage=chore: update macos bindings' \

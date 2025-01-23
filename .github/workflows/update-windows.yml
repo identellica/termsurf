@@ -45,7 +45,7 @@ jobs:
             git push --force -u origin update-windows
 
             gh api graphql `
-              -F githubRepository=${env:GIT_REPOSITORY} `
+              -F githubRepository=${env:GITHUB_REPOSITORY} `
               -F branchName=update-windows `
               -F expectedHeadOid=$(git rev-parse HEAD) `
               -F 'commitMessage=chore: update windows bindings' `

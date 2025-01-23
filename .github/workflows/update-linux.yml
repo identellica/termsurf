@@ -44,7 +44,7 @@ jobs:
             git switch -c update-linux
             git push --force -u origin update-linux
             gh api graphql \
-              -F githubRepository=${GIT_REPOSITORY} \
+              -F githubRepository=${GITHUB_REPOSITORY} \
               -F branchName=update-linux \
               -F expectedHeadOid=$(git rev-parse HEAD) \
               -F 'commitMessage=chore: update linux bindings' \
