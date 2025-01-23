@@ -29,24 +29,27 @@ jobs:
           git add .
 
           $changed = @(git diff --name-only --staged)
-          $files = ""
+          $files = @()
           $changed | %{
             $contents = [System.IO.File]::ReadAllBytes($_)
             $base64Contents = [System.Convert]::ToBase64String($contents)
-            Set-Content -Path "$_.base64" -Value $base64Contents
-            $files += " -F `"files[][path]=$_`" -F `"files[][contents]=@$_.base64`""
+            Set-Content -NoNewline -Path "$_.base64" -Value $base64Contents
+            $files += "-F"
+            $files += "files[][path]=$_"
+            $files += "-F"
+            $files += "files[][contents]=@$_.base64"
           }
 
-          if ($files -ne "") {
+          if ($files.Length -gt 0) {
             git switch -c update-windows
             git push --force -u origin update-windows
 
             gh api graphql `
-              -F "githubRepository=${env:GIT_REPOSITORY}" `
-              -F "branchName=update-windows" `
-              -F "expectedHeadOid=$(git rev-parse HEAD)" `
-              -F "commitMessage=chore: update windows bindings" `
-              -F "query=@.github/api/createCommitOnBranch.graphql" `
+              -F githubRepository=${env:GIT_REPOSITORY} `
+              -F branchName=update-windows `
+              -F expectedHeadOid=$(git rev-parse HEAD) `
+              -F 'commitMessage=chore: update windows bindings' `
+              -F query=@.github/api/createCommitOnBranch.graphql `
               $files
 
             git restore --staged .
