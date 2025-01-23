@@ -41,13 +41,13 @@ jobs:
             git switch -c update-windows
             git push --force -u origin update-windows
 
-            gh api graphql \
-              -F "githubRepository=${env:GIT_REPOSITORY}" \
-              -F "branchName=update-windows" \
-              -F "expectedHeadOid=$(git rev-parse HEAD)" \
-              -F "commitMessage=chore: update windows bindings" \
-              -F "query=@.github/api/createCommitOnBranch.graphql" \
-              ${FILES}
+            gh api graphql `
+              -F "githubRepository=${env:GIT_REPOSITORY}" `
+              -F "branchName=update-windows" `
+              -F "expectedHeadOid=$(git rev-parse HEAD)" `
+              -F "commitMessage=chore: update windows bindings" `
+              -F "query=@.github/api/createCommitOnBranch.graphql" `
+              $files
 
             git restore --staged .
             git restore .

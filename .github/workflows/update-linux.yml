@@ -40,7 +40,7 @@ jobs:
             FILES="${FILES} -F \"files[][path]=${value}\" -F \"files[][contents]=@${value}.base64\""
           done
 
-          if [ ${FILES} != "" ]; then
+          if [ "${FILES}" != "" ]; then
             git switch -c update-linux
             git push --force -u origin update-linux
             gh api graphql \
