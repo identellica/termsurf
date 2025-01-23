@@ -37,18 +37,18 @@ jobs:
           FILES=""
           for value in ${CHANGED[@]}; do
             base64 -w0 "${value}" > "${value}.base64"
-            FILES="${FILES} -F \"files[][path]=${value}\" -F \"files[][contents]=@${value}.base64\""
+            FILES="${FILES} -F files[][path]=${value} -F files[][contents]=@${value}.base64"
           done
 
           if [ "${FILES}" != "" ]; then
             git switch -c update-linux
             git push --force -u origin update-linux
             gh api graphql \
-              -F "githubRepository=${GIT_REPOSITORY}" \
-              -F "branchName=update-linux" \
-              -F "expectedHeadOid=$(git rev-parse HEAD)" \
-              -F "commitMessage=chore: update linux bindings" \
-              -F "query=@.github/api/createCommitOnBranch.graphql" \
+              -F githubRepository=${GITHUB_REPOSITORY} \
+              -F branchName=update-linux \
+              -F expectedHeadOid=$(git rev-parse HEAD) \
+              -F 'commitMessage=chore: update linux bindings' \
+              -F query=@.github/api/createCommitOnBranch.graphql \
               ${FILES}
 
             git restore --staged .
