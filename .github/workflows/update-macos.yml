@@ -30,7 +30,7 @@ jobs:
           CHANGED=($(git diff --name-only --staged | xargs))
           FILES=""
           for value in ${CHANGED[@]}; do
-            base64 "${value}" > "${value}.base64"
+            base64 -i "${value}" -o "${value}.base64"
             FILES="${FILES} -F \"files[][path]=${value}\" -F \"files[][contents]=@${value}.base64\""
           done
 
