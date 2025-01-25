@@ -29,10 +29,12 @@ fn main() -> anyhow::Result<()> {
         let parent = target.parent();
         let dir = target
             .file_name()
+            .and_then(|dir| dir.to_str())
             .ok_or_else(|| anyhow::anyhow!("invalid target directory: {}", target.display()))?;
-        let old_target = parent.map(|p| p.join(dir));
+        let old_target = parent.map(|p| p.join(format!("old_{dir}")));
         let old_target = old_target.as_ref().unwrap_or(&target);
         fs::rename(&target, old_target)?;
+        println!("Cleaning up: {}", old_target.display());
         fs::remove_dir_all(old_target)?
     }
 
