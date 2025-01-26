@@ -21,6 +21,8 @@ pub enum Error {
     VersionNotFound(String),
     #[error("Missing Content-Length header")]
     MissingContentLength,
+    #[error("Opaque Content-Length header: {0}")]
+    OpaqueContentLength(#[from] ureq::http::header::ToStrError),
     #[error("Invalid Content-Length header: {0}")]
     InvalidContentLength(String),
     #[error("File I/O error: {0}")]
@@ -116,7 +118,8 @@ where
 
     let index: CefIndex = ureq::get(&format!("{URL}/index.json"))
         .call()?
-        .into_json()?;
+        .into_body()
+        .read_json()?;
     let platform = index.platform(target)?;
     let version_prefix = format!("{cef_version}+");
 
@@ -166,8 +169,10 @@ where
 
     let resp = ureq::get(&cef_url).call()?;
     let expected = resp
-        .header("Content-Length")
+        .headers()
+        .get("Content-Length")
         .ok_or(Error::MissingContentLength)?;
+    let expected = expected.to_str()?;
     let expected = expected
         .parse::<u64>()
         .map_err(|_| Error::InvalidContentLength(expected.to_owned()))?;
@@ -180,9 +185,12 @@ where
                 .progress_chars("##-"),
         );
         bar.set_message("Downloading");
-        std::io::copy(&mut bar.wrap_read(resp.into_reader()), &mut file)
+        std::io::copy(
+            &mut bar.wrap_read(resp.into_body().into_reader()),
+            &mut file,
+        )
     } else {
-        let mut reader = resp.into_reader();
+        let mut reader = resp.into_body().into_reader();
         std::io::copy(&mut reader, &mut file)
     }?;
 
