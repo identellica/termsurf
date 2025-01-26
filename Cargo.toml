@@ -24,17 +24,17 @@ repository = "https://github.com/tauri-apps/cef-rs"
 cef-dll-sys = { version = "132.3.1", path = "sys" }
 download-cef = { version = "1.1", path = "download-cef" }
 
-anyhow = "1.0"
+anyhow = "1"
 bindgen = "0.71"
-clap = { version = "4.5", features = ["derive"] }
+clap = { version = "4", features = ["derive"] }
 cmake = "0.1"
 convert_case = "0.7"
-proc-macro2 = "1.0"
-quote = "1.0"
-regex = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-syn = { version = "2.0", features = ["full"] }
-thiserror = "2.0"
+proc-macro2 = "1"
+quote = "1"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+syn = { version = "2", features = ["full"] }
+thiserror = "2"
 
 [workspace.dependencies.windows-sys]
 version = "0.59"
