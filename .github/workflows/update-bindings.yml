@@ -37,9 +37,15 @@ jobs:
           CHANGED=($(git diff --name-only --staged | xargs))
           FILES=""
           for value in ${CHANGED[@]}; do
+            echo "::debug::files[][path]=${value}"
+            echo "::debug::files[][contents]=${value}.base64"
+
             base64 -w0 "${value}" > "${value}.base64"
             FILES="${FILES} -F files[][path]=${value} -F files[][contents]=@${value}.base64"
           done
+
+          echo "::debug::CHANGED=${CHANGED[@]}"
+          echo "::debug::FILES=${FILES}"
 
           if [ "${FILES}" != "" ]; then
             git switch -c update-linux
@@ -51,6 +57,7 @@ jobs:
               -F 'commitMessage=chore: update linux bindings' \
               -F query=@.github/api/createCommitOnBranch.graphql \
               ${FILES}
+
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -79,9 +86,15 @@ jobs:
           CHANGED=($(git diff --name-only --staged | xargs))
           FILES=""
           for value in ${CHANGED[@]}; do
+            echo "::debug::files[][path]=${value}"
+            echo "::debug::files[][contents]=${value}.base64"
+
             base64 -b 0 -i "${value}" -o "${value}.base64"
             FILES="${FILES} -F files[][path]=${value} -F files[][contents]=@${value}.base64"
           done
+
+          echo "::debug::CHANGED=${CHANGED[@]}"
+          echo "::debug::FILES=${FILES}"
 
           if [ "${FILES}" != "" ]; then
             git switch -c update-macos
@@ -93,6 +106,7 @@ jobs:
               -F 'commitMessage=chore: update macos bindings' \
               -F query=@.github/api/createCommitOnBranch.graphql \
               ${FILES}
+
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -122,6 +136,9 @@ jobs:
           $changed = @(git diff --name-only --staged)
           $files = @()
           $changed | %{
+            echo "::debug::files[][path]=$_"
+            echo "::debug::files[][contents]=$_.base64"
+
             $contents = [System.IO.File]::ReadAllBytes($_)
             $base64Contents = [System.Convert]::ToBase64String($contents)
             Set-Content -NoNewline -Path "$_.base64" -Value $base64Contents
@@ -130,6 +147,9 @@ jobs:
             $files += "-F"
             $files += "files[][contents]=@$_.base64"
           }
+
+          echo "::debug::changed=$changed"
+          echo "::debug::files=$files"
 
           if ($files.Length -gt 0) {
             git switch -c update-windows
