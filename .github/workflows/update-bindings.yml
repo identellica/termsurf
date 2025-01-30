@@ -143,9 +143,9 @@ jobs:
               -F query=@.github/api/createCommitOnBranch.graphql `
               $files
 
-            Write-Host "changed=true" >> "$env:GITHUB_OUTPUT"
+            echo "changed=true" >> "$env:GITHUB_OUTPUT"
           } else {
-            Write-Host "changed=false" >> "$env:GITHUB_OUTPUT"
+            echo "changed=false" >> "$env:GITHUB_OUTPUT"
           }
 
   merge-changes:
