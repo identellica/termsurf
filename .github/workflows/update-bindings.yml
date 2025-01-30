@@ -73,6 +73,7 @@ jobs:
 
       - name: Update Bindings
         run: |
+          base64 --help
           cargo run -p update-bindings -- -b -d aarch64-apple-darwin
           cargo run -p update-bindings -- -b -d x86_64-apple-darwin
 
@@ -91,10 +92,6 @@ jobs:
 
             base64 -b 0 -i "${value}" -o "${value}.base64"
             FILES="${FILES} -F files[][path]=${value} -F files[][contents]=@${value}.base64"
-
-            ls -l ${value}.base64
-            wc ${value}.base64
-            tail -c 100 ${value}.base64
           done
 
           echo "::debug::CHANGED=${CHANGED[@]}"
@@ -103,6 +100,13 @@ jobs:
           if [ "${FILES}" != "" ]; then
             git switch -c update-macos
             git push --force -u origin update-macos
+            echo "::debug::gh api graphql \
+              -F githubRepository=${GITHUB_REPOSITORY} \
+              -F branchName=update-macos \
+              -F expectedHeadOid=$(git rev-parse HEAD) \
+              -F 'commitMessage=chore: update macos bindings' \
+              -F query=@.github/api/createCommitOnBranch.graphql \
+              ${FILES}"
             gh api graphql \
               -F githubRepository=${GITHUB_REPOSITORY} \
               -F branchName=update-macos \
