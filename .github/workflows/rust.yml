@@ -49,10 +49,10 @@ jobs:
           echo "CEF_PATH=${{ matrix.os == 'windows-latest'
             && '$env:USERPROFILE'
             || '$HOME'
-          }}/.local/share/cef" >> $${{ matrix.os == 'windows-latest'
+          }}/.local/share/cef" >> "$${{ matrix.os == 'windows-latest'
             && 'env:'
             || ''
-          }}GITHUB_ENV
+          }}GITHUB_ENV"
           echo "${{ matrix.os == 'macos-latest'
             && 'DYLD_FALLBACK_LIBRARY_PATH'
             || (matrix.os == 'windows-latest'
@@ -61,10 +61,10 @@ jobs:
                 && '$DYLD_FALLBACK_LIBRARY_PATH:$HOME/.local/share/cef'
                 || (matrix.os == 'windows-latest'
                   && '$env:PATH;$env:USERPROFILE/.local/share/cef'
-                  || '$LD_LIBRARY_PATH:$HOME/.local/share/cef') }}" >> $${{ matrix.os == 'windows-latest'
+                  || '$LD_LIBRARY_PATH:$HOME/.local/share/cef') }}" >> "$${{ matrix.os == 'windows-latest'
                     && 'env:'
                     || ''
-                  }}GITHUB_ENV
+                  }}GITHUB_ENV"
 
       - name: Build
         run: cargo build --verbose
