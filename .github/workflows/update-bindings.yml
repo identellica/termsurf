@@ -38,7 +38,7 @@ jobs:
           FILES=""
           for value in ${CHANGED[@]}; do
             echo "::debug::files[][path]=${value}"
-            echo "::debug::files[][contents]=${value}.base64"
+            echo "::debug::files[][contents]=@${value}.base64"
 
             base64 -w0 "${value}" > "${value}.base64"
             FILES="${FILES} -F files[][path]=${value} -F files[][contents]=@${value}.base64"
@@ -87,10 +87,14 @@ jobs:
           FILES=""
           for value in ${CHANGED[@]}; do
             echo "::debug::files[][path]=${value}"
-            echo "::debug::files[][contents]=${value}.base64"
+            echo "::debug::files[][contents]=@${value}.base64"
 
             base64 -b 0 -i "${value}" -o "${value}.base64"
             FILES="${FILES} -F files[][path]=${value} -F files[][contents]=@${value}.base64"
+
+            ls -l ${value}.base64
+            wc ${value}.base64
+            tail -c 100 ${value}.base64
           done
 
           echo "::debug::CHANGED=${CHANGED[@]}"
@@ -137,7 +141,7 @@ jobs:
           $files = @()
           $changed | %{
             echo "::debug::files[][path]=$_"
-            echo "::debug::files[][contents]=$_.base64"
+            echo "::debug::files[][contents]=@$_.base64"
 
             $contents = [System.IO.File]::ReadAllBytes($_)
             $base64Contents = [System.Convert]::ToBase64String($contents)
