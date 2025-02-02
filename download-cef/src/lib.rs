@@ -1,5 +1,5 @@
 use bzip2::bufread::BzDecoder;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha1_smol::Sha1;
 use std::{
     fmt::{self, Display},
@@ -37,8 +37,6 @@ pub enum Error {
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-const DOWNLOAD_TEMPLATE: &str = "{msg} {spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({eta})";
-
 pub const LINUX_TARGETS: &[&str] = &[
     "x86_64-unknown-linux-gnu",
     "arm-unknown-linux-gnueabi",
@@ -55,20 +53,27 @@ pub const WINDOWS_TARGETS: &[&str] = &[
 
 const URL: &str = "https://cef-builds.spotifycdn.com";
 
-#[derive(Deserialize)]
-struct CefIndex {
-    macosarm64: CefPlatform,
-    macosx64: CefPlatform,
-    windows64: CefPlatform,
-    windowsarm64: CefPlatform,
-    windows32: CefPlatform,
-    linux64: CefPlatform,
-    linuxarm64: CefPlatform,
-    linuxarm: CefPlatform,
+#[derive(Deserialize, Serialize, Default)]
+pub struct CefIndex {
+    pub macosarm64: CefPlatform,
+    pub macosx64: CefPlatform,
+    pub windows64: CefPlatform,
+    pub windowsarm64: CefPlatform,
+    pub windows32: CefPlatform,
+    pub linux64: CefPlatform,
+    pub linuxarm64: CefPlatform,
+    pub linuxarm: CefPlatform,
 }
 
 impl CefIndex {
-    fn platform(&self, target: &str) -> Result<&CefPlatform> {
+    pub fn download() -> Result<Self> {
+        Ok(ureq::get(&format!("{URL}/index.json"))
+            .call()?
+            .into_body()
+            .read_json()?)
+    }
+
+    pub fn platform(&self, target: &str) -> Result<&CefPlatform> {
         match target {
             "aarch64-apple-darwin" => Ok(&self.macosarm64),
             "x86_64-apple-darwin" => Ok(&self.macosx64),
@@ -83,24 +88,125 @@ impl CefIndex {
     }
 }
 
-#[derive(Deserialize)]
-struct CefPlatform {
-    versions: Vec<CefVersion>,
+#[derive(Deserialize, Serialize, Default)]
+pub struct CefPlatform {
+    pub versions: Vec<CefVersion>,
 }
 
-#[derive(Deserialize)]
-struct CefVersion {
-    channel: String,
-    cef_version: String,
-    files: Vec<CefFile>,
+impl CefPlatform {
+    pub fn version(&self, cef_version: &str) -> Result<&CefVersion> {
+        let version_prefix = format!("{cef_version}+");
+        self.versions
+            .iter()
+            .find(|v| v.cef_version.starts_with(&version_prefix))
+            .ok_or_else(|| Error::VersionNotFound(cef_version.to_string()))
+    }
 }
 
-#[derive(Deserialize)]
-struct CefFile {
+#[derive(Deserialize, Serialize)]
+pub struct CefVersion {
+    pub channel: String,
+    pub cef_version: String,
+    pub files: Vec<CefFile>,
+}
+
+impl CefVersion {
+    pub fn download_archive<P>(&self, location: P, show_progress: bool) -> Result<PathBuf>
+    where
+        P: AsRef<Path>,
+    {
+        let file = self.minimal()?;
+        let (file, sha) = (file.name.as_str(), file.sha1.as_str());
+
+        fs::create_dir_all(&location)?;
+        let download_file = location.as_ref().join(file);
+
+        if download_file.exists() {
+            if calculate_file_sha1(&download_file) == sha {
+                if show_progress {
+                    println!("Verified archive: {}", download_file.display());
+                }
+                return Ok(download_file);
+            }
+
+            if show_progress {
+                println!("Cleaning corrupted archive: {}", download_file.display());
+            }
+            let corrupted_file = location.as_ref().join(format!("corrupted_{file}"));
+            fs::rename(&download_file, &corrupted_file)?;
+            fs::remove_file(&corrupted_file)?;
+        }
+
+        let cef_url = format!("{URL}/{file}");
+        if show_progress {
+            println!("Using archive url: {cef_url}");
+        }
+
+        let mut file = File::create(&download_file)?;
+
+        let resp = ureq::get(&cef_url).call()?;
+        let expected = resp
+            .headers()
+            .get("Content-Length")
+            .ok_or(Error::MissingContentLength)?;
+        let expected = expected.to_str()?;
+        let expected = expected
+            .parse::<u64>()
+            .map_err(|_| Error::InvalidContentLength(expected.to_owned()))?;
+
+        let downloaded = if show_progress {
+            const DOWNLOAD_TEMPLATE: &str = "{msg} {spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({eta})";
+
+            let bar = indicatif::ProgressBar::new(expected);
+            bar.set_style(
+                indicatif::ProgressStyle::with_template(DOWNLOAD_TEMPLATE)
+                    .expect("invalid template")
+                    .progress_chars("##-"),
+            );
+            bar.set_message("Downloading");
+            std::io::copy(
+                &mut bar.wrap_read(resp.into_body().into_reader()),
+                &mut file,
+            )
+        } else {
+            let mut reader = resp.into_body().into_reader();
+            std::io::copy(&mut reader, &mut file)
+        }?;
+
+        if downloaded != expected {
+            return Err(Error::UnexpectedFileSize {
+                downloaded,
+                expected,
+            });
+        }
+
+        if show_progress {
+            println!("Verifying SHA1 hash: {sha}...");
+        }
+        if calculate_file_sha1(&download_file) != sha {
+            return Err(Error::CorruptedFile(download_file.display().to_string()));
+        }
+
+        if show_progress {
+            println!("Downloaded archive: {}", download_file.display());
+        }
+        Ok(download_file)
+    }
+
+    pub fn minimal(&self) -> Result<&CefFile> {
+        self.files
+            .iter()
+            .find(|f| f.file_type == "minimal")
+            .ok_or_else(|| Error::VersionNotFound(self.cef_version.clone()))
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct CefFile {
     #[serde(rename = "type")]
-    file_type: String,
-    name: String,
-    sha1: String,
+    pub file_type: String,
+    pub name: String,
+    pub sha1: String,
 }
 
 pub fn download_target_archive<P>(
@@ -116,102 +222,11 @@ where
         println!("Downloading CEF archive for {target}...");
     }
 
-    let index: CefIndex = ureq::get(&format!("{URL}/index.json"))
-        .call()?
-        .into_body()
-        .read_json()?;
+    let index = CefIndex::download()?;
     let platform = index.platform(target)?;
-    let version_prefix = format!("{cef_version}+");
+    let version = platform.version(cef_version)?;
 
-    let (file, sha) = platform
-        .versions
-        .iter()
-        .find_map(|v| {
-            if v.channel == "stable" && v.cef_version.starts_with(&version_prefix) {
-                v.files.iter().find_map(|f| {
-                    if f.file_type == "minimal" {
-                        Some((f.name.as_str(), f.sha1.as_str()))
-                    } else {
-                        None
-                    }
-                })
-            } else {
-                None
-            }
-        })
-        .ok_or_else(|| Error::VersionNotFound(cef_version.to_string()))?;
-
-    fs::create_dir_all(&location)?;
-    let download_file = location.as_ref().join(file);
-
-    if download_file.exists() {
-        if calculate_file_sha1(&download_file) == sha {
-            if show_progress {
-                println!("Verified archive: {}", download_file.display());
-            }
-            return Ok(download_file);
-        }
-
-        if show_progress {
-            println!("Cleaning corrupted archive: {}", download_file.display());
-        }
-        let corrupted_file = location.as_ref().join(format!("corrupted_{file}"));
-        fs::rename(&download_file, &corrupted_file)?;
-        fs::remove_file(&corrupted_file)?;
-    }
-
-    let cef_url = format!("{URL}/{file}");
-    if show_progress {
-        println!("Using archive url: {cef_url}");
-    }
-
-    let mut file = File::create(&download_file)?;
-
-    let resp = ureq::get(&cef_url).call()?;
-    let expected = resp
-        .headers()
-        .get("Content-Length")
-        .ok_or(Error::MissingContentLength)?;
-    let expected = expected.to_str()?;
-    let expected = expected
-        .parse::<u64>()
-        .map_err(|_| Error::InvalidContentLength(expected.to_owned()))?;
-
-    let downloaded = if show_progress {
-        let bar = indicatif::ProgressBar::new(expected);
-        bar.set_style(
-            indicatif::ProgressStyle::with_template(DOWNLOAD_TEMPLATE)
-                .expect("invalid template")
-                .progress_chars("##-"),
-        );
-        bar.set_message("Downloading");
-        std::io::copy(
-            &mut bar.wrap_read(resp.into_body().into_reader()),
-            &mut file,
-        )
-    } else {
-        let mut reader = resp.into_body().into_reader();
-        std::io::copy(&mut reader, &mut file)
-    }?;
-
-    if downloaded != expected {
-        return Err(Error::UnexpectedFileSize {
-            downloaded,
-            expected,
-        });
-    }
-
-    if show_progress {
-        println!("Verifying SHA1 hash: {sha}...");
-    }
-    if calculate_file_sha1(&download_file) != sha {
-        return Err(Error::CorruptedFile(download_file.display().to_string()));
-    }
-
-    if show_progress {
-        println!("Downloaded archive: {}", download_file.display());
-    }
-    Ok(download_file)
+    version.download_archive(location, show_progress)
 }
 
 pub fn extract_target_archive<P, Q>(
@@ -252,7 +267,12 @@ where
     const RELEASE_DIR: &str = "Release";
     fs::rename(extracted_dir.join(RELEASE_DIR), &cef_dir)?;
 
-    if os != "macos" {
+    if os == "macos" {
+        fs::rename(
+            cef_dir.join("cef_sandbox.a"),
+            cef_dir.join("libcef_sandbox.a"),
+        )?;
+    } else {
         let resources = extracted_dir.join("Resources");
 
         for entry in fs::read_dir(&resources)? {

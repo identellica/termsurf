@@ -1,7 +1,12 @@
 #[cfg(not(feature = "dox"))]
 fn main() -> anyhow::Result<()> {
-    use download_cef::OsAndArch;
-    use std::{env, fs, path::PathBuf};
+    use download_cef::{CefIndex, OsAndArch};
+    use std::{
+        env,
+        fs::{self, File},
+        io::Write,
+        path::PathBuf,
+    };
 
     println!("cargo::rerun-if-changed=build.rs");
 
@@ -27,8 +32,11 @@ fn main() -> anyhow::Result<()> {
 
             if !fs::exists(&cef_dir)? {
                 let cef_version = env::var("CARGO_PKG_VERSION")?;
-                let archive =
-                    download_cef::download_target_archive(&target, &cef_version, &out_dir, false)?;
+                let index = CefIndex::download()?;
+                let platform = index.platform(&target)?;
+                let version = platform.version(&cef_version)?;
+
+                let archive = version.download_archive(&out_dir, false)?;
                 let extracted_dir =
                     download_cef::extract_target_archive(&target, &archive, &out_dir, false)?;
                 if extracted_dir != cef_dir {
@@ -37,12 +45,9 @@ fn main() -> anyhow::Result<()> {
                     ));
                 }
 
-                if os_arch.os == "macos" {
-                    fs::rename(
-                        cef_dir.join("cef_sandbox.a"),
-                        cef_dir.join("libcef_sandbox.a"),
-                    )?;
-                }
+                let archive_version = serde_json::to_string_pretty(version.minimal()?)?;
+                let mut archive_json = File::create(extracted_dir.join("archive.json"))?;
+                archive_json.write_all(archive_version.as_bytes())?;
             }
 
             cef_dir
