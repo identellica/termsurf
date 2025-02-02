@@ -6,12 +6,19 @@ use std::{
     path::{Path, PathBuf},
 };
 
+#[cfg(target_os = "windows")]
+const DEFAULT_TARGET: &str = "x86_64-pc-windows-msvc";
+#[cfg(target_os = "macos")]
+const DEFAULT_TARGET: &str = "aarch64-apple-darwin";
+#[cfg(target_os = "linux")]
+const DEFAULT_TARGET: &str = "x86_64-unknown-linux-gnu";
+
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
 struct Args {
     #[arg(short, long, default_value = "false")]
     force: bool,
-    #[arg(short, long)]
+    #[arg(short, long, default_value = DEFAULT_TARGET)]
     target: String,
     output: String,
 }
