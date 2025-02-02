@@ -382,8 +382,9 @@ name = "export-cef-dir"
 version = "132.3.1"
 dependencies = [
  "anyhow",
- "cef-dll-sys",
  "clap",
+ "download-cef",
+ "serde_json",
 ]
 
 [[package]]
