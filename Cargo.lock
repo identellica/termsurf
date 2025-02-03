@@ -1149,12 +1149,11 @@ dependencies = [
 
 [[package]]
 name = "ureq"
-version = "3.0.3"
+version = "3.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "217751151c53226090391713e533d9a5e904ba2570dabaaace29032687589c3e"
+checksum = "18250fd12e095bc29eb65b753431ae5d326f7c259a818cb3bf3faaf740ee3344"
 dependencies = [
  "base64",
- "cc",
  "cookie_store",
  "flate2",
  "log",
