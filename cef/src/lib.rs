@@ -1,6 +1,4 @@
-//! # cef
-//!
-//! Use the [Chromium Embedded Framework](https://github.com/chromiumembedded/cef) in Rust.
+#![doc = include_str!("../README.md")]
 
 pub mod args;
 pub mod rc;
