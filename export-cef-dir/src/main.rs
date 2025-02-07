@@ -1,9 +1,32 @@
+//! # export-cef-dir
+//!
+//! Export files from the prebuilt [Chromium Embedded Framework](https://github.com/chromiumembedded/cef)
+//! archive on any supported platform. The structure of the exported directory matches the way that
+//! the `cef-dll-sys` crate expects to see them.
+//!
+//! To use the target directory when building, set the `CEF_PATH` environment variable to the path of the
+//! exported directory, e.g., `~/.local/share/cef`.
+//!
+//! To use the DLLs in this directory at runtime, the library loader path varies by platform:
+//! - Linux
+//! ```sh
+//! export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CEF_PATH"
+//! ```
+//! - macOS
+//! ```sh
+//! export DYLD_FALLBACK_LIBRARY_PATH="$DYLD_FALLBACK_LIBRARY_PATH:$CEF_PATH"
+//! ```
+//! - Windows (using PowerShell)
+//! ```pwsh
+//! $env:PATH = "$env:PATH;$env:CEF_PATH"
+//! ```
+
 use clap::Parser;
 use download_cef::{CefIndex, OsAndArch};
 use std::{
     fs::{self, File},
-    io::{self, Write},
-    path::{Path, PathBuf},
+    io::Write,
+    path::PathBuf,
 };
 
 #[cfg(target_os = "windows")]
@@ -16,8 +39,10 @@ const DEFAULT_TARGET: &str = "x86_64-unknown-linux-gnu";
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
 struct Args {
-    #[arg(short, long, default_value = "false")]
+    #[arg(short, long)]
     force: bool,
+    #[arg(short, long)]
+    save_archive: bool,
     #[arg(short, long, default_value = DEFAULT_TARGET)]
     target: String,
     output: String,
@@ -26,8 +51,13 @@ struct Args {
 fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let output = PathBuf::from(args.output);
+    let parent = PathBuf::from(
+        output
+            .parent()
+            .ok_or_else(|| anyhow::anyhow!("invalid target directory: {}", output.display()))?,
+    );
 
-    if output.exists() {
+    if fs::exists(&output)? {
         if !args.force {
             return Err(anyhow::anyhow!(
                 "target directory already exists: {}",
@@ -35,62 +65,58 @@ fn main() -> anyhow::Result<()> {
             ));
         }
 
-        let parent = output.parent();
         let dir = output
             .file_name()
             .and_then(|dir| dir.to_str())
             .ok_or_else(|| anyhow::anyhow!("invalid target directory: {}", output.display()))?;
-        let old_output = parent.map(|p| p.join(format!("old_{dir}")));
-        let old_output = old_output.as_ref().unwrap_or(&output);
-        fs::rename(&output, old_output)?;
+        let old_output = parent.join(format!("old_{dir}"));
+        fs::rename(&output, &old_output)?;
         println!("Cleaning up: {}", old_output.display());
         fs::remove_dir_all(old_output)?
     }
 
     let target = args.target.as_str();
     let os_arch = OsAndArch::try_from(target)?;
-    let out_dir = PathBuf::from(env!("OUT_DIR"));
     let cef_dir = os_arch.to_string();
-    let cef_dir = out_dir.join(&cef_dir);
+    let cef_dir = parent.join(&cef_dir);
 
-    if !fs::exists(&cef_dir)? {
-        let cef_version = env!("CARGO_PKG_VERSION");
-        let index = CefIndex::download()?;
-        let platform = index.platform(target)?;
-        let version = platform.version(cef_version)?;
-
-        let archive = version.download_archive(&out_dir, true)?;
-        let extracted_dir = download_cef::extract_target_archive(target, &archive, &out_dir, true)?;
-        if extracted_dir != cef_dir {
-            return Err(anyhow::anyhow!(
-                "extracted dir {extracted_dir:?} does not match cef_dir {cef_dir:?}",
-            ));
-        }
-
-        let archive_version = serde_json::to_string_pretty(version.minimal()?)?;
-        let mut archive_json = File::create(extracted_dir.join("archive.json"))?;
-        archive_json.write_all(archive_version.as_bytes())?;
+    if fs::exists(&cef_dir)? {
+        let dir = cef_dir
+            .file_name()
+            .and_then(|dir| dir.to_str())
+            .ok_or_else(|| anyhow::anyhow!("invalid target directory: {}", output.display()))?;
+        let old_cef_dir = parent.join(format!("old_{dir}"));
+        fs::rename(&cef_dir, &old_cef_dir)?;
+        println!("Cleaning up: {}", old_cef_dir.display());
+        fs::remove_dir_all(old_cef_dir)?
     }
 
-    copy_directory(cef_dir, &output)?;
+    let cef_version = env!("CARGO_PKG_VERSION");
+    let index = CefIndex::download()?;
+    let platform = index.platform(target)?;
+    let version = platform.version(cef_version)?;
 
-    Ok(())
-}
-
-fn copy_directory<P, Q>(src: P, dst: Q) -> io::Result<()>
-where
-    P: AsRef<Path>,
-    Q: AsRef<Path>,
-{
-    fs::create_dir_all(&dst)?;
-    for entry in fs::read_dir(&src)? {
-        let entry = entry?;
-        let dst_path = dst.as_ref().join(entry.file_name());
-        if entry.file_type()?.is_dir() {
-            copy_directory(&entry.path(), &dst_path)?;
-        } else {
-            fs::copy(&entry.path(), &dst_path)?;
-        }
+    let archive = version.download_archive(&parent, true)?;
+    let extracted_dir = download_cef::extract_target_archive(target, &archive, &parent, true)?;
+    if extracted_dir != cef_dir {
+        return Err(anyhow::anyhow!(
+            "extracted dir {extracted_dir:?} does not match cef_dir {cef_dir:?}",
+        ));
     }
+
+    if !args.save_archive {
+        println!("Cleaning up: {}", archive.display());
+        fs::remove_file(archive)?;
+    }
+
+    let archive_version = serde_json::to_string_pretty(version.minimal()?)?;
+    let mut archive_json = File::create(extracted_dir.join("archive.json"))?;
+    archive_json.write_all(archive_version.as_bytes())?;
+
+    if output != cef_dir {
+        println!("Renaming: {}", output.display());
+        fs::rename(cef_dir, output)?;
+    }
+
     Ok(())
 }
