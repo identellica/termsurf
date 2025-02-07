@@ -1,3 +1,8 @@
+//! # download-cef
+//!
+//! Utility functions to download and extract prebuilt [Chromium Embedded Framework](https://github.com/chromiumembedded/cef)
+//! archives on any supported platform.
+
 use bzip2::bufread::BzDecoder;
 use serde::{Deserialize, Serialize};
 use sha1_smol::Sha1;
