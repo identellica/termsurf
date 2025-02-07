@@ -1,7 +1,4 @@
-//! # cef-dll-sys
-//!
-//! Generated bindings for the prebuilt [Chromium Embedded Framework](https://github.com/chromiumembedded/cef)
-//! C API on any supported platform.
+#![doc = include_str!("../README.md")]
 
 #[allow(
     non_snake_case,
