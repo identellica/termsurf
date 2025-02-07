@@ -11,67 +11,67 @@ Use CEF in Rust.
 
 ## Usage
 
-### Linux
+### Install Shared CEF Binaries
 
-#### Manual Install
+This step is optional, but it will make all other builds of the `cef` crate much faster. If you don't do this, the `cef-dll-sys` crate `build.rs` script will download and extract the same files under its `OUT_DIR` directory. You should repeat this step each time you upgrade to a new version of the `cef` crate.
 
-- [Download](https://cef-builds.spotifycdn.com/index.html#linux64) Linux-64bit build.
+#### Linux or macOS:
 
-- Copy files to `.local`:
-
-```cmd
-cp -r Resources ~/.local/share/cef
-cp -r Release ~/.local/share/cef
+```sh
+cargo run -p export-cef-dir -- --force $HOME/.local/share/cef
 ```
 
-- Build and run the application with `LD_LIBRARY_PATH` (or you can also add rpath to your cargo config or build script):
+#### Windows (using PowerShell)
 
-```cmd
-LD_LIBRARY_PATH=~/.local/share/cef cargo r --example demo
+```pwsh
+cargo run -p export-cef-dir -- --force $env:USERPROFILE/.local/share/cef
 ```
 
-#### Flatpak
+### Set Environment Variables
 
-- Install flatpak runtime & sdk:
+#### Linux
 
-```cmd
-flatpak install flathub dev.crabnebula.Platform
-flatpak install flathub dev.crabnebula.Sdk
+```sh
+export CEF_PATH=$HOME/.local/share/cef
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/share/cef
 ```
 
-- Setup cargo project for flatpak. See [flatpak-builder-tools](https://github.com/flatpak/flatpak-builder-tools/blob/master/cargo/README.md) for more details. Here are files you will need to have at leaset:
-  - flatpak-cargo-generator.py
-  - flatpak manifest file (ie. app.example.demo.yml)
+#### macOS
 
-- Build the flatpak application and run:
-
-```cmd
-cargo b --example demo
-python3 ./flatpak-cargo-generator.py ./Cargo.lock -o cargo-sources.json
-touch run.sh
-flatpak-builder --user --install --force-clean target app.example.demo.yml
-flatpak run app.example.demo
+```sh
+export CEF_PATH=$HOME/.local/share/cef
+export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$HOME/.local/share/cef
 ```
 
-### macOS
+#### Windows (using PowerShell)
 
-- Download cef prebuilts with `update-bindings`, it should print out the extracted `CEF_PATH` on success.
-
-```cmd
-cargo run -p update-bindings --bindgen --download
+```pwsh
+$env:CEF_PATH=$env:USERPROFILE/.local/share/cef
+$env:PATH=$env:PATH;$env:USERPROFILE/.local/share/cef
 ```
 
-- Build and run the cefsimple application
+### Run the `cefsimple` Example
 
-```cmd
-export CEF_PATH=<path>
+#### Linux
 
+```sh
+cargo run --example cefsimple
+```
+
+#### macOS
+
+```sh
 ./cef/examples/cefsimple/bundle_script.rs
-
 open target/debug/examples/cefsimple.app
+```
+
+#### Windows (using PowerShell)
+
+```pwsh
+cp ./cef/examples/cefsimple/win/cefsimple.exe.manifest ./target/debug/examples/
+cargo run --example cefsimple
 ```
 
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
