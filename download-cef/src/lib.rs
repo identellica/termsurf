@@ -6,7 +6,7 @@ use sha1_smol::Sha1;
 use std::{
     fmt::{self, Display},
     fs::{self, File},
-    io::BufReader,
+    io::{self, BufReader, IsTerminal},
     path::{Path, PathBuf},
 };
 
@@ -156,7 +156,7 @@ impl CefVersion {
             .parse::<u64>()
             .map_err(|_| Error::InvalidContentLength(expected.to_owned()))?;
 
-        let downloaded = if show_progress {
+        let downloaded = if show_progress && io::stdout().is_terminal() {
             const DOWNLOAD_TEMPLATE: &str = "{msg} {spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({eta})";
 
             let bar = indicatif::ProgressBar::new(expected);

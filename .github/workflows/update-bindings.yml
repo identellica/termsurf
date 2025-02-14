@@ -185,7 +185,7 @@ jobs:
               -F expectedHeadOid=${RESET_REV} \
               -F 'commitMessage=chore: update bindings' \
               -F query=@.github/api/createCommitOnBranch.graphql \
-              ${FILES}
+              ${FILES[@]}
 
             git pull
 
