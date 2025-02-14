@@ -257,6 +257,7 @@ impl Default for Insets {
 /// See [_cef_accelerated_paint_info_common_t] for more documentation.
 #[derive(Clone)]
 pub struct AcceleratedPaintInfoCommon {
+    pub size: usize,
     pub timestamp: u64,
     pub coded_size: Size,
     pub visible_rect: Rect,
@@ -273,6 +274,7 @@ pub struct AcceleratedPaintInfoCommon {
 impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
     fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
         Self {
+            size: value.size.into(),
             timestamp: value.timestamp.into(),
             coded_size: value.coded_size.into(),
             visible_rect: value.visible_rect.into(),
@@ -291,6 +293,7 @@ impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
 impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
     fn into(self) -> _cef_accelerated_paint_info_common_t {
         _cef_accelerated_paint_info_common_t {
+            size: self.size.into(),
             timestamp: self.timestamp.into(),
             coded_size: self.coded_size.into(),
             visible_rect: self.visible_rect.into(),
@@ -308,7 +311,10 @@ impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
 }
 impl Default for AcceleratedPaintInfoCommon {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_accelerated_paint_info_common_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -340,6 +346,7 @@ impl Default for MainArgs {
 /// See [_cef_window_info_t] for more documentation.
 #[derive(Clone)]
 pub struct WindowInfo {
+    pub size: usize,
     pub ex_style: DWORD,
     pub window_name: CefStringUtf16,
     pub style: DWORD,
@@ -355,6 +362,7 @@ pub struct WindowInfo {
 impl From<_cef_window_info_t> for WindowInfo {
     fn from(value: _cef_window_info_t) -> Self {
         Self {
+            size: value.size.into(),
             ex_style: value.ex_style.into(),
             window_name: value.window_name.into(),
             style: value.style.into(),
@@ -372,6 +380,7 @@ impl From<_cef_window_info_t> for WindowInfo {
 impl Into<_cef_window_info_t> for WindowInfo {
     fn into(self) -> _cef_window_info_t {
         _cef_window_info_t {
+            size: self.size.into(),
             ex_style: self.ex_style.into(),
             window_name: self.window_name.into(),
             style: self.style.into(),
@@ -388,13 +397,17 @@ impl Into<_cef_window_info_t> for WindowInfo {
 }
 impl Default for WindowInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_window_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_accelerated_paint_info_t] for more documentation.
 #[derive(Clone)]
 pub struct AcceleratedPaintInfo {
+    pub size: usize,
     pub shared_texture_handle: HANDLE,
     pub format: ColorType,
     pub extra: AcceleratedPaintInfoCommon,
@@ -402,6 +415,7 @@ pub struct AcceleratedPaintInfo {
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
         Self {
+            size: value.size.into(),
             shared_texture_handle: value.shared_texture_handle.into(),
             format: value.format.into(),
             extra: value.extra.into(),
@@ -411,6 +425,7 @@ impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
 impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn into(self) -> _cef_accelerated_paint_info_t {
         _cef_accelerated_paint_info_t {
+            size: self.size.into(),
             shared_texture_handle: self.shared_texture_handle.into(),
             format: self.format.into(),
             extra: self.extra.into(),
@@ -419,7 +434,10 @@ impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
 }
 impl Default for AcceleratedPaintInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_accelerated_paint_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -455,6 +473,7 @@ pub struct Settings {
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
     pub chrome_policy_id: CefStringUtf16,
     pub chrome_app_icon_id: ::std::os::raw::c_int,
+    pub disable_signal_handlers: ::std::os::raw::c_int,
 }
 impl From<_cef_settings_t> for Settings {
     fn from(value: _cef_settings_t) -> Self {
@@ -488,6 +507,7 @@ impl From<_cef_settings_t> for Settings {
             cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults.into(),
             chrome_policy_id: value.chrome_policy_id.into(),
             chrome_app_icon_id: value.chrome_app_icon_id.into(),
+            disable_signal_handlers: value.disable_signal_handlers.into(),
         }
     }
 }
@@ -523,6 +543,7 @@ impl Into<_cef_settings_t> for Settings {
             cookieable_schemes_exclude_defaults: self.cookieable_schemes_exclude_defaults.into(),
             chrome_policy_id: self.chrome_policy_id.into(),
             chrome_app_icon_id: self.chrome_app_icon_id.into(),
+            disable_signal_handlers: self.disable_signal_handlers.into(),
         }
     }
 }
@@ -690,6 +711,7 @@ impl Default for BrowserSettings {
 /// See [_cef_urlparts_t] for more documentation.
 #[derive(Clone)]
 pub struct Urlparts {
+    pub size: usize,
     pub spec: CefStringUtf16,
     pub scheme: CefStringUtf16,
     pub username: CefStringUtf16,
@@ -704,6 +726,7 @@ pub struct Urlparts {
 impl From<_cef_urlparts_t> for Urlparts {
     fn from(value: _cef_urlparts_t) -> Self {
         Self {
+            size: value.size.into(),
             spec: value.spec.into(),
             scheme: value.scheme.into(),
             username: value.username.into(),
@@ -720,6 +743,7 @@ impl From<_cef_urlparts_t> for Urlparts {
 impl Into<_cef_urlparts_t> for Urlparts {
     fn into(self) -> _cef_urlparts_t {
         _cef_urlparts_t {
+            size: self.size.into(),
             spec: self.spec.into(),
             scheme: self.scheme.into(),
             username: self.username.into(),
@@ -735,13 +759,17 @@ impl Into<_cef_urlparts_t> for Urlparts {
 }
 impl Default for Urlparts {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_urlparts_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_cookie_t] for more documentation.
 #[derive(Clone)]
 pub struct Cookie {
+    pub size: usize,
     pub name: CefStringUtf16,
     pub value: CefStringUtf16,
     pub domain: CefStringUtf16,
@@ -758,6 +786,7 @@ pub struct Cookie {
 impl From<_cef_cookie_t> for Cookie {
     fn from(value: _cef_cookie_t) -> Self {
         Self {
+            size: value.size.into(),
             name: value.name.into(),
             value: value.value.into(),
             domain: value.domain.into(),
@@ -776,6 +805,7 @@ impl From<_cef_cookie_t> for Cookie {
 impl Into<_cef_cookie_t> for Cookie {
     fn into(self) -> _cef_cookie_t {
         _cef_cookie_t {
+            size: self.size.into(),
             name: self.name.into(),
             value: self.value.into(),
             domain: self.domain.into(),
@@ -793,7 +823,10 @@ impl Into<_cef_cookie_t> for Cookie {
 }
 impl Default for Cookie {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_cookie_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -828,6 +861,7 @@ impl Default for DraggableRegion {
 /// See [_cef_screen_info_t] for more documentation.
 #[derive(Clone)]
 pub struct ScreenInfo {
+    pub size: usize,
     pub device_scale_factor: f32,
     pub depth: ::std::os::raw::c_int,
     pub depth_per_component: ::std::os::raw::c_int,
@@ -838,6 +872,7 @@ pub struct ScreenInfo {
 impl From<_cef_screen_info_t> for ScreenInfo {
     fn from(value: _cef_screen_info_t) -> Self {
         Self {
+            size: value.size.into(),
             device_scale_factor: value.device_scale_factor.into(),
             depth: value.depth.into(),
             depth_per_component: value.depth_per_component.into(),
@@ -850,6 +885,7 @@ impl From<_cef_screen_info_t> for ScreenInfo {
 impl Into<_cef_screen_info_t> for ScreenInfo {
     fn into(self) -> _cef_screen_info_t {
         _cef_screen_info_t {
+            size: self.size.into(),
             device_scale_factor: self.device_scale_factor.into(),
             depth: self.depth.into(),
             depth_per_component: self.depth_per_component.into(),
@@ -861,13 +897,17 @@ impl Into<_cef_screen_info_t> for ScreenInfo {
 }
 impl Default for ScreenInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_screen_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_linux_window_properties_t] for more documentation.
 #[derive(Clone)]
 pub struct LinuxWindowProperties {
+    pub size: usize,
     pub wayland_app_id: CefStringUtf16,
     pub wm_class_class: CefStringUtf16,
     pub wm_class_name: CefStringUtf16,
@@ -876,6 +916,7 @@ pub struct LinuxWindowProperties {
 impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn from(value: _cef_linux_window_properties_t) -> Self {
         Self {
+            size: value.size.into(),
             wayland_app_id: value.wayland_app_id.into(),
             wm_class_class: value.wm_class_class.into(),
             wm_class_name: value.wm_class_name.into(),
@@ -886,6 +927,7 @@ impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
 impl Into<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn into(self) -> _cef_linux_window_properties_t {
         _cef_linux_window_properties_t {
+            size: self.size.into(),
             wayland_app_id: self.wayland_app_id.into(),
             wm_class_class: self.wm_class_class.into(),
             wm_class_name: self.wm_class_name.into(),
@@ -895,7 +937,10 @@ impl Into<_cef_linux_window_properties_t> for LinuxWindowProperties {
 }
 impl Default for LinuxWindowProperties {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_linux_window_properties_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -985,6 +1030,7 @@ impl Default for TouchEvent {
 /// See [_cef_key_event_t] for more documentation.
 #[derive(Clone)]
 pub struct KeyEvent {
+    pub size: usize,
     pub type_: KeyEventType,
     pub modifiers: u32,
     pub windows_key_code: ::std::os::raw::c_int,
@@ -997,6 +1043,7 @@ pub struct KeyEvent {
 impl From<_cef_key_event_t> for KeyEvent {
     fn from(value: _cef_key_event_t) -> Self {
         Self {
+            size: value.size.into(),
             type_: value.type_.into(),
             modifiers: value.modifiers.into(),
             windows_key_code: value.windows_key_code.into(),
@@ -1011,6 +1058,7 @@ impl From<_cef_key_event_t> for KeyEvent {
 impl Into<_cef_key_event_t> for KeyEvent {
     fn into(self) -> _cef_key_event_t {
         _cef_key_event_t {
+            size: self.size.into(),
             type_: self.type_.into(),
             modifiers: self.modifiers.into(),
             windows_key_code: self.windows_key_code.into(),
@@ -1024,13 +1072,17 @@ impl Into<_cef_key_event_t> for KeyEvent {
 }
 impl Default for KeyEvent {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_key_event_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_popup_features_t] for more documentation.
 #[derive(Clone)]
 pub struct PopupFeatures {
+    pub size: usize,
     pub x: ::std::os::raw::c_int,
     pub x_set: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -1044,6 +1096,7 @@ pub struct PopupFeatures {
 impl From<_cef_popup_features_t> for PopupFeatures {
     fn from(value: _cef_popup_features_t) -> Self {
         Self {
+            size: value.size.into(),
             x: value.x.into(),
             x_set: value.xSet.into(),
             y: value.y.into(),
@@ -1059,6 +1112,7 @@ impl From<_cef_popup_features_t> for PopupFeatures {
 impl Into<_cef_popup_features_t> for PopupFeatures {
     fn into(self) -> _cef_popup_features_t {
         _cef_popup_features_t {
+            size: self.size.into(),
             x: self.x.into(),
             xSet: self.x_set.into(),
             y: self.y.into(),
@@ -1073,7 +1127,10 @@ impl Into<_cef_popup_features_t> for PopupFeatures {
 }
 impl Default for PopupFeatures {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_popup_features_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -1114,6 +1171,7 @@ impl Default for CursorInfo {
 /// See [_cef_pdf_print_settings_t] for more documentation.
 #[derive(Clone)]
 pub struct PdfPrintSettings {
+    pub size: usize,
     pub landscape: ::std::os::raw::c_int,
     pub print_background: ::std::os::raw::c_int,
     pub scale: f64,
@@ -1135,6 +1193,7 @@ pub struct PdfPrintSettings {
 impl From<_cef_pdf_print_settings_t> for PdfPrintSettings {
     fn from(value: _cef_pdf_print_settings_t) -> Self {
         Self {
+            size: value.size.into(),
             landscape: value.landscape.into(),
             print_background: value.print_background.into(),
             scale: value.scale.into(),
@@ -1158,6 +1217,7 @@ impl From<_cef_pdf_print_settings_t> for PdfPrintSettings {
 impl Into<_cef_pdf_print_settings_t> for PdfPrintSettings {
     fn into(self) -> _cef_pdf_print_settings_t {
         _cef_pdf_print_settings_t {
+            size: self.size.into(),
             landscape: self.landscape.into(),
             print_background: self.print_background.into(),
             scale: self.scale.into(),
@@ -1180,13 +1240,17 @@ impl Into<_cef_pdf_print_settings_t> for PdfPrintSettings {
 }
 impl Default for PdfPrintSettings {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_pdf_print_settings_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_box_layout_settings_t] for more documentation.
 #[derive(Clone)]
 pub struct BoxLayoutSettings {
+    pub size: usize,
     pub horizontal: ::std::os::raw::c_int,
     pub inside_border_horizontal_spacing: ::std::os::raw::c_int,
     pub inside_border_vertical_spacing: ::std::os::raw::c_int,
@@ -1200,6 +1264,7 @@ pub struct BoxLayoutSettings {
 impl From<_cef_box_layout_settings_t> for BoxLayoutSettings {
     fn from(value: _cef_box_layout_settings_t) -> Self {
         Self {
+            size: value.size.into(),
             horizontal: value.horizontal.into(),
             inside_border_horizontal_spacing: value.inside_border_horizontal_spacing.into(),
             inside_border_vertical_spacing: value.inside_border_vertical_spacing.into(),
@@ -1215,6 +1280,7 @@ impl From<_cef_box_layout_settings_t> for BoxLayoutSettings {
 impl Into<_cef_box_layout_settings_t> for BoxLayoutSettings {
     fn into(self) -> _cef_box_layout_settings_t {
         _cef_box_layout_settings_t {
+            size: self.size.into(),
             horizontal: self.horizontal.into(),
             inside_border_horizontal_spacing: self.inside_border_horizontal_spacing.into(),
             inside_border_vertical_spacing: self.inside_border_vertical_spacing.into(),
@@ -1229,7 +1295,10 @@ impl Into<_cef_box_layout_settings_t> for BoxLayoutSettings {
 }
 impl Default for BoxLayoutSettings {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_box_layout_settings_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -1264,6 +1333,7 @@ impl Default for Range {
 /// See [_cef_composition_underline_t] for more documentation.
 #[derive(Clone)]
 pub struct CompositionUnderline {
+    pub size: usize,
     pub range: Range,
     pub color: u32,
     pub background_color: u32,
@@ -1273,6 +1343,7 @@ pub struct CompositionUnderline {
 impl From<_cef_composition_underline_t> for CompositionUnderline {
     fn from(value: _cef_composition_underline_t) -> Self {
         Self {
+            size: value.size.into(),
             range: value.range.into(),
             color: value.color.into(),
             background_color: value.background_color.into(),
@@ -1284,6 +1355,7 @@ impl From<_cef_composition_underline_t> for CompositionUnderline {
 impl Into<_cef_composition_underline_t> for CompositionUnderline {
     fn into(self) -> _cef_composition_underline_t {
         _cef_composition_underline_t {
+            size: self.size.into(),
             range: self.range.into(),
             color: self.color.into(),
             background_color: self.background_color.into(),
@@ -1294,13 +1366,17 @@ impl Into<_cef_composition_underline_t> for CompositionUnderline {
 }
 impl Default for CompositionUnderline {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_composition_underline_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_audio_parameters_t] for more documentation.
 #[derive(Clone)]
 pub struct AudioParameters {
+    pub size: usize,
     pub channel_layout: ChannelLayout,
     pub sample_rate: ::std::os::raw::c_int,
     pub frames_per_buffer: ::std::os::raw::c_int,
@@ -1308,6 +1384,7 @@ pub struct AudioParameters {
 impl From<_cef_audio_parameters_t> for AudioParameters {
     fn from(value: _cef_audio_parameters_t) -> Self {
         Self {
+            size: value.size.into(),
             channel_layout: value.channel_layout.into(),
             sample_rate: value.sample_rate.into(),
             frames_per_buffer: value.frames_per_buffer.into(),
@@ -1317,6 +1394,7 @@ impl From<_cef_audio_parameters_t> for AudioParameters {
 impl Into<_cef_audio_parameters_t> for AudioParameters {
     fn into(self) -> _cef_audio_parameters_t {
         _cef_audio_parameters_t {
+            size: self.size.into(),
             channel_layout: self.channel_layout.into(),
             sample_rate: self.sample_rate.into(),
             frames_per_buffer: self.frames_per_buffer.into(),
@@ -1325,13 +1403,17 @@ impl Into<_cef_audio_parameters_t> for AudioParameters {
 }
 impl Default for AudioParameters {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_audio_parameters_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_media_sink_device_info_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaSinkDeviceInfo {
+    pub size: usize,
     pub ip_address: CefStringUtf16,
     pub port: ::std::os::raw::c_int,
     pub model_name: CefStringUtf16,
@@ -1339,6 +1421,7 @@ pub struct MediaSinkDeviceInfo {
 impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn from(value: _cef_media_sink_device_info_t) -> Self {
         Self {
+            size: value.size.into(),
             ip_address: value.ip_address.into(),
             port: value.port.into(),
             model_name: value.model_name.into(),
@@ -1348,6 +1431,7 @@ impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
 impl Into<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn into(self) -> _cef_media_sink_device_info_t {
         _cef_media_sink_device_info_t {
+            size: self.size.into(),
             ip_address: self.ip_address.into(),
             port: self.port.into(),
             model_name: self.model_name.into(),
@@ -1356,13 +1440,17 @@ impl Into<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
 }
 impl Default for MediaSinkDeviceInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_media_sink_device_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_touch_handle_state_t] for more documentation.
 #[derive(Clone)]
 pub struct TouchHandleState {
+    pub size: usize,
     pub touch_handle_id: ::std::os::raw::c_int,
     pub flags: u32,
     pub enabled: ::std::os::raw::c_int,
@@ -1375,6 +1463,7 @@ pub struct TouchHandleState {
 impl From<_cef_touch_handle_state_t> for TouchHandleState {
     fn from(value: _cef_touch_handle_state_t) -> Self {
         Self {
+            size: value.size.into(),
             touch_handle_id: value.touch_handle_id.into(),
             flags: value.flags.into(),
             enabled: value.enabled.into(),
@@ -1389,6 +1478,7 @@ impl From<_cef_touch_handle_state_t> for TouchHandleState {
 impl Into<_cef_touch_handle_state_t> for TouchHandleState {
     fn into(self) -> _cef_touch_handle_state_t {
         _cef_touch_handle_state_t {
+            size: self.size.into(),
             touch_handle_id: self.touch_handle_id.into(),
             flags: self.flags.into(),
             enabled: self.enabled.into(),
@@ -1402,13 +1492,17 @@ impl Into<_cef_touch_handle_state_t> for TouchHandleState {
 }
 impl Default for TouchHandleState {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_touch_handle_state_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_task_info_t] for more documentation.
 #[derive(Clone)]
 pub struct TaskInfo {
+    pub size: usize,
     pub id: i64,
     pub type_: TaskType,
     pub is_killable: ::std::os::raw::c_int,
@@ -1422,6 +1516,7 @@ pub struct TaskInfo {
 impl From<_cef_task_info_t> for TaskInfo {
     fn from(value: _cef_task_info_t) -> Self {
         Self {
+            size: value.size.into(),
             id: value.id.into(),
             type_: value.type_.into(),
             is_killable: value.is_killable.into(),
@@ -1437,6 +1532,7 @@ impl From<_cef_task_info_t> for TaskInfo {
 impl Into<_cef_task_info_t> for TaskInfo {
     fn into(self) -> _cef_task_info_t {
         _cef_task_info_t {
+            size: self.size.into(),
             id: self.id.into(),
             type_: self.type_.into(),
             is_killable: self.is_killable.into(),
@@ -1451,7 +1547,10 @@ impl Into<_cef_task_info_t> for TaskInfo {
 }
 impl Default for TaskInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_task_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -3658,7 +3757,7 @@ pub struct Frame {
         unsafe extern "stdcall" fn(self_: *mut _cef_frame_t) -> *mut _cef_browser_t,
     >,
     pub get_v_8_context: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_frame_t) -> *mut _cef_v8context_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_frame_t) -> *mut _cef_v8_context_t,
     >,
     pub visit_dom: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_frame_t, visitor: *mut _cef_domvisitor_t),
@@ -3704,7 +3803,7 @@ impl From<_cef_frame_t> for Frame {
             get_parent: value.get_parent.into(),
             get_url: value.get_url.into(),
             get_browser: value.get_browser.into(),
-            get_v_8_context: value.get_v8context.into(),
+            get_v_8_context: value.get_v8_context.into(),
             visit_dom: value.visit_dom.into(),
             create_urlrequest: value.create_urlrequest.into(),
             send_process_message: value.send_process_message.into(),
@@ -3737,7 +3836,7 @@ impl Into<_cef_frame_t> for Frame {
             get_parent: self.get_parent.into(),
             get_url: self.get_url.into(),
             get_browser: self.get_browser.into(),
-            get_v8context: self.get_v_8_context.into(),
+            get_v8_context: self.get_v_8_context.into(),
             visit_dom: self.visit_dom.into(),
             create_urlrequest: self.create_urlrequest.into(),
             send_process_message: self.send_process_message.into(),
@@ -3750,34 +3849,40 @@ impl Default for Frame {
     }
 }
 
-/// See [_cef_x509cert_principal_t] for more documentation.
+/// See [_cef_x509_cert_principal_t] for more documentation.
 #[derive(Clone)]
-pub struct X509certPrincipal {
+pub struct X509CertPrincipal {
     pub base: BaseRefCounted,
     pub get_display_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509cert_principal_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_cert_principal_t) -> cef_string_userfree_t,
     >,
     pub get_common_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509cert_principal_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_cert_principal_t) -> cef_string_userfree_t,
     >,
     pub get_locality_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509cert_principal_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_cert_principal_t) -> cef_string_userfree_t,
     >,
     pub get_state_or_province_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509cert_principal_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_cert_principal_t) -> cef_string_userfree_t,
     >,
     pub get_country_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509cert_principal_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_cert_principal_t) -> cef_string_userfree_t,
     >,
     pub get_organization_names: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509cert_principal_t, names: cef_string_list_t),
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_x509_cert_principal_t,
+            names: cef_string_list_t,
+        ),
     >,
     pub get_organization_unit_names: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509cert_principal_t, names: cef_string_list_t),
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_x509_cert_principal_t,
+            names: cef_string_list_t,
+        ),
     >,
 }
-impl From<_cef_x509cert_principal_t> for X509certPrincipal {
-    fn from(value: _cef_x509cert_principal_t) -> Self {
+impl From<_cef_x509_cert_principal_t> for X509CertPrincipal {
+    fn from(value: _cef_x509_cert_principal_t) -> Self {
         Self {
             base: value.base.into(),
             get_display_name: value.get_display_name.into(),
@@ -3790,9 +3895,9 @@ impl From<_cef_x509cert_principal_t> for X509certPrincipal {
         }
     }
 }
-impl Into<_cef_x509cert_principal_t> for X509certPrincipal {
-    fn into(self) -> _cef_x509cert_principal_t {
-        _cef_x509cert_principal_t {
+impl Into<_cef_x509_cert_principal_t> for X509CertPrincipal {
+    fn into(self) -> _cef_x509_cert_principal_t {
+        _cef_x509_cert_principal_t {
             base: self.base.into(),
             get_display_name: self.get_display_name.into(),
             get_common_name: self.get_common_name.into(),
@@ -3804,61 +3909,61 @@ impl Into<_cef_x509cert_principal_t> for X509certPrincipal {
         }
     }
 }
-impl Default for X509certPrincipal {
+impl Default for X509CertPrincipal {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_x509certificate_t] for more documentation.
+/// See [_cef_x509_certificate_t] for more documentation.
 #[derive(Clone)]
-pub struct X509certificate {
+pub struct X509Certificate {
     pub base: BaseRefCounted,
     pub get_subject: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_x509certificate_t,
-        ) -> *mut _cef_x509cert_principal_t,
+            self_: *mut _cef_x509_certificate_t,
+        ) -> *mut _cef_x509_cert_principal_t,
     >,
     pub get_issuer: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_x509certificate_t,
-        ) -> *mut _cef_x509cert_principal_t,
+            self_: *mut _cef_x509_certificate_t,
+        ) -> *mut _cef_x509_cert_principal_t,
     >,
     pub get_serial_number: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509certificate_t) -> *mut _cef_binary_value_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_certificate_t) -> *mut _cef_binary_value_t,
     >,
     pub get_valid_start: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509certificate_t) -> cef_basetime_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_certificate_t) -> cef_basetime_t,
     >,
     pub get_valid_expiry: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509certificate_t) -> cef_basetime_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_certificate_t) -> cef_basetime_t,
     >,
     pub get_derencoded: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509certificate_t) -> *mut _cef_binary_value_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_certificate_t) -> *mut _cef_binary_value_t,
     >,
     pub get_pemencoded: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509certificate_t) -> *mut _cef_binary_value_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_certificate_t) -> *mut _cef_binary_value_t,
     >,
     pub get_issuer_chain_size: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_x509certificate_t) -> usize,
+        unsafe extern "stdcall" fn(self_: *mut _cef_x509_certificate_t) -> usize,
     >,
     pub get_derencoded_issuer_chain: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_x509certificate_t,
+            self_: *mut _cef_x509_certificate_t,
             chainCount: *mut usize,
             chain: *mut *mut _cef_binary_value_t,
         ),
     >,
     pub get_pemencoded_issuer_chain: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_x509certificate_t,
+            self_: *mut _cef_x509_certificate_t,
             chainCount: *mut usize,
             chain: *mut *mut _cef_binary_value_t,
         ),
     >,
 }
-impl From<_cef_x509certificate_t> for X509certificate {
-    fn from(value: _cef_x509certificate_t) -> Self {
+impl From<_cef_x509_certificate_t> for X509Certificate {
+    fn from(value: _cef_x509_certificate_t) -> Self {
         Self {
             base: value.base.into(),
             get_subject: value.get_subject.into(),
@@ -3874,9 +3979,9 @@ impl From<_cef_x509certificate_t> for X509certificate {
         }
     }
 }
-impl Into<_cef_x509certificate_t> for X509certificate {
-    fn into(self) -> _cef_x509certificate_t {
-        _cef_x509certificate_t {
+impl Into<_cef_x509_certificate_t> for X509Certificate {
+    fn into(self) -> _cef_x509_certificate_t {
+        _cef_x509_certificate_t {
             base: self.base.into(),
             get_subject: self.get_subject.into(),
             get_issuer: self.get_issuer.into(),
@@ -3891,7 +3996,7 @@ impl Into<_cef_x509certificate_t> for X509certificate {
         }
     }
 }
-impl Default for X509certificate {
+impl Default for X509Certificate {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -3914,7 +4019,7 @@ pub struct Sslstatus {
         unsafe extern "stdcall" fn(self_: *mut _cef_sslstatus_t) -> cef_ssl_content_status_t,
     >,
     pub get_x_509_certificate: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_sslstatus_t) -> *mut _cef_x509certificate_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_sslstatus_t) -> *mut _cef_x509_certificate_t,
     >,
 }
 impl From<_cef_sslstatus_t> for Sslstatus {
@@ -3925,7 +4030,7 @@ impl From<_cef_sslstatus_t> for Sslstatus {
             get_cert_status: value.get_cert_status.into(),
             get_sslversion: value.get_sslversion.into(),
             get_content_status: value.get_content_status.into(),
-            get_x_509_certificate: value.get_x509certificate.into(),
+            get_x_509_certificate: value.get_x509_certificate.into(),
         }
     }
 }
@@ -3937,7 +4042,7 @@ impl Into<_cef_sslstatus_t> for Sslstatus {
             get_cert_status: self.get_cert_status.into(),
             get_sslversion: self.get_sslversion.into(),
             get_content_status: self.get_content_status.into(),
-            get_x509certificate: self.get_x_509_certificate.into(),
+            get_x509_certificate: self.get_x_509_certificate.into(),
         }
     }
 }
@@ -8950,7 +9055,7 @@ pub struct Sslinfo {
         unsafe extern "stdcall" fn(self_: *mut _cef_sslinfo_t) -> cef_cert_status_t,
     >,
     pub get_x_509_certificate: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_sslinfo_t) -> *mut _cef_x509certificate_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_sslinfo_t) -> *mut _cef_x509_certificate_t,
     >,
 }
 impl From<_cef_sslinfo_t> for Sslinfo {
@@ -8958,7 +9063,7 @@ impl From<_cef_sslinfo_t> for Sslinfo {
         Self {
             base: value.base.into(),
             get_cert_status: value.get_cert_status.into(),
-            get_x_509_certificate: value.get_x509certificate.into(),
+            get_x_509_certificate: value.get_x509_certificate.into(),
         }
     }
 }
@@ -8967,7 +9072,7 @@ impl Into<_cef_sslinfo_t> for Sslinfo {
         _cef_sslinfo_t {
             base: self.base.into(),
             get_cert_status: self.get_cert_status.into(),
-            get_x509certificate: self.get_x_509_certificate.into(),
+            get_x509_certificate: self.get_x_509_certificate.into(),
         }
     }
 }
@@ -9019,7 +9124,7 @@ pub struct SelectClientCertificateCallback {
     pub select: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_select_client_certificate_callback_t,
-            cert: *mut _cef_x509certificate_t,
+            cert: *mut _cef_x509_certificate_t,
         ),
     >,
 }
@@ -9112,7 +9217,7 @@ pub struct RequestHandler {
             host: *const cef_string_t,
             port: ::std::os::raw::c_int,
             certificatesCount: usize,
-            certificates: *const *mut _cef_x509certificate_t,
+            certificates: *const *mut _cef_x509_certificate_t,
             callback: *mut _cef_select_client_certificate_callback_t,
         ) -> ::std::os::raw::c_int,
     >,
@@ -9672,50 +9777,50 @@ impl Default for TaskRunner {
     }
 }
 
-/// See [_cef_v8context_t] for more documentation.
+/// See [_cef_v8_context_t] for more documentation.
 #[derive(Clone)]
-pub struct V8context {
+pub struct V8Context {
     pub base: BaseRefCounted,
     pub get_task_runner: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8context_t) -> *mut _cef_task_runner_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_context_t) -> *mut _cef_task_runner_t,
     >,
     pub is_valid: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8context_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_context_t) -> ::std::os::raw::c_int,
     >,
     pub get_browser: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8context_t) -> *mut _cef_browser_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_context_t) -> *mut _cef_browser_t,
     >,
     pub get_frame: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8context_t) -> *mut _cef_frame_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_context_t) -> *mut _cef_frame_t,
     >,
     pub get_global: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8context_t) -> *mut _cef_v8value_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_context_t) -> *mut _cef_v8_value_t,
     >,
     pub enter: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8context_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_context_t) -> ::std::os::raw::c_int,
     >,
     pub exit: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8context_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_context_t) -> ::std::os::raw::c_int,
     >,
     pub is_same: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8context_t,
-            that: *mut _cef_v8context_t,
+            self_: *mut _cef_v8_context_t,
+            that: *mut _cef_v8_context_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub eval: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8context_t,
+            self_: *mut _cef_v8_context_t,
             code: *const cef_string_t,
             script_url: *const cef_string_t,
             start_line: ::std::os::raw::c_int,
-            retval: *mut *mut _cef_v8value_t,
-            exception: *mut *mut _cef_v8exception_t,
+            retval: *mut *mut _cef_v8_value_t,
+            exception: *mut *mut _cef_v8_exception_t,
         ) -> ::std::os::raw::c_int,
     >,
 }
-impl From<_cef_v8context_t> for V8context {
-    fn from(value: _cef_v8context_t) -> Self {
+impl From<_cef_v8_context_t> for V8Context {
+    fn from(value: _cef_v8_context_t) -> Self {
         Self {
             base: value.base.into(),
             get_task_runner: value.get_task_runner.into(),
@@ -9730,9 +9835,9 @@ impl From<_cef_v8context_t> for V8context {
         }
     }
 }
-impl Into<_cef_v8context_t> for V8context {
-    fn into(self) -> _cef_v8context_t {
-        _cef_v8context_t {
+impl Into<_cef_v8_context_t> for V8Context {
+    fn into(self) -> _cef_v8_context_t {
+        _cef_v8_context_t {
             base: self.base.into(),
             get_task_runner: self.get_task_runner.into(),
             is_valid: self.is_valid.into(),
@@ -9746,75 +9851,75 @@ impl Into<_cef_v8context_t> for V8context {
         }
     }
 }
-impl Default for V8context {
+impl Default for V8Context {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8handler_t] for more documentation.
+/// See [_cef_v8_handler_t] for more documentation.
 #[derive(Clone)]
-pub struct V8handler {
+pub struct V8Handler {
     pub base: BaseRefCounted,
     pub execute: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8handler_t,
+            self_: *mut _cef_v8_handler_t,
             name: *const cef_string_t,
-            object: *mut _cef_v8value_t,
+            object: *mut _cef_v8_value_t,
             argumentsCount: usize,
-            arguments: *const *mut _cef_v8value_t,
-            retval: *mut *mut _cef_v8value_t,
+            arguments: *const *mut _cef_v8_value_t,
+            retval: *mut *mut _cef_v8_value_t,
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
 }
-impl From<_cef_v8handler_t> for V8handler {
-    fn from(value: _cef_v8handler_t) -> Self {
+impl From<_cef_v8_handler_t> for V8Handler {
+    fn from(value: _cef_v8_handler_t) -> Self {
         Self {
             base: value.base.into(),
             execute: value.execute.into(),
         }
     }
 }
-impl Into<_cef_v8handler_t> for V8handler {
-    fn into(self) -> _cef_v8handler_t {
-        _cef_v8handler_t {
+impl Into<_cef_v8_handler_t> for V8Handler {
+    fn into(self) -> _cef_v8_handler_t {
+        _cef_v8_handler_t {
             base: self.base.into(),
             execute: self.execute.into(),
         }
     }
 }
-impl Default for V8handler {
+impl Default for V8Handler {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8accessor_t] for more documentation.
+/// See [_cef_v8_accessor_t] for more documentation.
 #[derive(Clone)]
-pub struct V8accessor {
+pub struct V8Accessor {
     pub base: BaseRefCounted,
     pub get: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8accessor_t,
+            self_: *mut _cef_v8_accessor_t,
             name: *const cef_string_t,
-            object: *mut _cef_v8value_t,
-            retval: *mut *mut _cef_v8value_t,
+            object: *mut _cef_v8_value_t,
+            retval: *mut *mut _cef_v8_value_t,
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub set: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8accessor_t,
+            self_: *mut _cef_v8_accessor_t,
             name: *const cef_string_t,
-            object: *mut _cef_v8value_t,
-            value: *mut _cef_v8value_t,
+            object: *mut _cef_v8_value_t,
+            value: *mut _cef_v8_value_t,
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
 }
-impl From<_cef_v8accessor_t> for V8accessor {
-    fn from(value: _cef_v8accessor_t) -> Self {
+impl From<_cef_v8_accessor_t> for V8Accessor {
+    fn from(value: _cef_v8_accessor_t) -> Self {
         Self {
             base: value.base.into(),
             get: value.get.into(),
@@ -9822,64 +9927,64 @@ impl From<_cef_v8accessor_t> for V8accessor {
         }
     }
 }
-impl Into<_cef_v8accessor_t> for V8accessor {
-    fn into(self) -> _cef_v8accessor_t {
-        _cef_v8accessor_t {
+impl Into<_cef_v8_accessor_t> for V8Accessor {
+    fn into(self) -> _cef_v8_accessor_t {
+        _cef_v8_accessor_t {
             base: self.base.into(),
             get: self.get.into(),
             set: self.set.into(),
         }
     }
 }
-impl Default for V8accessor {
+impl Default for V8Accessor {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8interceptor_t] for more documentation.
+/// See [_cef_v8_interceptor_t] for more documentation.
 #[derive(Clone)]
-pub struct V8interceptor {
+pub struct V8Interceptor {
     pub base: BaseRefCounted,
     pub get_byname: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8interceptor_t,
+            self_: *mut _cef_v8_interceptor_t,
             name: *const cef_string_t,
-            object: *mut _cef_v8value_t,
-            retval: *mut *mut _cef_v8value_t,
+            object: *mut _cef_v8_value_t,
+            retval: *mut *mut _cef_v8_value_t,
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub get_byindex: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8interceptor_t,
+            self_: *mut _cef_v8_interceptor_t,
             index: ::std::os::raw::c_int,
-            object: *mut _cef_v8value_t,
-            retval: *mut *mut _cef_v8value_t,
+            object: *mut _cef_v8_value_t,
+            retval: *mut *mut _cef_v8_value_t,
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub set_byname: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8interceptor_t,
+            self_: *mut _cef_v8_interceptor_t,
             name: *const cef_string_t,
-            object: *mut _cef_v8value_t,
-            value: *mut _cef_v8value_t,
+            object: *mut _cef_v8_value_t,
+            value: *mut _cef_v8_value_t,
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub set_byindex: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8interceptor_t,
+            self_: *mut _cef_v8_interceptor_t,
             index: ::std::os::raw::c_int,
-            object: *mut _cef_v8value_t,
-            value: *mut _cef_v8value_t,
+            object: *mut _cef_v8_value_t,
+            value: *mut _cef_v8_value_t,
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
 }
-impl From<_cef_v8interceptor_t> for V8interceptor {
-    fn from(value: _cef_v8interceptor_t) -> Self {
+impl From<_cef_v8_interceptor_t> for V8Interceptor {
+    fn from(value: _cef_v8_interceptor_t) -> Self {
         Self {
             base: value.base.into(),
             get_byname: value.get_byname.into(),
@@ -9889,9 +9994,9 @@ impl From<_cef_v8interceptor_t> for V8interceptor {
         }
     }
 }
-impl Into<_cef_v8interceptor_t> for V8interceptor {
-    fn into(self) -> _cef_v8interceptor_t {
-        _cef_v8interceptor_t {
+impl Into<_cef_v8_interceptor_t> for V8Interceptor {
+    fn into(self) -> _cef_v8_interceptor_t {
+        _cef_v8_interceptor_t {
             base: self.base.into(),
             get_byname: self.get_byname.into(),
             get_byindex: self.get_byindex.into(),
@@ -9900,43 +10005,43 @@ impl Into<_cef_v8interceptor_t> for V8interceptor {
         }
     }
 }
-impl Default for V8interceptor {
+impl Default for V8Interceptor {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8exception_t] for more documentation.
+/// See [_cef_v8_exception_t] for more documentation.
 #[derive(Clone)]
-pub struct V8exception {
+pub struct V8Exception {
     pub base: BaseRefCounted,
     pub get_message: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> cef_string_userfree_t,
     >,
     pub get_source_line: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> cef_string_userfree_t,
     >,
     pub get_script_resource_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> cef_string_userfree_t,
     >,
     pub get_line_number: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> ::std::os::raw::c_int,
     >,
     pub get_start_position: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> ::std::os::raw::c_int,
     >,
     pub get_end_position: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> ::std::os::raw::c_int,
     >,
     pub get_start_column: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> ::std::os::raw::c_int,
     >,
     pub get_end_column: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8exception_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> ::std::os::raw::c_int,
     >,
 }
-impl From<_cef_v8exception_t> for V8exception {
-    fn from(value: _cef_v8exception_t) -> Self {
+impl From<_cef_v8_exception_t> for V8Exception {
+    fn from(value: _cef_v8_exception_t) -> Self {
         Self {
             base: value.base.into(),
             get_message: value.get_message.into(),
@@ -9950,9 +10055,9 @@ impl From<_cef_v8exception_t> for V8exception {
         }
     }
 }
-impl Into<_cef_v8exception_t> for V8exception {
-    fn into(self) -> _cef_v8exception_t {
-        _cef_v8exception_t {
+impl Into<_cef_v8_exception_t> for V8Exception {
+    fn into(self) -> _cef_v8_exception_t {
+        _cef_v8_exception_t {
             base: self.base.into(),
             get_message: self.get_message.into(),
             get_source_line: self.get_source_line.into(),
@@ -9965,269 +10070,269 @@ impl Into<_cef_v8exception_t> for V8exception {
         }
     }
 }
-impl Default for V8exception {
+impl Default for V8Exception {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8array_buffer_release_callback_t] for more documentation.
+/// See [_cef_v8_array_buffer_release_callback_t] for more documentation.
 #[derive(Clone)]
-pub struct V8arrayBufferReleaseCallback {
+pub struct V8ArrayBufferReleaseCallback {
     pub base: BaseRefCounted,
     pub release_buffer: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8array_buffer_release_callback_t,
+            self_: *mut _cef_v8_array_buffer_release_callback_t,
             buffer: *mut ::std::os::raw::c_void,
         ),
     >,
 }
-impl From<_cef_v8array_buffer_release_callback_t> for V8arrayBufferReleaseCallback {
-    fn from(value: _cef_v8array_buffer_release_callback_t) -> Self {
+impl From<_cef_v8_array_buffer_release_callback_t> for V8ArrayBufferReleaseCallback {
+    fn from(value: _cef_v8_array_buffer_release_callback_t) -> Self {
         Self {
             base: value.base.into(),
             release_buffer: value.release_buffer.into(),
         }
     }
 }
-impl Into<_cef_v8array_buffer_release_callback_t> for V8arrayBufferReleaseCallback {
-    fn into(self) -> _cef_v8array_buffer_release_callback_t {
-        _cef_v8array_buffer_release_callback_t {
+impl Into<_cef_v8_array_buffer_release_callback_t> for V8ArrayBufferReleaseCallback {
+    fn into(self) -> _cef_v8_array_buffer_release_callback_t {
+        _cef_v8_array_buffer_release_callback_t {
             base: self.base.into(),
             release_buffer: self.release_buffer.into(),
         }
     }
 }
-impl Default for V8arrayBufferReleaseCallback {
+impl Default for V8ArrayBufferReleaseCallback {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8value_t] for more documentation.
+/// See [_cef_v8_value_t] for more documentation.
 #[derive(Clone)]
-pub struct V8value {
+pub struct V8Value {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_undefined: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_null: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_bool: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_int: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_uint: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_double: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_date: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_string: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_object: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_array: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_array_buffer: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_function: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_promise: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub is_same: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
-            that: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
+            that: *mut _cef_v8_value_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub get_bool_value: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub get_int_value:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> i32>,
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> i32>,
     pub get_uint_value:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> u32>,
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> u32>,
     pub get_double_value:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> f64>,
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> f64>,
     pub get_date_value: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> cef_basetime_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> cef_basetime_t,
     >,
     pub get_string_value: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> cef_string_userfree_t,
     >,
     pub is_user_created: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub has_exception: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub get_exception: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> *mut _cef_v8exception_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> *mut _cef_v8_exception_t,
     >,
     pub clear_exception: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub will_rethrow_exceptions: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub set_rethrow_exceptions: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             rethrow: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
     pub has_value_bykey: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             key: *const cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub has_value_byindex: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             index: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
     pub delete_value_bykey: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             key: *const cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub delete_value_byindex: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             index: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
     pub get_value_bykey: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             key: *const cef_string_t,
-        ) -> *mut _cef_v8value_t,
+        ) -> *mut _cef_v8_value_t,
     >,
     pub get_value_byindex: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             index: ::std::os::raw::c_int,
-        ) -> *mut _cef_v8value_t,
+        ) -> *mut _cef_v8_value_t,
     >,
     pub set_value_bykey: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             key: *const cef_string_t,
-            value: *mut _cef_v8value_t,
+            value: *mut _cef_v8_value_t,
             attribute: cef_v8_propertyattribute_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub set_value_byindex: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             index: ::std::os::raw::c_int,
-            value: *mut _cef_v8value_t,
+            value: *mut _cef_v8_value_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub set_value_byaccessor: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             key: *const cef_string_t,
             attribute: cef_v8_propertyattribute_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub get_keys: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             keys: cef_string_list_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub set_user_data: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             user_data: *mut _cef_base_ref_counted_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub get_user_data: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> *mut _cef_base_ref_counted_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> *mut _cef_base_ref_counted_t,
     >,
     pub get_externally_allocated_memory: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub adjust_externally_allocated_memory: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             change_in_bytes: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
     pub get_array_length: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub get_array_buffer_release_callback: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
-        ) -> *mut _cef_v8array_buffer_release_callback_t,
+            self_: *mut _cef_v8_value_t,
+        ) -> *mut _cef_v8_array_buffer_release_callback_t,
     >,
     pub neuter_array_buffer: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int,
     >,
     pub get_array_buffer_byte_length:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> usize>,
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> usize>,
     pub get_array_buffer_data: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> *mut ::std::os::raw::c_void,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> *mut ::std::os::raw::c_void,
     >,
     pub get_function_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> cef_string_userfree_t,
     >,
     pub get_function_handler: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8value_t) -> *mut _cef_v8handler_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_value_t) -> *mut _cef_v8_handler_t,
     >,
     pub execute_function: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
-            object: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
+            object: *mut _cef_v8_value_t,
             argumentsCount: usize,
-            arguments: *const *mut _cef_v8value_t,
-        ) -> *mut _cef_v8value_t,
+            arguments: *const *mut _cef_v8_value_t,
+        ) -> *mut _cef_v8_value_t,
     >,
     pub execute_function_with_context: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
-            context: *mut _cef_v8context_t,
-            object: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
+            context: *mut _cef_v8_context_t,
+            object: *mut _cef_v8_value_t,
             argumentsCount: usize,
-            arguments: *const *mut _cef_v8value_t,
-        ) -> *mut _cef_v8value_t,
+            arguments: *const *mut _cef_v8_value_t,
+        ) -> *mut _cef_v8_value_t,
     >,
     pub resolve_promise: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
-            arg: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
+            arg: *mut _cef_v8_value_t,
         ) -> ::std::os::raw::c_int,
     >,
     pub reject_promise: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8value_t,
+            self_: *mut _cef_v8_value_t,
             errorMsg: *const cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
 }
-impl From<_cef_v8value_t> for V8value {
-    fn from(value: _cef_v8value_t) -> Self {
+impl From<_cef_v8_value_t> for V8Value {
+    fn from(value: _cef_v8_value_t) -> Self {
         Self {
             base: value.base.into(),
             is_valid: value.is_valid.into(),
@@ -10285,9 +10390,9 @@ impl From<_cef_v8value_t> for V8value {
         }
     }
 }
-impl Into<_cef_v8value_t> for V8value {
-    fn into(self) -> _cef_v8value_t {
-        _cef_v8value_t {
+impl Into<_cef_v8_value_t> for V8Value {
+    fn into(self) -> _cef_v8_value_t {
+        _cef_v8_value_t {
             base: self.base.into(),
             is_valid: self.is_valid.into(),
             is_undefined: self.is_undefined.into(),
@@ -10344,31 +10449,31 @@ impl Into<_cef_v8value_t> for V8value {
         }
     }
 }
-impl Default for V8value {
+impl Default for V8Value {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8stack_trace_t] for more documentation.
+/// See [_cef_v8_stack_trace_t] for more documentation.
 #[derive(Clone)]
-pub struct V8stackTrace {
+pub struct V8StackTrace {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_trace_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_trace_t) -> ::std::os::raw::c_int,
     >,
     pub get_frame_count: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_trace_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_trace_t) -> ::std::os::raw::c_int,
     >,
     pub get_frame: ::std::option::Option<
         unsafe extern "stdcall" fn(
-            self_: *mut _cef_v8stack_trace_t,
+            self_: *mut _cef_v8_stack_trace_t,
             index: ::std::os::raw::c_int,
-        ) -> *mut _cef_v8stack_frame_t,
+        ) -> *mut _cef_v8_stack_frame_t,
     >,
 }
-impl From<_cef_v8stack_trace_t> for V8stackTrace {
-    fn from(value: _cef_v8stack_trace_t) -> Self {
+impl From<_cef_v8_stack_trace_t> for V8StackTrace {
+    fn from(value: _cef_v8_stack_trace_t) -> Self {
         Self {
             base: value.base.into(),
             is_valid: value.is_valid.into(),
@@ -10377,9 +10482,9 @@ impl From<_cef_v8stack_trace_t> for V8stackTrace {
         }
     }
 }
-impl Into<_cef_v8stack_trace_t> for V8stackTrace {
-    fn into(self) -> _cef_v8stack_trace_t {
-        _cef_v8stack_trace_t {
+impl Into<_cef_v8_stack_trace_t> for V8StackTrace {
+    fn into(self) -> _cef_v8_stack_trace_t {
+        _cef_v8_stack_trace_t {
             base: self.base.into(),
             is_valid: self.is_valid.into(),
             get_frame_count: self.get_frame_count.into(),
@@ -10387,43 +10492,43 @@ impl Into<_cef_v8stack_trace_t> for V8stackTrace {
         }
     }
 }
-impl Default for V8stackTrace {
+impl Default for V8StackTrace {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8stack_frame_t] for more documentation.
+/// See [_cef_v8_stack_frame_t] for more documentation.
 #[derive(Clone)]
-pub struct V8stackFrame {
+pub struct V8StackFrame {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> ::std::os::raw::c_int,
     >,
     pub get_script_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> cef_string_userfree_t,
     >,
     pub get_script_name_or_source_url: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> cef_string_userfree_t,
     >,
     pub get_function_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> cef_string_userfree_t,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> cef_string_userfree_t,
     >,
     pub get_line_number: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> ::std::os::raw::c_int,
     >,
     pub get_column: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> ::std::os::raw::c_int,
     >,
     pub is_eval: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> ::std::os::raw::c_int,
     >,
     pub is_constructor: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_v8stack_frame_t) -> ::std::os::raw::c_int,
+        unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> ::std::os::raw::c_int,
     >,
 }
-impl From<_cef_v8stack_frame_t> for V8stackFrame {
-    fn from(value: _cef_v8stack_frame_t) -> Self {
+impl From<_cef_v8_stack_frame_t> for V8StackFrame {
+    fn from(value: _cef_v8_stack_frame_t) -> Self {
         Self {
             base: value.base.into(),
             is_valid: value.is_valid.into(),
@@ -10437,9 +10542,9 @@ impl From<_cef_v8stack_frame_t> for V8stackFrame {
         }
     }
 }
-impl Into<_cef_v8stack_frame_t> for V8stackFrame {
-    fn into(self) -> _cef_v8stack_frame_t {
-        _cef_v8stack_frame_t {
+impl Into<_cef_v8_stack_frame_t> for V8StackFrame {
+    fn into(self) -> _cef_v8_stack_frame_t {
+        _cef_v8_stack_frame_t {
             base: self.base.into(),
             is_valid: self.is_valid.into(),
             get_script_name: self.get_script_name.into(),
@@ -10452,7 +10557,7 @@ impl Into<_cef_v8stack_frame_t> for V8stackFrame {
         }
     }
 }
-impl Default for V8stackFrame {
+impl Default for V8StackFrame {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -10488,7 +10593,7 @@ pub struct RenderProcessHandler {
             self_: *mut _cef_render_process_handler_t,
             browser: *mut _cef_browser_t,
             frame: *mut _cef_frame_t,
-            context: *mut _cef_v8context_t,
+            context: *mut _cef_v8_context_t,
         ),
     >,
     pub on_context_released: ::std::option::Option<
@@ -10496,7 +10601,7 @@ pub struct RenderProcessHandler {
             self_: *mut _cef_render_process_handler_t,
             browser: *mut _cef_browser_t,
             frame: *mut _cef_frame_t,
-            context: *mut _cef_v8context_t,
+            context: *mut _cef_v8_context_t,
         ),
     >,
     pub on_uncaught_exception: ::std::option::Option<
@@ -10504,9 +10609,9 @@ pub struct RenderProcessHandler {
             self_: *mut _cef_render_process_handler_t,
             browser: *mut _cef_browser_t,
             frame: *mut _cef_frame_t,
-            context: *mut _cef_v8context_t,
-            exception: *mut _cef_v8exception_t,
-            stackTrace: *mut _cef_v8stack_trace_t,
+            context: *mut _cef_v8_context_t,
+            exception: *mut _cef_v8_exception_t,
+            stackTrace: *mut _cef_v8_stack_trace_t,
         ),
     >,
     pub on_focused_node_changed: ::std::option::Option<
@@ -15290,7 +15395,7 @@ impl Into<cef_text_field_commands_t> for TextFieldCommands {
 }
 impl Default for TextFieldCommands {
     fn default() -> Self {
-        Self(cef_text_field_commands_t::CEF_TFC_CUT)
+        Self(cef_text_field_commands_t::CEF_TFC_UNKNOWN)
     }
 }
 
@@ -15319,7 +15424,7 @@ impl Into<cef_chrome_toolbar_type_t> for ChromeToolbarType {
 }
 impl Default for ChromeToolbarType {
     fn default() -> Self {
-        Self(cef_chrome_toolbar_type_t::CEF_CTT_NONE)
+        Self(cef_chrome_toolbar_type_t::CEF_CTT_UNKNOWN)
     }
 }
 
@@ -15772,6 +15877,28 @@ pub fn sandbox_info_destroy(sandbox_info: *mut u8) {
         let arg_sandbox_info = sandbox_info;
         let arg_sandbox_info = arg_sandbox_info as *mut _;
         let result = cef_sandbox_info_destroy(arg_sandbox_info);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_api_hash] for more documentation.
+pub fn api_hash(
+    version: ::std::os::raw::c_int,
+    entry: ::std::os::raw::c_int,
+) -> *const ::std::os::raw::c_char {
+    unsafe {
+        let (arg_version, arg_entry) = (version, entry);
+        let arg_version = arg_version;
+        let arg_entry = arg_entry;
+        let result = cef_api_hash(arg_version, arg_entry);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_api_version] for more documentation.
+pub fn api_version() -> ::std::os::raw::c_int {
+    unsafe {
+        let result = cef_api_version();
         result.as_wrapper()
     }
 }
@@ -17093,8 +17220,8 @@ pub fn request_context_create_context(
     }
 }
 
-/// See [cef_create_context_shared] for more documentation.
-pub fn create_context_shared(
+/// See [cef_request_context_cef_create_context_shared] for more documentation.
+pub fn request_context_cef_create_context_shared(
     other: Option<&mut RequestContext>,
     handler: Option<&mut RequestContextHandler>,
 ) -> Option<RequestContext> {
@@ -17110,7 +17237,7 @@ pub fn create_context_shared(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_create_context_shared(arg_other, arg_handler);
+        let result = cef_request_context_cef_create_context_shared(arg_other, arg_handler);
         if result.is_null() {
             None
         } else {
@@ -17412,10 +17539,10 @@ pub fn post_delayed_task(
     }
 }
 
-/// See [cef_v8context_get_current_context] for more documentation.
-pub fn v8context_get_current_context() -> Option<V8context> {
+/// See [cef_v8_context_get_current_context] for more documentation.
+pub fn v8_context_get_current_context() -> Option<V8Context> {
     unsafe {
-        let result = cef_v8context_get_current_context();
+        let result = cef_v8_context_get_current_context();
         if result.is_null() {
             None
         } else {
@@ -17424,10 +17551,10 @@ pub fn v8context_get_current_context() -> Option<V8context> {
     }
 }
 
-/// See [cef_v8context_get_entered_context] for more documentation.
-pub fn v8context_get_entered_context() -> Option<V8context> {
+/// See [cef_v8_context_get_entered_context] for more documentation.
+pub fn v8_context_get_entered_context() -> Option<V8Context> {
     unsafe {
-        let result = cef_v8context_get_entered_context();
+        let result = cef_v8_context_get_entered_context();
         if result.is_null() {
             None
         } else {
@@ -17436,18 +17563,18 @@ pub fn v8context_get_entered_context() -> Option<V8context> {
     }
 }
 
-/// See [cef_v8context_in_context] for more documentation.
-pub fn v8context_in_context() -> ::std::os::raw::c_int {
+/// See [cef_v8_context_in_context] for more documentation.
+pub fn v8_context_in_context() -> ::std::os::raw::c_int {
     unsafe {
-        let result = cef_v8context_in_context();
+        let result = cef_v8_context_in_context();
         result.as_wrapper()
     }
 }
 
-/// See [cef_v8value_create_undefined] for more documentation.
-pub fn v8value_create_undefined() -> Option<V8value> {
+/// See [cef_v8_value_create_undefined] for more documentation.
+pub fn v8_value_create_undefined() -> Option<V8Value> {
     unsafe {
-        let result = cef_v8value_create_undefined();
+        let result = cef_v8_value_create_undefined();
         if result.is_null() {
             None
         } else {
@@ -17456,10 +17583,10 @@ pub fn v8value_create_undefined() -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_null] for more documentation.
-pub fn v8value_create_null() -> Option<V8value> {
+/// See [cef_v8_value_create_null] for more documentation.
+pub fn v8_value_create_null() -> Option<V8Value> {
     unsafe {
-        let result = cef_v8value_create_null();
+        let result = cef_v8_value_create_null();
         if result.is_null() {
             None
         } else {
@@ -17468,26 +17595,12 @@ pub fn v8value_create_null() -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_bool] for more documentation.
-pub fn v8value_create_bool(value: ::std::os::raw::c_int) -> Option<V8value> {
-    unsafe {
-        let arg_value = value;
-        let arg_value = arg_value;
-        let result = cef_v8value_create_bool(arg_value);
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
-    }
-}
-
-/// See [cef_v8value_create_int] for more documentation.
-pub fn v8value_create_int(value: i32) -> Option<V8value> {
+/// See [cef_v8_value_create_bool] for more documentation.
+pub fn v8_value_create_bool(value: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value;
-        let result = cef_v8value_create_int(arg_value);
+        let result = cef_v8_value_create_bool(arg_value);
         if result.is_null() {
             None
         } else {
@@ -17496,12 +17609,12 @@ pub fn v8value_create_int(value: i32) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_uint] for more documentation.
-pub fn v8value_create_uint(value: u32) -> Option<V8value> {
+/// See [cef_v8_value_create_int] for more documentation.
+pub fn v8_value_create_int(value: i32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value;
-        let result = cef_v8value_create_uint(arg_value);
+        let result = cef_v8_value_create_int(arg_value);
         if result.is_null() {
             None
         } else {
@@ -17510,12 +17623,12 @@ pub fn v8value_create_uint(value: u32) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_double] for more documentation.
-pub fn v8value_create_double(value: f64) -> Option<V8value> {
+/// See [cef_v8_value_create_uint] for more documentation.
+pub fn v8_value_create_uint(value: u32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value;
-        let result = cef_v8value_create_double(arg_value);
+        let result = cef_v8_value_create_uint(arg_value);
         if result.is_null() {
             None
         } else {
@@ -17524,11 +17637,25 @@ pub fn v8value_create_double(value: f64) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_date] for more documentation.
-pub fn v8value_create_date(date: _cef_basetime_t) -> Option<V8value> {
+/// See [cef_v8_value_create_double] for more documentation.
+pub fn v8_value_create_double(value: f64) -> Option<V8Value> {
+    unsafe {
+        let arg_value = value;
+        let arg_value = arg_value;
+        let result = cef_v8_value_create_double(arg_value);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.as_wrapper())
+        }
+    }
+}
+
+/// See [cef_v8_value_create_date] for more documentation.
+pub fn v8_value_create_date(date: _cef_basetime_t) -> Option<V8Value> {
     unsafe {
         let arg_date = date;
-        let result = cef_v8value_create_date(arg_date);
+        let result = cef_v8_value_create_date(arg_date);
         if result.is_null() {
             None
         } else {
@@ -17537,14 +17664,14 @@ pub fn v8value_create_date(date: _cef_basetime_t) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_string] for more documentation.
-pub fn v8value_create_string(value: Option<&CefStringUtf16>) -> Option<V8value> {
+/// See [cef_v8_value_create_string] for more documentation.
+pub fn v8_value_create_string(value: Option<&CefStringUtf16>) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value
             .map(|arg| arg.as_raw())
             .unwrap_or(std::ptr::null());
-        let result = cef_v8value_create_string(arg_value);
+        let result = cef_v8_value_create_string(arg_value);
         if result.is_null() {
             None
         } else {
@@ -17553,11 +17680,11 @@ pub fn v8value_create_string(value: Option<&CefStringUtf16>) -> Option<V8value> 
     }
 }
 
-/// See [cef_v8value_create_object] for more documentation.
-pub fn v8value_create_object(
-    accessor: Option<&mut V8accessor>,
-    interceptor: Option<&mut V8interceptor>,
-) -> Option<V8value> {
+/// See [cef_v8_value_create_object] for more documentation.
+pub fn v8_value_create_object(
+    accessor: Option<&mut V8Accessor>,
+    interceptor: Option<&mut V8Interceptor>,
+) -> Option<V8Value> {
     unsafe {
         let (arg_accessor, arg_interceptor) = (accessor, interceptor);
         let mut arg_accessor = arg_accessor.cloned().map(|arg| arg.into());
@@ -17570,7 +17697,7 @@ pub fn v8value_create_object(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_v8value_create_object(arg_accessor, arg_interceptor);
+        let result = cef_v8_value_create_object(arg_accessor, arg_interceptor);
         if result.is_null() {
             None
         } else {
@@ -17579,12 +17706,12 @@ pub fn v8value_create_object(
     }
 }
 
-/// See [cef_v8value_create_array] for more documentation.
-pub fn v8value_create_array(length: ::std::os::raw::c_int) -> Option<V8value> {
+/// See [cef_v8_value_create_array] for more documentation.
+pub fn v8_value_create_array(length: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_length = length;
         let arg_length = arg_length;
-        let result = cef_v8value_create_array(arg_length);
+        let result = cef_v8_value_create_array(arg_length);
         if result.is_null() {
             None
         } else {
@@ -17593,12 +17720,12 @@ pub fn v8value_create_array(length: ::std::os::raw::c_int) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_array_buffer] for more documentation.
-pub fn v8value_create_array_buffer(
+/// See [cef_v8_value_create_array_buffer] for more documentation.
+pub fn v8_value_create_array_buffer(
     buffer: *mut u8,
     length: usize,
-    release_callback: Option<&mut V8arrayBufferReleaseCallback>,
-) -> Option<V8value> {
+    release_callback: Option<&mut V8ArrayBufferReleaseCallback>,
+) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length, arg_release_callback) = (buffer, length, release_callback);
         let arg_buffer = arg_buffer as *mut _;
@@ -17608,7 +17735,7 @@ pub fn v8value_create_array_buffer(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_v8value_create_array_buffer(arg_buffer, arg_length, arg_release_callback);
+        let result = cef_v8_value_create_array_buffer(arg_buffer, arg_length, arg_release_callback);
         if result.is_null() {
             None
         } else {
@@ -17617,13 +17744,13 @@ pub fn v8value_create_array_buffer(
     }
 }
 
-/// See [cef_v8value_create_array_buffer_with_copy] for more documentation.
-pub fn v8value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8value> {
+/// See [cef_v8_value_create_array_buffer_with_copy] for more documentation.
+pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length) = (buffer, length);
         let arg_buffer = arg_buffer as *mut _;
         let arg_length = arg_length;
-        let result = cef_v8value_create_array_buffer_with_copy(arg_buffer, arg_length);
+        let result = cef_v8_value_create_array_buffer_with_copy(arg_buffer, arg_length);
         if result.is_null() {
             None
         } else {
@@ -17632,11 +17759,11 @@ pub fn v8value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> 
     }
 }
 
-/// See [cef_v8value_create_function] for more documentation.
-pub fn v8value_create_function(
+/// See [cef_v8_value_create_function] for more documentation.
+pub fn v8_value_create_function(
     name: Option<&CefStringUtf16>,
-    handler: Option<&mut V8handler>,
-) -> Option<V8value> {
+    handler: Option<&mut V8Handler>,
+) -> Option<V8Value> {
     unsafe {
         let (arg_name, arg_handler) = (name, handler);
         let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
@@ -17645,7 +17772,7 @@ pub fn v8value_create_function(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_v8value_create_function(arg_name, arg_handler);
+        let result = cef_v8_value_create_function(arg_name, arg_handler);
         if result.is_null() {
             None
         } else {
@@ -17654,10 +17781,10 @@ pub fn v8value_create_function(
     }
 }
 
-/// See [cef_v8value_create_promise] for more documentation.
-pub fn v8value_create_promise() -> Option<V8value> {
+/// See [cef_v8_value_create_promise] for more documentation.
+pub fn v8_value_create_promise() -> Option<V8Value> {
     unsafe {
-        let result = cef_v8value_create_promise();
+        let result = cef_v8_value_create_promise();
         if result.is_null() {
             None
         } else {
@@ -17666,12 +17793,12 @@ pub fn v8value_create_promise() -> Option<V8value> {
     }
 }
 
-/// See [cef_v8stack_trace_get_current] for more documentation.
-pub fn v8stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V8stackTrace> {
+/// See [cef_v8_stack_trace_get_current] for more documentation.
+pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V8StackTrace> {
     unsafe {
         let arg_frame_limit = frame_limit;
         let arg_frame_limit = arg_frame_limit;
-        let result = cef_v8stack_trace_get_current(arg_frame_limit);
+        let result = cef_v8_stack_trace_get_current(arg_frame_limit);
         if result.is_null() {
             None
         } else {
@@ -17684,7 +17811,7 @@ pub fn v8stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V
 pub fn register_extension(
     extension_name: Option<&CefStringUtf16>,
     javascript_code: Option<&CefStringUtf16>,
-    handler: Option<&mut V8handler>,
+    handler: Option<&mut V8Handler>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_extension_name, arg_javascript_code, arg_handler) =

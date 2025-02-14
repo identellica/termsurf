@@ -257,6 +257,7 @@ impl Default for Insets {
 /// See [_cef_accelerated_paint_info_common_t] for more documentation.
 #[derive(Clone)]
 pub struct AcceleratedPaintInfoCommon {
+    pub size: usize,
     pub timestamp: u64,
     pub coded_size: Size,
     pub visible_rect: Rect,
@@ -273,6 +274,7 @@ pub struct AcceleratedPaintInfoCommon {
 impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
     fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
         Self {
+            size: value.size.into(),
             timestamp: value.timestamp.into(),
             coded_size: value.coded_size.into(),
             visible_rect: value.visible_rect.into(),
@@ -291,6 +293,7 @@ impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
 impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
     fn into(self) -> _cef_accelerated_paint_info_common_t {
         _cef_accelerated_paint_info_common_t {
+            size: self.size.into(),
             timestamp: self.timestamp.into(),
             coded_size: self.coded_size.into(),
             visible_rect: self.visible_rect.into(),
@@ -308,7 +311,10 @@ impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
 }
 impl Default for AcceleratedPaintInfoCommon {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_accelerated_paint_info_common_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -343,6 +349,7 @@ impl Default for MainArgs {
 /// See [_cef_window_info_t] for more documentation.
 #[derive(Clone)]
 pub struct WindowInfo {
+    pub size: usize,
     pub window_name: CefStringUtf16,
     pub bounds: Rect,
     pub hidden: ::std::os::raw::c_int,
@@ -356,6 +363,7 @@ pub struct WindowInfo {
 impl From<_cef_window_info_t> for WindowInfo {
     fn from(value: _cef_window_info_t) -> Self {
         Self {
+            size: value.size.into(),
             window_name: value.window_name.into(),
             bounds: value.bounds.into(),
             hidden: value.hidden.into(),
@@ -371,6 +379,7 @@ impl From<_cef_window_info_t> for WindowInfo {
 impl Into<_cef_window_info_t> for WindowInfo {
     fn into(self) -> _cef_window_info_t {
         _cef_window_info_t {
+            size: self.size.into(),
             window_name: self.window_name.into(),
             bounds: self.bounds.into(),
             hidden: self.hidden.into(),
@@ -385,13 +394,17 @@ impl Into<_cef_window_info_t> for WindowInfo {
 }
 impl Default for WindowInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_window_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_accelerated_paint_info_t] for more documentation.
 #[derive(Clone)]
 pub struct AcceleratedPaintInfo {
+    pub size: usize,
     pub shared_texture_io_surface: *mut ::std::os::raw::c_void,
     pub format: ColorType,
     pub extra: AcceleratedPaintInfoCommon,
@@ -399,6 +412,7 @@ pub struct AcceleratedPaintInfo {
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
         Self {
+            size: value.size.into(),
             shared_texture_io_surface: value.shared_texture_io_surface.into(),
             format: value.format.into(),
             extra: value.extra.into(),
@@ -408,6 +422,7 @@ impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
 impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn into(self) -> _cef_accelerated_paint_info_t {
         _cef_accelerated_paint_info_t {
+            size: self.size.into(),
             shared_texture_io_surface: self.shared_texture_io_surface.into(),
             format: self.format.into(),
             extra: self.extra.into(),
@@ -416,7 +431,10 @@ impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
 }
 impl Default for AcceleratedPaintInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_accelerated_paint_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -690,6 +708,7 @@ impl Default for BrowserSettings {
 /// See [_cef_urlparts_t] for more documentation.
 #[derive(Clone)]
 pub struct Urlparts {
+    pub size: usize,
     pub spec: CefStringUtf16,
     pub scheme: CefStringUtf16,
     pub username: CefStringUtf16,
@@ -704,6 +723,7 @@ pub struct Urlparts {
 impl From<_cef_urlparts_t> for Urlparts {
     fn from(value: _cef_urlparts_t) -> Self {
         Self {
+            size: value.size.into(),
             spec: value.spec.into(),
             scheme: value.scheme.into(),
             username: value.username.into(),
@@ -720,6 +740,7 @@ impl From<_cef_urlparts_t> for Urlparts {
 impl Into<_cef_urlparts_t> for Urlparts {
     fn into(self) -> _cef_urlparts_t {
         _cef_urlparts_t {
+            size: self.size.into(),
             spec: self.spec.into(),
             scheme: self.scheme.into(),
             username: self.username.into(),
@@ -735,13 +756,17 @@ impl Into<_cef_urlparts_t> for Urlparts {
 }
 impl Default for Urlparts {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_urlparts_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_cookie_t] for more documentation.
 #[derive(Clone)]
 pub struct Cookie {
+    pub size: usize,
     pub name: CefStringUtf16,
     pub value: CefStringUtf16,
     pub domain: CefStringUtf16,
@@ -758,6 +783,7 @@ pub struct Cookie {
 impl From<_cef_cookie_t> for Cookie {
     fn from(value: _cef_cookie_t) -> Self {
         Self {
+            size: value.size.into(),
             name: value.name.into(),
             value: value.value.into(),
             domain: value.domain.into(),
@@ -776,6 +802,7 @@ impl From<_cef_cookie_t> for Cookie {
 impl Into<_cef_cookie_t> for Cookie {
     fn into(self) -> _cef_cookie_t {
         _cef_cookie_t {
+            size: self.size.into(),
             name: self.name.into(),
             value: self.value.into(),
             domain: self.domain.into(),
@@ -793,7 +820,10 @@ impl Into<_cef_cookie_t> for Cookie {
 }
 impl Default for Cookie {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_cookie_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -828,6 +858,7 @@ impl Default for DraggableRegion {
 /// See [_cef_screen_info_t] for more documentation.
 #[derive(Clone)]
 pub struct ScreenInfo {
+    pub size: usize,
     pub device_scale_factor: f32,
     pub depth: ::std::os::raw::c_int,
     pub depth_per_component: ::std::os::raw::c_int,
@@ -838,6 +869,7 @@ pub struct ScreenInfo {
 impl From<_cef_screen_info_t> for ScreenInfo {
     fn from(value: _cef_screen_info_t) -> Self {
         Self {
+            size: value.size.into(),
             device_scale_factor: value.device_scale_factor.into(),
             depth: value.depth.into(),
             depth_per_component: value.depth_per_component.into(),
@@ -850,6 +882,7 @@ impl From<_cef_screen_info_t> for ScreenInfo {
 impl Into<_cef_screen_info_t> for ScreenInfo {
     fn into(self) -> _cef_screen_info_t {
         _cef_screen_info_t {
+            size: self.size.into(),
             device_scale_factor: self.device_scale_factor.into(),
             depth: self.depth.into(),
             depth_per_component: self.depth_per_component.into(),
@@ -861,13 +894,17 @@ impl Into<_cef_screen_info_t> for ScreenInfo {
 }
 impl Default for ScreenInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_screen_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_linux_window_properties_t] for more documentation.
 #[derive(Clone)]
 pub struct LinuxWindowProperties {
+    pub size: usize,
     pub wayland_app_id: CefStringUtf16,
     pub wm_class_class: CefStringUtf16,
     pub wm_class_name: CefStringUtf16,
@@ -876,6 +913,7 @@ pub struct LinuxWindowProperties {
 impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn from(value: _cef_linux_window_properties_t) -> Self {
         Self {
+            size: value.size.into(),
             wayland_app_id: value.wayland_app_id.into(),
             wm_class_class: value.wm_class_class.into(),
             wm_class_name: value.wm_class_name.into(),
@@ -886,6 +924,7 @@ impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
 impl Into<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn into(self) -> _cef_linux_window_properties_t {
         _cef_linux_window_properties_t {
+            size: self.size.into(),
             wayland_app_id: self.wayland_app_id.into(),
             wm_class_class: self.wm_class_class.into(),
             wm_class_name: self.wm_class_name.into(),
@@ -895,7 +934,10 @@ impl Into<_cef_linux_window_properties_t> for LinuxWindowProperties {
 }
 impl Default for LinuxWindowProperties {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_linux_window_properties_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -985,6 +1027,7 @@ impl Default for TouchEvent {
 /// See [_cef_key_event_t] for more documentation.
 #[derive(Clone)]
 pub struct KeyEvent {
+    pub size: usize,
     pub type_: KeyEventType,
     pub modifiers: u32,
     pub windows_key_code: ::std::os::raw::c_int,
@@ -997,6 +1040,7 @@ pub struct KeyEvent {
 impl From<_cef_key_event_t> for KeyEvent {
     fn from(value: _cef_key_event_t) -> Self {
         Self {
+            size: value.size.into(),
             type_: value.type_.into(),
             modifiers: value.modifiers.into(),
             windows_key_code: value.windows_key_code.into(),
@@ -1011,6 +1055,7 @@ impl From<_cef_key_event_t> for KeyEvent {
 impl Into<_cef_key_event_t> for KeyEvent {
     fn into(self) -> _cef_key_event_t {
         _cef_key_event_t {
+            size: self.size.into(),
             type_: self.type_.into(),
             modifiers: self.modifiers.into(),
             windows_key_code: self.windows_key_code.into(),
@@ -1024,13 +1069,17 @@ impl Into<_cef_key_event_t> for KeyEvent {
 }
 impl Default for KeyEvent {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_key_event_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_popup_features_t] for more documentation.
 #[derive(Clone)]
 pub struct PopupFeatures {
+    pub size: usize,
     pub x: ::std::os::raw::c_int,
     pub x_set: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -1044,6 +1093,7 @@ pub struct PopupFeatures {
 impl From<_cef_popup_features_t> for PopupFeatures {
     fn from(value: _cef_popup_features_t) -> Self {
         Self {
+            size: value.size.into(),
             x: value.x.into(),
             x_set: value.xSet.into(),
             y: value.y.into(),
@@ -1059,6 +1109,7 @@ impl From<_cef_popup_features_t> for PopupFeatures {
 impl Into<_cef_popup_features_t> for PopupFeatures {
     fn into(self) -> _cef_popup_features_t {
         _cef_popup_features_t {
+            size: self.size.into(),
             x: self.x.into(),
             xSet: self.x_set.into(),
             y: self.y.into(),
@@ -1073,7 +1124,10 @@ impl Into<_cef_popup_features_t> for PopupFeatures {
 }
 impl Default for PopupFeatures {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_popup_features_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -1114,6 +1168,7 @@ impl Default for CursorInfo {
 /// See [_cef_pdf_print_settings_t] for more documentation.
 #[derive(Clone)]
 pub struct PdfPrintSettings {
+    pub size: usize,
     pub landscape: ::std::os::raw::c_int,
     pub print_background: ::std::os::raw::c_int,
     pub scale: f64,
@@ -1135,6 +1190,7 @@ pub struct PdfPrintSettings {
 impl From<_cef_pdf_print_settings_t> for PdfPrintSettings {
     fn from(value: _cef_pdf_print_settings_t) -> Self {
         Self {
+            size: value.size.into(),
             landscape: value.landscape.into(),
             print_background: value.print_background.into(),
             scale: value.scale.into(),
@@ -1158,6 +1214,7 @@ impl From<_cef_pdf_print_settings_t> for PdfPrintSettings {
 impl Into<_cef_pdf_print_settings_t> for PdfPrintSettings {
     fn into(self) -> _cef_pdf_print_settings_t {
         _cef_pdf_print_settings_t {
+            size: self.size.into(),
             landscape: self.landscape.into(),
             print_background: self.print_background.into(),
             scale: self.scale.into(),
@@ -1180,13 +1237,17 @@ impl Into<_cef_pdf_print_settings_t> for PdfPrintSettings {
 }
 impl Default for PdfPrintSettings {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_pdf_print_settings_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_box_layout_settings_t] for more documentation.
 #[derive(Clone)]
 pub struct BoxLayoutSettings {
+    pub size: usize,
     pub horizontal: ::std::os::raw::c_int,
     pub inside_border_horizontal_spacing: ::std::os::raw::c_int,
     pub inside_border_vertical_spacing: ::std::os::raw::c_int,
@@ -1200,6 +1261,7 @@ pub struct BoxLayoutSettings {
 impl From<_cef_box_layout_settings_t> for BoxLayoutSettings {
     fn from(value: _cef_box_layout_settings_t) -> Self {
         Self {
+            size: value.size.into(),
             horizontal: value.horizontal.into(),
             inside_border_horizontal_spacing: value.inside_border_horizontal_spacing.into(),
             inside_border_vertical_spacing: value.inside_border_vertical_spacing.into(),
@@ -1215,6 +1277,7 @@ impl From<_cef_box_layout_settings_t> for BoxLayoutSettings {
 impl Into<_cef_box_layout_settings_t> for BoxLayoutSettings {
     fn into(self) -> _cef_box_layout_settings_t {
         _cef_box_layout_settings_t {
+            size: self.size.into(),
             horizontal: self.horizontal.into(),
             inside_border_horizontal_spacing: self.inside_border_horizontal_spacing.into(),
             inside_border_vertical_spacing: self.inside_border_vertical_spacing.into(),
@@ -1229,7 +1292,10 @@ impl Into<_cef_box_layout_settings_t> for BoxLayoutSettings {
 }
 impl Default for BoxLayoutSettings {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_box_layout_settings_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -1264,6 +1330,7 @@ impl Default for Range {
 /// See [_cef_composition_underline_t] for more documentation.
 #[derive(Clone)]
 pub struct CompositionUnderline {
+    pub size: usize,
     pub range: Range,
     pub color: u32,
     pub background_color: u32,
@@ -1273,6 +1340,7 @@ pub struct CompositionUnderline {
 impl From<_cef_composition_underline_t> for CompositionUnderline {
     fn from(value: _cef_composition_underline_t) -> Self {
         Self {
+            size: value.size.into(),
             range: value.range.into(),
             color: value.color.into(),
             background_color: value.background_color.into(),
@@ -1284,6 +1352,7 @@ impl From<_cef_composition_underline_t> for CompositionUnderline {
 impl Into<_cef_composition_underline_t> for CompositionUnderline {
     fn into(self) -> _cef_composition_underline_t {
         _cef_composition_underline_t {
+            size: self.size.into(),
             range: self.range.into(),
             color: self.color.into(),
             background_color: self.background_color.into(),
@@ -1294,13 +1363,17 @@ impl Into<_cef_composition_underline_t> for CompositionUnderline {
 }
 impl Default for CompositionUnderline {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_composition_underline_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_audio_parameters_t] for more documentation.
 #[derive(Clone)]
 pub struct AudioParameters {
+    pub size: usize,
     pub channel_layout: ChannelLayout,
     pub sample_rate: ::std::os::raw::c_int,
     pub frames_per_buffer: ::std::os::raw::c_int,
@@ -1308,6 +1381,7 @@ pub struct AudioParameters {
 impl From<_cef_audio_parameters_t> for AudioParameters {
     fn from(value: _cef_audio_parameters_t) -> Self {
         Self {
+            size: value.size.into(),
             channel_layout: value.channel_layout.into(),
             sample_rate: value.sample_rate.into(),
             frames_per_buffer: value.frames_per_buffer.into(),
@@ -1317,6 +1391,7 @@ impl From<_cef_audio_parameters_t> for AudioParameters {
 impl Into<_cef_audio_parameters_t> for AudioParameters {
     fn into(self) -> _cef_audio_parameters_t {
         _cef_audio_parameters_t {
+            size: self.size.into(),
             channel_layout: self.channel_layout.into(),
             sample_rate: self.sample_rate.into(),
             frames_per_buffer: self.frames_per_buffer.into(),
@@ -1325,13 +1400,17 @@ impl Into<_cef_audio_parameters_t> for AudioParameters {
 }
 impl Default for AudioParameters {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_audio_parameters_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_media_sink_device_info_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaSinkDeviceInfo {
+    pub size: usize,
     pub ip_address: CefStringUtf16,
     pub port: ::std::os::raw::c_int,
     pub model_name: CefStringUtf16,
@@ -1339,6 +1418,7 @@ pub struct MediaSinkDeviceInfo {
 impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn from(value: _cef_media_sink_device_info_t) -> Self {
         Self {
+            size: value.size.into(),
             ip_address: value.ip_address.into(),
             port: value.port.into(),
             model_name: value.model_name.into(),
@@ -1348,6 +1428,7 @@ impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
 impl Into<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn into(self) -> _cef_media_sink_device_info_t {
         _cef_media_sink_device_info_t {
+            size: self.size.into(),
             ip_address: self.ip_address.into(),
             port: self.port.into(),
             model_name: self.model_name.into(),
@@ -1356,13 +1437,17 @@ impl Into<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
 }
 impl Default for MediaSinkDeviceInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_media_sink_device_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_touch_handle_state_t] for more documentation.
 #[derive(Clone)]
 pub struct TouchHandleState {
+    pub size: usize,
     pub touch_handle_id: ::std::os::raw::c_int,
     pub flags: u32,
     pub enabled: ::std::os::raw::c_int,
@@ -1375,6 +1460,7 @@ pub struct TouchHandleState {
 impl From<_cef_touch_handle_state_t> for TouchHandleState {
     fn from(value: _cef_touch_handle_state_t) -> Self {
         Self {
+            size: value.size.into(),
             touch_handle_id: value.touch_handle_id.into(),
             flags: value.flags.into(),
             enabled: value.enabled.into(),
@@ -1389,6 +1475,7 @@ impl From<_cef_touch_handle_state_t> for TouchHandleState {
 impl Into<_cef_touch_handle_state_t> for TouchHandleState {
     fn into(self) -> _cef_touch_handle_state_t {
         _cef_touch_handle_state_t {
+            size: self.size.into(),
             touch_handle_id: self.touch_handle_id.into(),
             flags: self.flags.into(),
             enabled: self.enabled.into(),
@@ -1402,13 +1489,17 @@ impl Into<_cef_touch_handle_state_t> for TouchHandleState {
 }
 impl Default for TouchHandleState {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_touch_handle_state_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
 /// See [_cef_task_info_t] for more documentation.
 #[derive(Clone)]
 pub struct TaskInfo {
+    pub size: usize,
     pub id: i64,
     pub type_: TaskType,
     pub is_killable: ::std::os::raw::c_int,
@@ -1422,6 +1513,7 @@ pub struct TaskInfo {
 impl From<_cef_task_info_t> for TaskInfo {
     fn from(value: _cef_task_info_t) -> Self {
         Self {
+            size: value.size.into(),
             id: value.id.into(),
             type_: value.type_.into(),
             is_killable: value.is_killable.into(),
@@ -1437,6 +1529,7 @@ impl From<_cef_task_info_t> for TaskInfo {
 impl Into<_cef_task_info_t> for TaskInfo {
     fn into(self) -> _cef_task_info_t {
         _cef_task_info_t {
+            size: self.size.into(),
             id: self.id.into(),
             type_: self.type_.into(),
             is_killable: self.is_killable.into(),
@@ -1451,7 +1544,10 @@ impl Into<_cef_task_info_t> for TaskInfo {
 }
 impl Default for TaskInfo {
     fn default() -> Self {
-        unsafe { std::mem::zeroed() }
+        Self {
+            size: std::mem::size_of::<_cef_task_info_t>(),
+            ..unsafe { std::mem::zeroed() }
+        }
     }
 }
 
@@ -10951,7 +11047,7 @@ pub trait ImplFrame: Clone + Sized + Rc {
     fn get_browser(&self) -> Option<Browser> {
         Default::default()
     }
-    fn get_v8context(&self) -> Option<V8context> {
+    fn get_v8_context(&self) -> Option<V8Context> {
         Default::default()
     }
     fn visit_dom(&self, visitor: Option<&mut impl ImplDomvisitor>) {}
@@ -10998,7 +11094,7 @@ mod impl_cef_frame_t {
         object.get_parent = Some(get_parent::<I>);
         object.get_url = Some(get_url::<I>);
         object.get_browser = Some(get_browser::<I>);
-        object.get_v8context = Some(get_v8context::<I>);
+        object.get_v8_context = Some(get_v8_context::<I>);
         object.visit_dom = Some(visit_dom::<I>);
         object.create_urlrequest = Some(create_urlrequest::<I>);
         object.send_process_message = Some(send_process_message::<I>);
@@ -11184,10 +11280,10 @@ mod impl_cef_frame_t {
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_v8context<I: ImplFrame>(self_: *mut _cef_frame_t) -> *mut _cef_v8context_t {
+    extern "C" fn get_v8_context<I: ImplFrame>(self_: *mut _cef_frame_t) -> *mut _cef_v8_context_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::get_v8context(&arg_self_.interface);
+        let result = ImplFrame::get_v8_context(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
@@ -11555,10 +11651,10 @@ impl ImplFrame for Frame {
                 .unwrap_or_default()
         }
     }
-    fn get_v8context(&self) -> Option<V8context> {
+    fn get_v8_context(&self) -> Option<V8Context> {
         unsafe {
             self.0
-                .get_v8context
+                .get_v8_context
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
@@ -11689,27 +11785,27 @@ impl Default for Frame {
     }
 }
 
-/// See [_cef_x509cert_principal_t] for more documentation.
+/// See [_cef_x509_cert_principal_t] for more documentation.
 #[derive(Clone)]
-pub struct X509certPrincipal(RefGuard<_cef_x509cert_principal_t>);
-impl X509certPrincipal {
+pub struct X509CertPrincipal(RefGuard<_cef_x509_cert_principal_t>);
+impl X509CertPrincipal {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapX509certPrincipal,
+        T: WrapX509CertPrincipal,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplX509certPrincipal>::init_methods(&mut cef_object);
+            <T as ImplX509CertPrincipal>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapX509certPrincipal>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_x509cert_principal_t).as_wrapper()
+            <T as WrapX509CertPrincipal>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_x509_cert_principal_t).as_wrapper()
         }
     }
 }
-pub trait WrapX509certPrincipal: ImplX509certPrincipal {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_x509cert_principal_t, Self>);
+pub trait WrapX509CertPrincipal: ImplX509CertPrincipal {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_x509_cert_principal_t, Self>);
 }
-pub trait ImplX509certPrincipal: Clone + Sized + Rc {
+pub trait ImplX509CertPrincipal: Clone + Sized + Rc {
     fn get_display_name(&self) -> Option<CefStringUtf16> {
         Default::default()
     }
@@ -11727,14 +11823,14 @@ pub trait ImplX509certPrincipal: Clone + Sized + Rc {
     }
     fn get_organization_names(&self, names: Option<&mut CefStringList>) {}
     fn get_organization_unit_names(&self, names: Option<&mut CefStringList>) {}
-    fn init_methods(object: &mut _cef_x509cert_principal_t) {
-        impl_cef_x509cert_principal_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_x509_cert_principal_t) {
+        impl_cef_x509_cert_principal_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_x509cert_principal_t;
+    fn get_raw(&self) -> *mut _cef_x509_cert_principal_t;
 }
-mod impl_cef_x509cert_principal_t {
+mod impl_cef_x509_cert_principal_t {
     use super::*;
-    pub fn init_methods<I: ImplX509certPrincipal>(object: &mut _cef_x509cert_principal_t) {
+    pub fn init_methods<I: ImplX509CertPrincipal>(object: &mut _cef_x509_cert_principal_t) {
         object.get_display_name = Some(get_display_name::<I>);
         object.get_common_name = Some(get_common_name::<I>);
         object.get_locality_name = Some(get_locality_name::<I>);
@@ -11743,58 +11839,58 @@ mod impl_cef_x509cert_principal_t {
         object.get_organization_names = Some(get_organization_names::<I>);
         object.get_organization_unit_names = Some(get_organization_unit_names::<I>);
     }
-    extern "C" fn get_display_name<I: ImplX509certPrincipal>(
-        self_: *mut _cef_x509cert_principal_t,
+    extern "C" fn get_display_name<I: ImplX509CertPrincipal>(
+        self_: *mut _cef_x509_cert_principal_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certPrincipal::get_display_name(&arg_self_.interface);
+        let result = ImplX509CertPrincipal::get_display_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_common_name<I: ImplX509certPrincipal>(
-        self_: *mut _cef_x509cert_principal_t,
+    extern "C" fn get_common_name<I: ImplX509CertPrincipal>(
+        self_: *mut _cef_x509_cert_principal_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certPrincipal::get_common_name(&arg_self_.interface);
+        let result = ImplX509CertPrincipal::get_common_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_locality_name<I: ImplX509certPrincipal>(
-        self_: *mut _cef_x509cert_principal_t,
+    extern "C" fn get_locality_name<I: ImplX509CertPrincipal>(
+        self_: *mut _cef_x509_cert_principal_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certPrincipal::get_locality_name(&arg_self_.interface);
+        let result = ImplX509CertPrincipal::get_locality_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_state_or_province_name<I: ImplX509certPrincipal>(
-        self_: *mut _cef_x509cert_principal_t,
+    extern "C" fn get_state_or_province_name<I: ImplX509CertPrincipal>(
+        self_: *mut _cef_x509_cert_principal_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certPrincipal::get_state_or_province_name(&arg_self_.interface);
+        let result = ImplX509CertPrincipal::get_state_or_province_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_country_name<I: ImplX509certPrincipal>(
-        self_: *mut _cef_x509cert_principal_t,
+    extern "C" fn get_country_name<I: ImplX509CertPrincipal>(
+        self_: *mut _cef_x509_cert_principal_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certPrincipal::get_country_name(&arg_self_.interface);
+        let result = ImplX509CertPrincipal::get_country_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_organization_names<I: ImplX509certPrincipal>(
-        self_: *mut _cef_x509cert_principal_t,
+    extern "C" fn get_organization_names<I: ImplX509CertPrincipal>(
+        self_: *mut _cef_x509_cert_principal_t,
         names: *mut _cef_string_list_t,
     ) {
         let (arg_self_, arg_names) = (self_, names);
@@ -11805,10 +11901,10 @@ mod impl_cef_x509cert_principal_t {
             Some(arg_names.into())
         };
         let arg_names = arg_names.as_mut();
-        let result = ImplX509certPrincipal::get_organization_names(&arg_self_.interface, arg_names);
+        let result = ImplX509CertPrincipal::get_organization_names(&arg_self_.interface, arg_names);
     }
-    extern "C" fn get_organization_unit_names<I: ImplX509certPrincipal>(
-        self_: *mut _cef_x509cert_principal_t,
+    extern "C" fn get_organization_unit_names<I: ImplX509CertPrincipal>(
+        self_: *mut _cef_x509_cert_principal_t,
         names: *mut _cef_string_list_t,
     ) {
         let (arg_self_, arg_names) = (self_, names);
@@ -11820,10 +11916,10 @@ mod impl_cef_x509cert_principal_t {
         };
         let arg_names = arg_names.as_mut();
         let result =
-            ImplX509certPrincipal::get_organization_unit_names(&arg_self_.interface, arg_names);
+            ImplX509CertPrincipal::get_organization_unit_names(&arg_self_.interface, arg_names);
     }
 }
-impl ImplX509certPrincipal for X509certPrincipal {
+impl ImplX509CertPrincipal for X509CertPrincipal {
     fn get_display_name(&self) -> Option<CefStringUtf16> {
         unsafe {
             self.0
@@ -11936,73 +12032,73 @@ impl ImplX509certPrincipal for X509certPrincipal {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_raw(&self) -> *mut _cef_x509cert_principal_t {
+    fn get_raw(&self) -> *mut _cef_x509_cert_principal_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_x509cert_principal_t {
+impl Rc for _cef_x509_cert_principal_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for X509certPrincipal {
+impl Rc for X509CertPrincipal {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_x509cert_principal_t> for &X509certPrincipal {
-    fn as_raw(self) -> *mut _cef_x509cert_principal_t {
-        ImplX509certPrincipal::get_raw(self)
+impl ConvertParam<*mut _cef_x509_cert_principal_t> for &X509CertPrincipal {
+    fn as_raw(self) -> *mut _cef_x509_cert_principal_t {
+        ImplX509CertPrincipal::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_x509cert_principal_t> for &mut X509certPrincipal {
-    fn as_raw(self) -> *mut _cef_x509cert_principal_t {
-        ImplX509certPrincipal::get_raw(self)
+impl ConvertParam<*mut _cef_x509_cert_principal_t> for &mut X509CertPrincipal {
+    fn as_raw(self) -> *mut _cef_x509_cert_principal_t {
+        ImplX509CertPrincipal::get_raw(self)
     }
 }
-impl ConvertReturnValue<X509certPrincipal> for *mut _cef_x509cert_principal_t {
-    fn as_wrapper(self) -> X509certPrincipal {
-        X509certPrincipal(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<X509CertPrincipal> for *mut _cef_x509_cert_principal_t {
+    fn as_wrapper(self) -> X509CertPrincipal {
+        X509CertPrincipal(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_x509cert_principal_t> for X509certPrincipal {
-    fn into(self) -> *mut _cef_x509cert_principal_t {
-        let object = ImplX509certPrincipal::get_raw(&self);
+impl Into<*mut _cef_x509_cert_principal_t> for X509CertPrincipal {
+    fn into(self) -> *mut _cef_x509_cert_principal_t {
+        let object = ImplX509CertPrincipal::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for X509certPrincipal {
+impl Default for X509CertPrincipal {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_x509certificate_t] for more documentation.
+/// See [_cef_x509_certificate_t] for more documentation.
 #[derive(Clone)]
-pub struct X509certificate(RefGuard<_cef_x509certificate_t>);
-impl X509certificate {
+pub struct X509Certificate(RefGuard<_cef_x509_certificate_t>);
+impl X509Certificate {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapX509certificate,
+        T: WrapX509Certificate,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplX509certificate>::init_methods(&mut cef_object);
+            <T as ImplX509Certificate>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapX509certificate>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_x509certificate_t).as_wrapper()
+            <T as WrapX509Certificate>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_x509_certificate_t).as_wrapper()
         }
     }
 }
-pub trait WrapX509certificate: ImplX509certificate {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_x509certificate_t, Self>);
+pub trait WrapX509Certificate: ImplX509Certificate {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_x509_certificate_t, Self>);
 }
-pub trait ImplX509certificate: Clone + Sized + Rc {
-    fn get_subject(&self) -> Option<X509certPrincipal> {
+pub trait ImplX509Certificate: Clone + Sized + Rc {
+    fn get_subject(&self) -> Option<X509CertPrincipal> {
         Default::default()
     }
-    fn get_issuer(&self) -> Option<X509certPrincipal> {
+    fn get_issuer(&self) -> Option<X509CertPrincipal> {
         Default::default()
     }
     fn get_serial_number(&self) -> Option<BinaryValue> {
@@ -12025,14 +12121,14 @@ pub trait ImplX509certificate: Clone + Sized + Rc {
     }
     fn get_derencoded_issuer_chain(&self, chain: Option<&mut Vec<Option<BinaryValue>>>) {}
     fn get_pemencoded_issuer_chain(&self, chain: Option<&mut Vec<Option<BinaryValue>>>) {}
-    fn init_methods(object: &mut _cef_x509certificate_t) {
-        impl_cef_x509certificate_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_x509_certificate_t) {
+        impl_cef_x509_certificate_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_x509certificate_t;
+    fn get_raw(&self) -> *mut _cef_x509_certificate_t;
 }
-mod impl_cef_x509certificate_t {
+mod impl_cef_x509_certificate_t {
     use super::*;
-    pub fn init_methods<I: ImplX509certificate>(object: &mut _cef_x509certificate_t) {
+    pub fn init_methods<I: ImplX509Certificate>(object: &mut _cef_x509_certificate_t) {
         object.get_subject = Some(get_subject::<I>);
         object.get_issuer = Some(get_issuer::<I>);
         object.get_serial_number = Some(get_serial_number::<I>);
@@ -12044,82 +12140,82 @@ mod impl_cef_x509certificate_t {
         object.get_derencoded_issuer_chain = Some(get_derencoded_issuer_chain::<I>);
         object.get_pemencoded_issuer_chain = Some(get_pemencoded_issuer_chain::<I>);
     }
-    extern "C" fn get_subject<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
-    ) -> *mut _cef_x509cert_principal_t {
+    extern "C" fn get_subject<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
+    ) -> *mut _cef_x509_cert_principal_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_subject(&arg_self_.interface);
+        let result = ImplX509Certificate::get_subject(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_issuer<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
-    ) -> *mut _cef_x509cert_principal_t {
+    extern "C" fn get_issuer<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
+    ) -> *mut _cef_x509_cert_principal_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_issuer(&arg_self_.interface);
+        let result = ImplX509Certificate::get_issuer(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_serial_number<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_serial_number<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
     ) -> *mut _cef_binary_value_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_serial_number(&arg_self_.interface);
+        let result = ImplX509Certificate::get_serial_number(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_valid_start<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_valid_start<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
     ) -> _cef_basetime_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_valid_start(&arg_self_.interface);
+        let result = ImplX509Certificate::get_valid_start(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_valid_expiry<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_valid_expiry<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
     ) -> _cef_basetime_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_valid_expiry(&arg_self_.interface);
+        let result = ImplX509Certificate::get_valid_expiry(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_derencoded<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_derencoded<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
     ) -> *mut _cef_binary_value_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_derencoded(&arg_self_.interface);
+        let result = ImplX509Certificate::get_derencoded(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_pemencoded<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_pemencoded<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
     ) -> *mut _cef_binary_value_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_pemencoded(&arg_self_.interface);
+        let result = ImplX509Certificate::get_pemencoded(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_issuer_chain_size<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_issuer_chain_size<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
     ) -> usize {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509certificate::get_issuer_chain_size(&arg_self_.interface);
+        let result = ImplX509Certificate::get_issuer_chain_size(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_derencoded_issuer_chain<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_derencoded_issuer_chain<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
         chain_count: *mut usize,
         chain: *mut *mut _cef_binary_value_t,
     ) {
@@ -12146,7 +12242,7 @@ mod impl_cef_x509certificate_t {
         });
         let arg_chain = vec_chain.as_mut();
         let result =
-            ImplX509certificate::get_derencoded_issuer_chain(&arg_self_.interface, arg_chain);
+            ImplX509Certificate::get_derencoded_issuer_chain(&arg_self_.interface, arg_chain);
         if let (Some(out_chain_count), Some(vec_chain)) = (out_chain_count, vec_chain.as_mut()) {
             let size = vec_chain.len().min(*out_chain_count);
             for elem in &mut vec_chain[..size] {
@@ -12157,8 +12253,8 @@ mod impl_cef_x509certificate_t {
             *out_chain_count = size;
         }
     }
-    extern "C" fn get_pemencoded_issuer_chain<I: ImplX509certificate>(
-        self_: *mut _cef_x509certificate_t,
+    extern "C" fn get_pemencoded_issuer_chain<I: ImplX509Certificate>(
+        self_: *mut _cef_x509_certificate_t,
         chain_count: *mut usize,
         chain: *mut *mut _cef_binary_value_t,
     ) {
@@ -12185,7 +12281,7 @@ mod impl_cef_x509certificate_t {
         });
         let arg_chain = vec_chain.as_mut();
         let result =
-            ImplX509certificate::get_pemencoded_issuer_chain(&arg_self_.interface, arg_chain);
+            ImplX509Certificate::get_pemencoded_issuer_chain(&arg_self_.interface, arg_chain);
         if let (Some(out_chain_count), Some(vec_chain)) = (out_chain_count, vec_chain.as_mut()) {
             let size = vec_chain.len().min(*out_chain_count);
             for elem in &mut vec_chain[..size] {
@@ -12197,8 +12293,8 @@ mod impl_cef_x509certificate_t {
         }
     }
 }
-impl ImplX509certificate for X509certificate {
-    fn get_subject(&self) -> Option<X509certPrincipal> {
+impl ImplX509Certificate for X509Certificate {
+    fn get_subject(&self) -> Option<X509CertPrincipal> {
         unsafe {
             self.0
                 .get_subject
@@ -12214,7 +12310,7 @@ impl ImplX509certificate for X509certificate {
                 .unwrap_or_default()
         }
     }
-    fn get_issuer(&self) -> Option<X509certPrincipal> {
+    fn get_issuer(&self) -> Option<X509CertPrincipal> {
         unsafe {
             self.0
                 .get_issuer
@@ -12414,43 +12510,43 @@ impl ImplX509certificate for X509certificate {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_raw(&self) -> *mut _cef_x509certificate_t {
+    fn get_raw(&self) -> *mut _cef_x509_certificate_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_x509certificate_t {
+impl Rc for _cef_x509_certificate_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for X509certificate {
+impl Rc for X509Certificate {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_x509certificate_t> for &X509certificate {
-    fn as_raw(self) -> *mut _cef_x509certificate_t {
-        ImplX509certificate::get_raw(self)
+impl ConvertParam<*mut _cef_x509_certificate_t> for &X509Certificate {
+    fn as_raw(self) -> *mut _cef_x509_certificate_t {
+        ImplX509Certificate::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_x509certificate_t> for &mut X509certificate {
-    fn as_raw(self) -> *mut _cef_x509certificate_t {
-        ImplX509certificate::get_raw(self)
+impl ConvertParam<*mut _cef_x509_certificate_t> for &mut X509Certificate {
+    fn as_raw(self) -> *mut _cef_x509_certificate_t {
+        ImplX509Certificate::get_raw(self)
     }
 }
-impl ConvertReturnValue<X509certificate> for *mut _cef_x509certificate_t {
-    fn as_wrapper(self) -> X509certificate {
-        X509certificate(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<X509Certificate> for *mut _cef_x509_certificate_t {
+    fn as_wrapper(self) -> X509Certificate {
+        X509Certificate(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_x509certificate_t> for X509certificate {
-    fn into(self) -> *mut _cef_x509certificate_t {
-        let object = ImplX509certificate::get_raw(&self);
+impl Into<*mut _cef_x509_certificate_t> for X509Certificate {
+    fn into(self) -> *mut _cef_x509_certificate_t {
+        let object = ImplX509Certificate::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for X509certificate {
+impl Default for X509Certificate {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -12489,7 +12585,7 @@ pub trait ImplSslstatus: Clone + Sized + Rc {
     fn get_content_status(&self) -> SslContentStatus {
         Default::default()
     }
-    fn get_x509certificate(&self) -> Option<X509certificate> {
+    fn get_x509_certificate(&self) -> Option<X509Certificate> {
         Default::default()
     }
     fn init_methods(object: &mut _cef_sslstatus_t) {
@@ -12504,7 +12600,7 @@ mod impl_cef_sslstatus_t {
         object.get_cert_status = Some(get_cert_status::<I>);
         object.get_sslversion = Some(get_sslversion::<I>);
         object.get_content_status = Some(get_content_status::<I>);
-        object.get_x509certificate = Some(get_x509certificate::<I>);
+        object.get_x509_certificate = Some(get_x509_certificate::<I>);
     }
     extern "C" fn is_secure_connection<I: ImplSslstatus>(
         self_: *mut _cef_sslstatus_t,
@@ -12538,12 +12634,12 @@ mod impl_cef_sslstatus_t {
         let result = ImplSslstatus::get_content_status(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_x509certificate<I: ImplSslstatus>(
+    extern "C" fn get_x509_certificate<I: ImplSslstatus>(
         self_: *mut _cef_sslstatus_t,
-    ) -> *mut _cef_x509certificate_t {
+    ) -> *mut _cef_x509_certificate_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslstatus::get_x509certificate(&arg_self_.interface);
+        let result = ImplSslstatus::get_x509_certificate(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
@@ -12598,10 +12694,10 @@ impl ImplSslstatus for Sslstatus {
                 .unwrap_or_default()
         }
     }
-    fn get_x509certificate(&self) -> Option<X509certificate> {
+    fn get_x509_certificate(&self) -> Option<X509Certificate> {
         unsafe {
             self.0
-                .get_x509certificate
+                .get_x509_certificate
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
@@ -36688,7 +36784,7 @@ pub trait ImplSslinfo: Clone + Sized + Rc {
     fn get_cert_status(&self) -> CertStatus {
         Default::default()
     }
-    fn get_x509certificate(&self) -> Option<X509certificate> {
+    fn get_x509_certificate(&self) -> Option<X509Certificate> {
         Default::default()
     }
     fn init_methods(object: &mut _cef_sslinfo_t) {
@@ -36700,7 +36796,7 @@ mod impl_cef_sslinfo_t {
     use super::*;
     pub fn init_methods<I: ImplSslinfo>(object: &mut _cef_sslinfo_t) {
         object.get_cert_status = Some(get_cert_status::<I>);
-        object.get_x509certificate = Some(get_x509certificate::<I>);
+        object.get_x509_certificate = Some(get_x509_certificate::<I>);
     }
     extern "C" fn get_cert_status<I: ImplSslinfo>(self_: *mut _cef_sslinfo_t) -> cef_cert_status_t {
         let arg_self_ = self_;
@@ -36708,12 +36804,12 @@ mod impl_cef_sslinfo_t {
         let result = ImplSslinfo::get_cert_status(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_x509certificate<I: ImplSslinfo>(
+    extern "C" fn get_x509_certificate<I: ImplSslinfo>(
         self_: *mut _cef_sslinfo_t,
-    ) -> *mut _cef_x509certificate_t {
+    ) -> *mut _cef_x509_certificate_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslinfo::get_x509certificate(&arg_self_.interface);
+        let result = ImplSslinfo::get_x509_certificate(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
@@ -36732,10 +36828,10 @@ impl ImplSslinfo for Sslinfo {
                 .unwrap_or_default()
         }
     }
-    fn get_x509certificate(&self) -> Option<X509certificate> {
+    fn get_x509_certificate(&self) -> Option<X509Certificate> {
         unsafe {
             self.0
-                .get_x509certificate
+                .get_x509_certificate
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
@@ -36929,7 +37025,7 @@ pub trait WrapSelectClientCertificateCallback: ImplSelectClientCertificateCallba
     fn wrap_rc(&mut self, object: *mut RcImpl<_cef_select_client_certificate_callback_t, Self>);
 }
 pub trait ImplSelectClientCertificateCallback: Clone + Sized + Rc {
-    fn select(&self, cert: Option<&mut impl ImplX509certificate>) {}
+    fn select(&self, cert: Option<&mut impl ImplX509Certificate>) {}
     fn init_methods(object: &mut _cef_select_client_certificate_callback_t) {
         impl_cef_select_client_certificate_callback_t::init_methods::<Self>(object);
     }
@@ -36944,18 +37040,18 @@ mod impl_cef_select_client_certificate_callback_t {
     }
     extern "C" fn select<I: ImplSelectClientCertificateCallback>(
         self_: *mut _cef_select_client_certificate_callback_t,
-        cert: *mut _cef_x509certificate_t,
+        cert: *mut _cef_x509_certificate_t,
     ) {
         let (arg_self_, arg_cert) = (self_, cert);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let mut arg_cert = unsafe { arg_cert.as_mut() }
-            .map(|arg| X509certificate(unsafe { RefGuard::from_raw(arg) }));
+            .map(|arg| X509Certificate(unsafe { RefGuard::from_raw(arg) }));
         let arg_cert = arg_cert.as_mut();
         let result = ImplSelectClientCertificateCallback::select(&arg_self_.interface, arg_cert);
     }
 }
 impl ImplSelectClientCertificateCallback for SelectClientCertificateCallback {
-    fn select(&self, cert: Option<&mut impl ImplX509certificate>) {
+    fn select(&self, cert: Option<&mut impl ImplX509Certificate>) {
         unsafe {
             self.0
                 .select
@@ -36965,7 +37061,7 @@ impl ImplSelectClientCertificateCallback for SelectClientCertificateCallback {
                     let arg_cert = arg_cert
                         .map(|arg| {
                             arg.add_ref();
-                            ImplX509certificate::get_raw(arg)
+                            ImplX509Certificate::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_cert);
@@ -37104,7 +37200,7 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
         is_proxy: ::std::os::raw::c_int,
         host: Option<&CefStringUtf16>,
         port: ::std::os::raw::c_int,
-        certificates: Option<&[Option<impl ImplX509certificate>]>,
+        certificates: Option<&[Option<impl ImplX509Certificate>]>,
         callback: Option<&mut impl ImplSelectClientCertificateCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -37412,7 +37508,7 @@ mod impl_cef_request_handler_t {
         host: *const _cef_string_utf16_t,
         port: ::std::os::raw::c_int,
         certificates_count: usize,
-        certificates: *const *mut _cef_x509certificate_t,
+        certificates: *const *mut _cef_x509_certificate_t,
         callback: *mut _cef_select_client_certificate_callback_t,
     ) -> ::std::os::raw::c_int {
         let (
@@ -37455,7 +37551,7 @@ mod impl_cef_request_handler_t {
                     if arg.is_null() {
                         None
                     } else {
-                        Some(X509certificate(unsafe { RefGuard::from_raw(*arg) }))
+                        Some(X509Certificate(unsafe { RefGuard::from_raw(*arg) }))
                     }
                 })
                 .collect::<Vec<_>>()
@@ -37862,7 +37958,7 @@ impl ImplRequestHandler for RequestHandler {
         is_proxy: ::std::os::raw::c_int,
         host: Option<&CefStringUtf16>,
         port: ::std::os::raw::c_int,
-        certificates: Option<&[Option<impl ImplX509certificate>]>,
+        certificates: Option<&[Option<impl ImplX509Certificate>]>,
         callback: Option<&mut impl ImplSelectClientCertificateCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -40426,27 +40522,27 @@ impl Default for TaskRunner {
     }
 }
 
-/// See [_cef_v8context_t] for more documentation.
+/// See [_cef_v8_context_t] for more documentation.
 #[derive(Clone)]
-pub struct V8context(RefGuard<_cef_v8context_t>);
-impl V8context {
+pub struct V8Context(RefGuard<_cef_v8_context_t>);
+impl V8Context {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8context,
+        T: WrapV8Context,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8context>::init_methods(&mut cef_object);
+            <T as ImplV8Context>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8context>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8context_t).as_wrapper()
+            <T as WrapV8Context>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_context_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8context: ImplV8context {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8context_t, Self>);
+pub trait WrapV8Context: ImplV8Context {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_context_t, Self>);
 }
-pub trait ImplV8context: Clone + Sized + Rc {
+pub trait ImplV8Context: Clone + Sized + Rc {
     fn get_task_runner(&self) -> Option<TaskRunner> {
         Default::default()
     }
@@ -40459,7 +40555,7 @@ pub trait ImplV8context: Clone + Sized + Rc {
     fn get_frame(&self) -> Option<Frame> {
         Default::default()
     }
-    fn get_global(&self) -> Option<V8value> {
+    fn get_global(&self) -> Option<V8Value> {
         Default::default()
     }
     fn enter(&self) -> ::std::os::raw::c_int {
@@ -40468,7 +40564,7 @@ pub trait ImplV8context: Clone + Sized + Rc {
     fn exit(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn is_same(&self, that: Option<&mut impl ImplV8context>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut impl ImplV8Context>) -> ::std::os::raw::c_int {
         Default::default()
     }
     fn eval(
@@ -40476,19 +40572,19 @@ pub trait ImplV8context: Clone + Sized + Rc {
         code: Option<&CefStringUtf16>,
         script_url: Option<&CefStringUtf16>,
         start_line: ::std::os::raw::c_int,
-        retval: Option<&mut impl ImplV8value>,
-        exception: Option<&mut impl ImplV8exception>,
+        retval: Option<&mut impl ImplV8Value>,
+        exception: Option<&mut impl ImplV8Exception>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8context_t) {
-        impl_cef_v8context_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_context_t) {
+        impl_cef_v8_context_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8context_t;
+    fn get_raw(&self) -> *mut _cef_v8_context_t;
 }
-mod impl_cef_v8context_t {
+mod impl_cef_v8_context_t {
     use super::*;
-    pub fn init_methods<I: ImplV8context>(object: &mut _cef_v8context_t) {
+    pub fn init_methods<I: ImplV8Context>(object: &mut _cef_v8_context_t) {
         object.get_task_runner = Some(get_task_runner::<I>);
         object.is_valid = Some(is_valid::<I>);
         object.get_browser = Some(get_browser::<I>);
@@ -40499,83 +40595,83 @@ mod impl_cef_v8context_t {
         object.is_same = Some(is_same::<I>);
         object.eval = Some(eval::<I>);
     }
-    extern "C" fn get_task_runner<I: ImplV8context>(
-        self_: *mut _cef_v8context_t,
+    extern "C" fn get_task_runner<I: ImplV8Context>(
+        self_: *mut _cef_v8_context_t,
     ) -> *mut _cef_task_runner_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8context::get_task_runner(&arg_self_.interface);
+        let result = ImplV8Context::get_task_runner(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn is_valid<I: ImplV8context>(
-        self_: *mut _cef_v8context_t,
+    extern "C" fn is_valid<I: ImplV8Context>(
+        self_: *mut _cef_v8_context_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8context::is_valid(&arg_self_.interface);
+        let result = ImplV8Context::is_valid(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_browser<I: ImplV8context>(
-        self_: *mut _cef_v8context_t,
+    extern "C" fn get_browser<I: ImplV8Context>(
+        self_: *mut _cef_v8_context_t,
     ) -> *mut _cef_browser_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8context::get_browser(&arg_self_.interface);
+        let result = ImplV8Context::get_browser(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_frame<I: ImplV8context>(self_: *mut _cef_v8context_t) -> *mut _cef_frame_t {
+    extern "C" fn get_frame<I: ImplV8Context>(self_: *mut _cef_v8_context_t) -> *mut _cef_frame_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8context::get_frame(&arg_self_.interface);
+        let result = ImplV8Context::get_frame(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_global<I: ImplV8context>(
-        self_: *mut _cef_v8context_t,
-    ) -> *mut _cef_v8value_t {
+    extern "C" fn get_global<I: ImplV8Context>(
+        self_: *mut _cef_v8_context_t,
+    ) -> *mut _cef_v8_value_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8context::get_global(&arg_self_.interface);
+        let result = ImplV8Context::get_global(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn enter<I: ImplV8context>(self_: *mut _cef_v8context_t) -> ::std::os::raw::c_int {
+    extern "C" fn enter<I: ImplV8Context>(self_: *mut _cef_v8_context_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8context::enter(&arg_self_.interface);
+        let result = ImplV8Context::enter(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn exit<I: ImplV8context>(self_: *mut _cef_v8context_t) -> ::std::os::raw::c_int {
+    extern "C" fn exit<I: ImplV8Context>(self_: *mut _cef_v8_context_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8context::exit(&arg_self_.interface);
+        let result = ImplV8Context::exit(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_same<I: ImplV8context>(
-        self_: *mut _cef_v8context_t,
-        that: *mut _cef_v8context_t,
+    extern "C" fn is_same<I: ImplV8Context>(
+        self_: *mut _cef_v8_context_t,
+        that: *mut _cef_v8_context_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_that) = (self_, that);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| V8context(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_that.as_mut() }.map(|arg| V8Context(unsafe { RefGuard::from_raw(arg) }));
         let arg_that = arg_that.as_mut();
-        let result = ImplV8context::is_same(&arg_self_.interface, arg_that);
+        let result = ImplV8Context::is_same(&arg_self_.interface, arg_that);
         result.into()
     }
-    extern "C" fn eval<I: ImplV8context>(
-        self_: *mut _cef_v8context_t,
+    extern "C" fn eval<I: ImplV8Context>(
+        self_: *mut _cef_v8_context_t,
         code: *const _cef_string_utf16_t,
         script_url: *const _cef_string_utf16_t,
         start_line: ::std::os::raw::c_int,
-        retval: *mut *mut _cef_v8value_t,
-        exception: *mut *mut _cef_v8exception_t,
+        retval: *mut *mut _cef_v8_value_t,
+        exception: *mut *mut _cef_v8_exception_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_code, arg_script_url, arg_start_line, arg_retval, arg_exception) =
             (self_, code, script_url, start_line, retval, exception);
@@ -40597,7 +40693,7 @@ mod impl_cef_v8context_t {
             if ptr.is_null() {
                 None
             } else {
-                Some(V8value(unsafe { RefGuard::from_raw(*ptr) }))
+                Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
         let arg_retval = arg_retval.as_mut();
@@ -40605,11 +40701,11 @@ mod impl_cef_v8context_t {
             if ptr.is_null() {
                 None
             } else {
-                Some(V8exception(unsafe { RefGuard::from_raw(*ptr) }))
+                Some(V8Exception(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8context::eval(
+        let result = ImplV8Context::eval(
             &arg_self_.interface,
             arg_code,
             arg_script_url,
@@ -40620,7 +40716,7 @@ mod impl_cef_v8context_t {
         result.into()
     }
 }
-impl ImplV8context for V8context {
+impl ImplV8Context for V8Context {
     fn get_task_runner(&self) -> Option<TaskRunner> {
         unsafe {
             self.0
@@ -40681,7 +40777,7 @@ impl ImplV8context for V8context {
                 .unwrap_or_default()
         }
     }
-    fn get_global(&self) -> Option<V8value> {
+    fn get_global(&self) -> Option<V8Value> {
         unsafe {
             self.0
                 .get_global
@@ -40721,7 +40817,7 @@ impl ImplV8context for V8context {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplV8context>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut impl ImplV8Context>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -40731,7 +40827,7 @@ impl ImplV8context for V8context {
                     let arg_that = arg_that
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8context::get_raw(arg)
+                            ImplV8Context::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_that);
@@ -40745,8 +40841,8 @@ impl ImplV8context for V8context {
         code: Option<&CefStringUtf16>,
         script_url: Option<&CefStringUtf16>,
         start_line: ::std::os::raw::c_int,
-        retval: Option<&mut impl ImplV8value>,
-        exception: Option<&mut impl ImplV8exception>,
+        retval: Option<&mut impl ImplV8Value>,
+        exception: Option<&mut impl ImplV8Exception>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -40789,96 +40885,96 @@ impl ImplV8context for V8context {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8context_t {
+    fn get_raw(&self) -> *mut _cef_v8_context_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8context_t {
+impl Rc for _cef_v8_context_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8context {
+impl Rc for V8Context {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8context_t> for &V8context {
-    fn as_raw(self) -> *mut _cef_v8context_t {
-        ImplV8context::get_raw(self)
+impl ConvertParam<*mut _cef_v8_context_t> for &V8Context {
+    fn as_raw(self) -> *mut _cef_v8_context_t {
+        ImplV8Context::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8context_t> for &mut V8context {
-    fn as_raw(self) -> *mut _cef_v8context_t {
-        ImplV8context::get_raw(self)
+impl ConvertParam<*mut _cef_v8_context_t> for &mut V8Context {
+    fn as_raw(self) -> *mut _cef_v8_context_t {
+        ImplV8Context::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8context> for *mut _cef_v8context_t {
-    fn as_wrapper(self) -> V8context {
-        V8context(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8Context> for *mut _cef_v8_context_t {
+    fn as_wrapper(self) -> V8Context {
+        V8Context(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8context_t> for V8context {
-    fn into(self) -> *mut _cef_v8context_t {
-        let object = ImplV8context::get_raw(&self);
+impl Into<*mut _cef_v8_context_t> for V8Context {
+    fn into(self) -> *mut _cef_v8_context_t {
+        let object = ImplV8Context::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8context {
+impl Default for V8Context {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8handler_t] for more documentation.
+/// See [_cef_v8_handler_t] for more documentation.
 #[derive(Clone)]
-pub struct V8handler(RefGuard<_cef_v8handler_t>);
-impl V8handler {
+pub struct V8Handler(RefGuard<_cef_v8_handler_t>);
+impl V8Handler {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8handler,
+        T: WrapV8Handler,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8handler>::init_methods(&mut cef_object);
+            <T as ImplV8Handler>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8handler>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8handler_t).as_wrapper()
+            <T as WrapV8Handler>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_handler_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8handler: ImplV8handler {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8handler_t, Self>);
+pub trait WrapV8Handler: ImplV8Handler {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_handler_t, Self>);
 }
-pub trait ImplV8handler: Clone + Sized + Rc {
+pub trait ImplV8Handler: Clone + Sized + Rc {
     fn execute(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        arguments: Option<&[Option<impl ImplV8value>]>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        arguments: Option<&[Option<impl ImplV8Value>]>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8handler_t) {
-        impl_cef_v8handler_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_handler_t) {
+        impl_cef_v8_handler_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8handler_t;
+    fn get_raw(&self) -> *mut _cef_v8_handler_t;
 }
-mod impl_cef_v8handler_t {
+mod impl_cef_v8_handler_t {
     use super::*;
-    pub fn init_methods<I: ImplV8handler>(object: &mut _cef_v8handler_t) {
+    pub fn init_methods<I: ImplV8Handler>(object: &mut _cef_v8_handler_t) {
         object.execute = Some(execute::<I>);
     }
-    extern "C" fn execute<I: ImplV8handler>(
-        self_: *mut _cef_v8handler_t,
+    extern "C" fn execute<I: ImplV8Handler>(
+        self_: *mut _cef_v8_handler_t,
         name: *const _cef_string_utf16_t,
-        object: *mut _cef_v8value_t,
+        object: *mut _cef_v8_value_t,
         arguments_count: usize,
-        arguments: *const *mut _cef_v8value_t,
-        retval: *mut *mut _cef_v8value_t,
+        arguments: *const *mut _cef_v8_value_t,
+        retval: *mut *mut _cef_v8_value_t,
         exception: *mut _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (
@@ -40906,7 +41002,7 @@ mod impl_cef_v8handler_t {
         };
         let arg_name = arg_name.as_ref();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let vec_arguments = unsafe { arg_arguments.as_ref() }.map(|arg| {
             let arg =
@@ -40916,7 +41012,7 @@ mod impl_cef_v8handler_t {
                     if arg.is_null() {
                         None
                     } else {
-                        Some(V8value(unsafe { RefGuard::from_raw(*arg) }))
+                        Some(V8Value(unsafe { RefGuard::from_raw(*arg) }))
                     }
                 })
                 .collect::<Vec<_>>()
@@ -40926,7 +41022,7 @@ mod impl_cef_v8handler_t {
             if ptr.is_null() {
                 None
             } else {
-                Some(V8value(unsafe { RefGuard::from_raw(*ptr) }))
+                Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
         let arg_retval = arg_retval.as_mut();
@@ -40936,7 +41032,7 @@ mod impl_cef_v8handler_t {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8handler::execute(
+        let result = ImplV8Handler::execute(
             &arg_self_.interface,
             arg_name,
             arg_object,
@@ -40947,13 +41043,13 @@ mod impl_cef_v8handler_t {
         result.into()
     }
 }
-impl ImplV8handler for V8handler {
+impl ImplV8Handler for V8Handler {
     fn execute(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        arguments: Option<&[Option<impl ImplV8value>]>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        arguments: Option<&[Option<impl ImplV8Value>]>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -40967,7 +41063,7 @@ impl ImplV8handler for V8handler {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_arguments_count = arg_arguments
@@ -41019,74 +41115,74 @@ impl ImplV8handler for V8handler {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8handler_t {
+    fn get_raw(&self) -> *mut _cef_v8_handler_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8handler_t {
+impl Rc for _cef_v8_handler_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8handler {
+impl Rc for V8Handler {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8handler_t> for &V8handler {
-    fn as_raw(self) -> *mut _cef_v8handler_t {
-        ImplV8handler::get_raw(self)
+impl ConvertParam<*mut _cef_v8_handler_t> for &V8Handler {
+    fn as_raw(self) -> *mut _cef_v8_handler_t {
+        ImplV8Handler::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8handler_t> for &mut V8handler {
-    fn as_raw(self) -> *mut _cef_v8handler_t {
-        ImplV8handler::get_raw(self)
+impl ConvertParam<*mut _cef_v8_handler_t> for &mut V8Handler {
+    fn as_raw(self) -> *mut _cef_v8_handler_t {
+        ImplV8Handler::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8handler> for *mut _cef_v8handler_t {
-    fn as_wrapper(self) -> V8handler {
-        V8handler(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8Handler> for *mut _cef_v8_handler_t {
+    fn as_wrapper(self) -> V8Handler {
+        V8Handler(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8handler_t> for V8handler {
-    fn into(self) -> *mut _cef_v8handler_t {
-        let object = ImplV8handler::get_raw(&self);
+impl Into<*mut _cef_v8_handler_t> for V8Handler {
+    fn into(self) -> *mut _cef_v8_handler_t {
+        let object = ImplV8Handler::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8handler {
+impl Default for V8Handler {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8accessor_t] for more documentation.
+/// See [_cef_v8_accessor_t] for more documentation.
 #[derive(Clone)]
-pub struct V8accessor(RefGuard<_cef_v8accessor_t>);
-impl V8accessor {
+pub struct V8Accessor(RefGuard<_cef_v8_accessor_t>);
+impl V8Accessor {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8accessor,
+        T: WrapV8Accessor,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8accessor>::init_methods(&mut cef_object);
+            <T as ImplV8Accessor>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8accessor>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8accessor_t).as_wrapper()
+            <T as WrapV8Accessor>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_accessor_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8accessor: ImplV8accessor {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8accessor_t, Self>);
+pub trait WrapV8Accessor: ImplV8Accessor {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_accessor_t, Self>);
 }
-pub trait ImplV8accessor: Clone + Sized + Rc {
+pub trait ImplV8Accessor: Clone + Sized + Rc {
     fn get(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -41094,28 +41190,28 @@ pub trait ImplV8accessor: Clone + Sized + Rc {
     fn set(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        value: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        value: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8accessor_t) {
-        impl_cef_v8accessor_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_accessor_t) {
+        impl_cef_v8_accessor_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8accessor_t;
+    fn get_raw(&self) -> *mut _cef_v8_accessor_t;
 }
-mod impl_cef_v8accessor_t {
+mod impl_cef_v8_accessor_t {
     use super::*;
-    pub fn init_methods<I: ImplV8accessor>(object: &mut _cef_v8accessor_t) {
+    pub fn init_methods<I: ImplV8Accessor>(object: &mut _cef_v8_accessor_t) {
         object.get = Some(get::<I>);
         object.set = Some(set::<I>);
     }
-    extern "C" fn get<I: ImplV8accessor>(
-        self_: *mut _cef_v8accessor_t,
+    extern "C" fn get<I: ImplV8Accessor>(
+        self_: *mut _cef_v8_accessor_t,
         name: *const _cef_string_utf16_t,
-        object: *mut _cef_v8value_t,
-        retval: *mut *mut _cef_v8value_t,
+        object: *mut _cef_v8_value_t,
+        retval: *mut *mut _cef_v8_value_t,
         exception: *mut _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_retval, arg_exception) =
@@ -41128,13 +41224,13 @@ mod impl_cef_v8accessor_t {
         };
         let arg_name = arg_name.as_ref();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
-                Some(V8value(unsafe { RefGuard::from_raw(*ptr) }))
+                Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
         let arg_retval = arg_retval.as_mut();
@@ -41144,7 +41240,7 @@ mod impl_cef_v8accessor_t {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8accessor::get(
+        let result = ImplV8Accessor::get(
             &arg_self_.interface,
             arg_name,
             arg_object,
@@ -41153,11 +41249,11 @@ mod impl_cef_v8accessor_t {
         );
         result.into()
     }
-    extern "C" fn set<I: ImplV8accessor>(
-        self_: *mut _cef_v8accessor_t,
+    extern "C" fn set<I: ImplV8Accessor>(
+        self_: *mut _cef_v8_accessor_t,
         name: *const _cef_string_utf16_t,
-        object: *mut _cef_v8value_t,
-        value: *mut _cef_v8value_t,
+        object: *mut _cef_v8_value_t,
+        value: *mut _cef_v8_value_t,
         exception: *mut _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_value, arg_exception) =
@@ -41170,10 +41266,10 @@ mod impl_cef_v8accessor_t {
         };
         let arg_name = arg_name.as_ref();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_value.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_value = arg_value.as_mut();
         let mut arg_exception = if arg_exception.is_null() {
             None
@@ -41181,7 +41277,7 @@ mod impl_cef_v8accessor_t {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8accessor::set(
+        let result = ImplV8Accessor::set(
             &arg_self_.interface,
             arg_name,
             arg_object,
@@ -41191,12 +41287,12 @@ mod impl_cef_v8accessor_t {
         result.into()
     }
 }
-impl ImplV8accessor for V8accessor {
+impl ImplV8Accessor for V8Accessor {
     fn get(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41210,7 +41306,7 @@ impl ImplV8accessor for V8accessor {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let mut arg_retval = arg_retval.map(|arg| {
@@ -41233,8 +41329,8 @@ impl ImplV8accessor for V8accessor {
     fn set(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        value: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        value: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41248,13 +41344,13 @@ impl ImplV8accessor for V8accessor {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_value = arg_value
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
@@ -41266,74 +41362,74 @@ impl ImplV8accessor for V8accessor {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8accessor_t {
+    fn get_raw(&self) -> *mut _cef_v8_accessor_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8accessor_t {
+impl Rc for _cef_v8_accessor_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8accessor {
+impl Rc for V8Accessor {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8accessor_t> for &V8accessor {
-    fn as_raw(self) -> *mut _cef_v8accessor_t {
-        ImplV8accessor::get_raw(self)
+impl ConvertParam<*mut _cef_v8_accessor_t> for &V8Accessor {
+    fn as_raw(self) -> *mut _cef_v8_accessor_t {
+        ImplV8Accessor::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8accessor_t> for &mut V8accessor {
-    fn as_raw(self) -> *mut _cef_v8accessor_t {
-        ImplV8accessor::get_raw(self)
+impl ConvertParam<*mut _cef_v8_accessor_t> for &mut V8Accessor {
+    fn as_raw(self) -> *mut _cef_v8_accessor_t {
+        ImplV8Accessor::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8accessor> for *mut _cef_v8accessor_t {
-    fn as_wrapper(self) -> V8accessor {
-        V8accessor(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8Accessor> for *mut _cef_v8_accessor_t {
+    fn as_wrapper(self) -> V8Accessor {
+        V8Accessor(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8accessor_t> for V8accessor {
-    fn into(self) -> *mut _cef_v8accessor_t {
-        let object = ImplV8accessor::get_raw(&self);
+impl Into<*mut _cef_v8_accessor_t> for V8Accessor {
+    fn into(self) -> *mut _cef_v8_accessor_t {
+        let object = ImplV8Accessor::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8accessor {
+impl Default for V8Accessor {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8interceptor_t] for more documentation.
+/// See [_cef_v8_interceptor_t] for more documentation.
 #[derive(Clone)]
-pub struct V8interceptor(RefGuard<_cef_v8interceptor_t>);
-impl V8interceptor {
+pub struct V8Interceptor(RefGuard<_cef_v8_interceptor_t>);
+impl V8Interceptor {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8interceptor,
+        T: WrapV8Interceptor,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8interceptor>::init_methods(&mut cef_object);
+            <T as ImplV8Interceptor>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8interceptor>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8interceptor_t).as_wrapper()
+            <T as WrapV8Interceptor>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_interceptor_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8interceptor: ImplV8interceptor {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8interceptor_t, Self>);
+pub trait WrapV8Interceptor: ImplV8Interceptor {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_interceptor_t, Self>);
 }
-pub trait ImplV8interceptor: Clone + Sized + Rc {
+pub trait ImplV8Interceptor: Clone + Sized + Rc {
     fn get_byname(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -41341,8 +41437,8 @@ pub trait ImplV8interceptor: Clone + Sized + Rc {
     fn get_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8value>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -41350,8 +41446,8 @@ pub trait ImplV8interceptor: Clone + Sized + Rc {
     fn set_byname(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        value: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        value: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -41359,30 +41455,30 @@ pub trait ImplV8interceptor: Clone + Sized + Rc {
     fn set_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8value>,
-        value: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        value: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8interceptor_t) {
-        impl_cef_v8interceptor_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_interceptor_t) {
+        impl_cef_v8_interceptor_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8interceptor_t;
+    fn get_raw(&self) -> *mut _cef_v8_interceptor_t;
 }
-mod impl_cef_v8interceptor_t {
+mod impl_cef_v8_interceptor_t {
     use super::*;
-    pub fn init_methods<I: ImplV8interceptor>(object: &mut _cef_v8interceptor_t) {
+    pub fn init_methods<I: ImplV8Interceptor>(object: &mut _cef_v8_interceptor_t) {
         object.get_byname = Some(get_byname::<I>);
         object.get_byindex = Some(get_byindex::<I>);
         object.set_byname = Some(set_byname::<I>);
         object.set_byindex = Some(set_byindex::<I>);
     }
-    extern "C" fn get_byname<I: ImplV8interceptor>(
-        self_: *mut _cef_v8interceptor_t,
+    extern "C" fn get_byname<I: ImplV8Interceptor>(
+        self_: *mut _cef_v8_interceptor_t,
         name: *const _cef_string_utf16_t,
-        object: *mut _cef_v8value_t,
-        retval: *mut *mut _cef_v8value_t,
+        object: *mut _cef_v8_value_t,
+        retval: *mut *mut _cef_v8_value_t,
         exception: *mut _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_retval, arg_exception) =
@@ -41395,13 +41491,13 @@ mod impl_cef_v8interceptor_t {
         };
         let arg_name = arg_name.as_ref();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
-                Some(V8value(unsafe { RefGuard::from_raw(*ptr) }))
+                Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
         let arg_retval = arg_retval.as_mut();
@@ -41411,7 +41507,7 @@ mod impl_cef_v8interceptor_t {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8interceptor::get_byname(
+        let result = ImplV8Interceptor::get_byname(
             &arg_self_.interface,
             arg_name,
             arg_object,
@@ -41420,11 +41516,11 @@ mod impl_cef_v8interceptor_t {
         );
         result.into()
     }
-    extern "C" fn get_byindex<I: ImplV8interceptor>(
-        self_: *mut _cef_v8interceptor_t,
+    extern "C" fn get_byindex<I: ImplV8Interceptor>(
+        self_: *mut _cef_v8_interceptor_t,
         index: ::std::os::raw::c_int,
-        object: *mut _cef_v8value_t,
-        retval: *mut *mut _cef_v8value_t,
+        object: *mut _cef_v8_value_t,
+        retval: *mut *mut _cef_v8_value_t,
         exception: *mut _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_index, arg_object, arg_retval, arg_exception) =
@@ -41432,13 +41528,13 @@ mod impl_cef_v8interceptor_t {
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_index = arg_index.as_raw();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
             if ptr.is_null() {
                 None
             } else {
-                Some(V8value(unsafe { RefGuard::from_raw(*ptr) }))
+                Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
         let arg_retval = arg_retval.as_mut();
@@ -41448,7 +41544,7 @@ mod impl_cef_v8interceptor_t {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8interceptor::get_byindex(
+        let result = ImplV8Interceptor::get_byindex(
             &arg_self_.interface,
             arg_index,
             arg_object,
@@ -41457,11 +41553,11 @@ mod impl_cef_v8interceptor_t {
         );
         result.into()
     }
-    extern "C" fn set_byname<I: ImplV8interceptor>(
-        self_: *mut _cef_v8interceptor_t,
+    extern "C" fn set_byname<I: ImplV8Interceptor>(
+        self_: *mut _cef_v8_interceptor_t,
         name: *const _cef_string_utf16_t,
-        object: *mut _cef_v8value_t,
-        value: *mut _cef_v8value_t,
+        object: *mut _cef_v8_value_t,
+        value: *mut _cef_v8_value_t,
         exception: *mut _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_value, arg_exception) =
@@ -41474,10 +41570,10 @@ mod impl_cef_v8interceptor_t {
         };
         let arg_name = arg_name.as_ref();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_value.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_value = arg_value.as_mut();
         let mut arg_exception = if arg_exception.is_null() {
             None
@@ -41485,7 +41581,7 @@ mod impl_cef_v8interceptor_t {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8interceptor::set_byname(
+        let result = ImplV8Interceptor::set_byname(
             &arg_self_.interface,
             arg_name,
             arg_object,
@@ -41494,11 +41590,11 @@ mod impl_cef_v8interceptor_t {
         );
         result.into()
     }
-    extern "C" fn set_byindex<I: ImplV8interceptor>(
-        self_: *mut _cef_v8interceptor_t,
+    extern "C" fn set_byindex<I: ImplV8Interceptor>(
+        self_: *mut _cef_v8_interceptor_t,
         index: ::std::os::raw::c_int,
-        object: *mut _cef_v8value_t,
-        value: *mut _cef_v8value_t,
+        object: *mut _cef_v8_value_t,
+        value: *mut _cef_v8_value_t,
         exception: *mut _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_index, arg_object, arg_value, arg_exception) =
@@ -41506,10 +41602,10 @@ mod impl_cef_v8interceptor_t {
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_index = arg_index.as_raw();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_value.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_value = arg_value.as_mut();
         let mut arg_exception = if arg_exception.is_null() {
             None
@@ -41517,7 +41613,7 @@ mod impl_cef_v8interceptor_t {
             Some(arg_exception.into())
         };
         let arg_exception = arg_exception.as_mut();
-        let result = ImplV8interceptor::set_byindex(
+        let result = ImplV8Interceptor::set_byindex(
             &arg_self_.interface,
             arg_index,
             arg_object,
@@ -41527,12 +41623,12 @@ mod impl_cef_v8interceptor_t {
         result.into()
     }
 }
-impl ImplV8interceptor for V8interceptor {
+impl ImplV8Interceptor for V8Interceptor {
     fn get_byname(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41546,7 +41642,7 @@ impl ImplV8interceptor for V8interceptor {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let mut arg_retval = arg_retval.map(|arg| {
@@ -41569,8 +41665,8 @@ impl ImplV8interceptor for V8interceptor {
     fn get_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8value>,
-        retval: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41584,7 +41680,7 @@ impl ImplV8interceptor for V8interceptor {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let mut arg_retval = arg_retval.map(|arg| {
@@ -41607,8 +41703,8 @@ impl ImplV8interceptor for V8interceptor {
     fn set_byname(
         &self,
         name: Option<&CefStringUtf16>,
-        object: Option<&mut impl ImplV8value>,
-        value: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        value: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41622,13 +41718,13 @@ impl ImplV8interceptor for V8interceptor {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_value = arg_value
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
@@ -41643,8 +41739,8 @@ impl ImplV8interceptor for V8interceptor {
     fn set_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8value>,
-        value: Option<&mut impl ImplV8value>,
+        object: Option<&mut impl ImplV8Value>,
+        value: Option<&mut impl ImplV8Value>,
         exception: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41658,13 +41754,13 @@ impl ImplV8interceptor for V8interceptor {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_value = arg_value
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
@@ -41676,69 +41772,69 @@ impl ImplV8interceptor for V8interceptor {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8interceptor_t {
+    fn get_raw(&self) -> *mut _cef_v8_interceptor_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8interceptor_t {
+impl Rc for _cef_v8_interceptor_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8interceptor {
+impl Rc for V8Interceptor {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8interceptor_t> for &V8interceptor {
-    fn as_raw(self) -> *mut _cef_v8interceptor_t {
-        ImplV8interceptor::get_raw(self)
+impl ConvertParam<*mut _cef_v8_interceptor_t> for &V8Interceptor {
+    fn as_raw(self) -> *mut _cef_v8_interceptor_t {
+        ImplV8Interceptor::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8interceptor_t> for &mut V8interceptor {
-    fn as_raw(self) -> *mut _cef_v8interceptor_t {
-        ImplV8interceptor::get_raw(self)
+impl ConvertParam<*mut _cef_v8_interceptor_t> for &mut V8Interceptor {
+    fn as_raw(self) -> *mut _cef_v8_interceptor_t {
+        ImplV8Interceptor::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8interceptor> for *mut _cef_v8interceptor_t {
-    fn as_wrapper(self) -> V8interceptor {
-        V8interceptor(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8Interceptor> for *mut _cef_v8_interceptor_t {
+    fn as_wrapper(self) -> V8Interceptor {
+        V8Interceptor(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8interceptor_t> for V8interceptor {
-    fn into(self) -> *mut _cef_v8interceptor_t {
-        let object = ImplV8interceptor::get_raw(&self);
+impl Into<*mut _cef_v8_interceptor_t> for V8Interceptor {
+    fn into(self) -> *mut _cef_v8_interceptor_t {
+        let object = ImplV8Interceptor::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8interceptor {
+impl Default for V8Interceptor {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8exception_t] for more documentation.
+/// See [_cef_v8_exception_t] for more documentation.
 #[derive(Clone)]
-pub struct V8exception(RefGuard<_cef_v8exception_t>);
-impl V8exception {
+pub struct V8Exception(RefGuard<_cef_v8_exception_t>);
+impl V8Exception {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8exception,
+        T: WrapV8Exception,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8exception>::init_methods(&mut cef_object);
+            <T as ImplV8Exception>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8exception>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8exception_t).as_wrapper()
+            <T as WrapV8Exception>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_exception_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8exception: ImplV8exception {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8exception_t, Self>);
+pub trait WrapV8Exception: ImplV8Exception {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_exception_t, Self>);
 }
-pub trait ImplV8exception: Clone + Sized + Rc {
+pub trait ImplV8Exception: Clone + Sized + Rc {
     fn get_message(&self) -> Option<CefStringUtf16> {
         Default::default()
     }
@@ -41763,14 +41859,14 @@ pub trait ImplV8exception: Clone + Sized + Rc {
     fn get_end_column(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8exception_t) {
-        impl_cef_v8exception_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_exception_t) {
+        impl_cef_v8_exception_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8exception_t;
+    fn get_raw(&self) -> *mut _cef_v8_exception_t;
 }
-mod impl_cef_v8exception_t {
+mod impl_cef_v8_exception_t {
     use super::*;
-    pub fn init_methods<I: ImplV8exception>(object: &mut _cef_v8exception_t) {
+    pub fn init_methods<I: ImplV8Exception>(object: &mut _cef_v8_exception_t) {
         object.get_message = Some(get_message::<I>);
         object.get_source_line = Some(get_source_line::<I>);
         object.get_script_resource_name = Some(get_script_resource_name::<I>);
@@ -41780,78 +41876,78 @@ mod impl_cef_v8exception_t {
         object.get_start_column = Some(get_start_column::<I>);
         object.get_end_column = Some(get_end_column::<I>);
     }
-    extern "C" fn get_message<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_message<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_message(&arg_self_.interface);
+        let result = ImplV8Exception::get_message(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_source_line<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_source_line<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_source_line(&arg_self_.interface);
+        let result = ImplV8Exception::get_source_line(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_script_resource_name<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_script_resource_name<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_script_resource_name(&arg_self_.interface);
+        let result = ImplV8Exception::get_script_resource_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_line_number<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_line_number<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_line_number(&arg_self_.interface);
+        let result = ImplV8Exception::get_line_number(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_start_position<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_start_position<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_start_position(&arg_self_.interface);
+        let result = ImplV8Exception::get_start_position(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_end_position<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_end_position<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_end_position(&arg_self_.interface);
+        let result = ImplV8Exception::get_end_position(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_start_column<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_start_column<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_start_column(&arg_self_.interface);
+        let result = ImplV8Exception::get_start_column(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_end_column<I: ImplV8exception>(
-        self_: *mut _cef_v8exception_t,
+    extern "C" fn get_end_column<I: ImplV8Exception>(
+        self_: *mut _cef_v8_exception_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8exception::get_end_column(&arg_self_.interface);
+        let result = ImplV8Exception::get_end_column(&arg_self_.interface);
         result.into()
     }
 }
-impl ImplV8exception for V8exception {
+impl ImplV8Exception for V8Exception {
     fn get_message(&self) -> Option<CefStringUtf16> {
         unsafe {
             self.0
@@ -41960,94 +42056,94 @@ impl ImplV8exception for V8exception {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8exception_t {
+    fn get_raw(&self) -> *mut _cef_v8_exception_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8exception_t {
+impl Rc for _cef_v8_exception_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8exception {
+impl Rc for V8Exception {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8exception_t> for &V8exception {
-    fn as_raw(self) -> *mut _cef_v8exception_t {
-        ImplV8exception::get_raw(self)
+impl ConvertParam<*mut _cef_v8_exception_t> for &V8Exception {
+    fn as_raw(self) -> *mut _cef_v8_exception_t {
+        ImplV8Exception::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8exception_t> for &mut V8exception {
-    fn as_raw(self) -> *mut _cef_v8exception_t {
-        ImplV8exception::get_raw(self)
+impl ConvertParam<*mut _cef_v8_exception_t> for &mut V8Exception {
+    fn as_raw(self) -> *mut _cef_v8_exception_t {
+        ImplV8Exception::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8exception> for *mut _cef_v8exception_t {
-    fn as_wrapper(self) -> V8exception {
-        V8exception(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8Exception> for *mut _cef_v8_exception_t {
+    fn as_wrapper(self) -> V8Exception {
+        V8Exception(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8exception_t> for V8exception {
-    fn into(self) -> *mut _cef_v8exception_t {
-        let object = ImplV8exception::get_raw(&self);
+impl Into<*mut _cef_v8_exception_t> for V8Exception {
+    fn into(self) -> *mut _cef_v8_exception_t {
+        let object = ImplV8Exception::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8exception {
+impl Default for V8Exception {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8array_buffer_release_callback_t] for more documentation.
+/// See [_cef_v8_array_buffer_release_callback_t] for more documentation.
 #[derive(Clone)]
-pub struct V8arrayBufferReleaseCallback(RefGuard<_cef_v8array_buffer_release_callback_t>);
-impl V8arrayBufferReleaseCallback {
+pub struct V8ArrayBufferReleaseCallback(RefGuard<_cef_v8_array_buffer_release_callback_t>);
+impl V8ArrayBufferReleaseCallback {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8arrayBufferReleaseCallback,
+        T: WrapV8ArrayBufferReleaseCallback,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8arrayBufferReleaseCallback>::init_methods(&mut cef_object);
+            <T as ImplV8ArrayBufferReleaseCallback>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8arrayBufferReleaseCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8array_buffer_release_callback_t).as_wrapper()
+            <T as WrapV8ArrayBufferReleaseCallback>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_array_buffer_release_callback_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8arrayBufferReleaseCallback: ImplV8arrayBufferReleaseCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8array_buffer_release_callback_t, Self>);
+pub trait WrapV8ArrayBufferReleaseCallback: ImplV8ArrayBufferReleaseCallback {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_array_buffer_release_callback_t, Self>);
 }
-pub trait ImplV8arrayBufferReleaseCallback: Clone + Sized + Rc {
+pub trait ImplV8ArrayBufferReleaseCallback: Clone + Sized + Rc {
     fn release_buffer(&self, buffer: *mut u8) {}
-    fn init_methods(object: &mut _cef_v8array_buffer_release_callback_t) {
-        impl_cef_v8array_buffer_release_callback_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_array_buffer_release_callback_t) {
+        impl_cef_v8_array_buffer_release_callback_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8array_buffer_release_callback_t;
+    fn get_raw(&self) -> *mut _cef_v8_array_buffer_release_callback_t;
 }
-mod impl_cef_v8array_buffer_release_callback_t {
+mod impl_cef_v8_array_buffer_release_callback_t {
     use super::*;
-    pub fn init_methods<I: ImplV8arrayBufferReleaseCallback>(
-        object: &mut _cef_v8array_buffer_release_callback_t,
+    pub fn init_methods<I: ImplV8ArrayBufferReleaseCallback>(
+        object: &mut _cef_v8_array_buffer_release_callback_t,
     ) {
         object.release_buffer = Some(release_buffer::<I>);
     }
-    extern "C" fn release_buffer<I: ImplV8arrayBufferReleaseCallback>(
-        self_: *mut _cef_v8array_buffer_release_callback_t,
+    extern "C" fn release_buffer<I: ImplV8ArrayBufferReleaseCallback>(
+        self_: *mut _cef_v8_array_buffer_release_callback_t,
         buffer: *mut ::std::os::raw::c_void,
     ) {
         let (arg_self_, arg_buffer) = (self_, buffer);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_buffer = arg_buffer as *mut _;
         let result =
-            ImplV8arrayBufferReleaseCallback::release_buffer(&arg_self_.interface, arg_buffer);
+            ImplV8ArrayBufferReleaseCallback::release_buffer(&arg_self_.interface, arg_buffer);
     }
 }
-impl ImplV8arrayBufferReleaseCallback for V8arrayBufferReleaseCallback {
+impl ImplV8ArrayBufferReleaseCallback for V8ArrayBufferReleaseCallback {
     fn release_buffer(&self, buffer: *mut u8) {
         unsafe {
             self.0
@@ -42062,73 +42158,73 @@ impl ImplV8arrayBufferReleaseCallback for V8arrayBufferReleaseCallback {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8array_buffer_release_callback_t {
+    fn get_raw(&self) -> *mut _cef_v8_array_buffer_release_callback_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8array_buffer_release_callback_t {
+impl Rc for _cef_v8_array_buffer_release_callback_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8arrayBufferReleaseCallback {
+impl Rc for V8ArrayBufferReleaseCallback {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8array_buffer_release_callback_t> for &V8arrayBufferReleaseCallback {
-    fn as_raw(self) -> *mut _cef_v8array_buffer_release_callback_t {
-        ImplV8arrayBufferReleaseCallback::get_raw(self)
+impl ConvertParam<*mut _cef_v8_array_buffer_release_callback_t> for &V8ArrayBufferReleaseCallback {
+    fn as_raw(self) -> *mut _cef_v8_array_buffer_release_callback_t {
+        ImplV8ArrayBufferReleaseCallback::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8array_buffer_release_callback_t>
-    for &mut V8arrayBufferReleaseCallback
+impl ConvertParam<*mut _cef_v8_array_buffer_release_callback_t>
+    for &mut V8ArrayBufferReleaseCallback
 {
-    fn as_raw(self) -> *mut _cef_v8array_buffer_release_callback_t {
-        ImplV8arrayBufferReleaseCallback::get_raw(self)
+    fn as_raw(self) -> *mut _cef_v8_array_buffer_release_callback_t {
+        ImplV8ArrayBufferReleaseCallback::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8arrayBufferReleaseCallback>
-    for *mut _cef_v8array_buffer_release_callback_t
+impl ConvertReturnValue<V8ArrayBufferReleaseCallback>
+    for *mut _cef_v8_array_buffer_release_callback_t
 {
-    fn as_wrapper(self) -> V8arrayBufferReleaseCallback {
-        V8arrayBufferReleaseCallback(unsafe { RefGuard::from_raw(self) })
+    fn as_wrapper(self) -> V8ArrayBufferReleaseCallback {
+        V8ArrayBufferReleaseCallback(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8array_buffer_release_callback_t> for V8arrayBufferReleaseCallback {
-    fn into(self) -> *mut _cef_v8array_buffer_release_callback_t {
-        let object = ImplV8arrayBufferReleaseCallback::get_raw(&self);
+impl Into<*mut _cef_v8_array_buffer_release_callback_t> for V8ArrayBufferReleaseCallback {
+    fn into(self) -> *mut _cef_v8_array_buffer_release_callback_t {
+        let object = ImplV8ArrayBufferReleaseCallback::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8arrayBufferReleaseCallback {
+impl Default for V8ArrayBufferReleaseCallback {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8value_t] for more documentation.
+/// See [_cef_v8_value_t] for more documentation.
 #[derive(Clone)]
-pub struct V8value(RefGuard<_cef_v8value_t>);
-impl V8value {
+pub struct V8Value(RefGuard<_cef_v8_value_t>);
+impl V8Value {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8value,
+        T: WrapV8Value,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8value>::init_methods(&mut cef_object);
+            <T as ImplV8Value>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8value>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8value_t).as_wrapper()
+            <T as WrapV8Value>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_value_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8value: ImplV8value {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8value_t, Self>);
+pub trait WrapV8Value: ImplV8Value {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_value_t, Self>);
 }
-pub trait ImplV8value: Clone + Sized + Rc {
+pub trait ImplV8Value: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -42171,7 +42267,7 @@ pub trait ImplV8value: Clone + Sized + Rc {
     fn is_promise(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn is_same(&self, that: Option<&mut impl ImplV8value>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
         Default::default()
     }
     fn get_bool_value(&self) -> ::std::os::raw::c_int {
@@ -42198,7 +42294,7 @@ pub trait ImplV8value: Clone + Sized + Rc {
     fn has_exception(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn get_exception(&self) -> Option<V8exception> {
+    fn get_exception(&self) -> Option<V8Exception> {
         Default::default()
     }
     fn clear_exception(&self) -> ::std::os::raw::c_int {
@@ -42222,16 +42318,16 @@ pub trait ImplV8value: Clone + Sized + Rc {
     fn delete_value_byindex(&self, index: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8value> {
+    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8Value> {
         Default::default()
     }
-    fn get_value_byindex(&self, index: ::std::os::raw::c_int) -> Option<V8value> {
+    fn get_value_byindex(&self, index: ::std::os::raw::c_int) -> Option<V8Value> {
         Default::default()
     }
     fn set_value_bykey(
         &self,
         key: Option<&CefStringUtf16>,
-        value: Option<&mut impl ImplV8value>,
+        value: Option<&mut impl ImplV8Value>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -42239,7 +42335,7 @@ pub trait ImplV8value: Clone + Sized + Rc {
     fn set_value_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        value: Option<&mut impl ImplV8value>,
+        value: Option<&mut impl ImplV8Value>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -42271,7 +42367,7 @@ pub trait ImplV8value: Clone + Sized + Rc {
     fn get_array_length(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn get_array_buffer_release_callback(&self) -> Option<V8arrayBufferReleaseCallback> {
+    fn get_array_buffer_release_callback(&self) -> Option<V8ArrayBufferReleaseCallback> {
         Default::default()
     }
     fn neuter_array_buffer(&self) -> ::std::os::raw::c_int {
@@ -42286,38 +42382,38 @@ pub trait ImplV8value: Clone + Sized + Rc {
     fn get_function_name(&self) -> Option<CefStringUtf16> {
         Default::default()
     }
-    fn get_function_handler(&self) -> Option<V8handler> {
+    fn get_function_handler(&self) -> Option<V8Handler> {
         Default::default()
     }
     fn execute_function(
         &self,
-        object: Option<&mut impl ImplV8value>,
-        arguments: Option<&[Option<impl ImplV8value>]>,
-    ) -> Option<V8value> {
+        object: Option<&mut impl ImplV8Value>,
+        arguments: Option<&[Option<impl ImplV8Value>]>,
+    ) -> Option<V8Value> {
         Default::default()
     }
     fn execute_function_with_context(
         &self,
-        context: Option<&mut impl ImplV8context>,
-        object: Option<&mut impl ImplV8value>,
-        arguments: Option<&[Option<impl ImplV8value>]>,
-    ) -> Option<V8value> {
+        context: Option<&mut impl ImplV8Context>,
+        object: Option<&mut impl ImplV8Value>,
+        arguments: Option<&[Option<impl ImplV8Value>]>,
+    ) -> Option<V8Value> {
         Default::default()
     }
-    fn resolve_promise(&self, arg: Option<&mut impl ImplV8value>) -> ::std::os::raw::c_int {
+    fn resolve_promise(&self, arg: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
         Default::default()
     }
     fn reject_promise(&self, error_msg: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8value_t) {
-        impl_cef_v8value_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_value_t) {
+        impl_cef_v8_value_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8value_t;
+    fn get_raw(&self) -> *mut _cef_v8_value_t;
 }
-mod impl_cef_v8value_t {
+mod impl_cef_v8_value_t {
     use super::*;
-    pub fn init_methods<I: ImplV8value>(object: &mut _cef_v8value_t) {
+    pub fn init_methods<I: ImplV8Value>(object: &mut _cef_v8_value_t) {
         object.is_valid = Some(is_valid::<I>);
         object.is_undefined = Some(is_undefined::<I>);
         object.is_null = Some(is_null::<I>);
@@ -42371,202 +42467,204 @@ mod impl_cef_v8value_t {
         object.resolve_promise = Some(resolve_promise::<I>);
         object.reject_promise = Some(reject_promise::<I>);
     }
-    extern "C" fn is_valid<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_valid<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_valid(&arg_self_.interface);
+        let result = ImplV8Value::is_valid(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_undefined<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn is_undefined<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_undefined(&arg_self_.interface);
+        let result = ImplV8Value::is_undefined(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_null<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_null<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_null(&arg_self_.interface);
+        let result = ImplV8Value::is_null(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_bool<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_bool<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_bool(&arg_self_.interface);
+        let result = ImplV8Value::is_bool(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_int<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_int<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_int(&arg_self_.interface);
+        let result = ImplV8Value::is_int(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_uint<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_uint<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_uint(&arg_self_.interface);
+        let result = ImplV8Value::is_uint(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_double<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_double<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_double(&arg_self_.interface);
+        let result = ImplV8Value::is_double(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_date<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_date<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_date(&arg_self_.interface);
+        let result = ImplV8Value::is_date(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_string<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_string<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_string(&arg_self_.interface);
+        let result = ImplV8Value::is_string(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_object<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_object<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_object(&arg_self_.interface);
+        let result = ImplV8Value::is_object(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_array<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_array<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_array(&arg_self_.interface);
+        let result = ImplV8Value::is_array(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_array_buffer<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn is_array_buffer<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_array_buffer(&arg_self_.interface);
+        let result = ImplV8Value::is_array_buffer(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_function<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_function<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+    ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_function(&arg_self_.interface);
+        let result = ImplV8Value::is_function(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_promise<I: ImplV8value>(self_: *mut _cef_v8value_t) -> ::std::os::raw::c_int {
+    extern "C" fn is_promise<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_promise(&arg_self_.interface);
+        let result = ImplV8Value::is_promise(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_same<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
-        that: *mut _cef_v8value_t,
+    extern "C" fn is_same<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+        that: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_that) = (self_, that);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_that.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_that = arg_that.as_mut();
-        let result = ImplV8value::is_same(&arg_self_.interface, arg_that);
+        let result = ImplV8Value::is_same(&arg_self_.interface, arg_that);
         result.into()
     }
-    extern "C" fn get_bool_value<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_bool_value<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_bool_value(&arg_self_.interface);
+        let result = ImplV8Value::get_bool_value(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_int_value<I: ImplV8value>(self_: *mut _cef_v8value_t) -> i32 {
+    extern "C" fn get_int_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> i32 {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_int_value(&arg_self_.interface);
+        let result = ImplV8Value::get_int_value(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_uint_value<I: ImplV8value>(self_: *mut _cef_v8value_t) -> u32 {
+    extern "C" fn get_uint_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> u32 {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_uint_value(&arg_self_.interface);
+        let result = ImplV8Value::get_uint_value(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_double_value<I: ImplV8value>(self_: *mut _cef_v8value_t) -> f64 {
+    extern "C" fn get_double_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> f64 {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_double_value(&arg_self_.interface);
+        let result = ImplV8Value::get_double_value(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_date_value<I: ImplV8value>(self_: *mut _cef_v8value_t) -> _cef_basetime_t {
+    extern "C" fn get_date_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> _cef_basetime_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_date_value(&arg_self_.interface);
+        let result = ImplV8Value::get_date_value(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_string_value<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_string_value<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_string_value(&arg_self_.interface);
+        let result = ImplV8Value::get_string_value(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn is_user_created<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn is_user_created<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::is_user_created(&arg_self_.interface);
+        let result = ImplV8Value::is_user_created(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn has_exception<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn has_exception<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::has_exception(&arg_self_.interface);
+        let result = ImplV8Value::has_exception(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_exception<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
-    ) -> *mut _cef_v8exception_t {
+    extern "C" fn get_exception<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+    ) -> *mut _cef_v8_exception_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_exception(&arg_self_.interface);
+        let result = ImplV8Value::get_exception(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn clear_exception<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn clear_exception<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::clear_exception(&arg_self_.interface);
+        let result = ImplV8Value::clear_exception(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn will_rethrow_exceptions<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn will_rethrow_exceptions<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::will_rethrow_exceptions(&arg_self_.interface);
+        let result = ImplV8Value::will_rethrow_exceptions(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn set_rethrow_exceptions<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn set_rethrow_exceptions<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         rethrow: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_rethrow) = (self_, rethrow);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_rethrow = arg_rethrow.as_raw();
-        let result = ImplV8value::set_rethrow_exceptions(&arg_self_.interface, arg_rethrow);
+        let result = ImplV8Value::set_rethrow_exceptions(&arg_self_.interface, arg_rethrow);
         result.into()
     }
-    extern "C" fn has_value_bykey<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn has_value_bykey<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         key: *const _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_key) = (self_, key);
@@ -42577,21 +42675,21 @@ mod impl_cef_v8value_t {
             Some(arg_key.into())
         };
         let arg_key = arg_key.as_ref();
-        let result = ImplV8value::has_value_bykey(&arg_self_.interface, arg_key);
+        let result = ImplV8Value::has_value_bykey(&arg_self_.interface, arg_key);
         result.into()
     }
-    extern "C" fn has_value_byindex<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn has_value_byindex<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         index: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_index) = (self_, index);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_index = arg_index.as_raw();
-        let result = ImplV8value::has_value_byindex(&arg_self_.interface, arg_index);
+        let result = ImplV8Value::has_value_byindex(&arg_self_.interface, arg_index);
         result.into()
     }
-    extern "C" fn delete_value_bykey<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn delete_value_bykey<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         key: *const _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_key) = (self_, key);
@@ -42602,23 +42700,23 @@ mod impl_cef_v8value_t {
             Some(arg_key.into())
         };
         let arg_key = arg_key.as_ref();
-        let result = ImplV8value::delete_value_bykey(&arg_self_.interface, arg_key);
+        let result = ImplV8Value::delete_value_bykey(&arg_self_.interface, arg_key);
         result.into()
     }
-    extern "C" fn delete_value_byindex<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn delete_value_byindex<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         index: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_index) = (self_, index);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_index = arg_index.as_raw();
-        let result = ImplV8value::delete_value_byindex(&arg_self_.interface, arg_index);
+        let result = ImplV8Value::delete_value_byindex(&arg_self_.interface, arg_index);
         result.into()
     }
-    extern "C" fn get_value_bykey<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_value_bykey<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         key: *const _cef_string_utf16_t,
-    ) -> *mut _cef_v8value_t {
+    ) -> *mut _cef_v8_value_t {
         let (arg_self_, arg_key) = (self_, key);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_key = if arg_key.is_null() {
@@ -42627,27 +42725,27 @@ mod impl_cef_v8value_t {
             Some(arg_key.into())
         };
         let arg_key = arg_key.as_ref();
-        let result = ImplV8value::get_value_bykey(&arg_self_.interface, arg_key);
+        let result = ImplV8Value::get_value_bykey(&arg_self_.interface, arg_key);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_value_byindex<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_value_byindex<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         index: ::std::os::raw::c_int,
-    ) -> *mut _cef_v8value_t {
+    ) -> *mut _cef_v8_value_t {
         let (arg_self_, arg_index) = (self_, index);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_index = arg_index.as_raw();
-        let result = ImplV8value::get_value_byindex(&arg_self_.interface, arg_index);
+        let result = ImplV8Value::get_value_byindex(&arg_self_.interface, arg_index);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn set_value_bykey<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn set_value_bykey<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         key: *const _cef_string_utf16_t,
-        value: *mut _cef_v8value_t,
+        value: *mut _cef_v8_value_t,
         attribute: cef_v8_propertyattribute_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_key, arg_value, arg_attribute) = (self_, key, value, attribute);
@@ -42659,29 +42757,29 @@ mod impl_cef_v8value_t {
         };
         let arg_key = arg_key.as_ref();
         let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_value.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_value = arg_value.as_mut();
         let arg_attribute = arg_attribute.as_raw();
         let result =
-            ImplV8value::set_value_bykey(&arg_self_.interface, arg_key, arg_value, arg_attribute);
+            ImplV8Value::set_value_bykey(&arg_self_.interface, arg_key, arg_value, arg_attribute);
         result.into()
     }
-    extern "C" fn set_value_byindex<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn set_value_byindex<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         index: ::std::os::raw::c_int,
-        value: *mut _cef_v8value_t,
+        value: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_index, arg_value) = (self_, index, value);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_index = arg_index.as_raw();
         let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_value.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_value = arg_value.as_mut();
-        let result = ImplV8value::set_value_byindex(&arg_self_.interface, arg_index, arg_value);
+        let result = ImplV8Value::set_value_byindex(&arg_self_.interface, arg_index, arg_value);
         result.into()
     }
-    extern "C" fn set_value_byaccessor<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn set_value_byaccessor<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         key: *const _cef_string_utf16_t,
         attribute: cef_v8_propertyattribute_t,
     ) -> ::std::os::raw::c_int {
@@ -42695,11 +42793,11 @@ mod impl_cef_v8value_t {
         let arg_key = arg_key.as_ref();
         let arg_attribute = arg_attribute.as_raw();
         let result =
-            ImplV8value::set_value_byaccessor(&arg_self_.interface, arg_key, arg_attribute);
+            ImplV8Value::set_value_byaccessor(&arg_self_.interface, arg_key, arg_attribute);
         result.into()
     }
-    extern "C" fn get_keys<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_keys<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         keys: *mut _cef_string_list_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_keys) = (self_, keys);
@@ -42710,11 +42808,11 @@ mod impl_cef_v8value_t {
             Some(arg_keys.into())
         };
         let arg_keys = arg_keys.as_mut();
-        let result = ImplV8value::get_keys(&arg_self_.interface, arg_keys);
+        let result = ImplV8Value::get_keys(&arg_self_.interface, arg_keys);
         result.into()
     }
-    extern "C" fn set_user_data<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn set_user_data<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         user_data: *mut _cef_base_ref_counted_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_user_data) = (self_, user_data);
@@ -42722,113 +42820,113 @@ mod impl_cef_v8value_t {
         let mut arg_user_data = unsafe { arg_user_data.as_mut() }
             .map(|arg| BaseRefCounted(unsafe { RefGuard::from_raw(arg) }));
         let arg_user_data = arg_user_data.as_mut();
-        let result = ImplV8value::set_user_data(&arg_self_.interface, arg_user_data);
+        let result = ImplV8Value::set_user_data(&arg_self_.interface, arg_user_data);
         result.into()
     }
-    extern "C" fn get_user_data<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_user_data<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> *mut _cef_base_ref_counted_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_user_data(&arg_self_.interface);
+        let result = ImplV8Value::get_user_data(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_externally_allocated_memory<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_externally_allocated_memory<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_externally_allocated_memory(&arg_self_.interface);
+        let result = ImplV8Value::get_externally_allocated_memory(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn adjust_externally_allocated_memory<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn adjust_externally_allocated_memory<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         change_in_bytes: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_change_in_bytes) = (self_, change_in_bytes);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_change_in_bytes = arg_change_in_bytes.as_raw();
-        let result = ImplV8value::adjust_externally_allocated_memory(
+        let result = ImplV8Value::adjust_externally_allocated_memory(
             &arg_self_.interface,
             arg_change_in_bytes,
         );
         result.into()
     }
-    extern "C" fn get_array_length<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_array_length<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_array_length(&arg_self_.interface);
+        let result = ImplV8Value::get_array_length(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_array_buffer_release_callback<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
-    ) -> *mut _cef_v8array_buffer_release_callback_t {
+    extern "C" fn get_array_buffer_release_callback<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+    ) -> *mut _cef_v8_array_buffer_release_callback_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_array_buffer_release_callback(&arg_self_.interface);
+        let result = ImplV8Value::get_array_buffer_release_callback(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn neuter_array_buffer<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn neuter_array_buffer<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::neuter_array_buffer(&arg_self_.interface);
+        let result = ImplV8Value::neuter_array_buffer(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_array_buffer_byte_length<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_array_buffer_byte_length<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> usize {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_array_buffer_byte_length(&arg_self_.interface);
+        let result = ImplV8Value::get_array_buffer_byte_length(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_array_buffer_data<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_array_buffer_data<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> *mut ::std::os::raw::c_void {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_array_buffer_data(&arg_self_.interface);
+        let result = ImplV8Value::get_array_buffer_data(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_function_name<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn get_function_name<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_function_name(&arg_self_.interface);
+        let result = ImplV8Value::get_function_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_function_handler<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
-    ) -> *mut _cef_v8handler_t {
+    extern "C" fn get_function_handler<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+    ) -> *mut _cef_v8_handler_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8value::get_function_handler(&arg_self_.interface);
+        let result = ImplV8Value::get_function_handler(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn execute_function<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
-        object: *mut _cef_v8value_t,
+    extern "C" fn execute_function<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+        object: *mut _cef_v8_value_t,
         arguments_count: usize,
-        arguments: *const *mut _cef_v8value_t,
-    ) -> *mut _cef_v8value_t {
+        arguments: *const *mut _cef_v8_value_t,
+    ) -> *mut _cef_v8_value_t {
         let (arg_self_, arg_object, arg_arguments_count, arg_arguments) =
             (self_, object, arguments_count, arguments);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let vec_arguments = unsafe { arg_arguments.as_ref() }.map(|arg| {
             let arg =
@@ -42838,32 +42936,32 @@ mod impl_cef_v8value_t {
                     if arg.is_null() {
                         None
                     } else {
-                        Some(V8value(unsafe { RefGuard::from_raw(*arg) }))
+                        Some(V8Value(unsafe { RefGuard::from_raw(*arg) }))
                     }
                 })
                 .collect::<Vec<_>>()
         });
         let arg_arguments = vec_arguments.as_ref().map(|arg| arg.as_slice());
-        let result = ImplV8value::execute_function(&arg_self_.interface, arg_object, arg_arguments);
+        let result = ImplV8Value::execute_function(&arg_self_.interface, arg_object, arg_arguments);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn execute_function_with_context<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
-        context: *mut _cef_v8context_t,
-        object: *mut _cef_v8value_t,
+    extern "C" fn execute_function_with_context<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+        context: *mut _cef_v8_context_t,
+        object: *mut _cef_v8_value_t,
         arguments_count: usize,
-        arguments: *const *mut _cef_v8value_t,
-    ) -> *mut _cef_v8value_t {
+        arguments: *const *mut _cef_v8_value_t,
+    ) -> *mut _cef_v8_value_t {
         let (arg_self_, arg_context, arg_object, arg_arguments_count, arg_arguments) =
             (self_, context, object, arguments_count, arguments);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let mut arg_context = unsafe { arg_context.as_mut() }
-            .map(|arg| V8context(unsafe { RefGuard::from_raw(arg) }));
+            .map(|arg| V8Context(unsafe { RefGuard::from_raw(arg) }));
         let arg_context = arg_context.as_mut();
         let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_object = arg_object.as_mut();
         let vec_arguments = unsafe { arg_arguments.as_ref() }.map(|arg| {
             let arg =
@@ -42873,13 +42971,13 @@ mod impl_cef_v8value_t {
                     if arg.is_null() {
                         None
                     } else {
-                        Some(V8value(unsafe { RefGuard::from_raw(*arg) }))
+                        Some(V8Value(unsafe { RefGuard::from_raw(*arg) }))
                     }
                 })
                 .collect::<Vec<_>>()
         });
         let arg_arguments = vec_arguments.as_ref().map(|arg| arg.as_slice());
-        let result = ImplV8value::execute_function_with_context(
+        let result = ImplV8Value::execute_function_with_context(
             &arg_self_.interface,
             arg_context,
             arg_object,
@@ -42889,20 +42987,20 @@ mod impl_cef_v8value_t {
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn resolve_promise<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
-        arg: *mut _cef_v8value_t,
+    extern "C" fn resolve_promise<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
+        arg: *mut _cef_v8_value_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_arg) = (self_, arg);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let mut arg_arg =
-            unsafe { arg_arg.as_mut() }.map(|arg| V8value(unsafe { RefGuard::from_raw(arg) }));
+            unsafe { arg_arg.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
         let arg_arg = arg_arg.as_mut();
-        let result = ImplV8value::resolve_promise(&arg_self_.interface, arg_arg);
+        let result = ImplV8Value::resolve_promise(&arg_self_.interface, arg_arg);
         result.into()
     }
-    extern "C" fn reject_promise<I: ImplV8value>(
-        self_: *mut _cef_v8value_t,
+    extern "C" fn reject_promise<I: ImplV8Value>(
+        self_: *mut _cef_v8_value_t,
         error_msg: *const _cef_string_utf16_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_error_msg) = (self_, error_msg);
@@ -42913,11 +43011,11 @@ mod impl_cef_v8value_t {
             Some(arg_error_msg.into())
         };
         let arg_error_msg = arg_error_msg.as_ref();
-        let result = ImplV8value::reject_promise(&arg_self_.interface, arg_error_msg);
+        let result = ImplV8Value::reject_promise(&arg_self_.interface, arg_error_msg);
         result.into()
     }
 }
-impl ImplV8value for V8value {
+impl ImplV8Value for V8Value {
     fn is_valid(&self) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -43086,7 +43184,7 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplV8value>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -43096,7 +43194,7 @@ impl ImplV8value for V8value {
                     let arg_that = arg_that
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_that);
@@ -43205,7 +43303,7 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn get_exception(&self) -> Option<V8exception> {
+    fn get_exception(&self) -> Option<V8Exception> {
         unsafe {
             self.0
                 .get_exception
@@ -43315,7 +43413,7 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8value> {
+    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8Value> {
         unsafe {
             self.0
                 .get_value_bykey
@@ -43333,7 +43431,7 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn get_value_byindex(&self, index: ::std::os::raw::c_int) -> Option<V8value> {
+    fn get_value_byindex(&self, index: ::std::os::raw::c_int) -> Option<V8Value> {
         unsafe {
             self.0
                 .get_value_byindex
@@ -43354,7 +43452,7 @@ impl ImplV8value for V8value {
     fn set_value_bykey(
         &self,
         key: Option<&CefStringUtf16>,
-        value: Option<&mut impl ImplV8value>,
+        value: Option<&mut impl ImplV8Value>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -43367,7 +43465,7 @@ impl ImplV8value for V8value {
                     let arg_value = arg_value
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_attribute = arg_attribute.as_raw();
@@ -43380,7 +43478,7 @@ impl ImplV8value for V8value {
     fn set_value_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        value: Option<&mut impl ImplV8value>,
+        value: Option<&mut impl ImplV8Value>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -43392,7 +43490,7 @@ impl ImplV8value for V8value {
                     let arg_value = arg_value
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_index, arg_value);
@@ -43512,7 +43610,7 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn get_array_buffer_release_callback(&self) -> Option<V8arrayBufferReleaseCallback> {
+    fn get_array_buffer_release_callback(&self) -> Option<V8ArrayBufferReleaseCallback> {
         unsafe {
             self.0
                 .get_array_buffer_release_callback
@@ -43580,7 +43678,7 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn get_function_handler(&self) -> Option<V8handler> {
+    fn get_function_handler(&self) -> Option<V8Handler> {
         unsafe {
             self.0
                 .get_function_handler
@@ -43598,9 +43696,9 @@ impl ImplV8value for V8value {
     }
     fn execute_function(
         &self,
-        object: Option<&mut impl ImplV8value>,
-        arguments: Option<&[Option<impl ImplV8value>]>,
-    ) -> Option<V8value> {
+        object: Option<&mut impl ImplV8Value>,
+        arguments: Option<&[Option<impl ImplV8Value>]>,
+    ) -> Option<V8Value> {
         unsafe {
             self.0
                 .execute_function
@@ -43610,7 +43708,7 @@ impl ImplV8value for V8value {
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_arguments_count = arg_arguments
@@ -43649,10 +43747,10 @@ impl ImplV8value for V8value {
     }
     fn execute_function_with_context(
         &self,
-        context: Option<&mut impl ImplV8context>,
-        object: Option<&mut impl ImplV8value>,
-        arguments: Option<&[Option<impl ImplV8value>]>,
-    ) -> Option<V8value> {
+        context: Option<&mut impl ImplV8Context>,
+        object: Option<&mut impl ImplV8Value>,
+        arguments: Option<&[Option<impl ImplV8Value>]>,
+    ) -> Option<V8Value> {
         unsafe {
             self.0
                 .execute_function_with_context
@@ -43662,13 +43760,13 @@ impl ImplV8value for V8value {
                     let arg_context = arg_context
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8context::get_raw(arg)
+                            ImplV8Context::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_object = arg_object
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_arguments_count = arg_arguments
@@ -43711,7 +43809,7 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn resolve_promise(&self, arg: Option<&mut impl ImplV8value>) -> ::std::os::raw::c_int {
+    fn resolve_promise(&self, arg: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .resolve_promise
@@ -43721,7 +43819,7 @@ impl ImplV8value for V8value {
                     let arg_arg = arg_arg
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8value::get_raw(arg)
+                            ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_arg);
@@ -43746,120 +43844,120 @@ impl ImplV8value for V8value {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8value_t {
+    fn get_raw(&self) -> *mut _cef_v8_value_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8value_t {
+impl Rc for _cef_v8_value_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8value {
+impl Rc for V8Value {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8value_t> for &V8value {
-    fn as_raw(self) -> *mut _cef_v8value_t {
-        ImplV8value::get_raw(self)
+impl ConvertParam<*mut _cef_v8_value_t> for &V8Value {
+    fn as_raw(self) -> *mut _cef_v8_value_t {
+        ImplV8Value::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8value_t> for &mut V8value {
-    fn as_raw(self) -> *mut _cef_v8value_t {
-        ImplV8value::get_raw(self)
+impl ConvertParam<*mut _cef_v8_value_t> for &mut V8Value {
+    fn as_raw(self) -> *mut _cef_v8_value_t {
+        ImplV8Value::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8value> for *mut _cef_v8value_t {
-    fn as_wrapper(self) -> V8value {
-        V8value(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8Value> for *mut _cef_v8_value_t {
+    fn as_wrapper(self) -> V8Value {
+        V8Value(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8value_t> for V8value {
-    fn into(self) -> *mut _cef_v8value_t {
-        let object = ImplV8value::get_raw(&self);
+impl Into<*mut _cef_v8_value_t> for V8Value {
+    fn into(self) -> *mut _cef_v8_value_t {
+        let object = ImplV8Value::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8value {
+impl Default for V8Value {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8stack_trace_t] for more documentation.
+/// See [_cef_v8_stack_trace_t] for more documentation.
 #[derive(Clone)]
-pub struct V8stackTrace(RefGuard<_cef_v8stack_trace_t>);
-impl V8stackTrace {
+pub struct V8StackTrace(RefGuard<_cef_v8_stack_trace_t>);
+impl V8StackTrace {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8stackTrace,
+        T: WrapV8StackTrace,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8stackTrace>::init_methods(&mut cef_object);
+            <T as ImplV8StackTrace>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8stackTrace>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8stack_trace_t).as_wrapper()
+            <T as WrapV8StackTrace>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_stack_trace_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8stackTrace: ImplV8stackTrace {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8stack_trace_t, Self>);
+pub trait WrapV8StackTrace: ImplV8StackTrace {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_stack_trace_t, Self>);
 }
-pub trait ImplV8stackTrace: Clone + Sized + Rc {
+pub trait ImplV8StackTrace: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
     fn get_frame_count(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn get_frame(&self, index: ::std::os::raw::c_int) -> Option<V8stackFrame> {
+    fn get_frame(&self, index: ::std::os::raw::c_int) -> Option<V8StackFrame> {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8stack_trace_t) {
-        impl_cef_v8stack_trace_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_stack_trace_t) {
+        impl_cef_v8_stack_trace_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8stack_trace_t;
+    fn get_raw(&self) -> *mut _cef_v8_stack_trace_t;
 }
-mod impl_cef_v8stack_trace_t {
+mod impl_cef_v8_stack_trace_t {
     use super::*;
-    pub fn init_methods<I: ImplV8stackTrace>(object: &mut _cef_v8stack_trace_t) {
+    pub fn init_methods<I: ImplV8StackTrace>(object: &mut _cef_v8_stack_trace_t) {
         object.is_valid = Some(is_valid::<I>);
         object.get_frame_count = Some(get_frame_count::<I>);
         object.get_frame = Some(get_frame::<I>);
     }
-    extern "C" fn is_valid<I: ImplV8stackTrace>(
-        self_: *mut _cef_v8stack_trace_t,
+    extern "C" fn is_valid<I: ImplV8StackTrace>(
+        self_: *mut _cef_v8_stack_trace_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackTrace::is_valid(&arg_self_.interface);
+        let result = ImplV8StackTrace::is_valid(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_frame_count<I: ImplV8stackTrace>(
-        self_: *mut _cef_v8stack_trace_t,
+    extern "C" fn get_frame_count<I: ImplV8StackTrace>(
+        self_: *mut _cef_v8_stack_trace_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackTrace::get_frame_count(&arg_self_.interface);
+        let result = ImplV8StackTrace::get_frame_count(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_frame<I: ImplV8stackTrace>(
-        self_: *mut _cef_v8stack_trace_t,
+    extern "C" fn get_frame<I: ImplV8StackTrace>(
+        self_: *mut _cef_v8_stack_trace_t,
         index: ::std::os::raw::c_int,
-    ) -> *mut _cef_v8stack_frame_t {
+    ) -> *mut _cef_v8_stack_frame_t {
         let (arg_self_, arg_index) = (self_, index);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let arg_index = arg_index.as_raw();
-        let result = ImplV8stackTrace::get_frame(&arg_self_.interface, arg_index);
+        let result = ImplV8StackTrace::get_frame(&arg_self_.interface, arg_index);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
 }
-impl ImplV8stackTrace for V8stackTrace {
+impl ImplV8StackTrace for V8StackTrace {
     fn is_valid(&self) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -43884,7 +43982,7 @@ impl ImplV8stackTrace for V8stackTrace {
                 .unwrap_or_default()
         }
     }
-    fn get_frame(&self, index: ::std::os::raw::c_int) -> Option<V8stackFrame> {
+    fn get_frame(&self, index: ::std::os::raw::c_int) -> Option<V8StackFrame> {
         unsafe {
             self.0
                 .get_frame
@@ -43902,69 +44000,69 @@ impl ImplV8stackTrace for V8stackTrace {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8stack_trace_t {
+    fn get_raw(&self) -> *mut _cef_v8_stack_trace_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8stack_trace_t {
+impl Rc for _cef_v8_stack_trace_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8stackTrace {
+impl Rc for V8StackTrace {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8stack_trace_t> for &V8stackTrace {
-    fn as_raw(self) -> *mut _cef_v8stack_trace_t {
-        ImplV8stackTrace::get_raw(self)
+impl ConvertParam<*mut _cef_v8_stack_trace_t> for &V8StackTrace {
+    fn as_raw(self) -> *mut _cef_v8_stack_trace_t {
+        ImplV8StackTrace::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8stack_trace_t> for &mut V8stackTrace {
-    fn as_raw(self) -> *mut _cef_v8stack_trace_t {
-        ImplV8stackTrace::get_raw(self)
+impl ConvertParam<*mut _cef_v8_stack_trace_t> for &mut V8StackTrace {
+    fn as_raw(self) -> *mut _cef_v8_stack_trace_t {
+        ImplV8StackTrace::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8stackTrace> for *mut _cef_v8stack_trace_t {
-    fn as_wrapper(self) -> V8stackTrace {
-        V8stackTrace(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8StackTrace> for *mut _cef_v8_stack_trace_t {
+    fn as_wrapper(self) -> V8StackTrace {
+        V8StackTrace(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8stack_trace_t> for V8stackTrace {
-    fn into(self) -> *mut _cef_v8stack_trace_t {
-        let object = ImplV8stackTrace::get_raw(&self);
+impl Into<*mut _cef_v8_stack_trace_t> for V8StackTrace {
+    fn into(self) -> *mut _cef_v8_stack_trace_t {
+        let object = ImplV8StackTrace::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8stackTrace {
+impl Default for V8StackTrace {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
 }
 
-/// See [_cef_v8stack_frame_t] for more documentation.
+/// See [_cef_v8_stack_frame_t] for more documentation.
 #[derive(Clone)]
-pub struct V8stackFrame(RefGuard<_cef_v8stack_frame_t>);
-impl V8stackFrame {
+pub struct V8StackFrame(RefGuard<_cef_v8_stack_frame_t>);
+impl V8StackFrame {
     pub fn new<T>(interface: T) -> Self
     where
-        T: WrapV8stackFrame,
+        T: WrapV8StackFrame,
     {
         unsafe {
             let mut cef_object = std::mem::zeroed();
-            <T as ImplV8stackFrame>::init_methods(&mut cef_object);
+            <T as ImplV8StackFrame>::init_methods(&mut cef_object);
             let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8stackFrame>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8stack_frame_t).as_wrapper()
+            <T as WrapV8StackFrame>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_v8_stack_frame_t).as_wrapper()
         }
     }
 }
-pub trait WrapV8stackFrame: ImplV8stackFrame {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8stack_frame_t, Self>);
+pub trait WrapV8StackFrame: ImplV8StackFrame {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_stack_frame_t, Self>);
 }
-pub trait ImplV8stackFrame: Clone + Sized + Rc {
+pub trait ImplV8StackFrame: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -43989,14 +44087,14 @@ pub trait ImplV8stackFrame: Clone + Sized + Rc {
     fn is_constructor(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn init_methods(object: &mut _cef_v8stack_frame_t) {
-        impl_cef_v8stack_frame_t::init_methods::<Self>(object);
+    fn init_methods(object: &mut _cef_v8_stack_frame_t) {
+        impl_cef_v8_stack_frame_t::init_methods::<Self>(object);
     }
-    fn get_raw(&self) -> *mut _cef_v8stack_frame_t;
+    fn get_raw(&self) -> *mut _cef_v8_stack_frame_t;
 }
-mod impl_cef_v8stack_frame_t {
+mod impl_cef_v8_stack_frame_t {
     use super::*;
-    pub fn init_methods<I: ImplV8stackFrame>(object: &mut _cef_v8stack_frame_t) {
+    pub fn init_methods<I: ImplV8StackFrame>(object: &mut _cef_v8_stack_frame_t) {
         object.is_valid = Some(is_valid::<I>);
         object.get_script_name = Some(get_script_name::<I>);
         object.get_script_name_or_source_url = Some(get_script_name_or_source_url::<I>);
@@ -44006,78 +44104,78 @@ mod impl_cef_v8stack_frame_t {
         object.is_eval = Some(is_eval::<I>);
         object.is_constructor = Some(is_constructor::<I>);
     }
-    extern "C" fn is_valid<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn is_valid<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::is_valid(&arg_self_.interface);
+        let result = ImplV8StackFrame::is_valid(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_script_name<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn get_script_name<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::get_script_name(&arg_self_.interface);
+        let result = ImplV8StackFrame::get_script_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_script_name_or_source_url<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn get_script_name_or_source_url<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::get_script_name_or_source_url(&arg_self_.interface);
+        let result = ImplV8StackFrame::get_script_name_or_source_url(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_function_name<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn get_function_name<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> *mut _cef_string_utf16_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::get_function_name(&arg_self_.interface);
+        let result = ImplV8StackFrame::get_function_name(&arg_self_.interface);
         result
             .map(|result| result.into())
             .unwrap_or(std::ptr::null_mut())
     }
-    extern "C" fn get_line_number<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn get_line_number<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::get_line_number(&arg_self_.interface);
+        let result = ImplV8StackFrame::get_line_number(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn get_column<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn get_column<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::get_column(&arg_self_.interface);
+        let result = ImplV8StackFrame::get_column(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_eval<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn is_eval<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::is_eval(&arg_self_.interface);
+        let result = ImplV8StackFrame::is_eval(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_constructor<I: ImplV8stackFrame>(
-        self_: *mut _cef_v8stack_frame_t,
+    extern "C" fn is_constructor<I: ImplV8StackFrame>(
+        self_: *mut _cef_v8_stack_frame_t,
     ) -> ::std::os::raw::c_int {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8stackFrame::is_constructor(&arg_self_.interface);
+        let result = ImplV8StackFrame::is_constructor(&arg_self_.interface);
         result.into()
     }
 }
-impl ImplV8stackFrame for V8stackFrame {
+impl ImplV8StackFrame for V8StackFrame {
     fn is_valid(&self) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -44186,43 +44284,43 @@ impl ImplV8stackFrame for V8stackFrame {
                 .unwrap_or_default()
         }
     }
-    fn get_raw(&self) -> *mut _cef_v8stack_frame_t {
+    fn get_raw(&self) -> *mut _cef_v8_stack_frame_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
 }
-impl Rc for _cef_v8stack_frame_t {
+impl Rc for _cef_v8_stack_frame_t {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.base.as_base()
     }
 }
-impl Rc for V8stackFrame {
+impl Rc for V8StackFrame {
     fn as_base(&self) -> &_cef_base_ref_counted_t {
         self.0.as_base()
     }
 }
-impl ConvertParam<*mut _cef_v8stack_frame_t> for &V8stackFrame {
-    fn as_raw(self) -> *mut _cef_v8stack_frame_t {
-        ImplV8stackFrame::get_raw(self)
+impl ConvertParam<*mut _cef_v8_stack_frame_t> for &V8StackFrame {
+    fn as_raw(self) -> *mut _cef_v8_stack_frame_t {
+        ImplV8StackFrame::get_raw(self)
     }
 }
-impl ConvertParam<*mut _cef_v8stack_frame_t> for &mut V8stackFrame {
-    fn as_raw(self) -> *mut _cef_v8stack_frame_t {
-        ImplV8stackFrame::get_raw(self)
+impl ConvertParam<*mut _cef_v8_stack_frame_t> for &mut V8StackFrame {
+    fn as_raw(self) -> *mut _cef_v8_stack_frame_t {
+        ImplV8StackFrame::get_raw(self)
     }
 }
-impl ConvertReturnValue<V8stackFrame> for *mut _cef_v8stack_frame_t {
-    fn as_wrapper(self) -> V8stackFrame {
-        V8stackFrame(unsafe { RefGuard::from_raw(self) })
+impl ConvertReturnValue<V8StackFrame> for *mut _cef_v8_stack_frame_t {
+    fn as_wrapper(self) -> V8StackFrame {
+        V8StackFrame(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_v8stack_frame_t> for V8stackFrame {
-    fn into(self) -> *mut _cef_v8stack_frame_t {
-        let object = ImplV8stackFrame::get_raw(&self);
+impl Into<*mut _cef_v8_stack_frame_t> for V8StackFrame {
+    fn into(self) -> *mut _cef_v8_stack_frame_t {
+        let object = ImplV8StackFrame::get_raw(&self);
         std::mem::forget(self);
         object
     }
 }
-impl Default for V8stackFrame {
+impl Default for V8StackFrame {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -44264,23 +44362,23 @@ pub trait ImplRenderProcessHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8context>,
+        context: Option<&mut impl ImplV8Context>,
     ) {
     }
     fn on_context_released(
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8context>,
+        context: Option<&mut impl ImplV8Context>,
     ) {
     }
     fn on_uncaught_exception(
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8context>,
-        exception: Option<&mut impl ImplV8exception>,
-        stack_trace: Option<&mut impl ImplV8stackTrace>,
+        context: Option<&mut impl ImplV8Context>,
+        exception: Option<&mut impl ImplV8Exception>,
+        stack_trace: Option<&mut impl ImplV8StackTrace>,
     ) {
     }
     fn on_focused_node_changed(
@@ -44369,7 +44467,7 @@ mod impl_cef_render_process_handler_t {
         self_: *mut _cef_render_process_handler_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        context: *mut _cef_v8context_t,
+        context: *mut _cef_v8_context_t,
     ) {
         let (arg_self_, arg_browser, arg_frame, arg_context) = (self_, browser, frame, context);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -44380,7 +44478,7 @@ mod impl_cef_render_process_handler_t {
             unsafe { arg_frame.as_mut() }.map(|arg| Frame(unsafe { RefGuard::from_raw(arg) }));
         let arg_frame = arg_frame.as_mut();
         let mut arg_context = unsafe { arg_context.as_mut() }
-            .map(|arg| V8context(unsafe { RefGuard::from_raw(arg) }));
+            .map(|arg| V8Context(unsafe { RefGuard::from_raw(arg) }));
         let arg_context = arg_context.as_mut();
         let result = ImplRenderProcessHandler::on_context_created(
             &arg_self_.interface,
@@ -44393,7 +44491,7 @@ mod impl_cef_render_process_handler_t {
         self_: *mut _cef_render_process_handler_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        context: *mut _cef_v8context_t,
+        context: *mut _cef_v8_context_t,
     ) {
         let (arg_self_, arg_browser, arg_frame, arg_context) = (self_, browser, frame, context);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -44404,7 +44502,7 @@ mod impl_cef_render_process_handler_t {
             unsafe { arg_frame.as_mut() }.map(|arg| Frame(unsafe { RefGuard::from_raw(arg) }));
         let arg_frame = arg_frame.as_mut();
         let mut arg_context = unsafe { arg_context.as_mut() }
-            .map(|arg| V8context(unsafe { RefGuard::from_raw(arg) }));
+            .map(|arg| V8Context(unsafe { RefGuard::from_raw(arg) }));
         let arg_context = arg_context.as_mut();
         let result = ImplRenderProcessHandler::on_context_released(
             &arg_self_.interface,
@@ -44417,9 +44515,9 @@ mod impl_cef_render_process_handler_t {
         self_: *mut _cef_render_process_handler_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        context: *mut _cef_v8context_t,
-        exception: *mut _cef_v8exception_t,
-        stack_trace: *mut _cef_v8stack_trace_t,
+        context: *mut _cef_v8_context_t,
+        exception: *mut _cef_v8_exception_t,
+        stack_trace: *mut _cef_v8_stack_trace_t,
     ) {
         let (arg_self_, arg_browser, arg_frame, arg_context, arg_exception, arg_stack_trace) =
             (self_, browser, frame, context, exception, stack_trace);
@@ -44431,13 +44529,13 @@ mod impl_cef_render_process_handler_t {
             unsafe { arg_frame.as_mut() }.map(|arg| Frame(unsafe { RefGuard::from_raw(arg) }));
         let arg_frame = arg_frame.as_mut();
         let mut arg_context = unsafe { arg_context.as_mut() }
-            .map(|arg| V8context(unsafe { RefGuard::from_raw(arg) }));
+            .map(|arg| V8Context(unsafe { RefGuard::from_raw(arg) }));
         let arg_context = arg_context.as_mut();
         let mut arg_exception = unsafe { arg_exception.as_mut() }
-            .map(|arg| V8exception(unsafe { RefGuard::from_raw(arg) }));
+            .map(|arg| V8Exception(unsafe { RefGuard::from_raw(arg) }));
         let arg_exception = arg_exception.as_mut();
         let mut arg_stack_trace = unsafe { arg_stack_trace.as_mut() }
-            .map(|arg| V8stackTrace(unsafe { RefGuard::from_raw(arg) }));
+            .map(|arg| V8StackTrace(unsafe { RefGuard::from_raw(arg) }));
         let arg_stack_trace = arg_stack_trace.as_mut();
         let result = ImplRenderProcessHandler::on_uncaught_exception(
             &arg_self_.interface,
@@ -44583,7 +44681,7 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8context>,
+        context: Option<&mut impl ImplV8Context>,
     ) {
         unsafe {
             self.0
@@ -44606,7 +44704,7 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
                     let arg_context = arg_context
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8context::get_raw(arg)
+                            ImplV8Context::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_browser, arg_frame, arg_context);
@@ -44619,7 +44717,7 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8context>,
+        context: Option<&mut impl ImplV8Context>,
     ) {
         unsafe {
             self.0
@@ -44642,7 +44740,7 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
                     let arg_context = arg_context
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8context::get_raw(arg)
+                            ImplV8Context::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_browser, arg_frame, arg_context);
@@ -44655,9 +44753,9 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8context>,
-        exception: Option<&mut impl ImplV8exception>,
-        stack_trace: Option<&mut impl ImplV8stackTrace>,
+        context: Option<&mut impl ImplV8Context>,
+        exception: Option<&mut impl ImplV8Exception>,
+        stack_trace: Option<&mut impl ImplV8StackTrace>,
     ) {
         unsafe {
             self.0
@@ -44681,19 +44779,19 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
                     let arg_context = arg_context
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8context::get_raw(arg)
+                            ImplV8Context::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8exception::get_raw(arg)
+                            ImplV8Exception::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_stack_trace = arg_stack_trace
                         .map(|arg| {
                             arg.add_ref();
-                            ImplV8stackTrace::get_raw(arg)
+                            ImplV8StackTrace::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(
@@ -60242,7 +60340,7 @@ impl Into<cef_text_field_commands_t> for TextFieldCommands {
 }
 impl Default for TextFieldCommands {
     fn default() -> Self {
-        Self(cef_text_field_commands_t::CEF_TFC_CUT)
+        Self(cef_text_field_commands_t::CEF_TFC_UNKNOWN)
     }
 }
 
@@ -60271,7 +60369,7 @@ impl Into<cef_chrome_toolbar_type_t> for ChromeToolbarType {
 }
 impl Default for ChromeToolbarType {
     fn default() -> Self {
-        Self(cef_chrome_toolbar_type_t::CEF_CTT_NONE)
+        Self(cef_chrome_toolbar_type_t::CEF_CTT_UNKNOWN)
     }
 }
 
@@ -60748,6 +60846,28 @@ pub fn sandbox_destroy(sandbox_context: *mut u8) {
         let arg_sandbox_context = sandbox_context;
         let arg_sandbox_context = arg_sandbox_context as *mut _;
         let result = cef_sandbox_destroy(arg_sandbox_context);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_api_hash] for more documentation.
+pub fn api_hash(
+    version: ::std::os::raw::c_int,
+    entry: ::std::os::raw::c_int,
+) -> *const ::std::os::raw::c_char {
+    unsafe {
+        let (arg_version, arg_entry) = (version, entry);
+        let arg_version = arg_version;
+        let arg_entry = arg_entry;
+        let result = cef_api_hash(arg_version, arg_entry);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_api_version] for more documentation.
+pub fn api_version() -> ::std::os::raw::c_int {
+    unsafe {
+        let result = cef_api_version();
         result.as_wrapper()
     }
 }
@@ -62078,8 +62198,8 @@ pub fn request_context_create_context(
     }
 }
 
-/// See [cef_create_context_shared] for more documentation.
-pub fn create_context_shared(
+/// See [cef_request_context_cef_create_context_shared] for more documentation.
+pub fn request_context_cef_create_context_shared(
     other: Option<&mut impl ImplRequestContext>,
     handler: Option<&mut impl ImplRequestContextHandler>,
 ) -> Option<RequestContext> {
@@ -62097,7 +62217,7 @@ pub fn create_context_shared(
                 ImplRequestContextHandler::get_raw(arg)
             })
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_create_context_shared(arg_other, arg_handler);
+        let result = cef_request_context_cef_create_context_shared(arg_other, arg_handler);
         if result.is_null() {
             None
         } else {
@@ -62408,10 +62528,10 @@ pub fn post_delayed_task(
     }
 }
 
-/// See [cef_v8context_get_current_context] for more documentation.
-pub fn v8context_get_current_context() -> Option<V8context> {
+/// See [cef_v8_context_get_current_context] for more documentation.
+pub fn v8_context_get_current_context() -> Option<V8Context> {
     unsafe {
-        let result = cef_v8context_get_current_context();
+        let result = cef_v8_context_get_current_context();
         if result.is_null() {
             None
         } else {
@@ -62420,10 +62540,10 @@ pub fn v8context_get_current_context() -> Option<V8context> {
     }
 }
 
-/// See [cef_v8context_get_entered_context] for more documentation.
-pub fn v8context_get_entered_context() -> Option<V8context> {
+/// See [cef_v8_context_get_entered_context] for more documentation.
+pub fn v8_context_get_entered_context() -> Option<V8Context> {
     unsafe {
-        let result = cef_v8context_get_entered_context();
+        let result = cef_v8_context_get_entered_context();
         if result.is_null() {
             None
         } else {
@@ -62432,18 +62552,18 @@ pub fn v8context_get_entered_context() -> Option<V8context> {
     }
 }
 
-/// See [cef_v8context_in_context] for more documentation.
-pub fn v8context_in_context() -> ::std::os::raw::c_int {
+/// See [cef_v8_context_in_context] for more documentation.
+pub fn v8_context_in_context() -> ::std::os::raw::c_int {
     unsafe {
-        let result = cef_v8context_in_context();
+        let result = cef_v8_context_in_context();
         result.as_wrapper()
     }
 }
 
-/// See [cef_v8value_create_undefined] for more documentation.
-pub fn v8value_create_undefined() -> Option<V8value> {
+/// See [cef_v8_value_create_undefined] for more documentation.
+pub fn v8_value_create_undefined() -> Option<V8Value> {
     unsafe {
-        let result = cef_v8value_create_undefined();
+        let result = cef_v8_value_create_undefined();
         if result.is_null() {
             None
         } else {
@@ -62452,10 +62572,10 @@ pub fn v8value_create_undefined() -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_null] for more documentation.
-pub fn v8value_create_null() -> Option<V8value> {
+/// See [cef_v8_value_create_null] for more documentation.
+pub fn v8_value_create_null() -> Option<V8Value> {
     unsafe {
-        let result = cef_v8value_create_null();
+        let result = cef_v8_value_create_null();
         if result.is_null() {
             None
         } else {
@@ -62464,26 +62584,12 @@ pub fn v8value_create_null() -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_bool] for more documentation.
-pub fn v8value_create_bool(value: ::std::os::raw::c_int) -> Option<V8value> {
-    unsafe {
-        let arg_value = value;
-        let arg_value = arg_value;
-        let result = cef_v8value_create_bool(arg_value);
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
-    }
-}
-
-/// See [cef_v8value_create_int] for more documentation.
-pub fn v8value_create_int(value: i32) -> Option<V8value> {
+/// See [cef_v8_value_create_bool] for more documentation.
+pub fn v8_value_create_bool(value: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value;
-        let result = cef_v8value_create_int(arg_value);
+        let result = cef_v8_value_create_bool(arg_value);
         if result.is_null() {
             None
         } else {
@@ -62492,12 +62598,12 @@ pub fn v8value_create_int(value: i32) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_uint] for more documentation.
-pub fn v8value_create_uint(value: u32) -> Option<V8value> {
+/// See [cef_v8_value_create_int] for more documentation.
+pub fn v8_value_create_int(value: i32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value;
-        let result = cef_v8value_create_uint(arg_value);
+        let result = cef_v8_value_create_int(arg_value);
         if result.is_null() {
             None
         } else {
@@ -62506,12 +62612,12 @@ pub fn v8value_create_uint(value: u32) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_double] for more documentation.
-pub fn v8value_create_double(value: f64) -> Option<V8value> {
+/// See [cef_v8_value_create_uint] for more documentation.
+pub fn v8_value_create_uint(value: u32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value;
-        let result = cef_v8value_create_double(arg_value);
+        let result = cef_v8_value_create_uint(arg_value);
         if result.is_null() {
             None
         } else {
@@ -62520,11 +62626,25 @@ pub fn v8value_create_double(value: f64) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_date] for more documentation.
-pub fn v8value_create_date(date: _cef_basetime_t) -> Option<V8value> {
+/// See [cef_v8_value_create_double] for more documentation.
+pub fn v8_value_create_double(value: f64) -> Option<V8Value> {
+    unsafe {
+        let arg_value = value;
+        let arg_value = arg_value;
+        let result = cef_v8_value_create_double(arg_value);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.as_wrapper())
+        }
+    }
+}
+
+/// See [cef_v8_value_create_date] for more documentation.
+pub fn v8_value_create_date(date: _cef_basetime_t) -> Option<V8Value> {
     unsafe {
         let arg_date = date;
-        let result = cef_v8value_create_date(arg_date);
+        let result = cef_v8_value_create_date(arg_date);
         if result.is_null() {
             None
         } else {
@@ -62533,14 +62653,14 @@ pub fn v8value_create_date(date: _cef_basetime_t) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_string] for more documentation.
-pub fn v8value_create_string(value: Option<&CefStringUtf16>) -> Option<V8value> {
+/// See [cef_v8_value_create_string] for more documentation.
+pub fn v8_value_create_string(value: Option<&CefStringUtf16>) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value
             .map(|arg| arg.as_raw())
             .unwrap_or(std::ptr::null());
-        let result = cef_v8value_create_string(arg_value);
+        let result = cef_v8_value_create_string(arg_value);
         if result.is_null() {
             None
         } else {
@@ -62549,26 +62669,26 @@ pub fn v8value_create_string(value: Option<&CefStringUtf16>) -> Option<V8value> 
     }
 }
 
-/// See [cef_v8value_create_object] for more documentation.
-pub fn v8value_create_object(
-    accessor: Option<&mut impl ImplV8accessor>,
-    interceptor: Option<&mut impl ImplV8interceptor>,
-) -> Option<V8value> {
+/// See [cef_v8_value_create_object] for more documentation.
+pub fn v8_value_create_object(
+    accessor: Option<&mut impl ImplV8Accessor>,
+    interceptor: Option<&mut impl ImplV8Interceptor>,
+) -> Option<V8Value> {
     unsafe {
         let (arg_accessor, arg_interceptor) = (accessor, interceptor);
         let arg_accessor = arg_accessor
             .map(|arg| {
                 arg.add_ref();
-                ImplV8accessor::get_raw(arg)
+                ImplV8Accessor::get_raw(arg)
             })
             .unwrap_or(std::ptr::null_mut());
         let arg_interceptor = arg_interceptor
             .map(|arg| {
                 arg.add_ref();
-                ImplV8interceptor::get_raw(arg)
+                ImplV8Interceptor::get_raw(arg)
             })
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_v8value_create_object(arg_accessor, arg_interceptor);
+        let result = cef_v8_value_create_object(arg_accessor, arg_interceptor);
         if result.is_null() {
             None
         } else {
@@ -62577,12 +62697,12 @@ pub fn v8value_create_object(
     }
 }
 
-/// See [cef_v8value_create_array] for more documentation.
-pub fn v8value_create_array(length: ::std::os::raw::c_int) -> Option<V8value> {
+/// See [cef_v8_value_create_array] for more documentation.
+pub fn v8_value_create_array(length: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_length = length;
         let arg_length = arg_length;
-        let result = cef_v8value_create_array(arg_length);
+        let result = cef_v8_value_create_array(arg_length);
         if result.is_null() {
             None
         } else {
@@ -62591,12 +62711,12 @@ pub fn v8value_create_array(length: ::std::os::raw::c_int) -> Option<V8value> {
     }
 }
 
-/// See [cef_v8value_create_array_buffer] for more documentation.
-pub fn v8value_create_array_buffer(
+/// See [cef_v8_value_create_array_buffer] for more documentation.
+pub fn v8_value_create_array_buffer(
     buffer: *mut u8,
     length: usize,
-    release_callback: Option<&mut impl ImplV8arrayBufferReleaseCallback>,
-) -> Option<V8value> {
+    release_callback: Option<&mut impl ImplV8ArrayBufferReleaseCallback>,
+) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length, arg_release_callback) = (buffer, length, release_callback);
         let arg_buffer = arg_buffer as *mut _;
@@ -62604,10 +62724,10 @@ pub fn v8value_create_array_buffer(
         let arg_release_callback = arg_release_callback
             .map(|arg| {
                 arg.add_ref();
-                ImplV8arrayBufferReleaseCallback::get_raw(arg)
+                ImplV8ArrayBufferReleaseCallback::get_raw(arg)
             })
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_v8value_create_array_buffer(arg_buffer, arg_length, arg_release_callback);
+        let result = cef_v8_value_create_array_buffer(arg_buffer, arg_length, arg_release_callback);
         if result.is_null() {
             None
         } else {
@@ -62616,13 +62736,13 @@ pub fn v8value_create_array_buffer(
     }
 }
 
-/// See [cef_v8value_create_array_buffer_with_copy] for more documentation.
-pub fn v8value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8value> {
+/// See [cef_v8_value_create_array_buffer_with_copy] for more documentation.
+pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length) = (buffer, length);
         let arg_buffer = arg_buffer as *mut _;
         let arg_length = arg_length;
-        let result = cef_v8value_create_array_buffer_with_copy(arg_buffer, arg_length);
+        let result = cef_v8_value_create_array_buffer_with_copy(arg_buffer, arg_length);
         if result.is_null() {
             None
         } else {
@@ -62631,21 +62751,21 @@ pub fn v8value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> 
     }
 }
 
-/// See [cef_v8value_create_function] for more documentation.
-pub fn v8value_create_function(
+/// See [cef_v8_value_create_function] for more documentation.
+pub fn v8_value_create_function(
     name: Option<&CefStringUtf16>,
-    handler: Option<&mut impl ImplV8handler>,
-) -> Option<V8value> {
+    handler: Option<&mut impl ImplV8Handler>,
+) -> Option<V8Value> {
     unsafe {
         let (arg_name, arg_handler) = (name, handler);
         let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
         let arg_handler = arg_handler
             .map(|arg| {
                 arg.add_ref();
-                ImplV8handler::get_raw(arg)
+                ImplV8Handler::get_raw(arg)
             })
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_v8value_create_function(arg_name, arg_handler);
+        let result = cef_v8_value_create_function(arg_name, arg_handler);
         if result.is_null() {
             None
         } else {
@@ -62654,10 +62774,10 @@ pub fn v8value_create_function(
     }
 }
 
-/// See [cef_v8value_create_promise] for more documentation.
-pub fn v8value_create_promise() -> Option<V8value> {
+/// See [cef_v8_value_create_promise] for more documentation.
+pub fn v8_value_create_promise() -> Option<V8Value> {
     unsafe {
-        let result = cef_v8value_create_promise();
+        let result = cef_v8_value_create_promise();
         if result.is_null() {
             None
         } else {
@@ -62666,12 +62786,12 @@ pub fn v8value_create_promise() -> Option<V8value> {
     }
 }
 
-/// See [cef_v8stack_trace_get_current] for more documentation.
-pub fn v8stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V8stackTrace> {
+/// See [cef_v8_stack_trace_get_current] for more documentation.
+pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V8StackTrace> {
     unsafe {
         let arg_frame_limit = frame_limit;
         let arg_frame_limit = arg_frame_limit;
-        let result = cef_v8stack_trace_get_current(arg_frame_limit);
+        let result = cef_v8_stack_trace_get_current(arg_frame_limit);
         if result.is_null() {
             None
         } else {
@@ -62684,7 +62804,7 @@ pub fn v8stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V
 pub fn register_extension(
     extension_name: Option<&CefStringUtf16>,
     javascript_code: Option<&CefStringUtf16>,
-    handler: Option<&mut impl ImplV8handler>,
+    handler: Option<&mut impl ImplV8Handler>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_extension_name, arg_javascript_code, arg_handler) =
@@ -62698,7 +62818,7 @@ pub fn register_extension(
         let arg_handler = arg_handler
             .map(|arg| {
                 arg.add_ref();
-                ImplV8handler::get_raw(arg)
+                ImplV8Handler::get_raw(arg)
             })
             .unwrap_or(std::ptr::null_mut());
         let result = cef_register_extension(arg_extension_name, arg_javascript_code, arg_handler);
