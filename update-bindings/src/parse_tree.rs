@@ -1256,6 +1256,7 @@ struct StructDeclarationRef<'a> {
     name: String,
     fields: Vec<FieldRef<'a>>,
     methods: Vec<SignatureRef<'a>>,
+    is_sealed: bool,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -1674,6 +1675,236 @@ impl<'a> ParseTree<'a> {
             pub use crate::string::#rust_name;
         }
         .to_string();
+        writeln!(f, "{wrapper}")
+    }
+
+    fn write_sealed_struct(
+        &self,
+        f: &mut Formatter<'_>,
+        s: &StructDeclarationRef<'_>,
+        root: &str,
+        name_ident: &syn::Ident,
+        rust_name: &syn::Ident,
+    ) -> fmt::Result {
+        let name = s.name.as_str();
+        let methods = s.methods.iter().map(|m| {
+            let sig = m.get_signature(self);
+            let name = &m.name;
+            let name = format_ident!("{name}");
+            let pre_forward_args = m.unwrap_rust_args(self);
+            let args = m.inputs.iter().map(|arg| {
+                let name = make_snake_case_value_name(&arg.name);
+                let name = format_ident!("arg_{name}");
+                quote! { #name }
+            });
+            let post_forward_args = m.rewrap_rust_args(self);
+            let output_type = m.output.and_then(|ty| {
+                let ty = self.resolve_type_aliases(ty);
+                syn::parse2::<ModifiedType>(ty.to_token_stream()).ok()
+            });
+            let wrap_result = output_type
+                .as_ref()
+                .and_then(|ModifiedType { modifiers, ty, .. }| {
+                    let ty = ty.to_token_stream().to_string();
+                    match modifiers.as_slice() {
+                        [TypeModifier::ConstPtr | TypeModifier::MutPtr]
+                            if ty != quote! { ::std::os::raw::c_void }.to_string() =>
+                        {
+                            match self.cef_name_map.get(&ty) {
+                                Some(NameMapEntry {
+                                    ty: NameMapType::StructDeclaration,
+                                    ..
+                                }) => Some(quote! {
+                                    if result.is_null() {
+                                        None
+                                    } else {
+                                        Some(result.as_wrapper())
+                                    }
+                                }),
+                                _ => None,
+                            }
+                        }
+                        _ => None,
+                    }
+                })
+                .unwrap_or(quote! { result.as_wrapper() });
+            let impl_default = output_type
+                .and_then(|ty| {
+                    (ty.ty.to_token_stream().to_string()
+                        != quote! { ::std::os::raw::c_void }.to_string())
+                    .then(|| quote! { .unwrap_or_default() })
+                })
+                .unwrap_or(quote! { .unwrap_or_else(|| std::mem::zeroed()) });
+            quote! {
+                #sig {
+                    unsafe {
+                        self.0.#name.map(|f| {
+                            #pre_forward_args
+                            let result = f(#(#args),*);
+                            #post_forward_args
+                            #wrap_result
+                        })
+                        #impl_default
+                    }
+                }
+            }
+        });
+
+        let base_name = self.base(name);
+        let impl_trait = format_ident!("Impl{rust_name}");
+        let impl_base_name = base_name
+            .filter(|base| *base != BASE_REF_COUNTED)
+            .and_then(|base| self.cef_name_map.get(base))
+            .map(|entry| {
+                let base = &entry.name;
+                let base = format_ident!("Impl{base}");
+                quote! { #base }
+            });
+        let impl_get_raw = impl_base_name
+            .as_ref()
+            .map(|impl_base_name| {
+                quote! {
+                    fn get_raw(&self) -> *mut #name_ident {
+                        <Self as #impl_base_name>::get_raw(self) as *mut _
+                    }
+                }
+            })
+            .unwrap_or(quote! { fn get_raw(&self) -> *mut #name_ident; });
+        let impl_base_name = impl_base_name.unwrap_or(quote! { Clone + Sized + Rc });
+        let impl_methods = s.methods.iter().map(|m| {
+            let sig = m.get_signature(self);
+            quote! { #sig; }
+        });
+
+        let mut base_name = base_name;
+        let mut base_structs = vec![];
+        while let Some(next_base) = base_name
+            .filter(|base| *base != root)
+            .and_then(|base| self.lookup_struct_declaration.get(base))
+            .and_then(|&i| self.struct_declarations.get(i))
+        {
+            base_name = self.base(&next_base.name);
+            base_structs.push(next_base);
+        }
+
+        let impl_bases = base_structs
+            .into_iter()
+            .filter_map(|base_struct| {
+                self.cef_name_map.get(&base_struct.name).map(|entry| {
+                    let base = &base_struct.name;
+                    let base_ident = format_ident!("{base}");
+                    let base = &entry.name;
+                    let base_trait = format_ident!("Impl{base}");
+                    let base = format_ident!("{base}");
+                    let base_methods = base_struct.methods.iter().map(|m| {
+                        let sig = m.get_signature(self);
+                        let name = &m.name;
+                        let name = format_ident!("{name}");
+                        let args = m.merge_params(self).filter_map(|arg| match arg {
+                            MergedParam::Single { name, .. } => {
+                                let name = format_ident!("{name}");
+                                Some(quote! { #name })
+                            }
+                            MergedParam::Bounded { slice_name, .. }
+                            | MergedParam::Buffer { slice_name, .. } => {
+                                let name = format_ident!("{slice_name}");
+                                Some(quote! { #name })
+                            }
+                            _ => None,
+                        });
+                        quote! {
+                            #sig {
+                                #base(unsafe {
+                                    RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
+                                })
+                                .#name(#(#args),*)
+                            }
+                        }
+                    });
+
+                    quote! {
+                        impl #base_trait for #rust_name {
+                            #(#base_methods)*
+
+                            fn get_raw(&self) -> *mut #base_ident {
+                                unsafe { RefGuard::as_raw(&self.0) as *mut _ }
+                            }
+                        }
+                    }
+                })
+            })
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev();
+
+        let base_ident = format_ident!("{BASE_REF_COUNTED}");
+
+        let wrapper = quote! {
+            #[derive(Clone)]
+            pub struct #rust_name(RefGuard<#name_ident>);
+
+            pub trait #impl_trait : #impl_base_name {
+                #(#impl_methods)*
+
+                #impl_get_raw
+            }
+
+            #(#impl_bases)*
+
+            impl #impl_trait for #rust_name {
+                #(#methods)*
+
+                fn get_raw(&self) -> *mut #name_ident {
+                    unsafe { RefGuard::as_raw(&self.0) }
+                }
+            }
+
+            impl Rc for #name_ident {
+                fn as_base(&self) -> &#base_ident {
+                    self.base.as_base()
+                }
+            }
+
+            impl Rc for #rust_name {
+                fn as_base(&self) -> &#base_ident {
+                    self.0.as_base()
+                }
+            }
+
+            impl ConvertParam<*mut #name_ident> for &#rust_name {
+                fn as_raw(self) -> *mut #name_ident {
+                    #impl_trait::get_raw(self)
+                }
+            }
+
+            impl ConvertParam<*mut #name_ident> for &mut #rust_name {
+                fn as_raw(self) -> *mut #name_ident {
+                    #impl_trait::get_raw(self)
+                }
+            }
+
+            impl ConvertReturnValue<#rust_name> for *mut #name_ident {
+                fn as_wrapper(self) -> #rust_name {
+                    #rust_name(unsafe { RefGuard::from_raw(self) })
+                }
+            }
+
+            impl Into<*mut #name_ident> for #rust_name {
+                fn into(self) -> *mut #name_ident {
+                    let object = #impl_trait::get_raw(&self);
+                    std::mem::forget(self);
+                    object
+                }
+            }
+
+            impl Default for #rust_name {
+                fn default() -> Self {
+                    unsafe { std::mem::zeroed() }
+                }
+            }
+        }
+        .to_string();
+
         writeln!(f, "{wrapper}")
     }
 
@@ -2484,7 +2715,11 @@ impl<'a> ParseTree<'a> {
             let name_ident = format_ident!("{name}");
             let root = self.root(name);
             if root == BASE_REF_COUNTED {
-                self.write_ref_counted_struct(f, s, root, &name_ident, &rust_name)?;
+                if s.is_sealed {
+                    self.write_sealed_struct(f, s, root, &name_ident, &rust_name)
+                } else {
+                    self.write_ref_counted_struct(f, s, root, &name_ident, &rust_name)
+                }?;
                 continue;
             }
 
@@ -2848,10 +3083,40 @@ impl<'a> From<&'a syn::File> for ParseTree<'a> {
                             }
                         }
 
+                        let is_sealed = item_struct
+                            .attrs
+                            .iter()
+                            .find_map(|attr| match attr {
+                                syn::Attribute {
+                                    style: syn::AttrStyle::Outer,
+                                    meta:
+                                        syn::Meta::NameValue(syn::MetaNameValue {
+                                            path,
+                                            value:
+                                                syn::Expr::Lit(syn::ExprLit {
+                                                    lit: syn::Lit::Str(value),
+                                                    ..
+                                                }),
+                                            ..
+                                        }),
+                                    ..
+                                } if path.to_token_stream().to_string()
+                                    == quote! { doc }.to_string() =>
+                                {
+                                    Some(value.to_token_stream().to_string())
+                                }
+                                _ => None,
+                            })
+                            .map(|comment| {
+                                comment.ends_with(r#"NOTE: This struct is allocated DLL-side.\n""#)
+                            })
+                            .unwrap_or_default();
+
                         Some(StructDeclarationRef {
                             name: item_struct.ident.to_string(),
                             fields,
                             methods,
+                            is_sealed,
                         })
                     }
                     _ => None,
