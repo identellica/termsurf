@@ -4130,32 +4130,8 @@ impl Default for NavigationEntry {
 /// See [_cef_registration_t] for more documentation.
 #[derive(Clone)]
 pub struct Registration(RefGuard<_cef_registration_t>);
-impl Registration {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapRegistration,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplRegistration>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapRegistration>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_registration_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapRegistration: ImplRegistration {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_registration_t, Self>);
-}
 pub trait ImplRegistration: Clone + Sized + Rc {
-    fn init_methods(object: &mut _cef_registration_t) {
-        impl_cef_registration_t::init_methods::<Self>(object);
-    }
     fn get_raw(&self) -> *mut _cef_registration_t;
-}
-mod impl_cef_registration_t {
-    use super::*;
-    pub fn init_methods<I: ImplRegistration>(object: &mut _cef_registration_t) {}
 }
 impl ImplRegistration for Registration {
     fn get_raw(&self) -> *mut _cef_registration_t {
@@ -11692,35 +11668,8 @@ impl Default for LabelButton {
 /// See [_cef_menu_button_pressed_lock_t] for more documentation.
 #[derive(Clone)]
 pub struct MenuButtonPressedLock(RefGuard<_cef_menu_button_pressed_lock_t>);
-impl MenuButtonPressedLock {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMenuButtonPressedLock,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMenuButtonPressedLock>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMenuButtonPressedLock>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_menu_button_pressed_lock_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMenuButtonPressedLock: ImplMenuButtonPressedLock {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_menu_button_pressed_lock_t, Self>);
-}
 pub trait ImplMenuButtonPressedLock: Clone + Sized + Rc {
-    fn init_methods(object: &mut _cef_menu_button_pressed_lock_t) {
-        impl_cef_menu_button_pressed_lock_t::init_methods::<Self>(object);
-    }
     fn get_raw(&self) -> *mut _cef_menu_button_pressed_lock_t;
-}
-mod impl_cef_menu_button_pressed_lock_t {
-    use super::*;
-    pub fn init_methods<I: ImplMenuButtonPressedLock>(
-        object: &mut _cef_menu_button_pressed_lock_t,
-    ) {
-    }
 }
 impl ImplMenuButtonPressedLock for MenuButtonPressedLock {
     fn get_raw(&self) -> *mut _cef_menu_button_pressed_lock_t {

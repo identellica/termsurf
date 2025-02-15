@@ -2004,319 +2004,31 @@ impl Default for DevToolsMessageObserver {
 /// See [_cef_value_t] for more documentation.
 #[derive(Clone)]
 pub struct Value(RefGuard<_cef_value_t>);
-impl Value {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapValue,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplValue>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapValue>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_value_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapValue: ImplValue {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_value_t, Self>);
-}
 pub trait ImplValue: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_owned(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_equal(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn copy(&self) -> Option<Value> {
-        Default::default()
-    }
-    fn get_type(&self) -> ValueType {
-        Default::default()
-    }
-    fn get_bool(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_int(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_double(&self) -> f64 {
-        Default::default()
-    }
-    fn get_string(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_binary(&self) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn get_dictionary(&self) -> Option<DictionaryValue> {
-        Default::default()
-    }
-    fn get_list(&self) -> Option<ListValue> {
-        Default::default()
-    }
-    fn set_null(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_bool(&self, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_int(&self, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_double(&self, value: f64) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_string(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_binary(&self, value: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_dictionary(
-        &self,
-        value: Option<&mut impl ImplDictionaryValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_list(&self, value: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_value_t) {
-        impl_cef_value_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_owned(&self) -> ::std::os::raw::c_int;
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int;
+    fn copy(&self) -> Option<Value>;
+    fn get_type(&self) -> ValueType;
+    fn get_bool(&self) -> ::std::os::raw::c_int;
+    fn get_int(&self) -> ::std::os::raw::c_int;
+    fn get_double(&self) -> f64;
+    fn get_string(&self) -> Option<CefStringUtf16>;
+    fn get_binary(&self) -> Option<BinaryValue>;
+    fn get_dictionary(&self) -> Option<DictionaryValue>;
+    fn get_list(&self) -> Option<ListValue>;
+    fn set_null(&self) -> ::std::os::raw::c_int;
+    fn set_bool(&self, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn set_int(&self, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn set_double(&self, value: f64) -> ::std::os::raw::c_int;
+    fn set_string(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn set_binary(&self, value: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int;
+    fn set_dictionary(&self, value: Option<&mut impl ImplDictionaryValue>)
+        -> ::std::os::raw::c_int;
+    fn set_list(&self, value: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_value_t;
-}
-mod impl_cef_value_t {
-    use super::*;
-    pub fn init_methods<I: ImplValue>(object: &mut _cef_value_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_owned = Some(is_owned::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.is_equal = Some(is_equal::<I>);
-        object.copy = Some(copy::<I>);
-        object.get_type = Some(get_type::<I>);
-        object.get_bool = Some(get_bool::<I>);
-        object.get_int = Some(get_int::<I>);
-        object.get_double = Some(get_double::<I>);
-        object.get_string = Some(get_string::<I>);
-        object.get_binary = Some(get_binary::<I>);
-        object.get_dictionary = Some(get_dictionary::<I>);
-        object.get_list = Some(get_list::<I>);
-        object.set_null = Some(set_null::<I>);
-        object.set_bool = Some(set_bool::<I>);
-        object.set_int = Some(set_int::<I>);
-        object.set_double = Some(set_double::<I>);
-        object.set_string = Some(set_string::<I>);
-        object.set_binary = Some(set_binary::<I>);
-        object.set_dictionary = Some(set_dictionary::<I>);
-        object.set_list = Some(set_list::<I>);
-    }
-    extern "C" fn is_valid<I: ImplValue>(self_: *mut _cef_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_owned<I: ImplValue>(self_: *mut _cef_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::is_owned(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_read_only<I: ImplValue>(self_: *mut _cef_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        that: *mut _cef_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplValue::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn is_equal<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        that: *mut _cef_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplValue::is_equal(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn copy<I: ImplValue>(self_: *mut _cef_value_t) -> *mut _cef_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::copy(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_type<I: ImplValue>(self_: *mut _cef_value_t) -> cef_value_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_bool<I: ImplValue>(self_: *mut _cef_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_bool(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_int<I: ImplValue>(self_: *mut _cef_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_int(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_double<I: ImplValue>(self_: *mut _cef_value_t) -> f64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_double(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_string<I: ImplValue>(self_: *mut _cef_value_t) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_string(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_binary<I: ImplValue>(self_: *mut _cef_value_t) -> *mut _cef_binary_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_binary(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_dictionary<I: ImplValue>(
-        self_: *mut _cef_value_t,
-    ) -> *mut _cef_dictionary_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_dictionary(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_list<I: ImplValue>(self_: *mut _cef_value_t) -> *mut _cef_list_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::get_list(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_null<I: ImplValue>(self_: *mut _cef_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplValue::set_null(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_bool<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_value = arg_value.as_raw();
-        let result = ImplValue::set_bool(&arg_self_.interface, arg_value);
-        result.into()
-    }
-    extern "C" fn set_int<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_value = arg_value.as_raw();
-        let result = ImplValue::set_int(&arg_self_.interface, arg_value);
-        result.into()
-    }
-    extern "C" fn set_double<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        value: f64,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_value = arg_value.as_raw();
-        let result = ImplValue::set_double(&arg_self_.interface, arg_value);
-        result.into()
-    }
-    extern "C" fn set_string<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        value: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let result = ImplValue::set_string(&arg_self_.interface, arg_value);
-        result.into()
-    }
-    extern "C" fn set_binary<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        value: *mut _cef_binary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_value = unsafe { arg_value.as_mut() }
-            .map(|arg| BinaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplValue::set_binary(&arg_self_.interface, arg_value);
-        result.into()
-    }
-    extern "C" fn set_dictionary<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        value: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_value = unsafe { arg_value.as_mut() }
-            .map(|arg| DictionaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplValue::set_dictionary(&arg_self_.interface, arg_value);
-        result.into()
-    }
-    extern "C" fn set_list<I: ImplValue>(
-        self_: *mut _cef_value_t,
-        value: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| ListValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplValue::set_list(&arg_self_.interface, arg_value);
-        result.into()
-    }
 }
 impl ImplValue for Value {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -2696,151 +2408,16 @@ impl Default for Value {
 /// See [_cef_binary_value_t] for more documentation.
 #[derive(Clone)]
 pub struct BinaryValue(RefGuard<_cef_binary_value_t>);
-impl BinaryValue {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapBinaryValue,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplBinaryValue>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapBinaryValue>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_binary_value_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapBinaryValue: ImplBinaryValue {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_binary_value_t, Self>);
-}
 pub trait ImplBinaryValue: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_owned(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_equal(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn copy(&self) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn get_raw_data(&self) -> *const ::std::os::raw::c_void {
-        unsafe { std::mem::zeroed() }
-    }
-    fn get_size(&self) -> usize {
-        Default::default()
-    }
-    fn get_data(&self, buffer: Option<&mut Vec<u8>>, data_offset: usize) -> usize {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_binary_value_t) {
-        impl_cef_binary_value_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_owned(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int;
+    fn copy(&self) -> Option<BinaryValue>;
+    fn get_raw_data(&self) -> *const ::std::os::raw::c_void;
+    fn get_size(&self) -> usize;
+    fn get_data(&self, buffer: Option<&mut Vec<u8>>, data_offset: usize) -> usize;
     fn get_raw(&self) -> *mut _cef_binary_value_t;
-}
-mod impl_cef_binary_value_t {
-    use super::*;
-    pub fn init_methods<I: ImplBinaryValue>(object: &mut _cef_binary_value_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_owned = Some(is_owned::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.is_equal = Some(is_equal::<I>);
-        object.copy = Some(copy::<I>);
-        object.get_raw_data = Some(get_raw_data::<I>);
-        object.get_size = Some(get_size::<I>);
-        object.get_data = Some(get_data::<I>);
-    }
-    extern "C" fn is_valid<I: ImplBinaryValue>(
-        self_: *mut _cef_binary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBinaryValue::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_owned<I: ImplBinaryValue>(
-        self_: *mut _cef_binary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBinaryValue::is_owned(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplBinaryValue>(
-        self_: *mut _cef_binary_value_t,
-        that: *mut _cef_binary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| BinaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplBinaryValue::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn is_equal<I: ImplBinaryValue>(
-        self_: *mut _cef_binary_value_t,
-        that: *mut _cef_binary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| BinaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplBinaryValue::is_equal(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn copy<I: ImplBinaryValue>(
-        self_: *mut _cef_binary_value_t,
-    ) -> *mut _cef_binary_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBinaryValue::copy(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_raw_data<I: ImplBinaryValue>(
-        self_: *mut _cef_binary_value_t,
-    ) -> *const ::std::os::raw::c_void {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBinaryValue::get_raw_data(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_size<I: ImplBinaryValue>(self_: *mut _cef_binary_value_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBinaryValue::get_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_data<I: ImplBinaryValue>(
-        self_: *mut _cef_binary_value_t,
-        buffer: *mut ::std::os::raw::c_void,
-        buffer_size: usize,
-        data_offset: usize,
-    ) -> usize {
-        let (arg_self_, arg_buffer, arg_buffer_size, arg_data_offset) =
-            (self_, buffer, buffer_size, data_offset);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let out_buffer = (!arg_buffer.is_null() && arg_buffer_size > 0).then(|| unsafe {
-            std::slice::from_raw_parts_mut(arg_buffer as *mut _, arg_buffer_size)
-        });
-        let mut vec_buffer = out_buffer.as_ref().map(|arg| arg.to_vec());
-        let arg_buffer = vec_buffer.as_mut();
-        let arg_data_offset = arg_data_offset.as_raw();
-        let result = ImplBinaryValue::get_data(&arg_self_.interface, arg_buffer, arg_data_offset);
-        if let (Some(out_buffer), Some(vec_buffer)) = (out_buffer, vec_buffer.as_mut()) {
-            let size = vec_buffer.len().min(out_buffer.len());
-            out_buffer[..size].copy_from_slice(&vec_buffer[..size]);
-        }
-        result.into()
-    }
 }
 impl ImplBinaryValue for BinaryValue {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -3017,605 +2594,65 @@ impl Default for BinaryValue {
 /// See [_cef_dictionary_value_t] for more documentation.
 #[derive(Clone)]
 pub struct DictionaryValue(RefGuard<_cef_dictionary_value_t>);
-impl DictionaryValue {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapDictionaryValue,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplDictionaryValue>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapDictionaryValue>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_dictionary_value_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapDictionaryValue: ImplDictionaryValue {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_dictionary_value_t, Self>);
-}
 pub trait ImplDictionaryValue: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_owned(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_equal(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn copy(&self, exclude_empty_children: ::std::os::raw::c_int) -> Option<DictionaryValue> {
-        Default::default()
-    }
-    fn get_size(&self) -> usize {
-        Default::default()
-    }
-    fn clear(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_key(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_keys(&self, keys: Option<&mut CefStringList>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn remove(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_type(&self, key: Option<&CefStringUtf16>) -> ValueType {
-        Default::default()
-    }
-    fn get_value(&self, key: Option<&CefStringUtf16>) -> Option<Value> {
-        Default::default()
-    }
-    fn get_bool(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_int(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_double(&self, key: Option<&CefStringUtf16>) -> f64 {
-        Default::default()
-    }
-    fn get_string(&self, key: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_binary(&self, key: Option<&CefStringUtf16>) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn get_dictionary(&self, key: Option<&CefStringUtf16>) -> Option<DictionaryValue> {
-        Default::default()
-    }
-    fn get_list(&self, key: Option<&CefStringUtf16>) -> Option<ListValue> {
-        Default::default()
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_owned(&self) -> ::std::os::raw::c_int;
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int;
+    fn copy(&self, exclude_empty_children: ::std::os::raw::c_int) -> Option<DictionaryValue>;
+    fn get_size(&self) -> usize;
+    fn clear(&self) -> ::std::os::raw::c_int;
+    fn has_key(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_keys(&self, keys: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
+    fn remove(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_type(&self, key: Option<&CefStringUtf16>) -> ValueType;
+    fn get_value(&self, key: Option<&CefStringUtf16>) -> Option<Value>;
+    fn get_bool(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_int(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_double(&self, key: Option<&CefStringUtf16>) -> f64;
+    fn get_string(&self, key: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn get_binary(&self, key: Option<&CefStringUtf16>) -> Option<BinaryValue>;
+    fn get_dictionary(&self, key: Option<&CefStringUtf16>) -> Option<DictionaryValue>;
+    fn get_list(&self, key: Option<&CefStringUtf16>) -> Option<ListValue>;
     fn set_value(
         &self,
         key: Option<&CefStringUtf16>,
         value: Option<&mut impl ImplValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_null(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn set_null(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
     fn set_bool(
         &self,
         key: Option<&CefStringUtf16>,
         value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_int(
         &self,
         key: Option<&CefStringUtf16>,
         value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_double(&self, key: Option<&CefStringUtf16>, value: f64) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn set_double(&self, key: Option<&CefStringUtf16>, value: f64) -> ::std::os::raw::c_int;
     fn set_string(
         &self,
         key: Option<&CefStringUtf16>,
         value: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_binary(
         &self,
         key: Option<&CefStringUtf16>,
         value: Option<&mut impl ImplBinaryValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_dictionary(
         &self,
         key: Option<&CefStringUtf16>,
         value: Option<&mut impl ImplDictionaryValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_list(
         &self,
         key: Option<&CefStringUtf16>,
         value: Option<&mut impl ImplListValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_dictionary_value_t) {
-        impl_cef_dictionary_value_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_dictionary_value_t;
-}
-mod impl_cef_dictionary_value_t {
-    use super::*;
-    pub fn init_methods<I: ImplDictionaryValue>(object: &mut _cef_dictionary_value_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_owned = Some(is_owned::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.is_equal = Some(is_equal::<I>);
-        object.copy = Some(copy::<I>);
-        object.get_size = Some(get_size::<I>);
-        object.clear = Some(clear::<I>);
-        object.has_key = Some(has_key::<I>);
-        object.get_keys = Some(get_keys::<I>);
-        object.remove = Some(remove::<I>);
-        object.get_type = Some(get_type::<I>);
-        object.get_value = Some(get_value::<I>);
-        object.get_bool = Some(get_bool::<I>);
-        object.get_int = Some(get_int::<I>);
-        object.get_double = Some(get_double::<I>);
-        object.get_string = Some(get_string::<I>);
-        object.get_binary = Some(get_binary::<I>);
-        object.get_dictionary = Some(get_dictionary::<I>);
-        object.get_list = Some(get_list::<I>);
-        object.set_value = Some(set_value::<I>);
-        object.set_null = Some(set_null::<I>);
-        object.set_bool = Some(set_bool::<I>);
-        object.set_int = Some(set_int::<I>);
-        object.set_double = Some(set_double::<I>);
-        object.set_string = Some(set_string::<I>);
-        object.set_binary = Some(set_binary::<I>);
-        object.set_dictionary = Some(set_dictionary::<I>);
-        object.set_list = Some(set_list::<I>);
-    }
-    extern "C" fn is_valid<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDictionaryValue::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_owned<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDictionaryValue::is_owned(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_read_only<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDictionaryValue::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        that: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that = unsafe { arg_that.as_mut() }
-            .map(|arg| DictionaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplDictionaryValue::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn is_equal<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        that: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that = unsafe { arg_that.as_mut() }
-            .map(|arg| DictionaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplDictionaryValue::is_equal(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn copy<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        exclude_empty_children: ::std::os::raw::c_int,
-    ) -> *mut _cef_dictionary_value_t {
-        let (arg_self_, arg_exclude_empty_children) = (self_, exclude_empty_children);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_exclude_empty_children = arg_exclude_empty_children.as_raw();
-        let result = ImplDictionaryValue::copy(&arg_self_.interface, arg_exclude_empty_children);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_size<I: ImplDictionaryValue>(self_: *mut _cef_dictionary_value_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDictionaryValue::get_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn clear<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDictionaryValue::clear(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_key<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::has_key(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn get_keys<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        keys: *mut _cef_string_list_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_keys) = (self_, keys);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_keys = if arg_keys.is_null() {
-            None
-        } else {
-            Some(arg_keys.into())
-        };
-        let arg_keys = arg_keys.as_mut();
-        let result = ImplDictionaryValue::get_keys(&arg_self_.interface, arg_keys);
-        result.into()
-    }
-    extern "C" fn remove<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::remove(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn get_type<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> cef_value_type_t {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_type(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn get_value<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> *mut _cef_value_t {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_value(&arg_self_.interface, arg_key);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_bool<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_bool(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn get_int<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_int(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn get_double<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> f64 {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_double(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn get_string<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_string(&arg_self_.interface, arg_key);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_binary<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> *mut _cef_binary_value_t {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_binary(&arg_self_.interface, arg_key);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_dictionary<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> *mut _cef_dictionary_value_t {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_dictionary(&arg_self_.interface, arg_key);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_list<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> *mut _cef_list_value_t {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::get_list(&arg_self_.interface, arg_key);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_value<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: *mut _cef_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplDictionaryValue::set_value(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
-    extern "C" fn set_null<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplDictionaryValue::set_null(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn set_bool<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let arg_value = arg_value.as_raw();
-        let result = ImplDictionaryValue::set_bool(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
-    extern "C" fn set_int<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let arg_value = arg_value.as_raw();
-        let result = ImplDictionaryValue::set_int(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
-    extern "C" fn set_double<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: f64,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let arg_value = arg_value.as_raw();
-        let result = ImplDictionaryValue::set_double(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
-    extern "C" fn set_string<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let result = ImplDictionaryValue::set_string(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
-    extern "C" fn set_binary<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: *mut _cef_binary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let mut arg_value = unsafe { arg_value.as_mut() }
-            .map(|arg| BinaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplDictionaryValue::set_binary(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
-    extern "C" fn set_dictionary<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let mut arg_value = unsafe { arg_value.as_mut() }
-            .map(|arg| DictionaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplDictionaryValue::set_dictionary(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
-    extern "C" fn set_list<I: ImplDictionaryValue>(
-        self_: *mut _cef_dictionary_value_t,
-        key: *const _cef_string_utf16_t,
-        value: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value) = (self_, key, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| ListValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplDictionaryValue::set_list(&arg_self_.interface, arg_key, arg_value);
-        result.into()
-    }
 }
 impl ImplDictionaryValue for DictionaryValue {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -4153,461 +3190,48 @@ impl Default for DictionaryValue {
 /// See [_cef_list_value_t] for more documentation.
 #[derive(Clone)]
 pub struct ListValue(RefGuard<_cef_list_value_t>);
-impl ListValue {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapListValue,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplListValue>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapListValue>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_list_value_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapListValue: ImplListValue {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_list_value_t, Self>);
-}
 pub trait ImplListValue: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_owned(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_equal(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn copy(&self) -> Option<ListValue> {
-        Default::default()
-    }
-    fn set_size(&self, size: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_size(&self) -> usize {
-        Default::default()
-    }
-    fn clear(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn remove(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_type(&self, index: usize) -> ValueType {
-        Default::default()
-    }
-    fn get_value(&self, index: usize) -> Option<Value> {
-        Default::default()
-    }
-    fn get_bool(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_int(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_double(&self, index: usize) -> f64 {
-        Default::default()
-    }
-    fn get_string(&self, index: usize) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_binary(&self, index: usize) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn get_dictionary(&self, index: usize) -> Option<DictionaryValue> {
-        Default::default()
-    }
-    fn get_list(&self, index: usize) -> Option<ListValue> {
-        Default::default()
-    }
-    fn set_value(&self, index: usize, value: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_null(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_bool(&self, index: usize, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_int(&self, index: usize, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_double(&self, index: usize, value: f64) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_string(&self, index: usize, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_owned(&self) -> ::std::os::raw::c_int;
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int;
+    fn copy(&self) -> Option<ListValue>;
+    fn set_size(&self, size: usize) -> ::std::os::raw::c_int;
+    fn get_size(&self) -> usize;
+    fn clear(&self) -> ::std::os::raw::c_int;
+    fn remove(&self, index: usize) -> ::std::os::raw::c_int;
+    fn get_type(&self, index: usize) -> ValueType;
+    fn get_value(&self, index: usize) -> Option<Value>;
+    fn get_bool(&self, index: usize) -> ::std::os::raw::c_int;
+    fn get_int(&self, index: usize) -> ::std::os::raw::c_int;
+    fn get_double(&self, index: usize) -> f64;
+    fn get_string(&self, index: usize) -> Option<CefStringUtf16>;
+    fn get_binary(&self, index: usize) -> Option<BinaryValue>;
+    fn get_dictionary(&self, index: usize) -> Option<DictionaryValue>;
+    fn get_list(&self, index: usize) -> Option<ListValue>;
+    fn set_value(&self, index: usize, value: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int;
+    fn set_null(&self, index: usize) -> ::std::os::raw::c_int;
+    fn set_bool(&self, index: usize, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn set_int(&self, index: usize, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn set_double(&self, index: usize, value: f64) -> ::std::os::raw::c_int;
+    fn set_string(&self, index: usize, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
     fn set_binary(
         &self,
         index: usize,
         value: Option<&mut impl ImplBinaryValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_dictionary(
         &self,
         index: usize,
         value: Option<&mut impl ImplDictionaryValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_list(
         &self,
         index: usize,
         value: Option<&mut impl ImplListValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_list_value_t) {
-        impl_cef_list_value_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_list_value_t;
-}
-mod impl_cef_list_value_t {
-    use super::*;
-    pub fn init_methods<I: ImplListValue>(object: &mut _cef_list_value_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_owned = Some(is_owned::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.is_equal = Some(is_equal::<I>);
-        object.copy = Some(copy::<I>);
-        object.set_size = Some(set_size::<I>);
-        object.get_size = Some(get_size::<I>);
-        object.clear = Some(clear::<I>);
-        object.remove = Some(remove::<I>);
-        object.get_type = Some(get_type::<I>);
-        object.get_value = Some(get_value::<I>);
-        object.get_bool = Some(get_bool::<I>);
-        object.get_int = Some(get_int::<I>);
-        object.get_double = Some(get_double::<I>);
-        object.get_string = Some(get_string::<I>);
-        object.get_binary = Some(get_binary::<I>);
-        object.get_dictionary = Some(get_dictionary::<I>);
-        object.get_list = Some(get_list::<I>);
-        object.set_value = Some(set_value::<I>);
-        object.set_null = Some(set_null::<I>);
-        object.set_bool = Some(set_bool::<I>);
-        object.set_int = Some(set_int::<I>);
-        object.set_double = Some(set_double::<I>);
-        object.set_string = Some(set_string::<I>);
-        object.set_binary = Some(set_binary::<I>);
-        object.set_dictionary = Some(set_dictionary::<I>);
-        object.set_list = Some(set_list::<I>);
-    }
-    extern "C" fn is_valid<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplListValue::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_owned<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplListValue::is_owned(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_read_only<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplListValue::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        that: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| ListValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplListValue::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn is_equal<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        that: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| ListValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplListValue::is_equal(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn copy<I: ImplListValue>(self_: *mut _cef_list_value_t) -> *mut _cef_list_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplListValue::copy(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_size<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        size: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_size) = (self_, size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = arg_size.as_raw();
-        let result = ImplListValue::set_size(&arg_self_.interface, arg_size);
-        result.into()
-    }
-    extern "C" fn get_size<I: ImplListValue>(self_: *mut _cef_list_value_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplListValue::get_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn clear<I: ImplListValue>(self_: *mut _cef_list_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplListValue::clear(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn remove<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::remove(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_type<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> cef_value_type_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_type(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_value<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> *mut _cef_value_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_value(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_bool<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_bool(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_int<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_int(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_double<I: ImplListValue>(self_: *mut _cef_list_value_t, index: usize) -> f64 {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_double(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_string<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_string(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_binary<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> *mut _cef_binary_value_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_binary(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_dictionary<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> *mut _cef_dictionary_value_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_dictionary(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_list<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> *mut _cef_list_value_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::get_list(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_value<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: *mut _cef_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplListValue::set_value(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_null<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplListValue::set_null(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn set_bool<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_value = arg_value.as_raw();
-        let result = ImplListValue::set_bool(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_int<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_value = arg_value.as_raw();
-        let result = ImplListValue::set_int(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_double<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: f64,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_value = arg_value.as_raw();
-        let result = ImplListValue::set_double(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_string<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let result = ImplListValue::set_string(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_binary<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: *mut _cef_binary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let mut arg_value = unsafe { arg_value.as_mut() }
-            .map(|arg| BinaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplListValue::set_binary(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_dictionary<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let mut arg_value = unsafe { arg_value.as_mut() }
-            .map(|arg| DictionaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplListValue::set_dictionary(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_list<I: ImplListValue>(
-        self_: *mut _cef_list_value_t,
-        index: usize,
-        value: *mut _cef_list_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| ListValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplListValue::set_list(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
 }
 impl ImplListValue for ListValue {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -5111,30 +3735,9 @@ impl Default for ListValue {
 /// See [_cef_image_t] for more documentation.
 #[derive(Clone)]
 pub struct Image(RefGuard<_cef_image_t>);
-impl Image {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapImage,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplImage>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapImage>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_image_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapImage: ImplImage {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_image_t, Self>);
-}
 pub trait ImplImage: Clone + Sized + Rc {
-    fn is_empty(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplImage>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn is_empty(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplImage>) -> ::std::os::raw::c_int;
     fn add_bitmap(
         &self,
         scale_factor: f32,
@@ -5143,36 +3746,20 @@ pub trait ImplImage: Clone + Sized + Rc {
         color_type: ColorType,
         alpha_type: AlphaType,
         pixel_data: Option<&[u8]>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn add_png(&self, scale_factor: f32, png_data: Option<&[u8]>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn add_jpeg(&self, scale_factor: f32, jpeg_data: Option<&[u8]>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_width(&self) -> usize {
-        Default::default()
-    }
-    fn get_height(&self) -> usize {
-        Default::default()
-    }
-    fn has_representation(&self, scale_factor: f32) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn remove_representation(&self, scale_factor: f32) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn add_png(&self, scale_factor: f32, png_data: Option<&[u8]>) -> ::std::os::raw::c_int;
+    fn add_jpeg(&self, scale_factor: f32, jpeg_data: Option<&[u8]>) -> ::std::os::raw::c_int;
+    fn get_width(&self) -> usize;
+    fn get_height(&self) -> usize;
+    fn has_representation(&self, scale_factor: f32) -> ::std::os::raw::c_int;
+    fn remove_representation(&self, scale_factor: f32) -> ::std::os::raw::c_int;
     fn get_representation_info(
         &self,
         scale_factor: f32,
         actual_scale_factor: Option<&mut f32>,
         pixel_width: Option<&mut ::std::os::raw::c_int>,
         pixel_height: Option<&mut ::std::os::raw::c_int>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_as_bitmap(
         &self,
         scale_factor: f32,
@@ -5180,364 +3767,22 @@ pub trait ImplImage: Clone + Sized + Rc {
         alpha_type: AlphaType,
         pixel_width: Option<&mut ::std::os::raw::c_int>,
         pixel_height: Option<&mut ::std::os::raw::c_int>,
-    ) -> Option<BinaryValue> {
-        Default::default()
-    }
+    ) -> Option<BinaryValue>;
     fn get_as_png(
         &self,
         scale_factor: f32,
         with_transparency: ::std::os::raw::c_int,
         pixel_width: Option<&mut ::std::os::raw::c_int>,
         pixel_height: Option<&mut ::std::os::raw::c_int>,
-    ) -> Option<BinaryValue> {
-        Default::default()
-    }
+    ) -> Option<BinaryValue>;
     fn get_as_jpeg(
         &self,
         scale_factor: f32,
         quality: ::std::os::raw::c_int,
         pixel_width: Option<&mut ::std::os::raw::c_int>,
         pixel_height: Option<&mut ::std::os::raw::c_int>,
-    ) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_image_t) {
-        impl_cef_image_t::init_methods::<Self>(object);
-    }
+    ) -> Option<BinaryValue>;
     fn get_raw(&self) -> *mut _cef_image_t;
-}
-mod impl_cef_image_t {
-    use super::*;
-    pub fn init_methods<I: ImplImage>(object: &mut _cef_image_t) {
-        object.is_empty = Some(is_empty::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.add_bitmap = Some(add_bitmap::<I>);
-        object.add_png = Some(add_png::<I>);
-        object.add_jpeg = Some(add_jpeg::<I>);
-        object.get_width = Some(get_width::<I>);
-        object.get_height = Some(get_height::<I>);
-        object.has_representation = Some(has_representation::<I>);
-        object.remove_representation = Some(remove_representation::<I>);
-        object.get_representation_info = Some(get_representation_info::<I>);
-        object.get_as_bitmap = Some(get_as_bitmap::<I>);
-        object.get_as_png = Some(get_as_png::<I>);
-        object.get_as_jpeg = Some(get_as_jpeg::<I>);
-    }
-    extern "C" fn is_empty<I: ImplImage>(self_: *mut _cef_image_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplImage::is_empty(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        that: *mut _cef_image_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| Image(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplImage::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn add_bitmap<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-        pixel_width: ::std::os::raw::c_int,
-        pixel_height: ::std::os::raw::c_int,
-        color_type: cef_color_type_t,
-        alpha_type: cef_alpha_type_t,
-        pixel_data: *const ::std::os::raw::c_void,
-        pixel_data_size: usize,
-    ) -> ::std::os::raw::c_int {
-        let (
-            arg_self_,
-            arg_scale_factor,
-            arg_pixel_width,
-            arg_pixel_height,
-            arg_color_type,
-            arg_alpha_type,
-            arg_pixel_data,
-            arg_pixel_data_size,
-        ) = (
-            self_,
-            scale_factor,
-            pixel_width,
-            pixel_height,
-            color_type,
-            alpha_type,
-            pixel_data,
-            pixel_data_size,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let arg_pixel_width = arg_pixel_width.as_raw();
-        let arg_pixel_height = arg_pixel_height.as_raw();
-        let arg_color_type = arg_color_type.as_raw();
-        let arg_alpha_type = arg_alpha_type.as_raw();
-        let arg_pixel_data =
-            (!arg_pixel_data.is_null() && arg_pixel_data_size > 0).then(|| unsafe {
-                std::slice::from_raw_parts(arg_pixel_data as *const _, arg_pixel_data_size)
-            });
-        let result = ImplImage::add_bitmap(
-            &arg_self_.interface,
-            arg_scale_factor,
-            arg_pixel_width,
-            arg_pixel_height,
-            arg_color_type,
-            arg_alpha_type,
-            arg_pixel_data,
-        );
-        result.into()
-    }
-    extern "C" fn add_png<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-        png_data: *const ::std::os::raw::c_void,
-        png_data_size: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_scale_factor, arg_png_data, arg_png_data_size) =
-            (self_, scale_factor, png_data, png_data_size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let arg_png_data = (!arg_png_data.is_null() && arg_png_data_size > 0).then(|| unsafe {
-            std::slice::from_raw_parts(arg_png_data as *const _, arg_png_data_size)
-        });
-        let result = ImplImage::add_png(&arg_self_.interface, arg_scale_factor, arg_png_data);
-        result.into()
-    }
-    extern "C" fn add_jpeg<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-        jpeg_data: *const ::std::os::raw::c_void,
-        jpeg_data_size: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_scale_factor, arg_jpeg_data, arg_jpeg_data_size) =
-            (self_, scale_factor, jpeg_data, jpeg_data_size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let arg_jpeg_data = (!arg_jpeg_data.is_null() && arg_jpeg_data_size > 0).then(|| unsafe {
-            std::slice::from_raw_parts(arg_jpeg_data as *const _, arg_jpeg_data_size)
-        });
-        let result = ImplImage::add_jpeg(&arg_self_.interface, arg_scale_factor, arg_jpeg_data);
-        result.into()
-    }
-    extern "C" fn get_width<I: ImplImage>(self_: *mut _cef_image_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplImage::get_width(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_height<I: ImplImage>(self_: *mut _cef_image_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplImage::get_height(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_representation<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_scale_factor) = (self_, scale_factor);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let result = ImplImage::has_representation(&arg_self_.interface, arg_scale_factor);
-        result.into()
-    }
-    extern "C" fn remove_representation<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_scale_factor) = (self_, scale_factor);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let result = ImplImage::remove_representation(&arg_self_.interface, arg_scale_factor);
-        result.into()
-    }
-    extern "C" fn get_representation_info<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-        actual_scale_factor: *mut f32,
-        pixel_width: *mut ::std::os::raw::c_int,
-        pixel_height: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (
-            arg_self_,
-            arg_scale_factor,
-            arg_actual_scale_factor,
-            arg_pixel_width,
-            arg_pixel_height,
-        ) = (
-            self_,
-            scale_factor,
-            actual_scale_factor,
-            pixel_width,
-            pixel_height,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let mut arg_actual_scale_factor = if arg_actual_scale_factor.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<f32>::from(arg_actual_scale_factor))
-        };
-        let arg_actual_scale_factor = arg_actual_scale_factor.as_mut().map(|arg| arg.as_mut());
-        let mut arg_pixel_width = if arg_pixel_width.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_pixel_width))
-        };
-        let arg_pixel_width = arg_pixel_width.as_mut().map(|arg| arg.as_mut());
-        let mut arg_pixel_height = if arg_pixel_height.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_pixel_height,
-            ))
-        };
-        let arg_pixel_height = arg_pixel_height.as_mut().map(|arg| arg.as_mut());
-        let result = ImplImage::get_representation_info(
-            &arg_self_.interface,
-            arg_scale_factor,
-            arg_actual_scale_factor,
-            arg_pixel_width,
-            arg_pixel_height,
-        );
-        result.into()
-    }
-    extern "C" fn get_as_bitmap<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-        color_type: cef_color_type_t,
-        alpha_type: cef_alpha_type_t,
-        pixel_width: *mut ::std::os::raw::c_int,
-        pixel_height: *mut ::std::os::raw::c_int,
-    ) -> *mut _cef_binary_value_t {
-        let (
-            arg_self_,
-            arg_scale_factor,
-            arg_color_type,
-            arg_alpha_type,
-            arg_pixel_width,
-            arg_pixel_height,
-        ) = (
-            self_,
-            scale_factor,
-            color_type,
-            alpha_type,
-            pixel_width,
-            pixel_height,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let arg_color_type = arg_color_type.as_raw();
-        let arg_alpha_type = arg_alpha_type.as_raw();
-        let mut arg_pixel_width = if arg_pixel_width.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_pixel_width))
-        };
-        let arg_pixel_width = arg_pixel_width.as_mut().map(|arg| arg.as_mut());
-        let mut arg_pixel_height = if arg_pixel_height.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_pixel_height,
-            ))
-        };
-        let arg_pixel_height = arg_pixel_height.as_mut().map(|arg| arg.as_mut());
-        let result = ImplImage::get_as_bitmap(
-            &arg_self_.interface,
-            arg_scale_factor,
-            arg_color_type,
-            arg_alpha_type,
-            arg_pixel_width,
-            arg_pixel_height,
-        );
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_as_png<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-        with_transparency: ::std::os::raw::c_int,
-        pixel_width: *mut ::std::os::raw::c_int,
-        pixel_height: *mut ::std::os::raw::c_int,
-    ) -> *mut _cef_binary_value_t {
-        let (arg_self_, arg_scale_factor, arg_with_transparency, arg_pixel_width, arg_pixel_height) = (
-            self_,
-            scale_factor,
-            with_transparency,
-            pixel_width,
-            pixel_height,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let arg_with_transparency = arg_with_transparency.as_raw();
-        let mut arg_pixel_width = if arg_pixel_width.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_pixel_width))
-        };
-        let arg_pixel_width = arg_pixel_width.as_mut().map(|arg| arg.as_mut());
-        let mut arg_pixel_height = if arg_pixel_height.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_pixel_height,
-            ))
-        };
-        let arg_pixel_height = arg_pixel_height.as_mut().map(|arg| arg.as_mut());
-        let result = ImplImage::get_as_png(
-            &arg_self_.interface,
-            arg_scale_factor,
-            arg_with_transparency,
-            arg_pixel_width,
-            arg_pixel_height,
-        );
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_as_jpeg<I: ImplImage>(
-        self_: *mut _cef_image_t,
-        scale_factor: f32,
-        quality: ::std::os::raw::c_int,
-        pixel_width: *mut ::std::os::raw::c_int,
-        pixel_height: *mut ::std::os::raw::c_int,
-    ) -> *mut _cef_binary_value_t {
-        let (arg_self_, arg_scale_factor, arg_quality, arg_pixel_width, arg_pixel_height) =
-            (self_, scale_factor, quality, pixel_width, pixel_height);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scale_factor = arg_scale_factor.as_raw();
-        let arg_quality = arg_quality.as_raw();
-        let mut arg_pixel_width = if arg_pixel_width.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_pixel_width))
-        };
-        let arg_pixel_width = arg_pixel_width.as_mut().map(|arg| arg.as_mut());
-        let mut arg_pixel_height = if arg_pixel_height.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_pixel_height,
-            ))
-        };
-        let arg_pixel_height = arg_pixel_height.as_mut().map(|arg| arg.as_mut());
-        let result = ImplImage::get_as_jpeg(
-            &arg_self_.interface,
-            arg_scale_factor,
-            arg_quality,
-            arg_pixel_width,
-            arg_pixel_height,
-        );
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplImage for Image {
     fn is_empty(&self) -> ::std::os::raw::c_int {
@@ -6170,101 +4415,13 @@ impl Default for ReadHandler {
 /// See [_cef_stream_reader_t] for more documentation.
 #[derive(Clone)]
 pub struct StreamReader(RefGuard<_cef_stream_reader_t>);
-impl StreamReader {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapStreamReader,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplStreamReader>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapStreamReader>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_stream_reader_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapStreamReader: ImplStreamReader {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_stream_reader_t, Self>);
-}
 pub trait ImplStreamReader: Clone + Sized + Rc {
-    fn read(&self, ptr: *mut u8, size: usize, n: usize) -> usize {
-        Default::default()
-    }
-    fn seek(&self, offset: i64, whence: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn tell(&self) -> i64 {
-        Default::default()
-    }
-    fn eof(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn may_block(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_stream_reader_t) {
-        impl_cef_stream_reader_t::init_methods::<Self>(object);
-    }
+    fn read(&self, ptr: *mut u8, size: usize, n: usize) -> usize;
+    fn seek(&self, offset: i64, whence: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn tell(&self) -> i64;
+    fn eof(&self) -> ::std::os::raw::c_int;
+    fn may_block(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_stream_reader_t;
-}
-mod impl_cef_stream_reader_t {
-    use super::*;
-    pub fn init_methods<I: ImplStreamReader>(object: &mut _cef_stream_reader_t) {
-        object.read = Some(read::<I>);
-        object.seek = Some(seek::<I>);
-        object.tell = Some(tell::<I>);
-        object.eof = Some(eof::<I>);
-        object.may_block = Some(may_block::<I>);
-    }
-    extern "C" fn read<I: ImplStreamReader>(
-        self_: *mut _cef_stream_reader_t,
-        ptr: *mut ::std::os::raw::c_void,
-        size: usize,
-        n: usize,
-    ) -> usize {
-        let (arg_self_, arg_ptr, arg_size, arg_n) = (self_, ptr, size, n);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_ptr = arg_ptr as *mut _;
-        let arg_size = arg_size.as_raw();
-        let arg_n = arg_n.as_raw();
-        let result = ImplStreamReader::read(&arg_self_.interface, arg_ptr, arg_size, arg_n);
-        result.into()
-    }
-    extern "C" fn seek<I: ImplStreamReader>(
-        self_: *mut _cef_stream_reader_t,
-        offset: i64,
-        whence: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_offset, arg_whence) = (self_, offset, whence);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_offset = arg_offset.as_raw();
-        let arg_whence = arg_whence.as_raw();
-        let result = ImplStreamReader::seek(&arg_self_.interface, arg_offset, arg_whence);
-        result.into()
-    }
-    extern "C" fn tell<I: ImplStreamReader>(self_: *mut _cef_stream_reader_t) -> i64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplStreamReader::tell(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn eof<I: ImplStreamReader>(
-        self_: *mut _cef_stream_reader_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplStreamReader::eof(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn may_block<I: ImplStreamReader>(
-        self_: *mut _cef_stream_reader_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplStreamReader::may_block(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplStreamReader for StreamReader {
     fn read(&self, ptr: *mut u8, size: usize, n: usize) -> usize {
@@ -6588,101 +4745,13 @@ impl Default for WriteHandler {
 /// See [_cef_stream_writer_t] for more documentation.
 #[derive(Clone)]
 pub struct StreamWriter(RefGuard<_cef_stream_writer_t>);
-impl StreamWriter {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapStreamWriter,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplStreamWriter>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapStreamWriter>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_stream_writer_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapStreamWriter: ImplStreamWriter {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_stream_writer_t, Self>);
-}
 pub trait ImplStreamWriter: Clone + Sized + Rc {
-    fn write(&self, ptr: *const u8, size: usize, n: usize) -> usize {
-        Default::default()
-    }
-    fn seek(&self, offset: i64, whence: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn tell(&self) -> i64 {
-        Default::default()
-    }
-    fn flush(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn may_block(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_stream_writer_t) {
-        impl_cef_stream_writer_t::init_methods::<Self>(object);
-    }
+    fn write(&self, ptr: *const u8, size: usize, n: usize) -> usize;
+    fn seek(&self, offset: i64, whence: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn tell(&self) -> i64;
+    fn flush(&self) -> ::std::os::raw::c_int;
+    fn may_block(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_stream_writer_t;
-}
-mod impl_cef_stream_writer_t {
-    use super::*;
-    pub fn init_methods<I: ImplStreamWriter>(object: &mut _cef_stream_writer_t) {
-        object.write = Some(write::<I>);
-        object.seek = Some(seek::<I>);
-        object.tell = Some(tell::<I>);
-        object.flush = Some(flush::<I>);
-        object.may_block = Some(may_block::<I>);
-    }
-    extern "C" fn write<I: ImplStreamWriter>(
-        self_: *mut _cef_stream_writer_t,
-        ptr: *const ::std::os::raw::c_void,
-        size: usize,
-        n: usize,
-    ) -> usize {
-        let (arg_self_, arg_ptr, arg_size, arg_n) = (self_, ptr, size, n);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_ptr = arg_ptr as *const _;
-        let arg_size = arg_size.as_raw();
-        let arg_n = arg_n.as_raw();
-        let result = ImplStreamWriter::write(&arg_self_.interface, arg_ptr, arg_size, arg_n);
-        result.into()
-    }
-    extern "C" fn seek<I: ImplStreamWriter>(
-        self_: *mut _cef_stream_writer_t,
-        offset: i64,
-        whence: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_offset, arg_whence) = (self_, offset, whence);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_offset = arg_offset.as_raw();
-        let arg_whence = arg_whence.as_raw();
-        let result = ImplStreamWriter::seek(&arg_self_.interface, arg_offset, arg_whence);
-        result.into()
-    }
-    extern "C" fn tell<I: ImplStreamWriter>(self_: *mut _cef_stream_writer_t) -> i64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplStreamWriter::tell(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn flush<I: ImplStreamWriter>(
-        self_: *mut _cef_stream_writer_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplStreamWriter::flush(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn may_block<I: ImplStreamWriter>(
-        self_: *mut _cef_stream_writer_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplStreamWriter::may_block(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplStreamWriter for StreamWriter {
     fn write(&self, ptr: *const u8, size: usize, n: usize) -> usize {
@@ -6797,408 +4866,35 @@ impl Default for StreamWriter {
 /// See [_cef_drag_data_t] for more documentation.
 #[derive(Clone)]
 pub struct DragData(RefGuard<_cef_drag_data_t>);
-impl DragData {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapDragData,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplDragData>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapDragData>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_drag_data_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapDragData: ImplDragData {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_drag_data_t, Self>);
-}
 pub trait ImplDragData: Clone + Sized + Rc {
-    fn clone(&self) -> Option<DragData> {
-        Default::default()
-    }
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_link(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_fragment(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_file(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_link_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_link_title(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_link_metadata(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_fragment_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_fragment_html(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_fragment_base_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_file_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_file_contents(&self, writer: Option<&mut impl ImplStreamWriter>) -> usize {
-        Default::default()
-    }
-    fn get_file_names(&self, names: Option<&mut CefStringList>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_file_paths(&self, paths: Option<&mut CefStringList>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_link_url(&self, url: Option<&CefStringUtf16>) {}
-    fn set_link_title(&self, title: Option<&CefStringUtf16>) {}
-    fn set_link_metadata(&self, data: Option<&CefStringUtf16>) {}
-    fn set_fragment_text(&self, text: Option<&CefStringUtf16>) {}
-    fn set_fragment_html(&self, html: Option<&CefStringUtf16>) {}
-    fn set_fragment_base_url(&self, base_url: Option<&CefStringUtf16>) {}
-    fn reset_file_contents(&self) {}
-    fn add_file(&self, path: Option<&CefStringUtf16>, display_name: Option<&CefStringUtf16>) {}
-    fn clear_filenames(&self) {}
-    fn get_image(&self) -> Option<Image> {
-        Default::default()
-    }
-    fn get_image_hotspot(&self) -> Point {
-        Default::default()
-    }
-    fn has_image(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_drag_data_t) {
-        impl_cef_drag_data_t::init_methods::<Self>(object);
-    }
+    fn clone(&self) -> Option<DragData>;
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn is_link(&self) -> ::std::os::raw::c_int;
+    fn is_fragment(&self) -> ::std::os::raw::c_int;
+    fn is_file(&self) -> ::std::os::raw::c_int;
+    fn get_link_url(&self) -> Option<CefStringUtf16>;
+    fn get_link_title(&self) -> Option<CefStringUtf16>;
+    fn get_link_metadata(&self) -> Option<CefStringUtf16>;
+    fn get_fragment_text(&self) -> Option<CefStringUtf16>;
+    fn get_fragment_html(&self) -> Option<CefStringUtf16>;
+    fn get_fragment_base_url(&self) -> Option<CefStringUtf16>;
+    fn get_file_name(&self) -> Option<CefStringUtf16>;
+    fn get_file_contents(&self, writer: Option<&mut impl ImplStreamWriter>) -> usize;
+    fn get_file_names(&self, names: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
+    fn get_file_paths(&self, paths: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
+    fn set_link_url(&self, url: Option<&CefStringUtf16>);
+    fn set_link_title(&self, title: Option<&CefStringUtf16>);
+    fn set_link_metadata(&self, data: Option<&CefStringUtf16>);
+    fn set_fragment_text(&self, text: Option<&CefStringUtf16>);
+    fn set_fragment_html(&self, html: Option<&CefStringUtf16>);
+    fn set_fragment_base_url(&self, base_url: Option<&CefStringUtf16>);
+    fn reset_file_contents(&self);
+    fn add_file(&self, path: Option<&CefStringUtf16>, display_name: Option<&CefStringUtf16>);
+    fn clear_filenames(&self);
+    fn get_image(&self) -> Option<Image>;
+    fn get_image_hotspot(&self) -> Point;
+    fn has_image(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_drag_data_t;
-}
-mod impl_cef_drag_data_t {
-    use super::*;
-    pub fn init_methods<I: ImplDragData>(object: &mut _cef_drag_data_t) {
-        object.clone = Some(clone::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.is_link = Some(is_link::<I>);
-        object.is_fragment = Some(is_fragment::<I>);
-        object.is_file = Some(is_file::<I>);
-        object.get_link_url = Some(get_link_url::<I>);
-        object.get_link_title = Some(get_link_title::<I>);
-        object.get_link_metadata = Some(get_link_metadata::<I>);
-        object.get_fragment_text = Some(get_fragment_text::<I>);
-        object.get_fragment_html = Some(get_fragment_html::<I>);
-        object.get_fragment_base_url = Some(get_fragment_base_url::<I>);
-        object.get_file_name = Some(get_file_name::<I>);
-        object.get_file_contents = Some(get_file_contents::<I>);
-        object.get_file_names = Some(get_file_names::<I>);
-        object.get_file_paths = Some(get_file_paths::<I>);
-        object.set_link_url = Some(set_link_url::<I>);
-        object.set_link_title = Some(set_link_title::<I>);
-        object.set_link_metadata = Some(set_link_metadata::<I>);
-        object.set_fragment_text = Some(set_fragment_text::<I>);
-        object.set_fragment_html = Some(set_fragment_html::<I>);
-        object.set_fragment_base_url = Some(set_fragment_base_url::<I>);
-        object.reset_file_contents = Some(reset_file_contents::<I>);
-        object.add_file = Some(add_file::<I>);
-        object.clear_filenames = Some(clear_filenames::<I>);
-        object.get_image = Some(get_image::<I>);
-        object.get_image_hotspot = Some(get_image_hotspot::<I>);
-        object.has_image = Some(has_image::<I>);
-    }
-    extern "C" fn clone<I: ImplDragData>(self_: *mut _cef_drag_data_t) -> *mut _cef_drag_data_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::clone(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn is_read_only<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_link<I: ImplDragData>(self_: *mut _cef_drag_data_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::is_link(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_fragment<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::is_fragment(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_file<I: ImplDragData>(self_: *mut _cef_drag_data_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::is_file(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_link_url<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_link_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_link_title<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_link_title(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_link_metadata<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_link_metadata(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_fragment_text<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_fragment_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_fragment_html<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_fragment_html(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_fragment_base_url<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_fragment_base_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_file_name<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_file_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_file_contents<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        writer: *mut _cef_stream_writer_t,
-    ) -> usize {
-        let (arg_self_, arg_writer) = (self_, writer);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_writer = unsafe { arg_writer.as_mut() }
-            .map(|arg| StreamWriter(unsafe { RefGuard::from_raw(arg) }));
-        let arg_writer = arg_writer.as_mut();
-        let result = ImplDragData::get_file_contents(&arg_self_.interface, arg_writer);
-        result.into()
-    }
-    extern "C" fn get_file_names<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        names: *mut _cef_string_list_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_names) = (self_, names);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_names = if arg_names.is_null() {
-            None
-        } else {
-            Some(arg_names.into())
-        };
-        let arg_names = arg_names.as_mut();
-        let result = ImplDragData::get_file_names(&arg_self_.interface, arg_names);
-        result.into()
-    }
-    extern "C" fn get_file_paths<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        paths: *mut _cef_string_list_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_paths) = (self_, paths);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_paths = if arg_paths.is_null() {
-            None
-        } else {
-            Some(arg_paths.into())
-        };
-        let arg_paths = arg_paths.as_mut();
-        let result = ImplDragData::get_file_paths(&arg_self_.interface, arg_paths);
-        result.into()
-    }
-    extern "C" fn set_link_url<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        url: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_url) = (self_, url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let result = ImplDragData::set_link_url(&arg_self_.interface, arg_url);
-    }
-    extern "C" fn set_link_title<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        title: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_title) = (self_, title);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_title = if arg_title.is_null() {
-            None
-        } else {
-            Some(arg_title.into())
-        };
-        let arg_title = arg_title.as_ref();
-        let result = ImplDragData::set_link_title(&arg_self_.interface, arg_title);
-    }
-    extern "C" fn set_link_metadata<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        data: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_data) = (self_, data);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_data = if arg_data.is_null() {
-            None
-        } else {
-            Some(arg_data.into())
-        };
-        let arg_data = arg_data.as_ref();
-        let result = ImplDragData::set_link_metadata(&arg_self_.interface, arg_data);
-    }
-    extern "C" fn set_fragment_text<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_text) = (self_, text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let result = ImplDragData::set_fragment_text(&arg_self_.interface, arg_text);
-    }
-    extern "C" fn set_fragment_html<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        html: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_html) = (self_, html);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_html = if arg_html.is_null() {
-            None
-        } else {
-            Some(arg_html.into())
-        };
-        let arg_html = arg_html.as_ref();
-        let result = ImplDragData::set_fragment_html(&arg_self_.interface, arg_html);
-    }
-    extern "C" fn set_fragment_base_url<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        base_url: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_base_url) = (self_, base_url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_base_url = if arg_base_url.is_null() {
-            None
-        } else {
-            Some(arg_base_url.into())
-        };
-        let arg_base_url = arg_base_url.as_ref();
-        let result = ImplDragData::set_fragment_base_url(&arg_self_.interface, arg_base_url);
-    }
-    extern "C" fn reset_file_contents<I: ImplDragData>(self_: *mut _cef_drag_data_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::reset_file_contents(&arg_self_.interface);
-    }
-    extern "C" fn add_file<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-        path: *const _cef_string_utf16_t,
-        display_name: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_path, arg_display_name) = (self_, path, display_name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_path = if arg_path.is_null() {
-            None
-        } else {
-            Some(arg_path.into())
-        };
-        let arg_path = arg_path.as_ref();
-        let arg_display_name = if arg_display_name.is_null() {
-            None
-        } else {
-            Some(arg_display_name.into())
-        };
-        let arg_display_name = arg_display_name.as_ref();
-        let result = ImplDragData::add_file(&arg_self_.interface, arg_path, arg_display_name);
-    }
-    extern "C" fn clear_filenames<I: ImplDragData>(self_: *mut _cef_drag_data_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::clear_filenames(&arg_self_.interface);
-    }
-    extern "C" fn get_image<I: ImplDragData>(self_: *mut _cef_drag_data_t) -> *mut _cef_image_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_image(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_image_hotspot<I: ImplDragData>(self_: *mut _cef_drag_data_t) -> _cef_point_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::get_image_hotspot(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_image<I: ImplDragData>(
-        self_: *mut _cef_drag_data_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDragData::has_image(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplDragData for DragData {
     fn clone(&self) -> Option<DragData> {
@@ -7748,235 +5444,22 @@ impl Default for Domvisitor {
 /// See [_cef_domdocument_t] for more documentation.
 #[derive(Clone)]
 pub struct Domdocument(RefGuard<_cef_domdocument_t>);
-impl Domdocument {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapDomdocument,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplDomdocument>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapDomdocument>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_domdocument_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapDomdocument: ImplDomdocument {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_domdocument_t, Self>);
-}
 pub trait ImplDomdocument: Clone + Sized + Rc {
-    fn get_type(&self) -> DomDocumentType {
-        Default::default()
-    }
-    fn get_document(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_body(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_head(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_title(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_element_by_id(&self, id: Option<&CefStringUtf16>) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_focused_node(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn has_selection(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_selection_start_offset(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_selection_end_offset(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_selection_as_markup(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_selection_as_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_base_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_domdocument_t) {
-        impl_cef_domdocument_t::init_methods::<Self>(object);
-    }
+    fn get_type(&self) -> DomDocumentType;
+    fn get_document(&self) -> Option<Domnode>;
+    fn get_body(&self) -> Option<Domnode>;
+    fn get_head(&self) -> Option<Domnode>;
+    fn get_title(&self) -> Option<CefStringUtf16>;
+    fn get_element_by_id(&self, id: Option<&CefStringUtf16>) -> Option<Domnode>;
+    fn get_focused_node(&self) -> Option<Domnode>;
+    fn has_selection(&self) -> ::std::os::raw::c_int;
+    fn get_selection_start_offset(&self) -> ::std::os::raw::c_int;
+    fn get_selection_end_offset(&self) -> ::std::os::raw::c_int;
+    fn get_selection_as_markup(&self) -> Option<CefStringUtf16>;
+    fn get_selection_as_text(&self) -> Option<CefStringUtf16>;
+    fn get_base_url(&self) -> Option<CefStringUtf16>;
+    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
     fn get_raw(&self) -> *mut _cef_domdocument_t;
-}
-mod impl_cef_domdocument_t {
-    use super::*;
-    pub fn init_methods<I: ImplDomdocument>(object: &mut _cef_domdocument_t) {
-        object.get_type = Some(get_type::<I>);
-        object.get_document = Some(get_document::<I>);
-        object.get_body = Some(get_body::<I>);
-        object.get_head = Some(get_head::<I>);
-        object.get_title = Some(get_title::<I>);
-        object.get_element_by_id = Some(get_element_by_id::<I>);
-        object.get_focused_node = Some(get_focused_node::<I>);
-        object.has_selection = Some(has_selection::<I>);
-        object.get_selection_start_offset = Some(get_selection_start_offset::<I>);
-        object.get_selection_end_offset = Some(get_selection_end_offset::<I>);
-        object.get_selection_as_markup = Some(get_selection_as_markup::<I>);
-        object.get_selection_as_text = Some(get_selection_as_text::<I>);
-        object.get_base_url = Some(get_base_url::<I>);
-        object.get_complete_url = Some(get_complete_url::<I>);
-    }
-    extern "C" fn get_type<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> cef_dom_document_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_document<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_document(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_body<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_body(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_head<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_head(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_title<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_title(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_element_by_id<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-        id: *const _cef_string_utf16_t,
-    ) -> *mut _cef_domnode_t {
-        let (arg_self_, arg_id) = (self_, id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_id = if arg_id.is_null() {
-            None
-        } else {
-            Some(arg_id.into())
-        };
-        let arg_id = arg_id.as_ref();
-        let result = ImplDomdocument::get_element_by_id(&arg_self_.interface, arg_id);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_focused_node<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_focused_node(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn has_selection<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::has_selection(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_selection_start_offset<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_selection_start_offset(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_selection_end_offset<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_selection_end_offset(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_selection_as_markup<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_selection_as_markup(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_selection_as_text<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_selection_as_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_base_url<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomdocument::get_base_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_complete_url<I: ImplDomdocument>(
-        self_: *mut _cef_domdocument_t,
-        partial_url: *const _cef_string_utf16_t,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_partial_url) = (self_, partial_url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_partial_url = if arg_partial_url.is_null() {
-            None
-        } else {
-            Some(arg_partial_url.into())
-        };
-        let arg_partial_url = arg_partial_url.as_ref();
-        let result = ImplDomdocument::get_complete_url(&arg_self_.interface, arg_partial_url);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplDomdocument for Domdocument {
     fn get_type(&self) -> DomDocumentType {
@@ -8238,403 +5721,38 @@ impl Default for Domdocument {
 /// See [_cef_domnode_t] for more documentation.
 #[derive(Clone)]
 pub struct Domnode(RefGuard<_cef_domnode_t>);
-impl Domnode {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapDomnode,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplDomnode>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapDomnode>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_domnode_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapDomnode: ImplDomnode {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_domnode_t, Self>);
-}
 pub trait ImplDomnode: Clone + Sized + Rc {
-    fn get_type(&self) -> DomNodeType {
-        Default::default()
-    }
-    fn is_text(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_element(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_editable(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_form_control_element(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_form_control_element_type(&self) -> DomFormControlType {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplDomnode>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_value(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_value(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_as_markup(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_document(&self) -> Option<Domdocument> {
-        Default::default()
-    }
-    fn get_parent(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_previous_sibling(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_next_sibling(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn has_children(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_first_child(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_last_child(&self) -> Option<Domnode> {
-        Default::default()
-    }
-    fn get_element_tag_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn has_element_attributes(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_element_attributes(&self, attr_map: Option<&mut CefStringMap>) {}
+    fn get_type(&self) -> DomNodeType;
+    fn is_text(&self) -> ::std::os::raw::c_int;
+    fn is_element(&self) -> ::std::os::raw::c_int;
+    fn is_editable(&self) -> ::std::os::raw::c_int;
+    fn is_form_control_element(&self) -> ::std::os::raw::c_int;
+    fn get_form_control_element_type(&self) -> DomFormControlType;
+    fn is_same(&self, that: Option<&mut impl ImplDomnode>) -> ::std::os::raw::c_int;
+    fn get_name(&self) -> Option<CefStringUtf16>;
+    fn get_value(&self) -> Option<CefStringUtf16>;
+    fn set_value(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_as_markup(&self) -> Option<CefStringUtf16>;
+    fn get_document(&self) -> Option<Domdocument>;
+    fn get_parent(&self) -> Option<Domnode>;
+    fn get_previous_sibling(&self) -> Option<Domnode>;
+    fn get_next_sibling(&self) -> Option<Domnode>;
+    fn has_children(&self) -> ::std::os::raw::c_int;
+    fn get_first_child(&self) -> Option<Domnode>;
+    fn get_last_child(&self) -> Option<Domnode>;
+    fn get_element_tag_name(&self) -> Option<CefStringUtf16>;
+    fn has_element_attributes(&self) -> ::std::os::raw::c_int;
+    fn has_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn get_element_attributes(&self, attr_map: Option<&mut CefStringMap>);
     fn set_element_attribute(
         &self,
         attr_name: Option<&CefStringUtf16>,
         value: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_element_inner_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_element_bounds(&self) -> Rect {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_domnode_t) {
-        impl_cef_domnode_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
+    fn get_element_inner_text(&self) -> Option<CefStringUtf16>;
+    fn get_element_bounds(&self) -> Rect;
     fn get_raw(&self) -> *mut _cef_domnode_t;
-}
-mod impl_cef_domnode_t {
-    use super::*;
-    pub fn init_methods<I: ImplDomnode>(object: &mut _cef_domnode_t) {
-        object.get_type = Some(get_type::<I>);
-        object.is_text = Some(is_text::<I>);
-        object.is_element = Some(is_element::<I>);
-        object.is_editable = Some(is_editable::<I>);
-        object.is_form_control_element = Some(is_form_control_element::<I>);
-        object.get_form_control_element_type = Some(get_form_control_element_type::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.get_name = Some(get_name::<I>);
-        object.get_value = Some(get_value::<I>);
-        object.set_value = Some(set_value::<I>);
-        object.get_as_markup = Some(get_as_markup::<I>);
-        object.get_document = Some(get_document::<I>);
-        object.get_parent = Some(get_parent::<I>);
-        object.get_previous_sibling = Some(get_previous_sibling::<I>);
-        object.get_next_sibling = Some(get_next_sibling::<I>);
-        object.has_children = Some(has_children::<I>);
-        object.get_first_child = Some(get_first_child::<I>);
-        object.get_last_child = Some(get_last_child::<I>);
-        object.get_element_tag_name = Some(get_element_tag_name::<I>);
-        object.has_element_attributes = Some(has_element_attributes::<I>);
-        object.has_element_attribute = Some(has_element_attribute::<I>);
-        object.get_element_attribute = Some(get_element_attribute::<I>);
-        object.get_element_attributes = Some(get_element_attributes::<I>);
-        object.set_element_attribute = Some(set_element_attribute::<I>);
-        object.get_element_inner_text = Some(get_element_inner_text::<I>);
-        object.get_element_bounds = Some(get_element_bounds::<I>);
-    }
-    extern "C" fn get_type<I: ImplDomnode>(self_: *mut _cef_domnode_t) -> cef_dom_node_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_text<I: ImplDomnode>(self_: *mut _cef_domnode_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::is_text(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_element<I: ImplDomnode>(self_: *mut _cef_domnode_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::is_element(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_editable<I: ImplDomnode>(self_: *mut _cef_domnode_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::is_editable(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_form_control_element<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::is_form_control_element(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_form_control_element_type<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> cef_dom_form_control_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_form_control_element_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-        that: *mut _cef_domnode_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| Domnode(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplDomnode::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn get_name<I: ImplDomnode>(self_: *mut _cef_domnode_t) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_value<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_value(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_value<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-        value: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_value) = (self_, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let result = ImplDomnode::set_value(&arg_self_.interface, arg_value);
-        result.into()
-    }
-    extern "C" fn get_as_markup<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_as_markup(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_document<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_domdocument_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_document(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_parent<I: ImplDomnode>(self_: *mut _cef_domnode_t) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_parent(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_previous_sibling<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_previous_sibling(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_next_sibling<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_next_sibling(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn has_children<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::has_children(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_first_child<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_first_child(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_last_child<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_domnode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_last_child(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_element_tag_name<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_element_tag_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn has_element_attributes<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::has_element_attributes(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_element_attribute<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-        attr_name: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_attr_name) = (self_, attr_name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_attr_name = if arg_attr_name.is_null() {
-            None
-        } else {
-            Some(arg_attr_name.into())
-        };
-        let arg_attr_name = arg_attr_name.as_ref();
-        let result = ImplDomnode::has_element_attribute(&arg_self_.interface, arg_attr_name);
-        result.into()
-    }
-    extern "C" fn get_element_attribute<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-        attr_name: *const _cef_string_utf16_t,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_attr_name) = (self_, attr_name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_attr_name = if arg_attr_name.is_null() {
-            None
-        } else {
-            Some(arg_attr_name.into())
-        };
-        let arg_attr_name = arg_attr_name.as_ref();
-        let result = ImplDomnode::get_element_attribute(&arg_self_.interface, arg_attr_name);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_element_attributes<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-        attr_map: *mut _cef_string_map_t,
-    ) {
-        let (arg_self_, arg_attr_map) = (self_, attr_map);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_attr_map = if arg_attr_map.is_null() {
-            None
-        } else {
-            Some(arg_attr_map.into())
-        };
-        let arg_attr_map = arg_attr_map.as_mut();
-        let result = ImplDomnode::get_element_attributes(&arg_self_.interface, arg_attr_map);
-    }
-    extern "C" fn set_element_attribute<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-        attr_name: *const _cef_string_utf16_t,
-        value: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_attr_name, arg_value) = (self_, attr_name, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_attr_name = if arg_attr_name.is_null() {
-            None
-        } else {
-            Some(arg_attr_name.into())
-        };
-        let arg_attr_name = arg_attr_name.as_ref();
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let result =
-            ImplDomnode::set_element_attribute(&arg_self_.interface, arg_attr_name, arg_value);
-        result.into()
-    }
-    extern "C" fn get_element_inner_text<I: ImplDomnode>(
-        self_: *mut _cef_domnode_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_element_inner_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_element_bounds<I: ImplDomnode>(self_: *mut _cef_domnode_t) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDomnode::get_element_bounds(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplDomnode for Domnode {
     fn get_type(&self) -> DomNodeType {
@@ -9076,69 +6194,11 @@ impl Default for Domnode {
 /// See [_cef_shared_memory_region_t] for more documentation.
 #[derive(Clone)]
 pub struct SharedMemoryRegion(RefGuard<_cef_shared_memory_region_t>);
-impl SharedMemoryRegion {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapSharedMemoryRegion,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplSharedMemoryRegion>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapSharedMemoryRegion>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_shared_memory_region_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapSharedMemoryRegion: ImplSharedMemoryRegion {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_shared_memory_region_t, Self>);
-}
 pub trait ImplSharedMemoryRegion: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn size(&self) -> usize {
-        Default::default()
-    }
-    fn memory(&self) -> *mut ::std::os::raw::c_void {
-        unsafe { std::mem::zeroed() }
-    }
-    fn init_methods(object: &mut _cef_shared_memory_region_t) {
-        impl_cef_shared_memory_region_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn size(&self) -> usize;
+    fn memory(&self) -> *mut ::std::os::raw::c_void;
     fn get_raw(&self) -> *mut _cef_shared_memory_region_t;
-}
-mod impl_cef_shared_memory_region_t {
-    use super::*;
-    pub fn init_methods<I: ImplSharedMemoryRegion>(object: &mut _cef_shared_memory_region_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.size = Some(size::<I>);
-        object.memory = Some(memory::<I>);
-    }
-    extern "C" fn is_valid<I: ImplSharedMemoryRegion>(
-        self_: *mut _cef_shared_memory_region_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSharedMemoryRegion::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn size<I: ImplSharedMemoryRegion>(
-        self_: *mut _cef_shared_memory_region_t,
-    ) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSharedMemoryRegion::size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn memory<I: ImplSharedMemoryRegion>(
-        self_: *mut _cef_shared_memory_region_t,
-    ) -> *mut ::std::os::raw::c_void {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSharedMemoryRegion::memory(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplSharedMemoryRegion for SharedMemoryRegion {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -9222,113 +6282,14 @@ impl Default for SharedMemoryRegion {
 /// See [_cef_process_message_t] for more documentation.
 #[derive(Clone)]
 pub struct ProcessMessage(RefGuard<_cef_process_message_t>);
-impl ProcessMessage {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapProcessMessage,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplProcessMessage>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapProcessMessage>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_process_message_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapProcessMessage: ImplProcessMessage {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_process_message_t, Self>);
-}
 pub trait ImplProcessMessage: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn copy(&self) -> Option<ProcessMessage> {
-        Default::default()
-    }
-    fn get_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_argument_list(&self) -> Option<ListValue> {
-        Default::default()
-    }
-    fn get_shared_memory_region(&self) -> Option<SharedMemoryRegion> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_process_message_t) {
-        impl_cef_process_message_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn copy(&self) -> Option<ProcessMessage>;
+    fn get_name(&self) -> Option<CefStringUtf16>;
+    fn get_argument_list(&self) -> Option<ListValue>;
+    fn get_shared_memory_region(&self) -> Option<SharedMemoryRegion>;
     fn get_raw(&self) -> *mut _cef_process_message_t;
-}
-mod impl_cef_process_message_t {
-    use super::*;
-    pub fn init_methods<I: ImplProcessMessage>(object: &mut _cef_process_message_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.copy = Some(copy::<I>);
-        object.get_name = Some(get_name::<I>);
-        object.get_argument_list = Some(get_argument_list::<I>);
-        object.get_shared_memory_region = Some(get_shared_memory_region::<I>);
-    }
-    extern "C" fn is_valid<I: ImplProcessMessage>(
-        self_: *mut _cef_process_message_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplProcessMessage::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_read_only<I: ImplProcessMessage>(
-        self_: *mut _cef_process_message_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplProcessMessage::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn copy<I: ImplProcessMessage>(
-        self_: *mut _cef_process_message_t,
-    ) -> *mut _cef_process_message_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplProcessMessage::copy(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_name<I: ImplProcessMessage>(
-        self_: *mut _cef_process_message_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplProcessMessage::get_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_argument_list<I: ImplProcessMessage>(
-        self_: *mut _cef_process_message_t,
-    ) -> *mut _cef_list_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplProcessMessage::get_argument_list(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_shared_memory_region<I: ImplProcessMessage>(
-        self_: *mut _cef_process_message_t,
-    ) -> *mut _cef_shared_memory_region_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplProcessMessage::get_shared_memory_region(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplProcessMessage for ProcessMessage {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -9464,396 +6425,41 @@ impl Default for ProcessMessage {
 /// See [_cef_request_t] for more documentation.
 #[derive(Clone)]
 pub struct Request(RefGuard<_cef_request_t>);
-impl Request {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapRequest,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplRequest>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapRequest>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_request_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapRequest: ImplRequest {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_request_t, Self>);
-}
 pub trait ImplRequest: Clone + Sized + Rc {
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_url(&self, url: Option<&CefStringUtf16>) {}
-    fn get_method(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_method(&self, method: Option<&CefStringUtf16>) {}
-    fn set_referrer(&self, referrer_url: Option<&CefStringUtf16>, policy: ReferrerPolicy) {}
-    fn get_referrer_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_referrer_policy(&self) -> ReferrerPolicy {
-        Default::default()
-    }
-    fn get_post_data(&self) -> Option<PostData> {
-        Default::default()
-    }
-    fn set_post_data(&self, post_data: Option<&mut impl ImplPostData>) {}
-    fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>) {}
-    fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>) {}
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
-        Default::default()
-    }
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn get_url(&self) -> Option<CefStringUtf16>;
+    fn set_url(&self, url: Option<&CefStringUtf16>);
+    fn get_method(&self) -> Option<CefStringUtf16>;
+    fn set_method(&self, method: Option<&CefStringUtf16>);
+    fn set_referrer(&self, referrer_url: Option<&CefStringUtf16>, policy: ReferrerPolicy);
+    fn get_referrer_url(&self) -> Option<CefStringUtf16>;
+    fn get_referrer_policy(&self) -> ReferrerPolicy;
+    fn get_post_data(&self) -> Option<PostData>;
+    fn set_post_data(&self, post_data: Option<&mut impl ImplPostData>);
+    fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>);
+    fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>);
+    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
     fn set_header_by_name(
         &self,
         name: Option<&CefStringUtf16>,
         value: Option<&CefStringUtf16>,
         overwrite: ::std::os::raw::c_int,
-    ) {
-    }
+    );
     fn set(
         &self,
         url: Option<&CefStringUtf16>,
         method: Option<&CefStringUtf16>,
         post_data: Option<&mut impl ImplPostData>,
         header_map: Option<&mut CefStringMultimap>,
-    ) {
-    }
-    fn get_flags(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_flags(&self, flags: ::std::os::raw::c_int) {}
-    fn get_first_party_for_cookies(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_first_party_for_cookies(&self, url: Option<&CefStringUtf16>) {}
-    fn get_resource_type(&self) -> ResourceType {
-        Default::default()
-    }
-    fn get_transition_type(&self) -> TransitionType {
-        Default::default()
-    }
-    fn get_identifier(&self) -> u64 {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_request_t) {
-        impl_cef_request_t::init_methods::<Self>(object);
-    }
+    );
+    fn get_flags(&self) -> ::std::os::raw::c_int;
+    fn set_flags(&self, flags: ::std::os::raw::c_int);
+    fn get_first_party_for_cookies(&self) -> Option<CefStringUtf16>;
+    fn set_first_party_for_cookies(&self, url: Option<&CefStringUtf16>);
+    fn get_resource_type(&self) -> ResourceType;
+    fn get_transition_type(&self) -> TransitionType;
+    fn get_identifier(&self) -> u64;
     fn get_raw(&self) -> *mut _cef_request_t;
-}
-mod impl_cef_request_t {
-    use super::*;
-    pub fn init_methods<I: ImplRequest>(object: &mut _cef_request_t) {
-        object.is_read_only = Some(is_read_only::<I>);
-        object.get_url = Some(get_url::<I>);
-        object.set_url = Some(set_url::<I>);
-        object.get_method = Some(get_method::<I>);
-        object.set_method = Some(set_method::<I>);
-        object.set_referrer = Some(set_referrer::<I>);
-        object.get_referrer_url = Some(get_referrer_url::<I>);
-        object.get_referrer_policy = Some(get_referrer_policy::<I>);
-        object.get_post_data = Some(get_post_data::<I>);
-        object.set_post_data = Some(set_post_data::<I>);
-        object.get_header_map = Some(get_header_map::<I>);
-        object.set_header_map = Some(set_header_map::<I>);
-        object.get_header_by_name = Some(get_header_by_name::<I>);
-        object.set_header_by_name = Some(set_header_by_name::<I>);
-        object.set = Some(set::<I>);
-        object.get_flags = Some(get_flags::<I>);
-        object.set_flags = Some(set_flags::<I>);
-        object.get_first_party_for_cookies = Some(get_first_party_for_cookies::<I>);
-        object.set_first_party_for_cookies = Some(set_first_party_for_cookies::<I>);
-        object.get_resource_type = Some(get_resource_type::<I>);
-        object.get_transition_type = Some(get_transition_type::<I>);
-        object.get_identifier = Some(get_identifier::<I>);
-    }
-    extern "C" fn is_read_only<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_url<I: ImplRequest>(self_: *mut _cef_request_t) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_url<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        url: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_url) = (self_, url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let result = ImplRequest::set_url(&arg_self_.interface, arg_url);
-    }
-    extern "C" fn get_method<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_method(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_method<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        method: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_method) = (self_, method);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_method = if arg_method.is_null() {
-            None
-        } else {
-            Some(arg_method.into())
-        };
-        let arg_method = arg_method.as_ref();
-        let result = ImplRequest::set_method(&arg_self_.interface, arg_method);
-    }
-    extern "C" fn set_referrer<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        referrer_url: *const _cef_string_utf16_t,
-        policy: cef_referrer_policy_t,
-    ) {
-        let (arg_self_, arg_referrer_url, arg_policy) = (self_, referrer_url, policy);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_referrer_url = if arg_referrer_url.is_null() {
-            None
-        } else {
-            Some(arg_referrer_url.into())
-        };
-        let arg_referrer_url = arg_referrer_url.as_ref();
-        let arg_policy = arg_policy.as_raw();
-        let result = ImplRequest::set_referrer(&arg_self_.interface, arg_referrer_url, arg_policy);
-    }
-    extern "C" fn get_referrer_url<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_referrer_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_referrer_policy<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> cef_referrer_policy_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_referrer_policy(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_post_data<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> *mut _cef_post_data_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_post_data(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_post_data<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        post_data: *mut _cef_post_data_t,
-    ) {
-        let (arg_self_, arg_post_data) = (self_, post_data);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_post_data = unsafe { arg_post_data.as_mut() }
-            .map(|arg| PostData(unsafe { RefGuard::from_raw(arg) }));
-        let arg_post_data = arg_post_data.as_mut();
-        let result = ImplRequest::set_post_data(&arg_self_.interface, arg_post_data);
-    }
-    extern "C" fn get_header_map<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        header_map: *mut _cef_string_multimap_t,
-    ) {
-        let (arg_self_, arg_header_map) = (self_, header_map);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_header_map = if arg_header_map.is_null() {
-            None
-        } else {
-            Some(arg_header_map.into())
-        };
-        let arg_header_map = arg_header_map.as_mut();
-        let result = ImplRequest::get_header_map(&arg_self_.interface, arg_header_map);
-    }
-    extern "C" fn set_header_map<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        header_map: *mut _cef_string_multimap_t,
-    ) {
-        let (arg_self_, arg_header_map) = (self_, header_map);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_header_map = if arg_header_map.is_null() {
-            None
-        } else {
-            Some(arg_header_map.into())
-        };
-        let arg_header_map = arg_header_map.as_mut();
-        let result = ImplRequest::set_header_map(&arg_self_.interface, arg_header_map);
-    }
-    extern "C" fn get_header_by_name<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        name: *const _cef_string_utf16_t,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplRequest::get_header_by_name(&arg_self_.interface, arg_name);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_header_by_name<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        name: *const _cef_string_utf16_t,
-        value: *const _cef_string_utf16_t,
-        overwrite: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_name, arg_value, arg_overwrite) = (self_, name, value, overwrite);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let arg_overwrite = arg_overwrite.as_raw();
-        let result = ImplRequest::set_header_by_name(
-            &arg_self_.interface,
-            arg_name,
-            arg_value,
-            arg_overwrite,
-        );
-    }
-    extern "C" fn set<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        url: *const _cef_string_utf16_t,
-        method: *const _cef_string_utf16_t,
-        post_data: *mut _cef_post_data_t,
-        header_map: *mut _cef_string_multimap_t,
-    ) {
-        let (arg_self_, arg_url, arg_method, arg_post_data, arg_header_map) =
-            (self_, url, method, post_data, header_map);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let arg_method = if arg_method.is_null() {
-            None
-        } else {
-            Some(arg_method.into())
-        };
-        let arg_method = arg_method.as_ref();
-        let mut arg_post_data = unsafe { arg_post_data.as_mut() }
-            .map(|arg| PostData(unsafe { RefGuard::from_raw(arg) }));
-        let arg_post_data = arg_post_data.as_mut();
-        let mut arg_header_map = if arg_header_map.is_null() {
-            None
-        } else {
-            Some(arg_header_map.into())
-        };
-        let arg_header_map = arg_header_map.as_mut();
-        let result = ImplRequest::set(
-            &arg_self_.interface,
-            arg_url,
-            arg_method,
-            arg_post_data,
-            arg_header_map,
-        );
-    }
-    extern "C" fn get_flags<I: ImplRequest>(self_: *mut _cef_request_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_flags(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_flags<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        flags: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_flags) = (self_, flags);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_flags = arg_flags.as_raw();
-        let result = ImplRequest::set_flags(&arg_self_.interface, arg_flags);
-    }
-    extern "C" fn get_first_party_for_cookies<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_first_party_for_cookies(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_first_party_for_cookies<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-        url: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_url) = (self_, url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let result = ImplRequest::set_first_party_for_cookies(&arg_self_.interface, arg_url);
-    }
-    extern "C" fn get_resource_type<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> cef_resource_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_resource_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_transition_type<I: ImplRequest>(
-        self_: *mut _cef_request_t,
-    ) -> cef_transition_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_transition_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_identifier<I: ImplRequest>(self_: *mut _cef_request_t) -> u64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequest::get_identifier(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplRequest for Request {
     fn is_read_only(&self) -> ::std::os::raw::c_int {
@@ -10259,152 +6865,18 @@ impl Default for Request {
 /// See [_cef_post_data_t] for more documentation.
 #[derive(Clone)]
 pub struct PostData(RefGuard<_cef_post_data_t>);
-impl PostData {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPostData,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPostData>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPostData>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_post_data_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPostData: ImplPostData {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_post_data_t, Self>);
-}
 pub trait ImplPostData: Clone + Sized + Rc {
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_excluded_elements(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_element_count(&self) -> usize {
-        Default::default()
-    }
-    fn get_elements(&self, elements: Option<&mut Vec<Option<PostDataElement>>>) {}
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn has_excluded_elements(&self) -> ::std::os::raw::c_int;
+    fn get_element_count(&self) -> usize;
+    fn get_elements(&self, elements: Option<&mut Vec<Option<PostDataElement>>>);
     fn remove_element(
         &self,
         element: Option<&mut impl ImplPostDataElement>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn add_element(&self, element: Option<&mut impl ImplPostDataElement>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn remove_elements(&self) {}
-    fn init_methods(object: &mut _cef_post_data_t) {
-        impl_cef_post_data_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
+    fn add_element(&self, element: Option<&mut impl ImplPostDataElement>) -> ::std::os::raw::c_int;
+    fn remove_elements(&self);
     fn get_raw(&self) -> *mut _cef_post_data_t;
-}
-mod impl_cef_post_data_t {
-    use super::*;
-    pub fn init_methods<I: ImplPostData>(object: &mut _cef_post_data_t) {
-        object.is_read_only = Some(is_read_only::<I>);
-        object.has_excluded_elements = Some(has_excluded_elements::<I>);
-        object.get_element_count = Some(get_element_count::<I>);
-        object.get_elements = Some(get_elements::<I>);
-        object.remove_element = Some(remove_element::<I>);
-        object.add_element = Some(add_element::<I>);
-        object.remove_elements = Some(remove_elements::<I>);
-    }
-    extern "C" fn is_read_only<I: ImplPostData>(
-        self_: *mut _cef_post_data_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostData::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_excluded_elements<I: ImplPostData>(
-        self_: *mut _cef_post_data_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostData::has_excluded_elements(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_element_count<I: ImplPostData>(self_: *mut _cef_post_data_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostData::get_element_count(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_elements<I: ImplPostData>(
-        self_: *mut _cef_post_data_t,
-        elements_count: *mut usize,
-        elements: *mut *mut _cef_post_data_element_t,
-    ) {
-        let (arg_self_, arg_elements_count, arg_elements) = (self_, elements_count, elements);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let out_elements_count = unsafe { arg_elements_count.as_mut() };
-        let out_elements = unsafe { arg_elements.as_mut() };
-        let arg_elements_count = out_elements_count
-            .as_ref()
-            .map(|count| **count)
-            .unwrap_or_default();
-        let mut vec_elements = unsafe { arg_elements.as_mut() }.map(|arg| {
-            let arg = unsafe {
-                std::slice::from_raw_parts_mut(std::ptr::from_mut(arg), arg_elements_count)
-            };
-            arg.iter_mut()
-                .map(|arg| {
-                    if arg.is_null() {
-                        None
-                    } else {
-                        Some(PostDataElement(unsafe { RefGuard::from_raw(*arg) }))
-                    }
-                })
-                .collect::<Vec<_>>()
-        });
-        let arg_elements = vec_elements.as_mut();
-        let result = ImplPostData::get_elements(&arg_self_.interface, arg_elements);
-        if let (Some(out_elements_count), Some(vec_elements)) =
-            (out_elements_count, vec_elements.as_mut())
-        {
-            let size = vec_elements.len().min(*out_elements_count);
-            for elem in &mut vec_elements[..size] {
-                if let Some(elem) = elem.as_ref() {
-                    unsafe { elem.add_ref() };
-                }
-            }
-            *out_elements_count = size;
-        }
-    }
-    extern "C" fn remove_element<I: ImplPostData>(
-        self_: *mut _cef_post_data_t,
-        element: *mut _cef_post_data_element_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_element) = (self_, element);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_element = unsafe { arg_element.as_mut() }
-            .map(|arg| PostDataElement(unsafe { RefGuard::from_raw(arg) }));
-        let arg_element = arg_element.as_mut();
-        let result = ImplPostData::remove_element(&arg_self_.interface, arg_element);
-        result.into()
-    }
-    extern "C" fn add_element<I: ImplPostData>(
-        self_: *mut _cef_post_data_t,
-        element: *mut _cef_post_data_element_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_element) = (self_, element);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_element = unsafe { arg_element.as_mut() }
-            .map(|arg| PostDataElement(unsafe { RefGuard::from_raw(arg) }));
-        let arg_element = arg_element.as_mut();
-        let result = ImplPostData::add_element(&arg_self_.interface, arg_element);
-        result.into()
-    }
-    extern "C" fn remove_elements<I: ImplPostData>(self_: *mut _cef_post_data_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostData::remove_elements(&arg_self_.interface);
-    }
 }
 impl ImplPostData for PostData {
     fn is_read_only(&self) -> ::std::os::raw::c_int {
@@ -10593,135 +7065,16 @@ impl Default for PostData {
 /// See [_cef_post_data_element_t] for more documentation.
 #[derive(Clone)]
 pub struct PostDataElement(RefGuard<_cef_post_data_element_t>);
-impl PostDataElement {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPostDataElement,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPostDataElement>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPostDataElement>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_post_data_element_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPostDataElement: ImplPostDataElement {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_post_data_element_t, Self>);
-}
 pub trait ImplPostDataElement: Clone + Sized + Rc {
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_to_empty(&self) {}
-    fn set_to_file(&self, file_name: Option<&CefStringUtf16>) {}
-    fn set_to_bytes(&self, size: usize, bytes: *const u8) {}
-    fn get_type(&self) -> PostdataelementType {
-        Default::default()
-    }
-    fn get_file(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_bytes_count(&self) -> usize {
-        Default::default()
-    }
-    fn get_bytes(&self, size: usize, bytes: *mut u8) -> usize {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_post_data_element_t) {
-        impl_cef_post_data_element_t::init_methods::<Self>(object);
-    }
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn set_to_empty(&self);
+    fn set_to_file(&self, file_name: Option<&CefStringUtf16>);
+    fn set_to_bytes(&self, size: usize, bytes: *const u8);
+    fn get_type(&self) -> PostdataelementType;
+    fn get_file(&self) -> Option<CefStringUtf16>;
+    fn get_bytes_count(&self) -> usize;
+    fn get_bytes(&self, size: usize, bytes: *mut u8) -> usize;
     fn get_raw(&self) -> *mut _cef_post_data_element_t;
-}
-mod impl_cef_post_data_element_t {
-    use super::*;
-    pub fn init_methods<I: ImplPostDataElement>(object: &mut _cef_post_data_element_t) {
-        object.is_read_only = Some(is_read_only::<I>);
-        object.set_to_empty = Some(set_to_empty::<I>);
-        object.set_to_file = Some(set_to_file::<I>);
-        object.set_to_bytes = Some(set_to_bytes::<I>);
-        object.get_type = Some(get_type::<I>);
-        object.get_file = Some(get_file::<I>);
-        object.get_bytes_count = Some(get_bytes_count::<I>);
-        object.get_bytes = Some(get_bytes::<I>);
-    }
-    extern "C" fn is_read_only<I: ImplPostDataElement>(
-        self_: *mut _cef_post_data_element_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostDataElement::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_to_empty<I: ImplPostDataElement>(self_: *mut _cef_post_data_element_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostDataElement::set_to_empty(&arg_self_.interface);
-    }
-    extern "C" fn set_to_file<I: ImplPostDataElement>(
-        self_: *mut _cef_post_data_element_t,
-        file_name: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_file_name) = (self_, file_name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_file_name = if arg_file_name.is_null() {
-            None
-        } else {
-            Some(arg_file_name.into())
-        };
-        let arg_file_name = arg_file_name.as_ref();
-        let result = ImplPostDataElement::set_to_file(&arg_self_.interface, arg_file_name);
-    }
-    extern "C" fn set_to_bytes<I: ImplPostDataElement>(
-        self_: *mut _cef_post_data_element_t,
-        size: usize,
-        bytes: *const ::std::os::raw::c_void,
-    ) {
-        let (arg_self_, arg_size, arg_bytes) = (self_, size, bytes);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = arg_size.as_raw();
-        let arg_bytes = arg_bytes as *const _;
-        let result = ImplPostDataElement::set_to_bytes(&arg_self_.interface, arg_size, arg_bytes);
-    }
-    extern "C" fn get_type<I: ImplPostDataElement>(
-        self_: *mut _cef_post_data_element_t,
-    ) -> cef_postdataelement_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostDataElement::get_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_file<I: ImplPostDataElement>(
-        self_: *mut _cef_post_data_element_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostDataElement::get_file(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_bytes_count<I: ImplPostDataElement>(
-        self_: *mut _cef_post_data_element_t,
-    ) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPostDataElement::get_bytes_count(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_bytes<I: ImplPostDataElement>(
-        self_: *mut _cef_post_data_element_t,
-        size: usize,
-        bytes: *mut ::std::os::raw::c_void,
-    ) -> usize {
-        let (arg_self_, arg_size, arg_bytes) = (self_, size, bytes);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = arg_size.as_raw();
-        let arg_bytes = arg_bytes as *mut _;
-        let result = ImplPostDataElement::get_bytes(&arg_self_.interface, arg_size, arg_bytes);
-        result.into()
-    }
 }
 impl ImplPostDataElement for PostDataElement {
     fn is_read_only(&self) -> ::std::os::raw::c_int {
@@ -10985,352 +7338,47 @@ impl Default for CefStringVisitor {
 /// See [_cef_frame_t] for more documentation.
 #[derive(Clone)]
 pub struct Frame(RefGuard<_cef_frame_t>);
-impl Frame {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapFrame,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplFrame>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapFrame>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_frame_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapFrame: ImplFrame {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_frame_t, Self>);
-}
 pub trait ImplFrame: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn undo(&self) {}
-    fn redo(&self) {}
-    fn cut(&self) {}
-    fn copy(&self) {}
-    fn paste(&self) {}
-    fn paste_and_match_style(&self) {}
-    fn del(&self) {}
-    fn select_all(&self) {}
-    fn view_source(&self) {}
-    fn get_source(&self, visitor: Option<&mut impl ImplCefStringVisitor>) {}
-    fn get_text(&self, visitor: Option<&mut impl ImplCefStringVisitor>) {}
-    fn load_request(&self, request: Option<&mut impl ImplRequest>) {}
-    fn load_url(&self, url: Option<&CefStringUtf16>) {}
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn undo(&self);
+    fn redo(&self);
+    fn cut(&self);
+    fn copy(&self);
+    fn paste(&self);
+    fn paste_and_match_style(&self);
+    fn del(&self);
+    fn select_all(&self);
+    fn view_source(&self);
+    fn get_source(&self, visitor: Option<&mut impl ImplCefStringVisitor>);
+    fn get_text(&self, visitor: Option<&mut impl ImplCefStringVisitor>);
+    fn load_request(&self, request: Option<&mut impl ImplRequest>);
+    fn load_url(&self, url: Option<&CefStringUtf16>);
     fn execute_java_script(
         &self,
         code: Option<&CefStringUtf16>,
         script_url: Option<&CefStringUtf16>,
         start_line: ::std::os::raw::c_int,
-    ) {
-    }
-    fn is_main(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_focused(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_identifier(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_parent(&self) -> Option<Frame> {
-        Default::default()
-    }
-    fn get_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_browser(&self) -> Option<Browser> {
-        Default::default()
-    }
-    fn get_v8_context(&self) -> Option<V8Context> {
-        Default::default()
-    }
-    fn visit_dom(&self, visitor: Option<&mut impl ImplDomvisitor>) {}
+    );
+    fn is_main(&self) -> ::std::os::raw::c_int;
+    fn is_focused(&self) -> ::std::os::raw::c_int;
+    fn get_name(&self) -> Option<CefStringUtf16>;
+    fn get_identifier(&self) -> Option<CefStringUtf16>;
+    fn get_parent(&self) -> Option<Frame>;
+    fn get_url(&self) -> Option<CefStringUtf16>;
+    fn get_browser(&self) -> Option<Browser>;
+    fn get_v8_context(&self) -> Option<V8Context>;
+    fn visit_dom(&self, visitor: Option<&mut impl ImplDomvisitor>);
     fn create_urlrequest(
         &self,
         request: Option<&mut impl ImplRequest>,
         client: Option<&mut impl ImplUrlrequestClient>,
-    ) -> Option<Urlrequest> {
-        Default::default()
-    }
+    ) -> Option<Urlrequest>;
     fn send_process_message(
         &self,
         target_process: ProcessId,
         message: Option<&mut impl ImplProcessMessage>,
-    ) {
-    }
-    fn init_methods(object: &mut _cef_frame_t) {
-        impl_cef_frame_t::init_methods::<Self>(object);
-    }
+    );
     fn get_raw(&self) -> *mut _cef_frame_t;
-}
-mod impl_cef_frame_t {
-    use super::*;
-    pub fn init_methods<I: ImplFrame>(object: &mut _cef_frame_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.undo = Some(undo::<I>);
-        object.redo = Some(redo::<I>);
-        object.cut = Some(cut::<I>);
-        object.copy = Some(copy::<I>);
-        object.paste = Some(paste::<I>);
-        object.paste_and_match_style = Some(paste_and_match_style::<I>);
-        object.del = Some(del::<I>);
-        object.select_all = Some(select_all::<I>);
-        object.view_source = Some(view_source::<I>);
-        object.get_source = Some(get_source::<I>);
-        object.get_text = Some(get_text::<I>);
-        object.load_request = Some(load_request::<I>);
-        object.load_url = Some(load_url::<I>);
-        object.execute_java_script = Some(execute_java_script::<I>);
-        object.is_main = Some(is_main::<I>);
-        object.is_focused = Some(is_focused::<I>);
-        object.get_name = Some(get_name::<I>);
-        object.get_identifier = Some(get_identifier::<I>);
-        object.get_parent = Some(get_parent::<I>);
-        object.get_url = Some(get_url::<I>);
-        object.get_browser = Some(get_browser::<I>);
-        object.get_v8_context = Some(get_v8_context::<I>);
-        object.visit_dom = Some(visit_dom::<I>);
-        object.create_urlrequest = Some(create_urlrequest::<I>);
-        object.send_process_message = Some(send_process_message::<I>);
-    }
-    extern "C" fn is_valid<I: ImplFrame>(self_: *mut _cef_frame_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn undo<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::undo(&arg_self_.interface);
-    }
-    extern "C" fn redo<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::redo(&arg_self_.interface);
-    }
-    extern "C" fn cut<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::cut(&arg_self_.interface);
-    }
-    extern "C" fn copy<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::copy(&arg_self_.interface);
-    }
-    extern "C" fn paste<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::paste(&arg_self_.interface);
-    }
-    extern "C" fn paste_and_match_style<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::paste_and_match_style(&arg_self_.interface);
-    }
-    extern "C" fn del<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::del(&arg_self_.interface);
-    }
-    extern "C" fn select_all<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::select_all(&arg_self_.interface);
-    }
-    extern "C" fn view_source<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::view_source(&arg_self_.interface);
-    }
-    extern "C" fn get_source<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        visitor: *mut _cef_string_visitor_t,
-    ) {
-        let (arg_self_, arg_visitor) = (self_, visitor);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_visitor = unsafe { arg_visitor.as_mut() }
-            .map(|arg| CefStringVisitor(unsafe { RefGuard::from_raw(arg) }));
-        let arg_visitor = arg_visitor.as_mut();
-        let result = ImplFrame::get_source(&arg_self_.interface, arg_visitor);
-    }
-    extern "C" fn get_text<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        visitor: *mut _cef_string_visitor_t,
-    ) {
-        let (arg_self_, arg_visitor) = (self_, visitor);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_visitor = unsafe { arg_visitor.as_mut() }
-            .map(|arg| CefStringVisitor(unsafe { RefGuard::from_raw(arg) }));
-        let arg_visitor = arg_visitor.as_mut();
-        let result = ImplFrame::get_text(&arg_self_.interface, arg_visitor);
-    }
-    extern "C" fn load_request<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        request: *mut _cef_request_t,
-    ) {
-        let (arg_self_, arg_request) = (self_, request);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_request =
-            unsafe { arg_request.as_mut() }.map(|arg| Request(unsafe { RefGuard::from_raw(arg) }));
-        let arg_request = arg_request.as_mut();
-        let result = ImplFrame::load_request(&arg_self_.interface, arg_request);
-    }
-    extern "C" fn load_url<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        url: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_url) = (self_, url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let result = ImplFrame::load_url(&arg_self_.interface, arg_url);
-    }
-    extern "C" fn execute_java_script<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        code: *const _cef_string_utf16_t,
-        script_url: *const _cef_string_utf16_t,
-        start_line: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_code, arg_script_url, arg_start_line) =
-            (self_, code, script_url, start_line);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_code = if arg_code.is_null() {
-            None
-        } else {
-            Some(arg_code.into())
-        };
-        let arg_code = arg_code.as_ref();
-        let arg_script_url = if arg_script_url.is_null() {
-            None
-        } else {
-            Some(arg_script_url.into())
-        };
-        let arg_script_url = arg_script_url.as_ref();
-        let arg_start_line = arg_start_line.as_raw();
-        let result = ImplFrame::execute_java_script(
-            &arg_self_.interface,
-            arg_code,
-            arg_script_url,
-            arg_start_line,
-        );
-    }
-    extern "C" fn is_main<I: ImplFrame>(self_: *mut _cef_frame_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::is_main(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_focused<I: ImplFrame>(self_: *mut _cef_frame_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::is_focused(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_name<I: ImplFrame>(self_: *mut _cef_frame_t) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::get_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_identifier<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::get_identifier(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_parent<I: ImplFrame>(self_: *mut _cef_frame_t) -> *mut _cef_frame_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::get_parent(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_url<I: ImplFrame>(self_: *mut _cef_frame_t) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::get_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_browser<I: ImplFrame>(self_: *mut _cef_frame_t) -> *mut _cef_browser_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::get_browser(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_v8_context<I: ImplFrame>(self_: *mut _cef_frame_t) -> *mut _cef_v8_context_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::get_v8_context(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn visit_dom<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        visitor: *mut _cef_domvisitor_t,
-    ) {
-        let (arg_self_, arg_visitor) = (self_, visitor);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_visitor = unsafe { arg_visitor.as_mut() }
-            .map(|arg| Domvisitor(unsafe { RefGuard::from_raw(arg) }));
-        let arg_visitor = arg_visitor.as_mut();
-        let result = ImplFrame::visit_dom(&arg_self_.interface, arg_visitor);
-    }
-    extern "C" fn create_urlrequest<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        request: *mut _cef_request_t,
-        client: *mut _cef_urlrequest_client_t,
-    ) -> *mut _cef_urlrequest_t {
-        let (arg_self_, arg_request, arg_client) = (self_, request, client);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_request =
-            unsafe { arg_request.as_mut() }.map(|arg| Request(unsafe { RefGuard::from_raw(arg) }));
-        let arg_request = arg_request.as_mut();
-        let mut arg_client = unsafe { arg_client.as_mut() }
-            .map(|arg| UrlrequestClient(unsafe { RefGuard::from_raw(arg) }));
-        let arg_client = arg_client.as_mut();
-        let result = ImplFrame::create_urlrequest(&arg_self_.interface, arg_request, arg_client);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn send_process_message<I: ImplFrame>(
-        self_: *mut _cef_frame_t,
-        target_process: cef_process_id_t,
-        message: *mut _cef_process_message_t,
-    ) {
-        let (arg_self_, arg_target_process, arg_message) = (self_, target_process, message);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_target_process = arg_target_process.as_raw();
-        let mut arg_message = unsafe { arg_message.as_mut() }
-            .map(|arg| ProcessMessage(unsafe { RefGuard::from_raw(arg) }));
-        let arg_message = arg_message.as_mut();
-        let result =
-            ImplFrame::send_process_message(&arg_self_.interface, arg_target_process, arg_message);
-    }
 }
 impl ImplFrame for Frame {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -11788,136 +7836,15 @@ impl Default for Frame {
 /// See [_cef_x509_cert_principal_t] for more documentation.
 #[derive(Clone)]
 pub struct X509CertPrincipal(RefGuard<_cef_x509_cert_principal_t>);
-impl X509CertPrincipal {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapX509CertPrincipal,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplX509CertPrincipal>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapX509CertPrincipal>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_x509_cert_principal_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapX509CertPrincipal: ImplX509CertPrincipal {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_x509_cert_principal_t, Self>);
-}
 pub trait ImplX509CertPrincipal: Clone + Sized + Rc {
-    fn get_display_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_common_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_locality_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_state_or_province_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_country_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_organization_names(&self, names: Option<&mut CefStringList>) {}
-    fn get_organization_unit_names(&self, names: Option<&mut CefStringList>) {}
-    fn init_methods(object: &mut _cef_x509_cert_principal_t) {
-        impl_cef_x509_cert_principal_t::init_methods::<Self>(object);
-    }
+    fn get_display_name(&self) -> Option<CefStringUtf16>;
+    fn get_common_name(&self) -> Option<CefStringUtf16>;
+    fn get_locality_name(&self) -> Option<CefStringUtf16>;
+    fn get_state_or_province_name(&self) -> Option<CefStringUtf16>;
+    fn get_country_name(&self) -> Option<CefStringUtf16>;
+    fn get_organization_names(&self, names: Option<&mut CefStringList>);
+    fn get_organization_unit_names(&self, names: Option<&mut CefStringList>);
     fn get_raw(&self) -> *mut _cef_x509_cert_principal_t;
-}
-mod impl_cef_x509_cert_principal_t {
-    use super::*;
-    pub fn init_methods<I: ImplX509CertPrincipal>(object: &mut _cef_x509_cert_principal_t) {
-        object.get_display_name = Some(get_display_name::<I>);
-        object.get_common_name = Some(get_common_name::<I>);
-        object.get_locality_name = Some(get_locality_name::<I>);
-        object.get_state_or_province_name = Some(get_state_or_province_name::<I>);
-        object.get_country_name = Some(get_country_name::<I>);
-        object.get_organization_names = Some(get_organization_names::<I>);
-        object.get_organization_unit_names = Some(get_organization_unit_names::<I>);
-    }
-    extern "C" fn get_display_name<I: ImplX509CertPrincipal>(
-        self_: *mut _cef_x509_cert_principal_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509CertPrincipal::get_display_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_common_name<I: ImplX509CertPrincipal>(
-        self_: *mut _cef_x509_cert_principal_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509CertPrincipal::get_common_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_locality_name<I: ImplX509CertPrincipal>(
-        self_: *mut _cef_x509_cert_principal_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509CertPrincipal::get_locality_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_state_or_province_name<I: ImplX509CertPrincipal>(
-        self_: *mut _cef_x509_cert_principal_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509CertPrincipal::get_state_or_province_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_country_name<I: ImplX509CertPrincipal>(
-        self_: *mut _cef_x509_cert_principal_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509CertPrincipal::get_country_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_organization_names<I: ImplX509CertPrincipal>(
-        self_: *mut _cef_x509_cert_principal_t,
-        names: *mut _cef_string_list_t,
-    ) {
-        let (arg_self_, arg_names) = (self_, names);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_names = if arg_names.is_null() {
-            None
-        } else {
-            Some(arg_names.into())
-        };
-        let arg_names = arg_names.as_mut();
-        let result = ImplX509CertPrincipal::get_organization_names(&arg_self_.interface, arg_names);
-    }
-    extern "C" fn get_organization_unit_names<I: ImplX509CertPrincipal>(
-        self_: *mut _cef_x509_cert_principal_t,
-        names: *mut _cef_string_list_t,
-    ) {
-        let (arg_self_, arg_names) = (self_, names);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_names = if arg_names.is_null() {
-            None
-        } else {
-            Some(arg_names.into())
-        };
-        let arg_names = arg_names.as_mut();
-        let result =
-            ImplX509CertPrincipal::get_organization_unit_names(&arg_self_.interface, arg_names);
-    }
 }
 impl ImplX509CertPrincipal for X509CertPrincipal {
     fn get_display_name(&self) -> Option<CefStringUtf16> {
@@ -12077,221 +8004,18 @@ impl Default for X509CertPrincipal {
 /// See [_cef_x509_certificate_t] for more documentation.
 #[derive(Clone)]
 pub struct X509Certificate(RefGuard<_cef_x509_certificate_t>);
-impl X509Certificate {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapX509Certificate,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplX509Certificate>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapX509Certificate>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_x509_certificate_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapX509Certificate: ImplX509Certificate {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_x509_certificate_t, Self>);
-}
 pub trait ImplX509Certificate: Clone + Sized + Rc {
-    fn get_subject(&self) -> Option<X509CertPrincipal> {
-        Default::default()
-    }
-    fn get_issuer(&self) -> Option<X509CertPrincipal> {
-        Default::default()
-    }
-    fn get_serial_number(&self) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn get_valid_start(&self) -> Basetime {
-        Default::default()
-    }
-    fn get_valid_expiry(&self) -> Basetime {
-        Default::default()
-    }
-    fn get_derencoded(&self) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn get_pemencoded(&self) -> Option<BinaryValue> {
-        Default::default()
-    }
-    fn get_issuer_chain_size(&self) -> usize {
-        Default::default()
-    }
-    fn get_derencoded_issuer_chain(&self, chain: Option<&mut Vec<Option<BinaryValue>>>) {}
-    fn get_pemencoded_issuer_chain(&self, chain: Option<&mut Vec<Option<BinaryValue>>>) {}
-    fn init_methods(object: &mut _cef_x509_certificate_t) {
-        impl_cef_x509_certificate_t::init_methods::<Self>(object);
-    }
+    fn get_subject(&self) -> Option<X509CertPrincipal>;
+    fn get_issuer(&self) -> Option<X509CertPrincipal>;
+    fn get_serial_number(&self) -> Option<BinaryValue>;
+    fn get_valid_start(&self) -> Basetime;
+    fn get_valid_expiry(&self) -> Basetime;
+    fn get_derencoded(&self) -> Option<BinaryValue>;
+    fn get_pemencoded(&self) -> Option<BinaryValue>;
+    fn get_issuer_chain_size(&self) -> usize;
+    fn get_derencoded_issuer_chain(&self, chain: Option<&mut Vec<Option<BinaryValue>>>);
+    fn get_pemencoded_issuer_chain(&self, chain: Option<&mut Vec<Option<BinaryValue>>>);
     fn get_raw(&self) -> *mut _cef_x509_certificate_t;
-}
-mod impl_cef_x509_certificate_t {
-    use super::*;
-    pub fn init_methods<I: ImplX509Certificate>(object: &mut _cef_x509_certificate_t) {
-        object.get_subject = Some(get_subject::<I>);
-        object.get_issuer = Some(get_issuer::<I>);
-        object.get_serial_number = Some(get_serial_number::<I>);
-        object.get_valid_start = Some(get_valid_start::<I>);
-        object.get_valid_expiry = Some(get_valid_expiry::<I>);
-        object.get_derencoded = Some(get_derencoded::<I>);
-        object.get_pemencoded = Some(get_pemencoded::<I>);
-        object.get_issuer_chain_size = Some(get_issuer_chain_size::<I>);
-        object.get_derencoded_issuer_chain = Some(get_derencoded_issuer_chain::<I>);
-        object.get_pemencoded_issuer_chain = Some(get_pemencoded_issuer_chain::<I>);
-    }
-    extern "C" fn get_subject<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> *mut _cef_x509_cert_principal_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_subject(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_issuer<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> *mut _cef_x509_cert_principal_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_issuer(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_serial_number<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> *mut _cef_binary_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_serial_number(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_valid_start<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> _cef_basetime_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_valid_start(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_valid_expiry<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> _cef_basetime_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_valid_expiry(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_derencoded<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> *mut _cef_binary_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_derencoded(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_pemencoded<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> *mut _cef_binary_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_pemencoded(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_issuer_chain_size<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-    ) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplX509Certificate::get_issuer_chain_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_derencoded_issuer_chain<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-        chain_count: *mut usize,
-        chain: *mut *mut _cef_binary_value_t,
-    ) {
-        let (arg_self_, arg_chain_count, arg_chain) = (self_, chain_count, chain);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let out_chain_count = unsafe { arg_chain_count.as_mut() };
-        let out_chain = unsafe { arg_chain.as_mut() };
-        let arg_chain_count = out_chain_count
-            .as_ref()
-            .map(|count| **count)
-            .unwrap_or_default();
-        let mut vec_chain = unsafe { arg_chain.as_mut() }.map(|arg| {
-            let arg =
-                unsafe { std::slice::from_raw_parts_mut(std::ptr::from_mut(arg), arg_chain_count) };
-            arg.iter_mut()
-                .map(|arg| {
-                    if arg.is_null() {
-                        None
-                    } else {
-                        Some(BinaryValue(unsafe { RefGuard::from_raw(*arg) }))
-                    }
-                })
-                .collect::<Vec<_>>()
-        });
-        let arg_chain = vec_chain.as_mut();
-        let result =
-            ImplX509Certificate::get_derencoded_issuer_chain(&arg_self_.interface, arg_chain);
-        if let (Some(out_chain_count), Some(vec_chain)) = (out_chain_count, vec_chain.as_mut()) {
-            let size = vec_chain.len().min(*out_chain_count);
-            for elem in &mut vec_chain[..size] {
-                if let Some(elem) = elem.as_ref() {
-                    unsafe { elem.add_ref() };
-                }
-            }
-            *out_chain_count = size;
-        }
-    }
-    extern "C" fn get_pemencoded_issuer_chain<I: ImplX509Certificate>(
-        self_: *mut _cef_x509_certificate_t,
-        chain_count: *mut usize,
-        chain: *mut *mut _cef_binary_value_t,
-    ) {
-        let (arg_self_, arg_chain_count, arg_chain) = (self_, chain_count, chain);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let out_chain_count = unsafe { arg_chain_count.as_mut() };
-        let out_chain = unsafe { arg_chain.as_mut() };
-        let arg_chain_count = out_chain_count
-            .as_ref()
-            .map(|count| **count)
-            .unwrap_or_default();
-        let mut vec_chain = unsafe { arg_chain.as_mut() }.map(|arg| {
-            let arg =
-                unsafe { std::slice::from_raw_parts_mut(std::ptr::from_mut(arg), arg_chain_count) };
-            arg.iter_mut()
-                .map(|arg| {
-                    if arg.is_null() {
-                        None
-                    } else {
-                        Some(BinaryValue(unsafe { RefGuard::from_raw(*arg) }))
-                    }
-                })
-                .collect::<Vec<_>>()
-        });
-        let arg_chain = vec_chain.as_mut();
-        let result =
-            ImplX509Certificate::get_pemencoded_issuer_chain(&arg_self_.interface, arg_chain);
-        if let (Some(out_chain_count), Some(vec_chain)) = (out_chain_count, vec_chain.as_mut()) {
-            let size = vec_chain.len().min(*out_chain_count);
-            for elem in &mut vec_chain[..size] {
-                if let Some(elem) = elem.as_ref() {
-                    unsafe { elem.add_ref() };
-                }
-            }
-            *out_chain_count = size;
-        }
-    }
 }
 impl ImplX509Certificate for X509Certificate {
     fn get_subject(&self) -> Option<X509CertPrincipal> {
@@ -12555,95 +8279,13 @@ impl Default for X509Certificate {
 /// See [_cef_sslstatus_t] for more documentation.
 #[derive(Clone)]
 pub struct Sslstatus(RefGuard<_cef_sslstatus_t>);
-impl Sslstatus {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapSslstatus,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplSslstatus>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapSslstatus>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_sslstatus_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapSslstatus: ImplSslstatus {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_sslstatus_t, Self>);
-}
 pub trait ImplSslstatus: Clone + Sized + Rc {
-    fn is_secure_connection(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_cert_status(&self) -> CertStatus {
-        Default::default()
-    }
-    fn get_sslversion(&self) -> SslVersion {
-        Default::default()
-    }
-    fn get_content_status(&self) -> SslContentStatus {
-        Default::default()
-    }
-    fn get_x509_certificate(&self) -> Option<X509Certificate> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_sslstatus_t) {
-        impl_cef_sslstatus_t::init_methods::<Self>(object);
-    }
+    fn is_secure_connection(&self) -> ::std::os::raw::c_int;
+    fn get_cert_status(&self) -> CertStatus;
+    fn get_sslversion(&self) -> SslVersion;
+    fn get_content_status(&self) -> SslContentStatus;
+    fn get_x509_certificate(&self) -> Option<X509Certificate>;
     fn get_raw(&self) -> *mut _cef_sslstatus_t;
-}
-mod impl_cef_sslstatus_t {
-    use super::*;
-    pub fn init_methods<I: ImplSslstatus>(object: &mut _cef_sslstatus_t) {
-        object.is_secure_connection = Some(is_secure_connection::<I>);
-        object.get_cert_status = Some(get_cert_status::<I>);
-        object.get_sslversion = Some(get_sslversion::<I>);
-        object.get_content_status = Some(get_content_status::<I>);
-        object.get_x509_certificate = Some(get_x509_certificate::<I>);
-    }
-    extern "C" fn is_secure_connection<I: ImplSslstatus>(
-        self_: *mut _cef_sslstatus_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslstatus::is_secure_connection(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_cert_status<I: ImplSslstatus>(
-        self_: *mut _cef_sslstatus_t,
-    ) -> cef_cert_status_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslstatus::get_cert_status(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_sslversion<I: ImplSslstatus>(
-        self_: *mut _cef_sslstatus_t,
-    ) -> cef_ssl_version_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslstatus::get_sslversion(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_content_status<I: ImplSslstatus>(
-        self_: *mut _cef_sslstatus_t,
-    ) -> cef_ssl_content_status_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslstatus::get_content_status(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_x509_certificate<I: ImplSslstatus>(
-        self_: *mut _cef_sslstatus_t,
-    ) -> *mut _cef_x509_certificate_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslstatus::get_x509_certificate(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplSslstatus for Sslstatus {
     fn is_secure_connection(&self) -> ::std::os::raw::c_int {
@@ -12755,163 +8397,18 @@ impl Default for Sslstatus {
 /// See [_cef_navigation_entry_t] for more documentation.
 #[derive(Clone)]
 pub struct NavigationEntry(RefGuard<_cef_navigation_entry_t>);
-impl NavigationEntry {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapNavigationEntry,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplNavigationEntry>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapNavigationEntry>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_navigation_entry_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapNavigationEntry: ImplNavigationEntry {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_navigation_entry_t, Self>);
-}
 pub trait ImplNavigationEntry: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_display_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_original_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_title(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_transition_type(&self) -> TransitionType {
-        Default::default()
-    }
-    fn has_post_data(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_completion_time(&self) -> Basetime {
-        Default::default()
-    }
-    fn get_http_status_code(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_sslstatus(&self) -> Option<Sslstatus> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_navigation_entry_t) {
-        impl_cef_navigation_entry_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn get_url(&self) -> Option<CefStringUtf16>;
+    fn get_display_url(&self) -> Option<CefStringUtf16>;
+    fn get_original_url(&self) -> Option<CefStringUtf16>;
+    fn get_title(&self) -> Option<CefStringUtf16>;
+    fn get_transition_type(&self) -> TransitionType;
+    fn has_post_data(&self) -> ::std::os::raw::c_int;
+    fn get_completion_time(&self) -> Basetime;
+    fn get_http_status_code(&self) -> ::std::os::raw::c_int;
+    fn get_sslstatus(&self) -> Option<Sslstatus>;
     fn get_raw(&self) -> *mut _cef_navigation_entry_t;
-}
-mod impl_cef_navigation_entry_t {
-    use super::*;
-    pub fn init_methods<I: ImplNavigationEntry>(object: &mut _cef_navigation_entry_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.get_url = Some(get_url::<I>);
-        object.get_display_url = Some(get_display_url::<I>);
-        object.get_original_url = Some(get_original_url::<I>);
-        object.get_title = Some(get_title::<I>);
-        object.get_transition_type = Some(get_transition_type::<I>);
-        object.has_post_data = Some(has_post_data::<I>);
-        object.get_completion_time = Some(get_completion_time::<I>);
-        object.get_http_status_code = Some(get_http_status_code::<I>);
-        object.get_sslstatus = Some(get_sslstatus::<I>);
-    }
-    extern "C" fn is_valid<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_url<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_display_url<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_display_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_original_url<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_original_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_title<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_title(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_transition_type<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> cef_transition_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_transition_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_post_data<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::has_post_data(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_completion_time<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> _cef_basetime_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_completion_time(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_http_status_code<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_http_status_code(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_sslstatus<I: ImplNavigationEntry>(
-        self_: *mut _cef_navigation_entry_t,
-    ) -> *mut _cef_sslstatus_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplNavigationEntry::get_sslstatus(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplNavigationEntry for NavigationEntry {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -13099,32 +8596,8 @@ impl Default for NavigationEntry {
 /// See [_cef_registration_t] for more documentation.
 #[derive(Clone)]
 pub struct Registration(RefGuard<_cef_registration_t>);
-impl Registration {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapRegistration,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplRegistration>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapRegistration>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_registration_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapRegistration: ImplRegistration {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_registration_t, Self>);
-}
 pub trait ImplRegistration: Clone + Sized + Rc {
-    fn init_methods(object: &mut _cef_registration_t) {
-        impl_cef_registration_t::init_methods::<Self>(object);
-    }
     fn get_raw(&self) -> *mut _cef_registration_t;
-}
-mod impl_cef_registration_t {
-    use super::*;
-    pub fn init_methods<I: ImplRegistration>(object: &mut _cef_registration_t) {}
 }
 impl ImplRegistration for Registration {
     fn get_raw(&self) -> *mut _cef_registration_t {
@@ -13172,47 +8645,10 @@ impl Default for Registration {
 /// See [_cef_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct Callback(RefGuard<_cef_callback_t>);
-impl Callback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapCallback: ImplCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_callback_t, Self>);
-}
 pub trait ImplCallback: Clone + Sized + Rc {
-    fn cont(&self) {}
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_callback_t) {
-        impl_cef_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self);
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_callback_t;
-}
-mod impl_cef_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplCallback>(object: &mut _cef_callback_t) {
-        object.cont = Some(cont::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn cont<I: ImplCallback>(self_: *mut _cef_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCallback::cont(&arg_self_.interface);
-    }
-    extern "C" fn cancel<I: ImplCallback>(self_: *mut _cef_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCallback::cancel(&arg_self_.interface);
-    }
 }
 impl ImplCallback for Callback {
     fn cont(&self) {
@@ -13377,184 +8813,34 @@ impl Default for CompletionCallback {
 /// See [_cef_cookie_manager_t] for more documentation.
 #[derive(Clone)]
 pub struct CookieManager(RefGuard<_cef_cookie_manager_t>);
-impl CookieManager {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapCookieManager,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplCookieManager>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapCookieManager>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_cookie_manager_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapCookieManager: ImplCookieManager {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_cookie_manager_t, Self>);
-}
 pub trait ImplCookieManager: Clone + Sized + Rc {
     fn visit_all_cookies(
         &self,
         visitor: Option<&mut impl ImplCookieVisitor>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn visit_url_cookies(
         &self,
         url: Option<&CefStringUtf16>,
         include_http_only: ::std::os::raw::c_int,
         visitor: Option<&mut impl ImplCookieVisitor>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_cookie(
         &self,
         url: Option<&CefStringUtf16>,
         cookie: Option<&Cookie>,
         callback: Option<&mut impl ImplSetCookieCallback>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn delete_cookies(
         &self,
         url: Option<&CefStringUtf16>,
         cookie_name: Option<&CefStringUtf16>,
         callback: Option<&mut impl ImplDeleteCookiesCallback>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn flush_store(
         &self,
         callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_cookie_manager_t) {
-        impl_cef_cookie_manager_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_cookie_manager_t;
-}
-mod impl_cef_cookie_manager_t {
-    use super::*;
-    pub fn init_methods<I: ImplCookieManager>(object: &mut _cef_cookie_manager_t) {
-        object.visit_all_cookies = Some(visit_all_cookies::<I>);
-        object.visit_url_cookies = Some(visit_url_cookies::<I>);
-        object.set_cookie = Some(set_cookie::<I>);
-        object.delete_cookies = Some(delete_cookies::<I>);
-        object.flush_store = Some(flush_store::<I>);
-    }
-    extern "C" fn visit_all_cookies<I: ImplCookieManager>(
-        self_: *mut _cef_cookie_manager_t,
-        visitor: *mut _cef_cookie_visitor_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_visitor) = (self_, visitor);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_visitor = unsafe { arg_visitor.as_mut() }
-            .map(|arg| CookieVisitor(unsafe { RefGuard::from_raw(arg) }));
-        let arg_visitor = arg_visitor.as_mut();
-        let result = ImplCookieManager::visit_all_cookies(&arg_self_.interface, arg_visitor);
-        result.into()
-    }
-    extern "C" fn visit_url_cookies<I: ImplCookieManager>(
-        self_: *mut _cef_cookie_manager_t,
-        url: *const _cef_string_utf16_t,
-        include_http_only: ::std::os::raw::c_int,
-        visitor: *mut _cef_cookie_visitor_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_url, arg_include_http_only, arg_visitor) =
-            (self_, url, include_http_only, visitor);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let arg_include_http_only = arg_include_http_only.as_raw();
-        let mut arg_visitor = unsafe { arg_visitor.as_mut() }
-            .map(|arg| CookieVisitor(unsafe { RefGuard::from_raw(arg) }));
-        let arg_visitor = arg_visitor.as_mut();
-        let result = ImplCookieManager::visit_url_cookies(
-            &arg_self_.interface,
-            arg_url,
-            arg_include_http_only,
-            arg_visitor,
-        );
-        result.into()
-    }
-    extern "C" fn set_cookie<I: ImplCookieManager>(
-        self_: *mut _cef_cookie_manager_t,
-        url: *const _cef_string_utf16_t,
-        cookie: *const _cef_cookie_t,
-        callback: *mut _cef_set_cookie_callback_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_url, arg_cookie, arg_callback) = (self_, url, cookie, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let arg_cookie = if arg_cookie.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Cookie>::from(arg_cookie))
-        };
-        let arg_cookie = arg_cookie.as_ref().map(|arg| arg.as_ref());
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| SetCookieCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result =
-            ImplCookieManager::set_cookie(&arg_self_.interface, arg_url, arg_cookie, arg_callback);
-        result.into()
-    }
-    extern "C" fn delete_cookies<I: ImplCookieManager>(
-        self_: *mut _cef_cookie_manager_t,
-        url: *const _cef_string_utf16_t,
-        cookie_name: *const _cef_string_utf16_t,
-        callback: *mut _cef_delete_cookies_callback_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_url, arg_cookie_name, arg_callback) =
-            (self_, url, cookie_name, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let arg_cookie_name = if arg_cookie_name.is_null() {
-            None
-        } else {
-            Some(arg_cookie_name.into())
-        };
-        let arg_cookie_name = arg_cookie_name.as_ref();
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| DeleteCookiesCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplCookieManager::delete_cookies(
-            &arg_self_.interface,
-            arg_url,
-            arg_cookie_name,
-            arg_callback,
-        );
-        result.into()
-    }
-    extern "C" fn flush_store<I: ImplCookieManager>(
-        self_: *mut _cef_cookie_manager_t,
-        callback: *mut _cef_completion_callback_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_callback) = (self_, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| CompletionCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplCookieManager::flush_store(&arg_self_.interface, arg_callback);
-        result.into()
-    }
 }
 impl ImplCookieManager for CookieManager {
     fn visit_all_cookies(
@@ -14084,114 +9370,18 @@ impl Default for DeleteCookiesCallback {
 /// See [_cef_media_router_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaRouter(RefGuard<_cef_media_router_t>);
-impl MediaRouter {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMediaRouter,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMediaRouter>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMediaRouter>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_media_router_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMediaRouter: ImplMediaRouter {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_media_router_t, Self>);
-}
 pub trait ImplMediaRouter: Clone + Sized + Rc {
-    fn add_observer(&self, observer: Option<&mut impl ImplMediaObserver>) -> Option<Registration> {
-        Default::default()
-    }
-    fn get_source(&self, urn: Option<&CefStringUtf16>) -> Option<MediaSource> {
-        Default::default()
-    }
-    fn notify_current_sinks(&self) {}
+    fn add_observer(&self, observer: Option<&mut impl ImplMediaObserver>) -> Option<Registration>;
+    fn get_source(&self, urn: Option<&CefStringUtf16>) -> Option<MediaSource>;
+    fn notify_current_sinks(&self);
     fn create_route(
         &self,
         source: Option<&mut impl ImplMediaSource>,
         sink: Option<&mut impl ImplMediaSink>,
         callback: Option<&mut impl ImplMediaRouteCreateCallback>,
-    ) {
-    }
-    fn notify_current_routes(&self) {}
-    fn init_methods(object: &mut _cef_media_router_t) {
-        impl_cef_media_router_t::init_methods::<Self>(object);
-    }
+    );
+    fn notify_current_routes(&self);
     fn get_raw(&self) -> *mut _cef_media_router_t;
-}
-mod impl_cef_media_router_t {
-    use super::*;
-    pub fn init_methods<I: ImplMediaRouter>(object: &mut _cef_media_router_t) {
-        object.add_observer = Some(add_observer::<I>);
-        object.get_source = Some(get_source::<I>);
-        object.notify_current_sinks = Some(notify_current_sinks::<I>);
-        object.create_route = Some(create_route::<I>);
-        object.notify_current_routes = Some(notify_current_routes::<I>);
-    }
-    extern "C" fn add_observer<I: ImplMediaRouter>(
-        self_: *mut _cef_media_router_t,
-        observer: *mut _cef_media_observer_t,
-    ) -> *mut _cef_registration_t {
-        let (arg_self_, arg_observer) = (self_, observer);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_observer = unsafe { arg_observer.as_mut() }
-            .map(|arg| MediaObserver(unsafe { RefGuard::from_raw(arg) }));
-        let arg_observer = arg_observer.as_mut();
-        let result = ImplMediaRouter::add_observer(&arg_self_.interface, arg_observer);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_source<I: ImplMediaRouter>(
-        self_: *mut _cef_media_router_t,
-        urn: *const _cef_string_utf16_t,
-    ) -> *mut _cef_media_source_t {
-        let (arg_self_, arg_urn) = (self_, urn);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_urn = if arg_urn.is_null() {
-            None
-        } else {
-            Some(arg_urn.into())
-        };
-        let arg_urn = arg_urn.as_ref();
-        let result = ImplMediaRouter::get_source(&arg_self_.interface, arg_urn);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn notify_current_sinks<I: ImplMediaRouter>(self_: *mut _cef_media_router_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaRouter::notify_current_sinks(&arg_self_.interface);
-    }
-    extern "C" fn create_route<I: ImplMediaRouter>(
-        self_: *mut _cef_media_router_t,
-        source: *mut _cef_media_source_t,
-        sink: *mut _cef_media_sink_t,
-        callback: *mut _cef_media_route_create_callback_t,
-    ) {
-        let (arg_self_, arg_source, arg_sink, arg_callback) = (self_, source, sink, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_source = unsafe { arg_source.as_mut() }
-            .map(|arg| MediaSource(unsafe { RefGuard::from_raw(arg) }));
-        let arg_source = arg_source.as_mut();
-        let mut arg_sink =
-            unsafe { arg_sink.as_mut() }.map(|arg| MediaSink(unsafe { RefGuard::from_raw(arg) }));
-        let arg_sink = arg_sink.as_mut();
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| MediaRouteCreateCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result =
-            ImplMediaRouter::create_route(&arg_self_.interface, arg_source, arg_sink, arg_callback);
-    }
-    extern "C" fn notify_current_routes<I: ImplMediaRouter>(self_: *mut _cef_media_router_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaRouter::notify_current_routes(&arg_self_.interface);
-    }
 }
 impl ImplMediaRouter for MediaRouter {
     fn add_observer(&self, observer: Option<&mut impl ImplMediaObserver>) -> Option<Registration> {
@@ -14643,96 +9833,13 @@ impl Default for MediaObserver {
 /// See [_cef_media_route_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaRoute(RefGuard<_cef_media_route_t>);
-impl MediaRoute {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMediaRoute,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMediaRoute>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMediaRoute>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_media_route_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMediaRoute: ImplMediaRoute {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_media_route_t, Self>);
-}
 pub trait ImplMediaRoute: Clone + Sized + Rc {
-    fn get_id(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_source(&self) -> Option<MediaSource> {
-        Default::default()
-    }
-    fn get_sink(&self) -> Option<MediaSink> {
-        Default::default()
-    }
-    fn send_route_message(&self, message: Option<&[u8]>) {}
-    fn terminate(&self) {}
-    fn init_methods(object: &mut _cef_media_route_t) {
-        impl_cef_media_route_t::init_methods::<Self>(object);
-    }
+    fn get_id(&self) -> Option<CefStringUtf16>;
+    fn get_source(&self) -> Option<MediaSource>;
+    fn get_sink(&self) -> Option<MediaSink>;
+    fn send_route_message(&self, message: Option<&[u8]>);
+    fn terminate(&self);
     fn get_raw(&self) -> *mut _cef_media_route_t;
-}
-mod impl_cef_media_route_t {
-    use super::*;
-    pub fn init_methods<I: ImplMediaRoute>(object: &mut _cef_media_route_t) {
-        object.get_id = Some(get_id::<I>);
-        object.get_source = Some(get_source::<I>);
-        object.get_sink = Some(get_sink::<I>);
-        object.send_route_message = Some(send_route_message::<I>);
-        object.terminate = Some(terminate::<I>);
-    }
-    extern "C" fn get_id<I: ImplMediaRoute>(
-        self_: *mut _cef_media_route_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaRoute::get_id(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_source<I: ImplMediaRoute>(
-        self_: *mut _cef_media_route_t,
-    ) -> *mut _cef_media_source_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaRoute::get_source(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_sink<I: ImplMediaRoute>(
-        self_: *mut _cef_media_route_t,
-    ) -> *mut _cef_media_sink_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaRoute::get_sink(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn send_route_message<I: ImplMediaRoute>(
-        self_: *mut _cef_media_route_t,
-        message: *const ::std::os::raw::c_void,
-        message_size: usize,
-    ) {
-        let (arg_self_, arg_message, arg_message_size) = (self_, message, message_size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_message = (!arg_message.is_null() && arg_message_size > 0).then(|| unsafe {
-            std::slice::from_raw_parts(arg_message as *const _, arg_message_size)
-        });
-        let result = ImplMediaRoute::send_route_message(&arg_self_.interface, arg_message);
-    }
-    extern "C" fn terminate<I: ImplMediaRoute>(self_: *mut _cef_media_route_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaRoute::terminate(&arg_self_.interface);
-    }
 }
 impl ImplMediaRoute for MediaRoute {
     fn get_id(&self) -> Option<CefStringUtf16> {
@@ -15003,129 +10110,18 @@ impl Default for MediaRouteCreateCallback {
 /// See [_cef_media_sink_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaSink(RefGuard<_cef_media_sink_t>);
-impl MediaSink {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMediaSink,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMediaSink>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMediaSink>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_media_sink_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMediaSink: ImplMediaSink {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_media_sink_t, Self>);
-}
 pub trait ImplMediaSink: Clone + Sized + Rc {
-    fn get_id(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_icon_type(&self) -> MediaSinkIconType {
-        Default::default()
-    }
-    fn get_device_info(&self, callback: Option<&mut impl ImplMediaSinkDeviceInfoCallback>) {}
-    fn is_cast_sink(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_dial_sink(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn get_id(&self) -> Option<CefStringUtf16>;
+    fn get_name(&self) -> Option<CefStringUtf16>;
+    fn get_icon_type(&self) -> MediaSinkIconType;
+    fn get_device_info(&self, callback: Option<&mut impl ImplMediaSinkDeviceInfoCallback>);
+    fn is_cast_sink(&self) -> ::std::os::raw::c_int;
+    fn is_dial_sink(&self) -> ::std::os::raw::c_int;
     fn is_compatible_with(
         &self,
         source: Option<&mut impl ImplMediaSource>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_media_sink_t) {
-        impl_cef_media_sink_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_media_sink_t;
-}
-mod impl_cef_media_sink_t {
-    use super::*;
-    pub fn init_methods<I: ImplMediaSink>(object: &mut _cef_media_sink_t) {
-        object.get_id = Some(get_id::<I>);
-        object.get_name = Some(get_name::<I>);
-        object.get_icon_type = Some(get_icon_type::<I>);
-        object.get_device_info = Some(get_device_info::<I>);
-        object.is_cast_sink = Some(is_cast_sink::<I>);
-        object.is_dial_sink = Some(is_dial_sink::<I>);
-        object.is_compatible_with = Some(is_compatible_with::<I>);
-    }
-    extern "C" fn get_id<I: ImplMediaSink>(
-        self_: *mut _cef_media_sink_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSink::get_id(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_name<I: ImplMediaSink>(
-        self_: *mut _cef_media_sink_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSink::get_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_icon_type<I: ImplMediaSink>(
-        self_: *mut _cef_media_sink_t,
-    ) -> cef_media_sink_icon_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSink::get_icon_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_device_info<I: ImplMediaSink>(
-        self_: *mut _cef_media_sink_t,
-        callback: *mut _cef_media_sink_device_info_callback_t,
-    ) {
-        let (arg_self_, arg_callback) = (self_, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| MediaSinkDeviceInfoCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplMediaSink::get_device_info(&arg_self_.interface, arg_callback);
-    }
-    extern "C" fn is_cast_sink<I: ImplMediaSink>(
-        self_: *mut _cef_media_sink_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSink::is_cast_sink(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_dial_sink<I: ImplMediaSink>(
-        self_: *mut _cef_media_sink_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSink::is_dial_sink(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_compatible_with<I: ImplMediaSink>(
-        self_: *mut _cef_media_sink_t,
-        source: *mut _cef_media_source_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_source) = (self_, source);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_source = unsafe { arg_source.as_mut() }
-            .map(|arg| MediaSource(unsafe { RefGuard::from_raw(arg) }));
-        let arg_source = arg_source.as_mut();
-        let result = ImplMediaSink::is_compatible_with(&arg_self_.interface, arg_source);
-        result.into()
-    }
 }
 impl ImplMediaSink for MediaSink {
     fn get_id(&self) -> Option<CefStringUtf16> {
@@ -15399,71 +10395,11 @@ impl Default for MediaSinkDeviceInfoCallback {
 /// See [_cef_media_source_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaSource(RefGuard<_cef_media_source_t>);
-impl MediaSource {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMediaSource,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMediaSource>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMediaSource>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_media_source_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMediaSource: ImplMediaSource {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_media_source_t, Self>);
-}
 pub trait ImplMediaSource: Clone + Sized + Rc {
-    fn get_id(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn is_cast_source(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_dial_source(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_media_source_t) {
-        impl_cef_media_source_t::init_methods::<Self>(object);
-    }
+    fn get_id(&self) -> Option<CefStringUtf16>;
+    fn is_cast_source(&self) -> ::std::os::raw::c_int;
+    fn is_dial_source(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_media_source_t;
-}
-mod impl_cef_media_source_t {
-    use super::*;
-    pub fn init_methods<I: ImplMediaSource>(object: &mut _cef_media_source_t) {
-        object.get_id = Some(get_id::<I>);
-        object.is_cast_source = Some(is_cast_source::<I>);
-        object.is_dial_source = Some(is_dial_source::<I>);
-    }
-    extern "C" fn get_id<I: ImplMediaSource>(
-        self_: *mut _cef_media_source_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSource::get_id(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn is_cast_source<I: ImplMediaSource>(
-        self_: *mut _cef_media_source_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSource::is_cast_source(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_dial_source<I: ImplMediaSource>(
-        self_: *mut _cef_media_source_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaSource::is_dial_source(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplMediaSource for MediaSource {
     fn get_id(&self) -> Option<CefStringUtf16> {
@@ -15650,152 +10586,21 @@ impl Default for PreferenceRegistrar {
 /// See [_cef_preference_manager_t] for more documentation.
 #[derive(Clone)]
 pub struct PreferenceManager(RefGuard<_cef_preference_manager_t>);
-impl PreferenceManager {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPreferenceManager,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPreferenceManager>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPreferenceManager>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_preference_manager_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPreferenceManager: ImplPreferenceManager {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_preference_manager_t, Self>);
-}
 pub trait ImplPreferenceManager: Clone + Sized + Rc {
-    fn has_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_preference(&self, name: Option<&CefStringUtf16>) -> Option<Value> {
-        Default::default()
-    }
+    fn has_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_preference(&self, name: Option<&CefStringUtf16>) -> Option<Value>;
     fn get_all_preferences(
         &self,
         include_defaults: ::std::os::raw::c_int,
-    ) -> Option<DictionaryValue> {
-        Default::default()
-    }
-    fn can_set_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> Option<DictionaryValue>;
+    fn can_set_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
     fn set_preference(
         &self,
         name: Option<&CefStringUtf16>,
         value: Option<&mut impl ImplValue>,
         error: Option<&mut CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_preference_manager_t) {
-        impl_cef_preference_manager_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_preference_manager_t;
-}
-mod impl_cef_preference_manager_t {
-    use super::*;
-    pub fn init_methods<I: ImplPreferenceManager>(object: &mut _cef_preference_manager_t) {
-        object.has_preference = Some(has_preference::<I>);
-        object.get_preference = Some(get_preference::<I>);
-        object.get_all_preferences = Some(get_all_preferences::<I>);
-        object.can_set_preference = Some(can_set_preference::<I>);
-        object.set_preference = Some(set_preference::<I>);
-    }
-    extern "C" fn has_preference<I: ImplPreferenceManager>(
-        self_: *mut _cef_preference_manager_t,
-        name: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplPreferenceManager::has_preference(&arg_self_.interface, arg_name);
-        result.into()
-    }
-    extern "C" fn get_preference<I: ImplPreferenceManager>(
-        self_: *mut _cef_preference_manager_t,
-        name: *const _cef_string_utf16_t,
-    ) -> *mut _cef_value_t {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplPreferenceManager::get_preference(&arg_self_.interface, arg_name);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_all_preferences<I: ImplPreferenceManager>(
-        self_: *mut _cef_preference_manager_t,
-        include_defaults: ::std::os::raw::c_int,
-    ) -> *mut _cef_dictionary_value_t {
-        let (arg_self_, arg_include_defaults) = (self_, include_defaults);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_include_defaults = arg_include_defaults.as_raw();
-        let result =
-            ImplPreferenceManager::get_all_preferences(&arg_self_.interface, arg_include_defaults);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn can_set_preference<I: ImplPreferenceManager>(
-        self_: *mut _cef_preference_manager_t,
-        name: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplPreferenceManager::can_set_preference(&arg_self_.interface, arg_name);
-        result.into()
-    }
-    extern "C" fn set_preference<I: ImplPreferenceManager>(
-        self_: *mut _cef_preference_manager_t,
-        name: *const _cef_string_utf16_t,
-        value: *mut _cef_value_t,
-        error: *mut _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_name, arg_value, arg_error) = (self_, name, value, error);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let mut arg_error = if arg_error.is_null() {
-            None
-        } else {
-            Some(arg_error.into())
-        };
-        let arg_error = arg_error.as_mut();
-        let result = ImplPreferenceManager::set_preference(
-            &arg_self_.interface,
-            arg_name,
-            arg_value,
-            arg_error,
-        );
-        result.into()
-    }
 }
 impl ImplPreferenceManager for PreferenceManager {
     fn has_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
@@ -16051,489 +10856,68 @@ impl Default for ResolveCallback {
 /// See [_cef_request_context_t] for more documentation.
 #[derive(Clone)]
 pub struct RequestContext(RefGuard<_cef_request_context_t>);
-impl RequestContext {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapRequestContext,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplRequestContext>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapRequestContext>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_request_context_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapRequestContext: ImplRequestContext {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_request_context_t, Self>);
-}
 pub trait ImplRequestContext: ImplPreferenceManager {
-    fn is_same(&self, other: Option<&mut impl ImplRequestContext>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_sharing_with(
-        &self,
-        other: Option<&mut impl ImplRequestContext>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_global(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_handler(&self) -> Option<RequestContextHandler> {
-        Default::default()
-    }
-    fn get_cache_path(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
+    fn is_same(&self, other: Option<&mut impl ImplRequestContext>) -> ::std::os::raw::c_int;
+    fn is_sharing_with(&self, other: Option<&mut impl ImplRequestContext>)
+        -> ::std::os::raw::c_int;
+    fn is_global(&self) -> ::std::os::raw::c_int;
+    fn get_handler(&self) -> Option<RequestContextHandler>;
+    fn get_cache_path(&self) -> Option<CefStringUtf16>;
     fn get_cookie_manager(
         &self,
         callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> Option<CookieManager> {
-        Default::default()
-    }
+    ) -> Option<CookieManager>;
     fn register_scheme_handler_factory(
         &self,
         scheme_name: Option<&CefStringUtf16>,
         domain_name: Option<&CefStringUtf16>,
         factory: Option<&mut impl ImplSchemeHandlerFactory>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn clear_scheme_handler_factories(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn clear_certificate_exceptions(&self, callback: Option<&mut impl ImplCompletionCallback>) {}
-    fn clear_http_auth_credentials(&self, callback: Option<&mut impl ImplCompletionCallback>) {}
-    fn close_all_connections(&self, callback: Option<&mut impl ImplCompletionCallback>) {}
+    ) -> ::std::os::raw::c_int;
+    fn clear_scheme_handler_factories(&self) -> ::std::os::raw::c_int;
+    fn clear_certificate_exceptions(&self, callback: Option<&mut impl ImplCompletionCallback>);
+    fn clear_http_auth_credentials(&self, callback: Option<&mut impl ImplCompletionCallback>);
+    fn close_all_connections(&self, callback: Option<&mut impl ImplCompletionCallback>);
     fn resolve_host(
         &self,
         origin: Option<&CefStringUtf16>,
         callback: Option<&mut impl ImplResolveCallback>,
-    ) {
-    }
+    );
     fn get_media_router(
         &self,
         callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> Option<MediaRouter> {
-        Default::default()
-    }
+    ) -> Option<MediaRouter>;
     fn get_website_setting(
         &self,
         requesting_url: Option<&CefStringUtf16>,
         top_level_url: Option<&CefStringUtf16>,
         content_type: ContentSettingTypes,
-    ) -> Option<Value> {
-        Default::default()
-    }
+    ) -> Option<Value>;
     fn set_website_setting(
         &self,
         requesting_url: Option<&CefStringUtf16>,
         top_level_url: Option<&CefStringUtf16>,
         content_type: ContentSettingTypes,
         value: Option<&mut impl ImplValue>,
-    ) {
-    }
+    );
     fn get_content_setting(
         &self,
         requesting_url: Option<&CefStringUtf16>,
         top_level_url: Option<&CefStringUtf16>,
         content_type: ContentSettingTypes,
-    ) -> ContentSettingValues {
-        Default::default()
-    }
+    ) -> ContentSettingValues;
     fn set_content_setting(
         &self,
         requesting_url: Option<&CefStringUtf16>,
         top_level_url: Option<&CefStringUtf16>,
         content_type: ContentSettingTypes,
         value: ContentSettingValues,
-    ) {
-    }
-    fn set_chrome_color_scheme(&self, variant: ColorVariant, user_color: u32) {}
-    fn get_chrome_color_scheme_mode(&self) -> ColorVariant {
-        Default::default()
-    }
-    fn get_chrome_color_scheme_color(&self) -> cef_color_t {
-        Default::default()
-    }
-    fn get_chrome_color_scheme_variant(&self) -> ColorVariant {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_request_context_t) {
-        impl_cef_preference_manager_t::init_methods::<Self>(&mut object.base);
-        impl_cef_request_context_t::init_methods::<Self>(object);
-    }
+    );
+    fn set_chrome_color_scheme(&self, variant: ColorVariant, user_color: u32);
+    fn get_chrome_color_scheme_mode(&self) -> ColorVariant;
+    fn get_chrome_color_scheme_color(&self) -> cef_color_t;
+    fn get_chrome_color_scheme_variant(&self) -> ColorVariant;
     fn get_raw(&self) -> *mut _cef_request_context_t {
         <Self as ImplPreferenceManager>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_request_context_t {
-    use super::*;
-    pub fn init_methods<I: ImplRequestContext>(object: &mut _cef_request_context_t) {
-        object.is_same = Some(is_same::<I>);
-        object.is_sharing_with = Some(is_sharing_with::<I>);
-        object.is_global = Some(is_global::<I>);
-        object.get_handler = Some(get_handler::<I>);
-        object.get_cache_path = Some(get_cache_path::<I>);
-        object.get_cookie_manager = Some(get_cookie_manager::<I>);
-        object.register_scheme_handler_factory = Some(register_scheme_handler_factory::<I>);
-        object.clear_scheme_handler_factories = Some(clear_scheme_handler_factories::<I>);
-        object.clear_certificate_exceptions = Some(clear_certificate_exceptions::<I>);
-        object.clear_http_auth_credentials = Some(clear_http_auth_credentials::<I>);
-        object.close_all_connections = Some(close_all_connections::<I>);
-        object.resolve_host = Some(resolve_host::<I>);
-        object.get_media_router = Some(get_media_router::<I>);
-        object.get_website_setting = Some(get_website_setting::<I>);
-        object.set_website_setting = Some(set_website_setting::<I>);
-        object.get_content_setting = Some(get_content_setting::<I>);
-        object.set_content_setting = Some(set_content_setting::<I>);
-        object.set_chrome_color_scheme = Some(set_chrome_color_scheme::<I>);
-        object.get_chrome_color_scheme_mode = Some(get_chrome_color_scheme_mode::<I>);
-        object.get_chrome_color_scheme_color = Some(get_chrome_color_scheme_color::<I>);
-        object.get_chrome_color_scheme_variant = Some(get_chrome_color_scheme_variant::<I>);
-    }
-    extern "C" fn is_same<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        other: *mut _cef_request_context_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_other) = (self_, other);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_other = unsafe { arg_other.as_mut() }
-            .map(|arg| RequestContext(unsafe { RefGuard::from_raw(arg) }));
-        let arg_other = arg_other.as_mut();
-        let result = ImplRequestContext::is_same(&arg_self_.interface, arg_other);
-        result.into()
-    }
-    extern "C" fn is_sharing_with<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        other: *mut _cef_request_context_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_other) = (self_, other);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_other = unsafe { arg_other.as_mut() }
-            .map(|arg| RequestContext(unsafe { RefGuard::from_raw(arg) }));
-        let arg_other = arg_other.as_mut();
-        let result = ImplRequestContext::is_sharing_with(&arg_self_.interface, arg_other);
-        result.into()
-    }
-    extern "C" fn is_global<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequestContext::is_global(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_handler<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-    ) -> *mut _cef_request_context_handler_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequestContext::get_handler(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_cache_path<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequestContext::get_cache_path(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_cookie_manager<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        callback: *mut _cef_completion_callback_t,
-    ) -> *mut _cef_cookie_manager_t {
-        let (arg_self_, arg_callback) = (self_, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| CompletionCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplRequestContext::get_cookie_manager(&arg_self_.interface, arg_callback);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn register_scheme_handler_factory<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        scheme_name: *const _cef_string_utf16_t,
-        domain_name: *const _cef_string_utf16_t,
-        factory: *mut _cef_scheme_handler_factory_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_scheme_name, arg_domain_name, arg_factory) =
-            (self_, scheme_name, domain_name, factory);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_scheme_name = if arg_scheme_name.is_null() {
-            None
-        } else {
-            Some(arg_scheme_name.into())
-        };
-        let arg_scheme_name = arg_scheme_name.as_ref();
-        let arg_domain_name = if arg_domain_name.is_null() {
-            None
-        } else {
-            Some(arg_domain_name.into())
-        };
-        let arg_domain_name = arg_domain_name.as_ref();
-        let mut arg_factory = unsafe { arg_factory.as_mut() }
-            .map(|arg| SchemeHandlerFactory(unsafe { RefGuard::from_raw(arg) }));
-        let arg_factory = arg_factory.as_mut();
-        let result = ImplRequestContext::register_scheme_handler_factory(
-            &arg_self_.interface,
-            arg_scheme_name,
-            arg_domain_name,
-            arg_factory,
-        );
-        result.into()
-    }
-    extern "C" fn clear_scheme_handler_factories<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequestContext::clear_scheme_handler_factories(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn clear_certificate_exceptions<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        callback: *mut _cef_completion_callback_t,
-    ) {
-        let (arg_self_, arg_callback) = (self_, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| CompletionCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result =
-            ImplRequestContext::clear_certificate_exceptions(&arg_self_.interface, arg_callback);
-    }
-    extern "C" fn clear_http_auth_credentials<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        callback: *mut _cef_completion_callback_t,
-    ) {
-        let (arg_self_, arg_callback) = (self_, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| CompletionCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result =
-            ImplRequestContext::clear_http_auth_credentials(&arg_self_.interface, arg_callback);
-    }
-    extern "C" fn close_all_connections<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        callback: *mut _cef_completion_callback_t,
-    ) {
-        let (arg_self_, arg_callback) = (self_, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| CompletionCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplRequestContext::close_all_connections(&arg_self_.interface, arg_callback);
-    }
-    extern "C" fn resolve_host<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        origin: *const _cef_string_utf16_t,
-        callback: *mut _cef_resolve_callback_t,
-    ) {
-        let (arg_self_, arg_origin, arg_callback) = (self_, origin, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_origin = if arg_origin.is_null() {
-            None
-        } else {
-            Some(arg_origin.into())
-        };
-        let arg_origin = arg_origin.as_ref();
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| ResolveCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result =
-            ImplRequestContext::resolve_host(&arg_self_.interface, arg_origin, arg_callback);
-    }
-    extern "C" fn get_media_router<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        callback: *mut _cef_completion_callback_t,
-    ) -> *mut _cef_media_router_t {
-        let (arg_self_, arg_callback) = (self_, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| CompletionCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplRequestContext::get_media_router(&arg_self_.interface, arg_callback);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_website_setting<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        requesting_url: *const _cef_string_utf16_t,
-        top_level_url: *const _cef_string_utf16_t,
-        content_type: cef_content_setting_types_t,
-    ) -> *mut _cef_value_t {
-        let (arg_self_, arg_requesting_url, arg_top_level_url, arg_content_type) =
-            (self_, requesting_url, top_level_url, content_type);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_requesting_url = if arg_requesting_url.is_null() {
-            None
-        } else {
-            Some(arg_requesting_url.into())
-        };
-        let arg_requesting_url = arg_requesting_url.as_ref();
-        let arg_top_level_url = if arg_top_level_url.is_null() {
-            None
-        } else {
-            Some(arg_top_level_url.into())
-        };
-        let arg_top_level_url = arg_top_level_url.as_ref();
-        let arg_content_type = arg_content_type.as_raw();
-        let result = ImplRequestContext::get_website_setting(
-            &arg_self_.interface,
-            arg_requesting_url,
-            arg_top_level_url,
-            arg_content_type,
-        );
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_website_setting<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        requesting_url: *const _cef_string_utf16_t,
-        top_level_url: *const _cef_string_utf16_t,
-        content_type: cef_content_setting_types_t,
-        value: *mut _cef_value_t,
-    ) {
-        let (arg_self_, arg_requesting_url, arg_top_level_url, arg_content_type, arg_value) =
-            (self_, requesting_url, top_level_url, content_type, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_requesting_url = if arg_requesting_url.is_null() {
-            None
-        } else {
-            Some(arg_requesting_url.into())
-        };
-        let arg_requesting_url = arg_requesting_url.as_ref();
-        let arg_top_level_url = if arg_top_level_url.is_null() {
-            None
-        } else {
-            Some(arg_top_level_url.into())
-        };
-        let arg_top_level_url = arg_top_level_url.as_ref();
-        let arg_content_type = arg_content_type.as_raw();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplRequestContext::set_website_setting(
-            &arg_self_.interface,
-            arg_requesting_url,
-            arg_top_level_url,
-            arg_content_type,
-            arg_value,
-        );
-    }
-    extern "C" fn get_content_setting<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        requesting_url: *const _cef_string_utf16_t,
-        top_level_url: *const _cef_string_utf16_t,
-        content_type: cef_content_setting_types_t,
-    ) -> cef_content_setting_values_t {
-        let (arg_self_, arg_requesting_url, arg_top_level_url, arg_content_type) =
-            (self_, requesting_url, top_level_url, content_type);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_requesting_url = if arg_requesting_url.is_null() {
-            None
-        } else {
-            Some(arg_requesting_url.into())
-        };
-        let arg_requesting_url = arg_requesting_url.as_ref();
-        let arg_top_level_url = if arg_top_level_url.is_null() {
-            None
-        } else {
-            Some(arg_top_level_url.into())
-        };
-        let arg_top_level_url = arg_top_level_url.as_ref();
-        let arg_content_type = arg_content_type.as_raw();
-        let result = ImplRequestContext::get_content_setting(
-            &arg_self_.interface,
-            arg_requesting_url,
-            arg_top_level_url,
-            arg_content_type,
-        );
-        result.into()
-    }
-    extern "C" fn set_content_setting<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        requesting_url: *const _cef_string_utf16_t,
-        top_level_url: *const _cef_string_utf16_t,
-        content_type: cef_content_setting_types_t,
-        value: cef_content_setting_values_t,
-    ) {
-        let (arg_self_, arg_requesting_url, arg_top_level_url, arg_content_type, arg_value) =
-            (self_, requesting_url, top_level_url, content_type, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_requesting_url = if arg_requesting_url.is_null() {
-            None
-        } else {
-            Some(arg_requesting_url.into())
-        };
-        let arg_requesting_url = arg_requesting_url.as_ref();
-        let arg_top_level_url = if arg_top_level_url.is_null() {
-            None
-        } else {
-            Some(arg_top_level_url.into())
-        };
-        let arg_top_level_url = arg_top_level_url.as_ref();
-        let arg_content_type = arg_content_type.as_raw();
-        let arg_value = arg_value.as_raw();
-        let result = ImplRequestContext::set_content_setting(
-            &arg_self_.interface,
-            arg_requesting_url,
-            arg_top_level_url,
-            arg_content_type,
-            arg_value,
-        );
-    }
-    extern "C" fn set_chrome_color_scheme<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-        variant: cef_color_variant_t,
-        user_color: u32,
-    ) {
-        let (arg_self_, arg_variant, arg_user_color) = (self_, variant, user_color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_variant = arg_variant.as_raw();
-        let arg_user_color = arg_user_color.as_raw();
-        let result = ImplRequestContext::set_chrome_color_scheme(
-            &arg_self_.interface,
-            arg_variant,
-            arg_user_color,
-        );
-    }
-    extern "C" fn get_chrome_color_scheme_mode<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-    ) -> cef_color_variant_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequestContext::get_chrome_color_scheme_mode(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_chrome_color_scheme_color<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-    ) -> u32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequestContext::get_chrome_color_scheme_color(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_chrome_color_scheme_variant<I: ImplRequestContext>(
-        self_: *mut _cef_request_context_t,
-    ) -> cef_color_variant_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRequestContext::get_chrome_color_scheme_variant(&arg_self_.interface);
-        result.into()
     }
 }
 impl ImplPreferenceManager for RequestContext {
@@ -17078,282 +11462,29 @@ impl Default for RequestContext {
 /// See [_cef_browser_t] for more documentation.
 #[derive(Clone)]
 pub struct Browser(RefGuard<_cef_browser_t>);
-impl Browser {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapBrowser,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplBrowser>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapBrowser>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_browser_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapBrowser: ImplBrowser {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_browser_t, Self>);
-}
 pub trait ImplBrowser: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_host(&self) -> Option<BrowserHost> {
-        Default::default()
-    }
-    fn can_go_back(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn go_back(&self) {}
-    fn can_go_forward(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn go_forward(&self) {}
-    fn is_loading(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn reload(&self) {}
-    fn reload_ignore_cache(&self) {}
-    fn stop_load(&self) {}
-    fn get_identifier(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplBrowser>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_popup(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_document(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_main_frame(&self) -> Option<Frame> {
-        Default::default()
-    }
-    fn get_focused_frame(&self) -> Option<Frame> {
-        Default::default()
-    }
-    fn get_frame_by_identifier(&self, identifier: Option<&CefStringUtf16>) -> Option<Frame> {
-        Default::default()
-    }
-    fn get_frame_by_name(&self, name: Option<&CefStringUtf16>) -> Option<Frame> {
-        Default::default()
-    }
-    fn get_frame_count(&self) -> usize {
-        Default::default()
-    }
-    fn get_frame_identifiers(&self, identifiers: Option<&mut CefStringList>) {}
-    fn get_frame_names(&self, names: Option<&mut CefStringList>) {}
-    fn init_methods(object: &mut _cef_browser_t) {
-        impl_cef_browser_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn get_host(&self) -> Option<BrowserHost>;
+    fn can_go_back(&self) -> ::std::os::raw::c_int;
+    fn go_back(&self);
+    fn can_go_forward(&self) -> ::std::os::raw::c_int;
+    fn go_forward(&self);
+    fn is_loading(&self) -> ::std::os::raw::c_int;
+    fn reload(&self);
+    fn reload_ignore_cache(&self);
+    fn stop_load(&self);
+    fn get_identifier(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplBrowser>) -> ::std::os::raw::c_int;
+    fn is_popup(&self) -> ::std::os::raw::c_int;
+    fn has_document(&self) -> ::std::os::raw::c_int;
+    fn get_main_frame(&self) -> Option<Frame>;
+    fn get_focused_frame(&self) -> Option<Frame>;
+    fn get_frame_by_identifier(&self, identifier: Option<&CefStringUtf16>) -> Option<Frame>;
+    fn get_frame_by_name(&self, name: Option<&CefStringUtf16>) -> Option<Frame>;
+    fn get_frame_count(&self) -> usize;
+    fn get_frame_identifiers(&self, identifiers: Option<&mut CefStringList>);
+    fn get_frame_names(&self, names: Option<&mut CefStringList>);
     fn get_raw(&self) -> *mut _cef_browser_t;
-}
-mod impl_cef_browser_t {
-    use super::*;
-    pub fn init_methods<I: ImplBrowser>(object: &mut _cef_browser_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.get_host = Some(get_host::<I>);
-        object.can_go_back = Some(can_go_back::<I>);
-        object.go_back = Some(go_back::<I>);
-        object.can_go_forward = Some(can_go_forward::<I>);
-        object.go_forward = Some(go_forward::<I>);
-        object.is_loading = Some(is_loading::<I>);
-        object.reload = Some(reload::<I>);
-        object.reload_ignore_cache = Some(reload_ignore_cache::<I>);
-        object.stop_load = Some(stop_load::<I>);
-        object.get_identifier = Some(get_identifier::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.is_popup = Some(is_popup::<I>);
-        object.has_document = Some(has_document::<I>);
-        object.get_main_frame = Some(get_main_frame::<I>);
-        object.get_focused_frame = Some(get_focused_frame::<I>);
-        object.get_frame_by_identifier = Some(get_frame_by_identifier::<I>);
-        object.get_frame_by_name = Some(get_frame_by_name::<I>);
-        object.get_frame_count = Some(get_frame_count::<I>);
-        object.get_frame_identifiers = Some(get_frame_identifiers::<I>);
-        object.get_frame_names = Some(get_frame_names::<I>);
-    }
-    extern "C" fn is_valid<I: ImplBrowser>(self_: *mut _cef_browser_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_host<I: ImplBrowser>(self_: *mut _cef_browser_t) -> *mut _cef_browser_host_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::get_host(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn can_go_back<I: ImplBrowser>(self_: *mut _cef_browser_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::can_go_back(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn go_back<I: ImplBrowser>(self_: *mut _cef_browser_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::go_back(&arg_self_.interface);
-    }
-    extern "C" fn can_go_forward<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::can_go_forward(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn go_forward<I: ImplBrowser>(self_: *mut _cef_browser_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::go_forward(&arg_self_.interface);
-    }
-    extern "C" fn is_loading<I: ImplBrowser>(self_: *mut _cef_browser_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::is_loading(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn reload<I: ImplBrowser>(self_: *mut _cef_browser_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::reload(&arg_self_.interface);
-    }
-    extern "C" fn reload_ignore_cache<I: ImplBrowser>(self_: *mut _cef_browser_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::reload_ignore_cache(&arg_self_.interface);
-    }
-    extern "C" fn stop_load<I: ImplBrowser>(self_: *mut _cef_browser_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::stop_load(&arg_self_.interface);
-    }
-    extern "C" fn get_identifier<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::get_identifier(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-        that: *mut _cef_browser_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplBrowser::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn is_popup<I: ImplBrowser>(self_: *mut _cef_browser_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::is_popup(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_document<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::has_document(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_main_frame<I: ImplBrowser>(self_: *mut _cef_browser_t) -> *mut _cef_frame_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::get_main_frame(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_focused_frame<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-    ) -> *mut _cef_frame_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::get_focused_frame(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_frame_by_identifier<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-        identifier: *const _cef_string_utf16_t,
-    ) -> *mut _cef_frame_t {
-        let (arg_self_, arg_identifier) = (self_, identifier);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_identifier = if arg_identifier.is_null() {
-            None
-        } else {
-            Some(arg_identifier.into())
-        };
-        let arg_identifier = arg_identifier.as_ref();
-        let result = ImplBrowser::get_frame_by_identifier(&arg_self_.interface, arg_identifier);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_frame_by_name<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-        name: *const _cef_string_utf16_t,
-    ) -> *mut _cef_frame_t {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplBrowser::get_frame_by_name(&arg_self_.interface, arg_name);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_frame_count<I: ImplBrowser>(self_: *mut _cef_browser_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowser::get_frame_count(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_frame_identifiers<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-        identifiers: *mut _cef_string_list_t,
-    ) {
-        let (arg_self_, arg_identifiers) = (self_, identifiers);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_identifiers = if arg_identifiers.is_null() {
-            None
-        } else {
-            Some(arg_identifiers.into())
-        };
-        let arg_identifiers = arg_identifiers.as_mut();
-        let result = ImplBrowser::get_frame_identifiers(&arg_self_.interface, arg_identifiers);
-    }
-    extern "C" fn get_frame_names<I: ImplBrowser>(
-        self_: *mut _cef_browser_t,
-        names: *mut _cef_string_list_t,
-    ) {
-        let (arg_self_, arg_names) = (self_, names);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_names = if arg_names.is_null() {
-            None
-        } else {
-            Some(arg_names.into())
-        };
-        let arg_names = arg_names.as_mut();
-        let result = ImplBrowser::get_frame_names(&arg_self_.interface, arg_names);
-    }
 }
 impl ImplBrowser for Browser {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -18190,64 +12321,23 @@ impl Default for DownloadImageCallback {
 /// See [_cef_browser_host_t] for more documentation.
 #[derive(Clone)]
 pub struct BrowserHost(RefGuard<_cef_browser_host_t>);
-impl BrowserHost {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapBrowserHost,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplBrowserHost>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapBrowserHost>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_browser_host_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapBrowserHost: ImplBrowserHost {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_browser_host_t, Self>);
-}
 pub trait ImplBrowserHost: Clone + Sized + Rc {
-    fn get_browser(&self) -> Option<Browser> {
-        Default::default()
-    }
-    fn close_browser(&self, force_close: ::std::os::raw::c_int) {}
-    fn try_close_browser(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_ready_to_be_closed(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_focus(&self, focus: ::std::os::raw::c_int) {}
-    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void {
-        unsafe { std::mem::zeroed() }
-    }
-    fn get_opener_window_handle(&self) -> *mut ::std::os::raw::c_void {
-        unsafe { std::mem::zeroed() }
-    }
-    fn get_opener_identifier(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_view(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_client(&self) -> Option<Client> {
-        Default::default()
-    }
-    fn get_request_context(&self) -> Option<RequestContext> {
-        Default::default()
-    }
-    fn can_zoom(&self, command: ZoomCommand) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn zoom(&self, command: ZoomCommand) {}
-    fn get_default_zoom_level(&self) -> f64 {
-        Default::default()
-    }
-    fn get_zoom_level(&self) -> f64 {
-        Default::default()
-    }
-    fn set_zoom_level(&self, zoom_level: f64) {}
+    fn get_browser(&self) -> Option<Browser>;
+    fn close_browser(&self, force_close: ::std::os::raw::c_int);
+    fn try_close_browser(&self) -> ::std::os::raw::c_int;
+    fn is_ready_to_be_closed(&self) -> ::std::os::raw::c_int;
+    fn set_focus(&self, focus: ::std::os::raw::c_int);
+    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void;
+    fn get_opener_window_handle(&self) -> *mut ::std::os::raw::c_void;
+    fn get_opener_identifier(&self) -> ::std::os::raw::c_int;
+    fn has_view(&self) -> ::std::os::raw::c_int;
+    fn get_client(&self) -> Option<Client>;
+    fn get_request_context(&self) -> Option<RequestContext>;
+    fn can_zoom(&self, command: ZoomCommand) -> ::std::os::raw::c_int;
+    fn zoom(&self, command: ZoomCommand);
+    fn get_default_zoom_level(&self) -> f64;
+    fn get_zoom_level(&self) -> f64;
+    fn set_zoom_level(&self, zoom_level: f64);
     fn run_file_dialog(
         &self,
         mode: FileDialogMode,
@@ -18255,9 +12345,8 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         default_file_path: Option<&CefStringUtf16>,
         accept_filters: Option<&mut CefStringList>,
         callback: Option<&mut impl ImplRunFileDialogCallback>,
-    ) {
-    }
-    fn start_download(&self, url: Option<&CefStringUtf16>) {}
+    );
+    fn start_download(&self, url: Option<&CefStringUtf16>);
     fn download_image(
         &self,
         image_url: Option<&CefStringUtf16>,
@@ -18265,99 +12354,75 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         max_image_size: u32,
         bypass_cache: ::std::os::raw::c_int,
         callback: Option<&mut impl ImplDownloadImageCallback>,
-    ) {
-    }
-    fn print(&self) {}
+    );
+    fn print(&self);
     fn print_to_pdf(
         &self,
         path: Option<&CefStringUtf16>,
         settings: Option<&PdfPrintSettings>,
         callback: Option<&mut impl ImplPdfPrintCallback>,
-    ) {
-    }
+    );
     fn find(
         &self,
         search_text: Option<&CefStringUtf16>,
         forward: ::std::os::raw::c_int,
         match_case: ::std::os::raw::c_int,
         find_next: ::std::os::raw::c_int,
-    ) {
-    }
-    fn stop_finding(&self, clear_selection: ::std::os::raw::c_int) {}
+    );
+    fn stop_finding(&self, clear_selection: ::std::os::raw::c_int);
     fn show_dev_tools(
         &self,
         window_info: Option<&WindowInfo>,
         client: Option<&mut impl ImplClient>,
         settings: Option<&BrowserSettings>,
         inspect_element_at: Option<&Point>,
-    ) {
-    }
-    fn close_dev_tools(&self) {}
-    fn has_dev_tools(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn send_dev_tools_message(&self, message: Option<&[u8]>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    );
+    fn close_dev_tools(&self);
+    fn has_dev_tools(&self) -> ::std::os::raw::c_int;
+    fn send_dev_tools_message(&self, message: Option<&[u8]>) -> ::std::os::raw::c_int;
     fn execute_dev_tools_method(
         &self,
         message_id: ::std::os::raw::c_int,
         method: Option<&CefStringUtf16>,
         params: Option<&mut impl ImplDictionaryValue>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn add_dev_tools_message_observer(
         &self,
         observer: Option<&mut impl ImplDevToolsMessageObserver>,
-    ) -> Option<Registration> {
-        Default::default()
-    }
+    ) -> Option<Registration>;
     fn get_navigation_entries(
         &self,
         visitor: Option<&mut impl ImplNavigationEntryVisitor>,
         current_only: ::std::os::raw::c_int,
-    ) {
-    }
-    fn replace_misspelling(&self, word: Option<&CefStringUtf16>) {}
-    fn add_word_to_dictionary(&self, word: Option<&CefStringUtf16>) {}
-    fn is_window_rendering_disabled(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn was_resized(&self) {}
-    fn was_hidden(&self, hidden: ::std::os::raw::c_int) {}
-    fn notify_screen_info_changed(&self) {}
-    fn invalidate(&self, type_: PaintElementType) {}
-    fn send_external_begin_frame(&self) {}
-    fn send_key_event(&self, event: Option<&KeyEvent>) {}
+    );
+    fn replace_misspelling(&self, word: Option<&CefStringUtf16>);
+    fn add_word_to_dictionary(&self, word: Option<&CefStringUtf16>);
+    fn is_window_rendering_disabled(&self) -> ::std::os::raw::c_int;
+    fn was_resized(&self);
+    fn was_hidden(&self, hidden: ::std::os::raw::c_int);
+    fn notify_screen_info_changed(&self);
+    fn invalidate(&self, type_: PaintElementType);
+    fn send_external_begin_frame(&self);
+    fn send_key_event(&self, event: Option<&KeyEvent>);
     fn send_mouse_click_event(
         &self,
         event: Option<&MouseEvent>,
         type_: MouseButtonType,
         mouse_up: ::std::os::raw::c_int,
         click_count: ::std::os::raw::c_int,
-    ) {
-    }
-    fn send_mouse_move_event(
-        &self,
-        event: Option<&MouseEvent>,
-        mouse_leave: ::std::os::raw::c_int,
-    ) {
-    }
+    );
+    fn send_mouse_move_event(&self, event: Option<&MouseEvent>, mouse_leave: ::std::os::raw::c_int);
     fn send_mouse_wheel_event(
         &self,
         event: Option<&MouseEvent>,
         delta_x: ::std::os::raw::c_int,
         delta_y: ::std::os::raw::c_int,
-    ) {
-    }
-    fn send_touch_event(&self, event: Option<&TouchEvent>) {}
-    fn send_capture_lost_event(&self) {}
-    fn notify_move_or_resize_started(&self) {}
-    fn get_windowless_frame_rate(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_windowless_frame_rate(&self, frame_rate: ::std::os::raw::c_int) {}
+    );
+    fn send_touch_event(&self, event: Option<&TouchEvent>);
+    fn send_capture_lost_event(&self);
+    fn notify_move_or_resize_started(&self);
+    fn get_windowless_frame_rate(&self) -> ::std::os::raw::c_int;
+    fn set_windowless_frame_rate(&self, frame_rate: ::std::os::raw::c_int);
     fn ime_set_composition(
         &self,
         text: Option<&CefStringUtf16>,
@@ -18365,1106 +12430,55 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         underlines: Option<&CompositionUnderline>,
         replacement_range: Option<&Range>,
         selection_range: Option<&Range>,
-    ) {
-    }
+    );
     fn ime_commit_text(
         &self,
         text: Option<&CefStringUtf16>,
         replacement_range: Option<&Range>,
         relative_cursor_pos: ::std::os::raw::c_int,
-    ) {
-    }
-    fn ime_finish_composing_text(&self, keep_selection: ::std::os::raw::c_int) {}
-    fn ime_cancel_composition(&self) {}
+    );
+    fn ime_finish_composing_text(&self, keep_selection: ::std::os::raw::c_int);
+    fn ime_cancel_composition(&self);
     fn drag_target_drag_enter(
         &self,
         drag_data: Option<&mut impl ImplDragData>,
         event: Option<&MouseEvent>,
         allowed_ops: DragOperationsMask,
-    ) {
-    }
-    fn drag_target_drag_over(&self, event: Option<&MouseEvent>, allowed_ops: DragOperationsMask) {}
-    fn drag_target_drag_leave(&self) {}
-    fn drag_target_drop(&self, event: Option<&MouseEvent>) {}
+    );
+    fn drag_target_drag_over(&self, event: Option<&MouseEvent>, allowed_ops: DragOperationsMask);
+    fn drag_target_drag_leave(&self);
+    fn drag_target_drop(&self, event: Option<&MouseEvent>);
     fn drag_source_ended_at(
         &self,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
         op: DragOperationsMask,
-    ) {
-    }
-    fn drag_source_system_drag_ended(&self) {}
-    fn get_visible_navigation_entry(&self) -> Option<NavigationEntry> {
-        Default::default()
-    }
-    fn set_accessibility_state(&self, accessibility_state: State) {}
+    );
+    fn drag_source_system_drag_ended(&self);
+    fn get_visible_navigation_entry(&self) -> Option<NavigationEntry>;
+    fn set_accessibility_state(&self, accessibility_state: State);
     fn set_auto_resize_enabled(
         &self,
         enabled: ::std::os::raw::c_int,
         min_size: Option<&Size>,
         max_size: Option<&Size>,
-    ) {
-    }
-    fn set_audio_muted(&self, mute: ::std::os::raw::c_int) {}
-    fn is_audio_muted(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_fullscreen(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn exit_fullscreen(&self, will_cause_resize: ::std::os::raw::c_int) {}
+    );
+    fn set_audio_muted(&self, mute: ::std::os::raw::c_int);
+    fn is_audio_muted(&self) -> ::std::os::raw::c_int;
+    fn is_fullscreen(&self) -> ::std::os::raw::c_int;
+    fn exit_fullscreen(&self, will_cause_resize: ::std::os::raw::c_int);
     fn can_execute_chrome_command(
         &self,
         command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn execute_chrome_command(
         &self,
         command_id: ::std::os::raw::c_int,
         disposition: WindowOpenDisposition,
-    ) {
-    }
-    fn is_render_process_unresponsive(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_runtime_style(&self) -> RuntimeStyle {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_browser_host_t) {
-        impl_cef_browser_host_t::init_methods::<Self>(object);
-    }
+    );
+    fn is_render_process_unresponsive(&self) -> ::std::os::raw::c_int;
+    fn get_runtime_style(&self) -> RuntimeStyle;
     fn get_raw(&self) -> *mut _cef_browser_host_t;
-}
-mod impl_cef_browser_host_t {
-    use super::*;
-    pub fn init_methods<I: ImplBrowserHost>(object: &mut _cef_browser_host_t) {
-        object.get_browser = Some(get_browser::<I>);
-        object.close_browser = Some(close_browser::<I>);
-        object.try_close_browser = Some(try_close_browser::<I>);
-        object.is_ready_to_be_closed = Some(is_ready_to_be_closed::<I>);
-        object.set_focus = Some(set_focus::<I>);
-        object.get_window_handle = Some(get_window_handle::<I>);
-        object.get_opener_window_handle = Some(get_opener_window_handle::<I>);
-        object.get_opener_identifier = Some(get_opener_identifier::<I>);
-        object.has_view = Some(has_view::<I>);
-        object.get_client = Some(get_client::<I>);
-        object.get_request_context = Some(get_request_context::<I>);
-        object.can_zoom = Some(can_zoom::<I>);
-        object.zoom = Some(zoom::<I>);
-        object.get_default_zoom_level = Some(get_default_zoom_level::<I>);
-        object.get_zoom_level = Some(get_zoom_level::<I>);
-        object.set_zoom_level = Some(set_zoom_level::<I>);
-        object.run_file_dialog = Some(run_file_dialog::<I>);
-        object.start_download = Some(start_download::<I>);
-        object.download_image = Some(download_image::<I>);
-        object.print = Some(print::<I>);
-        object.print_to_pdf = Some(print_to_pdf::<I>);
-        object.find = Some(find::<I>);
-        object.stop_finding = Some(stop_finding::<I>);
-        object.show_dev_tools = Some(show_dev_tools::<I>);
-        object.close_dev_tools = Some(close_dev_tools::<I>);
-        object.has_dev_tools = Some(has_dev_tools::<I>);
-        object.send_dev_tools_message = Some(send_dev_tools_message::<I>);
-        object.execute_dev_tools_method = Some(execute_dev_tools_method::<I>);
-        object.add_dev_tools_message_observer = Some(add_dev_tools_message_observer::<I>);
-        object.get_navigation_entries = Some(get_navigation_entries::<I>);
-        object.replace_misspelling = Some(replace_misspelling::<I>);
-        object.add_word_to_dictionary = Some(add_word_to_dictionary::<I>);
-        object.is_window_rendering_disabled = Some(is_window_rendering_disabled::<I>);
-        object.was_resized = Some(was_resized::<I>);
-        object.was_hidden = Some(was_hidden::<I>);
-        object.notify_screen_info_changed = Some(notify_screen_info_changed::<I>);
-        object.invalidate = Some(invalidate::<I>);
-        object.send_external_begin_frame = Some(send_external_begin_frame::<I>);
-        object.send_key_event = Some(send_key_event::<I>);
-        object.send_mouse_click_event = Some(send_mouse_click_event::<I>);
-        object.send_mouse_move_event = Some(send_mouse_move_event::<I>);
-        object.send_mouse_wheel_event = Some(send_mouse_wheel_event::<I>);
-        object.send_touch_event = Some(send_touch_event::<I>);
-        object.send_capture_lost_event = Some(send_capture_lost_event::<I>);
-        object.notify_move_or_resize_started = Some(notify_move_or_resize_started::<I>);
-        object.get_windowless_frame_rate = Some(get_windowless_frame_rate::<I>);
-        object.set_windowless_frame_rate = Some(set_windowless_frame_rate::<I>);
-        object.ime_set_composition = Some(ime_set_composition::<I>);
-        object.ime_commit_text = Some(ime_commit_text::<I>);
-        object.ime_finish_composing_text = Some(ime_finish_composing_text::<I>);
-        object.ime_cancel_composition = Some(ime_cancel_composition::<I>);
-        object.drag_target_drag_enter = Some(drag_target_drag_enter::<I>);
-        object.drag_target_drag_over = Some(drag_target_drag_over::<I>);
-        object.drag_target_drag_leave = Some(drag_target_drag_leave::<I>);
-        object.drag_target_drop = Some(drag_target_drop::<I>);
-        object.drag_source_ended_at = Some(drag_source_ended_at::<I>);
-        object.drag_source_system_drag_ended = Some(drag_source_system_drag_ended::<I>);
-        object.get_visible_navigation_entry = Some(get_visible_navigation_entry::<I>);
-        object.set_accessibility_state = Some(set_accessibility_state::<I>);
-        object.set_auto_resize_enabled = Some(set_auto_resize_enabled::<I>);
-        object.set_audio_muted = Some(set_audio_muted::<I>);
-        object.is_audio_muted = Some(is_audio_muted::<I>);
-        object.is_fullscreen = Some(is_fullscreen::<I>);
-        object.exit_fullscreen = Some(exit_fullscreen::<I>);
-        object.can_execute_chrome_command = Some(can_execute_chrome_command::<I>);
-        object.execute_chrome_command = Some(execute_chrome_command::<I>);
-        object.is_render_process_unresponsive = Some(is_render_process_unresponsive::<I>);
-        object.get_runtime_style = Some(get_runtime_style::<I>);
-    }
-    extern "C" fn get_browser<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> *mut _cef_browser_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_browser(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn close_browser<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        force_close: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_force_close) = (self_, force_close);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_force_close = arg_force_close.as_raw();
-        let result = ImplBrowserHost::close_browser(&arg_self_.interface, arg_force_close);
-    }
-    extern "C" fn try_close_browser<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::try_close_browser(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_ready_to_be_closed<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::is_ready_to_be_closed(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_focus<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        focus: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_focus) = (self_, focus);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_focus = arg_focus.as_raw();
-        let result = ImplBrowserHost::set_focus(&arg_self_.interface, arg_focus);
-    }
-    extern "C" fn get_window_handle<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> *mut ::std::os::raw::c_void {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_window_handle(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_opener_window_handle<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> *mut ::std::os::raw::c_void {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_opener_window_handle(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_opener_identifier<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_opener_identifier(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_view<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::has_view(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_client<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> *mut _cef_client_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_client(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_request_context<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> *mut _cef_request_context_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_request_context(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn can_zoom<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        command: cef_zoom_command_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command) = (self_, command);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command = arg_command.as_raw();
-        let result = ImplBrowserHost::can_zoom(&arg_self_.interface, arg_command);
-        result.into()
-    }
-    extern "C" fn zoom<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        command: cef_zoom_command_t,
-    ) {
-        let (arg_self_, arg_command) = (self_, command);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command = arg_command.as_raw();
-        let result = ImplBrowserHost::zoom(&arg_self_.interface, arg_command);
-    }
-    extern "C" fn get_default_zoom_level<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> f64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_default_zoom_level(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_zoom_level<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) -> f64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_zoom_level(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_zoom_level<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        zoom_level: f64,
-    ) {
-        let (arg_self_, arg_zoom_level) = (self_, zoom_level);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_zoom_level = arg_zoom_level.as_raw();
-        let result = ImplBrowserHost::set_zoom_level(&arg_self_.interface, arg_zoom_level);
-    }
-    extern "C" fn run_file_dialog<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        mode: cef_file_dialog_mode_t,
-        title: *const _cef_string_utf16_t,
-        default_file_path: *const _cef_string_utf16_t,
-        accept_filters: *mut _cef_string_list_t,
-        callback: *mut _cef_run_file_dialog_callback_t,
-    ) {
-        let (
-            arg_self_,
-            arg_mode,
-            arg_title,
-            arg_default_file_path,
-            arg_accept_filters,
-            arg_callback,
-        ) = (
-            self_,
-            mode,
-            title,
-            default_file_path,
-            accept_filters,
-            callback,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_mode = arg_mode.as_raw();
-        let arg_title = if arg_title.is_null() {
-            None
-        } else {
-            Some(arg_title.into())
-        };
-        let arg_title = arg_title.as_ref();
-        let arg_default_file_path = if arg_default_file_path.is_null() {
-            None
-        } else {
-            Some(arg_default_file_path.into())
-        };
-        let arg_default_file_path = arg_default_file_path.as_ref();
-        let mut arg_accept_filters = if arg_accept_filters.is_null() {
-            None
-        } else {
-            Some(arg_accept_filters.into())
-        };
-        let arg_accept_filters = arg_accept_filters.as_mut();
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| RunFileDialogCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplBrowserHost::run_file_dialog(
-            &arg_self_.interface,
-            arg_mode,
-            arg_title,
-            arg_default_file_path,
-            arg_accept_filters,
-            arg_callback,
-        );
-    }
-    extern "C" fn start_download<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        url: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_url) = (self_, url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let result = ImplBrowserHost::start_download(&arg_self_.interface, arg_url);
-    }
-    extern "C" fn download_image<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        image_url: *const _cef_string_utf16_t,
-        is_favicon: ::std::os::raw::c_int,
-        max_image_size: u32,
-        bypass_cache: ::std::os::raw::c_int,
-        callback: *mut _cef_download_image_callback_t,
-    ) {
-        let (
-            arg_self_,
-            arg_image_url,
-            arg_is_favicon,
-            arg_max_image_size,
-            arg_bypass_cache,
-            arg_callback,
-        ) = (
-            self_,
-            image_url,
-            is_favicon,
-            max_image_size,
-            bypass_cache,
-            callback,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_image_url = if arg_image_url.is_null() {
-            None
-        } else {
-            Some(arg_image_url.into())
-        };
-        let arg_image_url = arg_image_url.as_ref();
-        let arg_is_favicon = arg_is_favicon.as_raw();
-        let arg_max_image_size = arg_max_image_size.as_raw();
-        let arg_bypass_cache = arg_bypass_cache.as_raw();
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| DownloadImageCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplBrowserHost::download_image(
-            &arg_self_.interface,
-            arg_image_url,
-            arg_is_favicon,
-            arg_max_image_size,
-            arg_bypass_cache,
-            arg_callback,
-        );
-    }
-    extern "C" fn print<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::print(&arg_self_.interface);
-    }
-    extern "C" fn print_to_pdf<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        path: *const _cef_string_utf16_t,
-        settings: *const _cef_pdf_print_settings_t,
-        callback: *mut _cef_pdf_print_callback_t,
-    ) {
-        let (arg_self_, arg_path, arg_settings, arg_callback) = (self_, path, settings, callback);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_path = if arg_path.is_null() {
-            None
-        } else {
-            Some(arg_path.into())
-        };
-        let arg_path = arg_path.as_ref();
-        let arg_settings = if arg_settings.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<PdfPrintSettings>::from(arg_settings))
-        };
-        let arg_settings = arg_settings.as_ref().map(|arg| arg.as_ref());
-        let mut arg_callback = unsafe { arg_callback.as_mut() }
-            .map(|arg| PdfPrintCallback(unsafe { RefGuard::from_raw(arg) }));
-        let arg_callback = arg_callback.as_mut();
-        let result = ImplBrowserHost::print_to_pdf(
-            &arg_self_.interface,
-            arg_path,
-            arg_settings,
-            arg_callback,
-        );
-    }
-    extern "C" fn find<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        search_text: *const _cef_string_utf16_t,
-        forward: ::std::os::raw::c_int,
-        match_case: ::std::os::raw::c_int,
-        find_next: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_search_text, arg_forward, arg_match_case, arg_find_next) =
-            (self_, search_text, forward, match_case, find_next);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_search_text = if arg_search_text.is_null() {
-            None
-        } else {
-            Some(arg_search_text.into())
-        };
-        let arg_search_text = arg_search_text.as_ref();
-        let arg_forward = arg_forward.as_raw();
-        let arg_match_case = arg_match_case.as_raw();
-        let arg_find_next = arg_find_next.as_raw();
-        let result = ImplBrowserHost::find(
-            &arg_self_.interface,
-            arg_search_text,
-            arg_forward,
-            arg_match_case,
-            arg_find_next,
-        );
-    }
-    extern "C" fn stop_finding<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        clear_selection: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_clear_selection) = (self_, clear_selection);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_clear_selection = arg_clear_selection.as_raw();
-        let result = ImplBrowserHost::stop_finding(&arg_self_.interface, arg_clear_selection);
-    }
-    extern "C" fn show_dev_tools<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        window_info: *const _cef_window_info_t,
-        client: *mut _cef_client_t,
-        settings: *const _cef_browser_settings_t,
-        inspect_element_at: *const _cef_point_t,
-    ) {
-        let (arg_self_, arg_window_info, arg_client, arg_settings, arg_inspect_element_at) =
-            (self_, window_info, client, settings, inspect_element_at);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_window_info = if arg_window_info.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<WindowInfo>::from(arg_window_info))
-        };
-        let arg_window_info = arg_window_info.as_ref().map(|arg| arg.as_ref());
-        let mut arg_client =
-            unsafe { arg_client.as_mut() }.map(|arg| Client(unsafe { RefGuard::from_raw(arg) }));
-        let arg_client = arg_client.as_mut();
-        let arg_settings = if arg_settings.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<BrowserSettings>::from(arg_settings))
-        };
-        let arg_settings = arg_settings.as_ref().map(|arg| arg.as_ref());
-        let arg_inspect_element_at = if arg_inspect_element_at.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_inspect_element_at))
-        };
-        let arg_inspect_element_at = arg_inspect_element_at.as_ref().map(|arg| arg.as_ref());
-        let result = ImplBrowserHost::show_dev_tools(
-            &arg_self_.interface,
-            arg_window_info,
-            arg_client,
-            arg_settings,
-            arg_inspect_element_at,
-        );
-    }
-    extern "C" fn close_dev_tools<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::close_dev_tools(&arg_self_.interface);
-    }
-    extern "C" fn has_dev_tools<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::has_dev_tools(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn send_dev_tools_message<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        message: *const ::std::os::raw::c_void,
-        message_size: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_message, arg_message_size) = (self_, message, message_size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_message = (!arg_message.is_null() && arg_message_size > 0).then(|| unsafe {
-            std::slice::from_raw_parts(arg_message as *const _, arg_message_size)
-        });
-        let result = ImplBrowserHost::send_dev_tools_message(&arg_self_.interface, arg_message);
-        result.into()
-    }
-    extern "C" fn execute_dev_tools_method<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        message_id: ::std::os::raw::c_int,
-        method: *const _cef_string_utf16_t,
-        params: *mut _cef_dictionary_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_message_id, arg_method, arg_params) =
-            (self_, message_id, method, params);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_message_id = arg_message_id.as_raw();
-        let arg_method = if arg_method.is_null() {
-            None
-        } else {
-            Some(arg_method.into())
-        };
-        let arg_method = arg_method.as_ref();
-        let mut arg_params = unsafe { arg_params.as_mut() }
-            .map(|arg| DictionaryValue(unsafe { RefGuard::from_raw(arg) }));
-        let arg_params = arg_params.as_mut();
-        let result = ImplBrowserHost::execute_dev_tools_method(
-            &arg_self_.interface,
-            arg_message_id,
-            arg_method,
-            arg_params,
-        );
-        result.into()
-    }
-    extern "C" fn add_dev_tools_message_observer<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        observer: *mut _cef_dev_tools_message_observer_t,
-    ) -> *mut _cef_registration_t {
-        let (arg_self_, arg_observer) = (self_, observer);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_observer = unsafe { arg_observer.as_mut() }
-            .map(|arg| DevToolsMessageObserver(unsafe { RefGuard::from_raw(arg) }));
-        let arg_observer = arg_observer.as_mut();
-        let result =
-            ImplBrowserHost::add_dev_tools_message_observer(&arg_self_.interface, arg_observer);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_navigation_entries<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        visitor: *mut _cef_navigation_entry_visitor_t,
-        current_only: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_visitor, arg_current_only) = (self_, visitor, current_only);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_visitor = unsafe { arg_visitor.as_mut() }
-            .map(|arg| NavigationEntryVisitor(unsafe { RefGuard::from_raw(arg) }));
-        let arg_visitor = arg_visitor.as_mut();
-        let arg_current_only = arg_current_only.as_raw();
-        let result = ImplBrowserHost::get_navigation_entries(
-            &arg_self_.interface,
-            arg_visitor,
-            arg_current_only,
-        );
-    }
-    extern "C" fn replace_misspelling<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        word: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_word) = (self_, word);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_word = if arg_word.is_null() {
-            None
-        } else {
-            Some(arg_word.into())
-        };
-        let arg_word = arg_word.as_ref();
-        let result = ImplBrowserHost::replace_misspelling(&arg_self_.interface, arg_word);
-    }
-    extern "C" fn add_word_to_dictionary<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        word: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_word) = (self_, word);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_word = if arg_word.is_null() {
-            None
-        } else {
-            Some(arg_word.into())
-        };
-        let arg_word = arg_word.as_ref();
-        let result = ImplBrowserHost::add_word_to_dictionary(&arg_self_.interface, arg_word);
-    }
-    extern "C" fn is_window_rendering_disabled<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::is_window_rendering_disabled(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn was_resized<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::was_resized(&arg_self_.interface);
-    }
-    extern "C" fn was_hidden<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        hidden: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_hidden) = (self_, hidden);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_hidden = arg_hidden.as_raw();
-        let result = ImplBrowserHost::was_hidden(&arg_self_.interface, arg_hidden);
-    }
-    extern "C" fn notify_screen_info_changed<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::notify_screen_info_changed(&arg_self_.interface);
-    }
-    extern "C" fn invalidate<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        type_: cef_paint_element_type_t,
-    ) {
-        let (arg_self_, arg_type_) = (self_, type_);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_type_ = arg_type_.as_raw();
-        let result = ImplBrowserHost::invalidate(&arg_self_.interface, arg_type_);
-    }
-    extern "C" fn send_external_begin_frame<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::send_external_begin_frame(&arg_self_.interface);
-    }
-    extern "C" fn send_key_event<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        event: *const _cef_key_event_t,
-    ) {
-        let (arg_self_, arg_event) = (self_, event);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<KeyEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let result = ImplBrowserHost::send_key_event(&arg_self_.interface, arg_event);
-    }
-    extern "C" fn send_mouse_click_event<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        event: *const _cef_mouse_event_t,
-        type_: cef_mouse_button_type_t,
-        mouse_up: ::std::os::raw::c_int,
-        click_count: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_event, arg_type_, arg_mouse_up, arg_click_count) =
-            (self_, event, type_, mouse_up, click_count);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<MouseEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let arg_type_ = arg_type_.as_raw();
-        let arg_mouse_up = arg_mouse_up.as_raw();
-        let arg_click_count = arg_click_count.as_raw();
-        let result = ImplBrowserHost::send_mouse_click_event(
-            &arg_self_.interface,
-            arg_event,
-            arg_type_,
-            arg_mouse_up,
-            arg_click_count,
-        );
-    }
-    extern "C" fn send_mouse_move_event<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        event: *const _cef_mouse_event_t,
-        mouse_leave: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_event, arg_mouse_leave) = (self_, event, mouse_leave);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<MouseEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let arg_mouse_leave = arg_mouse_leave.as_raw();
-        let result = ImplBrowserHost::send_mouse_move_event(
-            &arg_self_.interface,
-            arg_event,
-            arg_mouse_leave,
-        );
-    }
-    extern "C" fn send_mouse_wheel_event<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        event: *const _cef_mouse_event_t,
-        delta_x: ::std::os::raw::c_int,
-        delta_y: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_event, arg_delta_x, arg_delta_y) = (self_, event, delta_x, delta_y);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<MouseEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let arg_delta_x = arg_delta_x.as_raw();
-        let arg_delta_y = arg_delta_y.as_raw();
-        let result = ImplBrowserHost::send_mouse_wheel_event(
-            &arg_self_.interface,
-            arg_event,
-            arg_delta_x,
-            arg_delta_y,
-        );
-    }
-    extern "C" fn send_touch_event<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        event: *const _cef_touch_event_t,
-    ) {
-        let (arg_self_, arg_event) = (self_, event);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<TouchEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let result = ImplBrowserHost::send_touch_event(&arg_self_.interface, arg_event);
-    }
-    extern "C" fn send_capture_lost_event<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::send_capture_lost_event(&arg_self_.interface);
-    }
-    extern "C" fn notify_move_or_resize_started<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::notify_move_or_resize_started(&arg_self_.interface);
-    }
-    extern "C" fn get_windowless_frame_rate<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_windowless_frame_rate(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_windowless_frame_rate<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        frame_rate: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_frame_rate) = (self_, frame_rate);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_frame_rate = arg_frame_rate.as_raw();
-        let result =
-            ImplBrowserHost::set_windowless_frame_rate(&arg_self_.interface, arg_frame_rate);
-    }
-    extern "C" fn ime_set_composition<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        text: *const _cef_string_utf16_t,
-        underlines_count: usize,
-        underlines: *const _cef_composition_underline_t,
-        replacement_range: *const _cef_range_t,
-        selection_range: *const _cef_range_t,
-    ) {
-        let (
-            arg_self_,
-            arg_text,
-            arg_underlines_count,
-            arg_underlines,
-            arg_replacement_range,
-            arg_selection_range,
-        ) = (
-            self_,
-            text,
-            underlines_count,
-            underlines,
-            replacement_range,
-            selection_range,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let arg_underlines_count = arg_underlines_count.as_raw();
-        let arg_underlines = if arg_underlines.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<CompositionUnderline>::from(arg_underlines))
-        };
-        let arg_underlines = arg_underlines.as_ref().map(|arg| arg.as_ref());
-        let arg_replacement_range = if arg_replacement_range.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_replacement_range))
-        };
-        let arg_replacement_range = arg_replacement_range.as_ref().map(|arg| arg.as_ref());
-        let arg_selection_range = if arg_selection_range.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_selection_range))
-        };
-        let arg_selection_range = arg_selection_range.as_ref().map(|arg| arg.as_ref());
-        let result = ImplBrowserHost::ime_set_composition(
-            &arg_self_.interface,
-            arg_text,
-            arg_underlines_count,
-            arg_underlines,
-            arg_replacement_range,
-            arg_selection_range,
-        );
-    }
-    extern "C" fn ime_commit_text<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        text: *const _cef_string_utf16_t,
-        replacement_range: *const _cef_range_t,
-        relative_cursor_pos: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_text, arg_replacement_range, arg_relative_cursor_pos) =
-            (self_, text, replacement_range, relative_cursor_pos);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let arg_replacement_range = if arg_replacement_range.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_replacement_range))
-        };
-        let arg_replacement_range = arg_replacement_range.as_ref().map(|arg| arg.as_ref());
-        let arg_relative_cursor_pos = arg_relative_cursor_pos.as_raw();
-        let result = ImplBrowserHost::ime_commit_text(
-            &arg_self_.interface,
-            arg_text,
-            arg_replacement_range,
-            arg_relative_cursor_pos,
-        );
-    }
-    extern "C" fn ime_finish_composing_text<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        keep_selection: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_keep_selection) = (self_, keep_selection);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_keep_selection = arg_keep_selection.as_raw();
-        let result =
-            ImplBrowserHost::ime_finish_composing_text(&arg_self_.interface, arg_keep_selection);
-    }
-    extern "C" fn ime_cancel_composition<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::ime_cancel_composition(&arg_self_.interface);
-    }
-    extern "C" fn drag_target_drag_enter<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        drag_data: *mut _cef_drag_data_t,
-        event: *const _cef_mouse_event_t,
-        allowed_ops: cef_drag_operations_mask_t,
-    ) {
-        let (arg_self_, arg_drag_data, arg_event, arg_allowed_ops) =
-            (self_, drag_data, event, allowed_ops);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_drag_data = unsafe { arg_drag_data.as_mut() }
-            .map(|arg| DragData(unsafe { RefGuard::from_raw(arg) }));
-        let arg_drag_data = arg_drag_data.as_mut();
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<MouseEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let arg_allowed_ops = arg_allowed_ops.as_raw();
-        let result = ImplBrowserHost::drag_target_drag_enter(
-            &arg_self_.interface,
-            arg_drag_data,
-            arg_event,
-            arg_allowed_ops,
-        );
-    }
-    extern "C" fn drag_target_drag_over<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        event: *const _cef_mouse_event_t,
-        allowed_ops: cef_drag_operations_mask_t,
-    ) {
-        let (arg_self_, arg_event, arg_allowed_ops) = (self_, event, allowed_ops);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<MouseEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let arg_allowed_ops = arg_allowed_ops.as_raw();
-        let result = ImplBrowserHost::drag_target_drag_over(
-            &arg_self_.interface,
-            arg_event,
-            arg_allowed_ops,
-        );
-    }
-    extern "C" fn drag_target_drag_leave<I: ImplBrowserHost>(self_: *mut _cef_browser_host_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::drag_target_drag_leave(&arg_self_.interface);
-    }
-    extern "C" fn drag_target_drop<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        event: *const _cef_mouse_event_t,
-    ) {
-        let (arg_self_, arg_event) = (self_, event);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_event = if arg_event.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<MouseEvent>::from(arg_event))
-        };
-        let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
-        let result = ImplBrowserHost::drag_target_drop(&arg_self_.interface, arg_event);
-    }
-    extern "C" fn drag_source_ended_at<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        x: ::std::os::raw::c_int,
-        y: ::std::os::raw::c_int,
-        op: cef_drag_operations_mask_t,
-    ) {
-        let (arg_self_, arg_x, arg_y, arg_op) = (self_, x, y, op);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_x = arg_x.as_raw();
-        let arg_y = arg_y.as_raw();
-        let arg_op = arg_op.as_raw();
-        let result =
-            ImplBrowserHost::drag_source_ended_at(&arg_self_.interface, arg_x, arg_y, arg_op);
-    }
-    extern "C" fn drag_source_system_drag_ended<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::drag_source_system_drag_ended(&arg_self_.interface);
-    }
-    extern "C" fn get_visible_navigation_entry<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> *mut _cef_navigation_entry_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_visible_navigation_entry(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_accessibility_state<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        accessibility_state: cef_state_t,
-    ) {
-        let (arg_self_, arg_accessibility_state) = (self_, accessibility_state);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_accessibility_state = arg_accessibility_state.as_raw();
-        let result =
-            ImplBrowserHost::set_accessibility_state(&arg_self_.interface, arg_accessibility_state);
-    }
-    extern "C" fn set_auto_resize_enabled<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        enabled: ::std::os::raw::c_int,
-        min_size: *const _cef_size_t,
-        max_size: *const _cef_size_t,
-    ) {
-        let (arg_self_, arg_enabled, arg_min_size, arg_max_size) =
-            (self_, enabled, min_size, max_size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_enabled = arg_enabled.as_raw();
-        let arg_min_size = if arg_min_size.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_min_size))
-        };
-        let arg_min_size = arg_min_size.as_ref().map(|arg| arg.as_ref());
-        let arg_max_size = if arg_max_size.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_max_size))
-        };
-        let arg_max_size = arg_max_size.as_ref().map(|arg| arg.as_ref());
-        let result = ImplBrowserHost::set_auto_resize_enabled(
-            &arg_self_.interface,
-            arg_enabled,
-            arg_min_size,
-            arg_max_size,
-        );
-    }
-    extern "C" fn set_audio_muted<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        mute: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_mute) = (self_, mute);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_mute = arg_mute.as_raw();
-        let result = ImplBrowserHost::set_audio_muted(&arg_self_.interface, arg_mute);
-    }
-    extern "C" fn is_audio_muted<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::is_audio_muted(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_fullscreen<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::is_fullscreen(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn exit_fullscreen<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        will_cause_resize: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_will_cause_resize) = (self_, will_cause_resize);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_will_cause_resize = arg_will_cause_resize.as_raw();
-        let result = ImplBrowserHost::exit_fullscreen(&arg_self_.interface, arg_will_cause_resize);
-    }
-    extern "C" fn can_execute_chrome_command<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result =
-            ImplBrowserHost::can_execute_chrome_command(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn execute_chrome_command<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-        command_id: ::std::os::raw::c_int,
-        disposition: cef_window_open_disposition_t,
-    ) {
-        let (arg_self_, arg_command_id, arg_disposition) = (self_, command_id, disposition);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_disposition = arg_disposition.as_raw();
-        let result = ImplBrowserHost::execute_chrome_command(
-            &arg_self_.interface,
-            arg_command_id,
-            arg_disposition,
-        );
-    }
-    extern "C" fn is_render_process_unresponsive<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::is_render_process_unresponsive(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_runtime_style<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> cef_runtime_style_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_runtime_style(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplBrowserHost for BrowserHost {
     fn get_browser(&self) -> Option<Browser> {
@@ -21820,234 +14834,120 @@ impl Default for MenuModelDelegate {
 /// See [_cef_menu_model_t] for more documentation.
 #[derive(Clone)]
 pub struct MenuModel(RefGuard<_cef_menu_model_t>);
-impl MenuModel {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMenuModel,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMenuModel>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMenuModel>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_menu_model_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMenuModel: ImplMenuModel {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_menu_model_t, Self>);
-}
 pub trait ImplMenuModel: Clone + Sized + Rc {
-    fn is_sub_menu(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn clear(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_count(&self) -> usize {
-        Default::default()
-    }
-    fn add_separator(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn is_sub_menu(&self) -> ::std::os::raw::c_int;
+    fn clear(&self) -> ::std::os::raw::c_int;
+    fn get_count(&self) -> usize;
+    fn add_separator(&self) -> ::std::os::raw::c_int;
     fn add_item(
         &self,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn add_check_item(
         &self,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn add_radio_item(
         &self,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
         group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn add_sub_menu(
         &self,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
-    ) -> Option<MenuModel> {
-        Default::default()
-    }
-    fn insert_separator_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> Option<MenuModel>;
+    fn insert_separator_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn insert_item_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn insert_check_item_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn insert_radio_item_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
         group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn insert_sub_menu_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
-    ) -> Option<MenuModel> {
-        Default::default()
-    }
-    fn remove(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn remove_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_index_of(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_command_id_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> Option<MenuModel>;
+    fn remove(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn remove_at(&self, index: usize) -> ::std::os::raw::c_int;
+    fn get_index_of(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn get_command_id_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn set_command_id_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_label(&self, command_id: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_label_at(&self, index: usize) -> Option<CefStringUtf16> {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn get_label(&self, command_id: ::std::os::raw::c_int) -> Option<CefStringUtf16>;
+    fn get_label_at(&self, index: usize) -> Option<CefStringUtf16>;
     fn set_label(
         &self,
         command_id: ::std::os::raw::c_int,
         label: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_label_at(&self, index: usize, label: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_type(&self, command_id: ::std::os::raw::c_int) -> MenuItemType {
-        Default::default()
-    }
-    fn get_type_at(&self, index: usize) -> MenuItemType {
-        Default::default()
-    }
-    fn get_group_id(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_group_id_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn set_label_at(&self, index: usize, label: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_type(&self, command_id: ::std::os::raw::c_int) -> MenuItemType;
+    fn get_type_at(&self, index: usize) -> MenuItemType;
+    fn get_group_id(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn get_group_id_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn set_group_id(
         &self,
         command_id: ::std::os::raw::c_int,
         group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_group_id_at(
         &self,
         index: usize,
         group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_sub_menu(&self, command_id: ::std::os::raw::c_int) -> Option<MenuModel> {
-        Default::default()
-    }
-    fn get_sub_menu_at(&self, index: usize) -> Option<MenuModel> {
-        Default::default()
-    }
-    fn is_visible(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_visible_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn get_sub_menu(&self, command_id: ::std::os::raw::c_int) -> Option<MenuModel>;
+    fn get_sub_menu_at(&self, index: usize) -> Option<MenuModel>;
+    fn is_visible(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn is_visible_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn set_visible(
         &self,
         command_id: ::std::os::raw::c_int,
         visible: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_visible_at(
-        &self,
-        index: usize,
-        visible: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_enabled(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_enabled_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn set_visible_at(&self, index: usize, visible: ::std::os::raw::c_int)
+        -> ::std::os::raw::c_int;
+    fn is_enabled(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn is_enabled_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn set_enabled(
         &self,
         command_id: ::std::os::raw::c_int,
         enabled: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_enabled_at(
-        &self,
-        index: usize,
-        enabled: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_checked(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_checked_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn set_enabled_at(&self, index: usize, enabled: ::std::os::raw::c_int)
+        -> ::std::os::raw::c_int;
+    fn is_checked(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn is_checked_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn set_checked(
         &self,
         command_id: ::std::os::raw::c_int,
         checked: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_checked_at(
-        &self,
-        index: usize,
-        checked: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_accelerator(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_accelerator_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn set_checked_at(&self, index: usize, checked: ::std::os::raw::c_int)
+        -> ::std::os::raw::c_int;
+    fn has_accelerator(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn has_accelerator_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn set_accelerator(
         &self,
         command_id: ::std::os::raw::c_int,
@@ -22055,9 +14955,7 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
         shift_pressed: ::std::os::raw::c_int,
         ctrl_pressed: ::std::os::raw::c_int,
         alt_pressed: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_accelerator_at(
         &self,
         index: usize,
@@ -22065,15 +14963,9 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
         shift_pressed: ::std::os::raw::c_int,
         ctrl_pressed: ::std::os::raw::c_int,
         alt_pressed: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn remove_accelerator(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn remove_accelerator_at(&self, index: usize) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn remove_accelerator(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn remove_accelerator_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn get_accelerator(
         &self,
         command_id: ::std::os::raw::c_int,
@@ -22081,9 +14973,7 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
         shift_pressed: Option<&mut ::std::os::raw::c_int>,
         ctrl_pressed: Option<&mut ::std::os::raw::c_int>,
         alt_pressed: Option<&mut ::std::os::raw::c_int>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_accelerator_at(
         &self,
         index: usize,
@@ -22091,1030 +14981,42 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
         shift_pressed: Option<&mut ::std::os::raw::c_int>,
         ctrl_pressed: Option<&mut ::std::os::raw::c_int>,
         alt_pressed: Option<&mut ::std::os::raw::c_int>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_color(
         &self,
         command_id: ::std::os::raw::c_int,
         color_type: MenuColorType,
         color: u32,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_color_at(
         &self,
         index: ::std::os::raw::c_int,
         color_type: MenuColorType,
         color: u32,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_color(
         &self,
         command_id: ::std::os::raw::c_int,
         color_type: MenuColorType,
         color: Option<&mut u32>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_color_at(
         &self,
         index: ::std::os::raw::c_int,
         color_type: MenuColorType,
         color: Option<&mut u32>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_font_list(
         &self,
         command_id: ::std::os::raw::c_int,
         font_list: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_font_list_at(
         &self,
         index: ::std::os::raw::c_int,
         font_list: Option<&CefStringUtf16>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_menu_model_t) {
-        impl_cef_menu_model_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_menu_model_t;
-}
-mod impl_cef_menu_model_t {
-    use super::*;
-    pub fn init_methods<I: ImplMenuModel>(object: &mut _cef_menu_model_t) {
-        object.is_sub_menu = Some(is_sub_menu::<I>);
-        object.clear = Some(clear::<I>);
-        object.get_count = Some(get_count::<I>);
-        object.add_separator = Some(add_separator::<I>);
-        object.add_item = Some(add_item::<I>);
-        object.add_check_item = Some(add_check_item::<I>);
-        object.add_radio_item = Some(add_radio_item::<I>);
-        object.add_sub_menu = Some(add_sub_menu::<I>);
-        object.insert_separator_at = Some(insert_separator_at::<I>);
-        object.insert_item_at = Some(insert_item_at::<I>);
-        object.insert_check_item_at = Some(insert_check_item_at::<I>);
-        object.insert_radio_item_at = Some(insert_radio_item_at::<I>);
-        object.insert_sub_menu_at = Some(insert_sub_menu_at::<I>);
-        object.remove = Some(remove::<I>);
-        object.remove_at = Some(remove_at::<I>);
-        object.get_index_of = Some(get_index_of::<I>);
-        object.get_command_id_at = Some(get_command_id_at::<I>);
-        object.set_command_id_at = Some(set_command_id_at::<I>);
-        object.get_label = Some(get_label::<I>);
-        object.get_label_at = Some(get_label_at::<I>);
-        object.set_label = Some(set_label::<I>);
-        object.set_label_at = Some(set_label_at::<I>);
-        object.get_type = Some(get_type::<I>);
-        object.get_type_at = Some(get_type_at::<I>);
-        object.get_group_id = Some(get_group_id::<I>);
-        object.get_group_id_at = Some(get_group_id_at::<I>);
-        object.set_group_id = Some(set_group_id::<I>);
-        object.set_group_id_at = Some(set_group_id_at::<I>);
-        object.get_sub_menu = Some(get_sub_menu::<I>);
-        object.get_sub_menu_at = Some(get_sub_menu_at::<I>);
-        object.is_visible = Some(is_visible::<I>);
-        object.is_visible_at = Some(is_visible_at::<I>);
-        object.set_visible = Some(set_visible::<I>);
-        object.set_visible_at = Some(set_visible_at::<I>);
-        object.is_enabled = Some(is_enabled::<I>);
-        object.is_enabled_at = Some(is_enabled_at::<I>);
-        object.set_enabled = Some(set_enabled::<I>);
-        object.set_enabled_at = Some(set_enabled_at::<I>);
-        object.is_checked = Some(is_checked::<I>);
-        object.is_checked_at = Some(is_checked_at::<I>);
-        object.set_checked = Some(set_checked::<I>);
-        object.set_checked_at = Some(set_checked_at::<I>);
-        object.has_accelerator = Some(has_accelerator::<I>);
-        object.has_accelerator_at = Some(has_accelerator_at::<I>);
-        object.set_accelerator = Some(set_accelerator::<I>);
-        object.set_accelerator_at = Some(set_accelerator_at::<I>);
-        object.remove_accelerator = Some(remove_accelerator::<I>);
-        object.remove_accelerator_at = Some(remove_accelerator_at::<I>);
-        object.get_accelerator = Some(get_accelerator::<I>);
-        object.get_accelerator_at = Some(get_accelerator_at::<I>);
-        object.set_color = Some(set_color::<I>);
-        object.set_color_at = Some(set_color_at::<I>);
-        object.get_color = Some(get_color::<I>);
-        object.get_color_at = Some(get_color_at::<I>);
-        object.set_font_list = Some(set_font_list::<I>);
-        object.set_font_list_at = Some(set_font_list_at::<I>);
-    }
-    extern "C" fn is_sub_menu<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMenuModel::is_sub_menu(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn clear<I: ImplMenuModel>(self_: *mut _cef_menu_model_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMenuModel::clear(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_count<I: ImplMenuModel>(self_: *mut _cef_menu_model_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMenuModel::get_count(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn add_separator<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMenuModel::add_separator(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn add_item<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_label) = (self_, command_id, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::add_item(&arg_self_.interface, arg_command_id, arg_label);
-        result.into()
-    }
-    extern "C" fn add_check_item<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_label) = (self_, command_id, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::add_check_item(&arg_self_.interface, arg_command_id, arg_label);
-        result.into()
-    }
-    extern "C" fn add_radio_item<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-        group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_label, arg_group_id) =
-            (self_, command_id, label, group_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let arg_group_id = arg_group_id.as_raw();
-        let result = ImplMenuModel::add_radio_item(
-            &arg_self_.interface,
-            arg_command_id,
-            arg_label,
-            arg_group_id,
-        );
-        result.into()
-    }
-    extern "C" fn add_sub_menu<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-    ) -> *mut _cef_menu_model_t {
-        let (arg_self_, arg_command_id, arg_label) = (self_, command_id, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::add_sub_menu(&arg_self_.interface, arg_command_id, arg_label);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn insert_separator_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::insert_separator_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn insert_item_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_command_id, arg_label) = (self_, index, command_id, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::insert_item_at(
-            &arg_self_.interface,
-            arg_index,
-            arg_command_id,
-            arg_label,
-        );
-        result.into()
-    }
-    extern "C" fn insert_check_item_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_command_id, arg_label) = (self_, index, command_id, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::insert_check_item_at(
-            &arg_self_.interface,
-            arg_index,
-            arg_command_id,
-            arg_label,
-        );
-        result.into()
-    }
-    extern "C" fn insert_radio_item_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-        group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_command_id, arg_label, arg_group_id) =
-            (self_, index, command_id, label, group_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let arg_group_id = arg_group_id.as_raw();
-        let result = ImplMenuModel::insert_radio_item_at(
-            &arg_self_.interface,
-            arg_index,
-            arg_command_id,
-            arg_label,
-            arg_group_id,
-        );
-        result.into()
-    }
-    extern "C" fn insert_sub_menu_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-    ) -> *mut _cef_menu_model_t {
-        let (arg_self_, arg_index, arg_command_id, arg_label) = (self_, index, command_id, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::insert_sub_menu_at(
-            &arg_self_.interface,
-            arg_index,
-            arg_command_id,
-            arg_label,
-        );
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn remove<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::remove(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn remove_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::remove_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_index_of<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::get_index_of(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn get_command_id_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::get_command_id_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn set_command_id_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_command_id) = (self_, index, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_command_id = arg_command_id.as_raw();
-        let result =
-            ImplMenuModel::set_command_id_at(&arg_self_.interface, arg_index, arg_command_id);
-        result.into()
-    }
-    extern "C" fn get_label<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::get_label(&arg_self_.interface, arg_command_id);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_label_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::get_label_at(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_label<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        label: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_label) = (self_, command_id, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::set_label(&arg_self_.interface, arg_command_id, arg_label);
-        result.into()
-    }
-    extern "C" fn set_label_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        label: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_label) = (self_, index, label);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_label = if arg_label.is_null() {
-            None
-        } else {
-            Some(arg_label.into())
-        };
-        let arg_label = arg_label.as_ref();
-        let result = ImplMenuModel::set_label_at(&arg_self_.interface, arg_index, arg_label);
-        result.into()
-    }
-    extern "C" fn get_type<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> cef_menu_item_type_t {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::get_type(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn get_type_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> cef_menu_item_type_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::get_type_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_group_id<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::get_group_id(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn get_group_id_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::get_group_id_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn set_group_id<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_group_id) = (self_, command_id, group_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_group_id = arg_group_id.as_raw();
-        let result =
-            ImplMenuModel::set_group_id(&arg_self_.interface, arg_command_id, arg_group_id);
-        result.into()
-    }
-    extern "C" fn set_group_id_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        group_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_group_id) = (self_, index, group_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_group_id = arg_group_id.as_raw();
-        let result = ImplMenuModel::set_group_id_at(&arg_self_.interface, arg_index, arg_group_id);
-        result.into()
-    }
-    extern "C" fn get_sub_menu<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> *mut _cef_menu_model_t {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::get_sub_menu(&arg_self_.interface, arg_command_id);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_sub_menu_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> *mut _cef_menu_model_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::get_sub_menu_at(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn is_visible<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::is_visible(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn is_visible_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::is_visible_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn set_visible<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        visible: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_visible) = (self_, command_id, visible);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_visible = arg_visible.as_raw();
-        let result = ImplMenuModel::set_visible(&arg_self_.interface, arg_command_id, arg_visible);
-        result.into()
-    }
-    extern "C" fn set_visible_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        visible: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_visible) = (self_, index, visible);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_visible = arg_visible.as_raw();
-        let result = ImplMenuModel::set_visible_at(&arg_self_.interface, arg_index, arg_visible);
-        result.into()
-    }
-    extern "C" fn is_enabled<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::is_enabled(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn is_enabled_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::is_enabled_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn set_enabled<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        enabled: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_enabled) = (self_, command_id, enabled);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_enabled = arg_enabled.as_raw();
-        let result = ImplMenuModel::set_enabled(&arg_self_.interface, arg_command_id, arg_enabled);
-        result.into()
-    }
-    extern "C" fn set_enabled_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        enabled: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_enabled) = (self_, index, enabled);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_enabled = arg_enabled.as_raw();
-        let result = ImplMenuModel::set_enabled_at(&arg_self_.interface, arg_index, arg_enabled);
-        result.into()
-    }
-    extern "C" fn is_checked<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::is_checked(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn is_checked_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::is_checked_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn set_checked<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        checked: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_checked) = (self_, command_id, checked);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_checked = arg_checked.as_raw();
-        let result = ImplMenuModel::set_checked(&arg_self_.interface, arg_command_id, arg_checked);
-        result.into()
-    }
-    extern "C" fn set_checked_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        checked: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_checked) = (self_, index, checked);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_checked = arg_checked.as_raw();
-        let result = ImplMenuModel::set_checked_at(&arg_self_.interface, arg_index, arg_checked);
-        result.into()
-    }
-    extern "C" fn has_accelerator<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::has_accelerator(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn has_accelerator_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::has_accelerator_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn set_accelerator<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        key_code: ::std::os::raw::c_int,
-        shift_pressed: ::std::os::raw::c_int,
-        ctrl_pressed: ::std::os::raw::c_int,
-        alt_pressed: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (
-            arg_self_,
-            arg_command_id,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        ) = (
-            self_,
-            command_id,
-            key_code,
-            shift_pressed,
-            ctrl_pressed,
-            alt_pressed,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_key_code = arg_key_code.as_raw();
-        let arg_shift_pressed = arg_shift_pressed.as_raw();
-        let arg_ctrl_pressed = arg_ctrl_pressed.as_raw();
-        let arg_alt_pressed = arg_alt_pressed.as_raw();
-        let result = ImplMenuModel::set_accelerator(
-            &arg_self_.interface,
-            arg_command_id,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        );
-        result.into()
-    }
-    extern "C" fn set_accelerator_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        key_code: ::std::os::raw::c_int,
-        shift_pressed: ::std::os::raw::c_int,
-        ctrl_pressed: ::std::os::raw::c_int,
-        alt_pressed: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (
-            arg_self_,
-            arg_index,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        ) = (
-            self_,
-            index,
-            key_code,
-            shift_pressed,
-            ctrl_pressed,
-            alt_pressed,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_key_code = arg_key_code.as_raw();
-        let arg_shift_pressed = arg_shift_pressed.as_raw();
-        let arg_ctrl_pressed = arg_ctrl_pressed.as_raw();
-        let arg_alt_pressed = arg_alt_pressed.as_raw();
-        let result = ImplMenuModel::set_accelerator_at(
-            &arg_self_.interface,
-            arg_index,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        );
-        result.into()
-    }
-    extern "C" fn remove_accelerator<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplMenuModel::remove_accelerator(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn remove_accelerator_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplMenuModel::remove_accelerator_at(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_accelerator<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        key_code: *mut ::std::os::raw::c_int,
-        shift_pressed: *mut ::std::os::raw::c_int,
-        ctrl_pressed: *mut ::std::os::raw::c_int,
-        alt_pressed: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (
-            arg_self_,
-            arg_command_id,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        ) = (
-            self_,
-            command_id,
-            key_code,
-            shift_pressed,
-            ctrl_pressed,
-            alt_pressed,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let mut arg_key_code = if arg_key_code.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_key_code))
-        };
-        let arg_key_code = arg_key_code.as_mut().map(|arg| arg.as_mut());
-        let mut arg_shift_pressed = if arg_shift_pressed.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_shift_pressed,
-            ))
-        };
-        let arg_shift_pressed = arg_shift_pressed.as_mut().map(|arg| arg.as_mut());
-        let mut arg_ctrl_pressed = if arg_ctrl_pressed.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_ctrl_pressed,
-            ))
-        };
-        let arg_ctrl_pressed = arg_ctrl_pressed.as_mut().map(|arg| arg.as_mut());
-        let mut arg_alt_pressed = if arg_alt_pressed.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_alt_pressed))
-        };
-        let arg_alt_pressed = arg_alt_pressed.as_mut().map(|arg| arg.as_mut());
-        let result = ImplMenuModel::get_accelerator(
-            &arg_self_.interface,
-            arg_command_id,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        );
-        result.into()
-    }
-    extern "C" fn get_accelerator_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: usize,
-        key_code: *mut ::std::os::raw::c_int,
-        shift_pressed: *mut ::std::os::raw::c_int,
-        ctrl_pressed: *mut ::std::os::raw::c_int,
-        alt_pressed: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (
-            arg_self_,
-            arg_index,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        ) = (
-            self_,
-            index,
-            key_code,
-            shift_pressed,
-            ctrl_pressed,
-            alt_pressed,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let mut arg_key_code = if arg_key_code.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_key_code))
-        };
-        let arg_key_code = arg_key_code.as_mut().map(|arg| arg.as_mut());
-        let mut arg_shift_pressed = if arg_shift_pressed.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_shift_pressed,
-            ))
-        };
-        let arg_shift_pressed = arg_shift_pressed.as_mut().map(|arg| arg.as_mut());
-        let mut arg_ctrl_pressed = if arg_ctrl_pressed.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
-                arg_ctrl_pressed,
-            ))
-        };
-        let arg_ctrl_pressed = arg_ctrl_pressed.as_mut().map(|arg| arg.as_mut());
-        let mut arg_alt_pressed = if arg_alt_pressed.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_alt_pressed))
-        };
-        let arg_alt_pressed = arg_alt_pressed.as_mut().map(|arg| arg.as_mut());
-        let result = ImplMenuModel::get_accelerator_at(
-            &arg_self_.interface,
-            arg_index,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-        );
-        result.into()
-    }
-    extern "C" fn set_color<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        color_type: cef_menu_color_type_t,
-        color: u32,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_color_type, arg_color) =
-            (self_, command_id, color_type, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_color_type = arg_color_type.as_raw();
-        let arg_color = arg_color.as_raw();
-        let result = ImplMenuModel::set_color(
-            &arg_self_.interface,
-            arg_command_id,
-            arg_color_type,
-            arg_color,
-        );
-        result.into()
-    }
-    extern "C" fn set_color_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: ::std::os::raw::c_int,
-        color_type: cef_menu_color_type_t,
-        color: u32,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_color_type, arg_color) = (self_, index, color_type, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_color_type = arg_color_type.as_raw();
-        let arg_color = arg_color.as_raw();
-        let result =
-            ImplMenuModel::set_color_at(&arg_self_.interface, arg_index, arg_color_type, arg_color);
-        result.into()
-    }
-    extern "C" fn get_color<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        color_type: cef_menu_color_type_t,
-        color: *mut u32,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_color_type, arg_color) =
-            (self_, command_id, color_type, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_color_type = arg_color_type.as_raw();
-        let mut arg_color = if arg_color.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<u32>::from(arg_color))
-        };
-        let arg_color = arg_color.as_mut().map(|arg| arg.as_mut());
-        let result = ImplMenuModel::get_color(
-            &arg_self_.interface,
-            arg_command_id,
-            arg_color_type,
-            arg_color,
-        );
-        result.into()
-    }
-    extern "C" fn get_color_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: ::std::os::raw::c_int,
-        color_type: cef_menu_color_type_t,
-        color: *mut u32,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_color_type, arg_color) = (self_, index, color_type, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_color_type = arg_color_type.as_raw();
-        let mut arg_color = if arg_color.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<u32>::from(arg_color))
-        };
-        let arg_color = arg_color.as_mut().map(|arg| arg.as_mut());
-        let result =
-            ImplMenuModel::get_color_at(&arg_self_.interface, arg_index, arg_color_type, arg_color);
-        result.into()
-    }
-    extern "C" fn set_font_list<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        command_id: ::std::os::raw::c_int,
-        font_list: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id, arg_font_list) = (self_, command_id, font_list);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_font_list = if arg_font_list.is_null() {
-            None
-        } else {
-            Some(arg_font_list.into())
-        };
-        let arg_font_list = arg_font_list.as_ref();
-        let result =
-            ImplMenuModel::set_font_list(&arg_self_.interface, arg_command_id, arg_font_list);
-        result.into()
-    }
-    extern "C" fn set_font_list_at<I: ImplMenuModel>(
-        self_: *mut _cef_menu_model_t,
-        index: ::std::os::raw::c_int,
-        font_list: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_font_list) = (self_, index, font_list);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let arg_font_list = if arg_font_list.is_null() {
-            None
-        } else {
-            Some(arg_font_list.into())
-        };
-        let arg_font_list = arg_font_list.as_ref();
-        let result =
-            ImplMenuModel::set_font_list_at(&arg_self_.interface, arg_index, arg_font_list);
-        result.into()
-    }
 }
 impl ImplMenuModel for MenuModel {
     fn is_sub_menu(&self) -> ::std::os::raw::c_int {
@@ -24264,58 +16166,10 @@ impl Default for MenuModel {
 /// See [_cef_run_context_menu_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct RunContextMenuCallback(RefGuard<_cef_run_context_menu_callback_t>);
-impl RunContextMenuCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapRunContextMenuCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplRunContextMenuCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapRunContextMenuCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_run_context_menu_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapRunContextMenuCallback: ImplRunContextMenuCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_run_context_menu_callback_t, Self>);
-}
 pub trait ImplRunContextMenuCallback: Clone + Sized + Rc {
-    fn cont(&self, command_id: ::std::os::raw::c_int, event_flags: EventFlags) {}
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_run_context_menu_callback_t) {
-        impl_cef_run_context_menu_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, command_id: ::std::os::raw::c_int, event_flags: EventFlags);
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_run_context_menu_callback_t;
-}
-mod impl_cef_run_context_menu_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplRunContextMenuCallback>(
-        object: &mut _cef_run_context_menu_callback_t,
-    ) {
-        object.cont = Some(cont::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn cont<I: ImplRunContextMenuCallback>(
-        self_: *mut _cef_run_context_menu_callback_t,
-        command_id: ::std::os::raw::c_int,
-        event_flags: cef_event_flags_t,
-    ) {
-        let (arg_self_, arg_command_id, arg_event_flags) = (self_, command_id, event_flags);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_event_flags = arg_event_flags.as_raw();
-        let result =
-            ImplRunContextMenuCallback::cont(&arg_self_.interface, arg_command_id, arg_event_flags);
-    }
-    extern "C" fn cancel<I: ImplRunContextMenuCallback>(
-        self_: *mut _cef_run_context_menu_callback_t,
-    ) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRunContextMenuCallback::cancel(&arg_self_.interface);
-    }
 }
 impl ImplRunContextMenuCallback for RunContextMenuCallback {
     fn cont(&self, command_id: ::std::os::raw::c_int, event_flags: EventFlags) {
@@ -24390,54 +16244,10 @@ impl Default for RunContextMenuCallback {
 /// See [_cef_run_quick_menu_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct RunQuickMenuCallback(RefGuard<_cef_run_quick_menu_callback_t>);
-impl RunQuickMenuCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapRunQuickMenuCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplRunQuickMenuCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapRunQuickMenuCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_run_quick_menu_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapRunQuickMenuCallback: ImplRunQuickMenuCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_run_quick_menu_callback_t, Self>);
-}
 pub trait ImplRunQuickMenuCallback: Clone + Sized + Rc {
-    fn cont(&self, command_id: ::std::os::raw::c_int, event_flags: EventFlags) {}
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_run_quick_menu_callback_t) {
-        impl_cef_run_quick_menu_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, command_id: ::std::os::raw::c_int, event_flags: EventFlags);
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_run_quick_menu_callback_t;
-}
-mod impl_cef_run_quick_menu_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplRunQuickMenuCallback>(object: &mut _cef_run_quick_menu_callback_t) {
-        object.cont = Some(cont::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn cont<I: ImplRunQuickMenuCallback>(
-        self_: *mut _cef_run_quick_menu_callback_t,
-        command_id: ::std::os::raw::c_int,
-        event_flags: cef_event_flags_t,
-    ) {
-        let (arg_self_, arg_command_id, arg_event_flags) = (self_, command_id, event_flags);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_event_flags = arg_event_flags.as_raw();
-        let result =
-            ImplRunQuickMenuCallback::cont(&arg_self_.interface, arg_command_id, arg_event_flags);
-    }
-    extern "C" fn cancel<I: ImplRunQuickMenuCallback>(self_: *mut _cef_run_quick_menu_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplRunQuickMenuCallback::cancel(&arg_self_.interface);
-    }
 }
 impl ImplRunQuickMenuCallback for RunQuickMenuCallback {
     fn cont(&self, command_id: ::std::os::raw::c_int, event_flags: EventFlags) {
@@ -25189,304 +16999,31 @@ impl Default for ContextMenuHandler {
 /// See [_cef_context_menu_params_t] for more documentation.
 #[derive(Clone)]
 pub struct ContextMenuParams(RefGuard<_cef_context_menu_params_t>);
-impl ContextMenuParams {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapContextMenuParams,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplContextMenuParams>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapContextMenuParams>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_context_menu_params_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapContextMenuParams: ImplContextMenuParams {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_context_menu_params_t, Self>);
-}
 pub trait ImplContextMenuParams: Clone + Sized + Rc {
-    fn get_xcoord(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_ycoord(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_type_flags(&self) -> ContextMenuTypeFlags {
-        Default::default()
-    }
-    fn get_link_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_unfiltered_link_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_source_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn has_image_contents(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_title_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_page_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_frame_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_frame_charset(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_media_type(&self) -> ContextMenuMediaType {
-        Default::default()
-    }
-    fn get_media_state_flags(&self) -> ContextMenuMediaStateFlags {
-        Default::default()
-    }
-    fn get_selection_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_misspelled_word(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
+    fn get_xcoord(&self) -> ::std::os::raw::c_int;
+    fn get_ycoord(&self) -> ::std::os::raw::c_int;
+    fn get_type_flags(&self) -> ContextMenuTypeFlags;
+    fn get_link_url(&self) -> Option<CefStringUtf16>;
+    fn get_unfiltered_link_url(&self) -> Option<CefStringUtf16>;
+    fn get_source_url(&self) -> Option<CefStringUtf16>;
+    fn has_image_contents(&self) -> ::std::os::raw::c_int;
+    fn get_title_text(&self) -> Option<CefStringUtf16>;
+    fn get_page_url(&self) -> Option<CefStringUtf16>;
+    fn get_frame_url(&self) -> Option<CefStringUtf16>;
+    fn get_frame_charset(&self) -> Option<CefStringUtf16>;
+    fn get_media_type(&self) -> ContextMenuMediaType;
+    fn get_media_state_flags(&self) -> ContextMenuMediaStateFlags;
+    fn get_selection_text(&self) -> Option<CefStringUtf16>;
+    fn get_misspelled_word(&self) -> Option<CefStringUtf16>;
     fn get_dictionary_suggestions(
         &self,
         suggestions: Option<&mut CefStringList>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_editable(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_spell_check_enabled(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_edit_state_flags(&self) -> ContextMenuEditStateFlags {
-        Default::default()
-    }
-    fn is_custom_menu(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_context_menu_params_t) {
-        impl_cef_context_menu_params_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
+    fn is_editable(&self) -> ::std::os::raw::c_int;
+    fn is_spell_check_enabled(&self) -> ::std::os::raw::c_int;
+    fn get_edit_state_flags(&self) -> ContextMenuEditStateFlags;
+    fn is_custom_menu(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_context_menu_params_t;
-}
-mod impl_cef_context_menu_params_t {
-    use super::*;
-    pub fn init_methods<I: ImplContextMenuParams>(object: &mut _cef_context_menu_params_t) {
-        object.get_xcoord = Some(get_xcoord::<I>);
-        object.get_ycoord = Some(get_ycoord::<I>);
-        object.get_type_flags = Some(get_type_flags::<I>);
-        object.get_link_url = Some(get_link_url::<I>);
-        object.get_unfiltered_link_url = Some(get_unfiltered_link_url::<I>);
-        object.get_source_url = Some(get_source_url::<I>);
-        object.has_image_contents = Some(has_image_contents::<I>);
-        object.get_title_text = Some(get_title_text::<I>);
-        object.get_page_url = Some(get_page_url::<I>);
-        object.get_frame_url = Some(get_frame_url::<I>);
-        object.get_frame_charset = Some(get_frame_charset::<I>);
-        object.get_media_type = Some(get_media_type::<I>);
-        object.get_media_state_flags = Some(get_media_state_flags::<I>);
-        object.get_selection_text = Some(get_selection_text::<I>);
-        object.get_misspelled_word = Some(get_misspelled_word::<I>);
-        object.get_dictionary_suggestions = Some(get_dictionary_suggestions::<I>);
-        object.is_editable = Some(is_editable::<I>);
-        object.is_spell_check_enabled = Some(is_spell_check_enabled::<I>);
-        object.get_edit_state_flags = Some(get_edit_state_flags::<I>);
-        object.is_custom_menu = Some(is_custom_menu::<I>);
-    }
-    extern "C" fn get_xcoord<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_xcoord(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_ycoord<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_ycoord(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_type_flags<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> cef_context_menu_type_flags_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_type_flags(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_link_url<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_link_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_unfiltered_link_url<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_unfiltered_link_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_source_url<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_source_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn has_image_contents<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::has_image_contents(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_title_text<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_title_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_page_url<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_page_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_frame_url<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_frame_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_frame_charset<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_frame_charset(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_media_type<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> cef_context_menu_media_type_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_media_type(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_media_state_flags<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> cef_context_menu_media_state_flags_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_media_state_flags(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_selection_text<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_selection_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_misspelled_word<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_misspelled_word(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_dictionary_suggestions<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-        suggestions: *mut _cef_string_list_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_suggestions) = (self_, suggestions);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_suggestions = if arg_suggestions.is_null() {
-            None
-        } else {
-            Some(arg_suggestions.into())
-        };
-        let arg_suggestions = arg_suggestions.as_mut();
-        let result = ImplContextMenuParams::get_dictionary_suggestions(
-            &arg_self_.interface,
-            arg_suggestions,
-        );
-        result.into()
-    }
-    extern "C" fn is_editable<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::is_editable(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_spell_check_enabled<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::is_spell_check_enabled(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_edit_state_flags<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> cef_context_menu_edit_state_flags_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::get_edit_state_flags(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_custom_menu<I: ImplContextMenuParams>(
-        self_: *mut _cef_context_menu_params_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplContextMenuParams::is_custom_menu(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplContextMenuParams for ContextMenuParams {
     fn get_xcoord(&self) -> ::std::os::raw::c_int {
@@ -25817,56 +17354,10 @@ impl Default for ContextMenuParams {
 /// See [_cef_file_dialog_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct FileDialogCallback(RefGuard<_cef_file_dialog_callback_t>);
-impl FileDialogCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapFileDialogCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplFileDialogCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapFileDialogCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_file_dialog_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapFileDialogCallback: ImplFileDialogCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_file_dialog_callback_t, Self>);
-}
 pub trait ImplFileDialogCallback: Clone + Sized + Rc {
-    fn cont(&self, file_paths: Option<&mut CefStringList>) {}
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_file_dialog_callback_t) {
-        impl_cef_file_dialog_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, file_paths: Option<&mut CefStringList>);
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_file_dialog_callback_t;
-}
-mod impl_cef_file_dialog_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplFileDialogCallback>(object: &mut _cef_file_dialog_callback_t) {
-        object.cont = Some(cont::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn cont<I: ImplFileDialogCallback>(
-        self_: *mut _cef_file_dialog_callback_t,
-        file_paths: *mut _cef_string_list_t,
-    ) {
-        let (arg_self_, arg_file_paths) = (self_, file_paths);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_file_paths = if arg_file_paths.is_null() {
-            None
-        } else {
-            Some(arg_file_paths.into())
-        };
-        let arg_file_paths = arg_file_paths.as_mut();
-        let result = ImplFileDialogCallback::cont(&arg_self_.interface, arg_file_paths);
-    }
-    extern "C" fn cancel<I: ImplFileDialogCallback>(self_: *mut _cef_file_dialog_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFileDialogCallback::cancel(&arg_self_.interface);
-    }
 }
 impl ImplFileDialogCallback for FileDialogCallback {
     fn cont(&self, file_paths: Option<&mut CefStringList>) {
@@ -26919,265 +18410,27 @@ impl Default for DisplayHandler {
 /// See [_cef_download_item_t] for more documentation.
 #[derive(Clone)]
 pub struct DownloadItem(RefGuard<_cef_download_item_t>);
-impl DownloadItem {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapDownloadItem,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplDownloadItem>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapDownloadItem>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_download_item_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapDownloadItem: ImplDownloadItem {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_download_item_t, Self>);
-}
 pub trait ImplDownloadItem: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_in_progress(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_complete(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_canceled(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_interrupted(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_interrupt_reason(&self) -> DownloadInterruptReason {
-        Default::default()
-    }
-    fn get_current_speed(&self) -> i64 {
-        Default::default()
-    }
-    fn get_percent_complete(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_total_bytes(&self) -> i64 {
-        Default::default()
-    }
-    fn get_received_bytes(&self) -> i64 {
-        Default::default()
-    }
-    fn get_start_time(&self) -> Basetime {
-        Default::default()
-    }
-    fn get_end_time(&self) -> Basetime {
-        Default::default()
-    }
-    fn get_full_path(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_id(&self) -> u32 {
-        Default::default()
-    }
-    fn get_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_original_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_suggested_file_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_content_disposition(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_mime_type(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_download_item_t) {
-        impl_cef_download_item_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_in_progress(&self) -> ::std::os::raw::c_int;
+    fn is_complete(&self) -> ::std::os::raw::c_int;
+    fn is_canceled(&self) -> ::std::os::raw::c_int;
+    fn is_interrupted(&self) -> ::std::os::raw::c_int;
+    fn get_interrupt_reason(&self) -> DownloadInterruptReason;
+    fn get_current_speed(&self) -> i64;
+    fn get_percent_complete(&self) -> ::std::os::raw::c_int;
+    fn get_total_bytes(&self) -> i64;
+    fn get_received_bytes(&self) -> i64;
+    fn get_start_time(&self) -> Basetime;
+    fn get_end_time(&self) -> Basetime;
+    fn get_full_path(&self) -> Option<CefStringUtf16>;
+    fn get_id(&self) -> u32;
+    fn get_url(&self) -> Option<CefStringUtf16>;
+    fn get_original_url(&self) -> Option<CefStringUtf16>;
+    fn get_suggested_file_name(&self) -> Option<CefStringUtf16>;
+    fn get_content_disposition(&self) -> Option<CefStringUtf16>;
+    fn get_mime_type(&self) -> Option<CefStringUtf16>;
     fn get_raw(&self) -> *mut _cef_download_item_t;
-}
-mod impl_cef_download_item_t {
-    use super::*;
-    pub fn init_methods<I: ImplDownloadItem>(object: &mut _cef_download_item_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_in_progress = Some(is_in_progress::<I>);
-        object.is_complete = Some(is_complete::<I>);
-        object.is_canceled = Some(is_canceled::<I>);
-        object.is_interrupted = Some(is_interrupted::<I>);
-        object.get_interrupt_reason = Some(get_interrupt_reason::<I>);
-        object.get_current_speed = Some(get_current_speed::<I>);
-        object.get_percent_complete = Some(get_percent_complete::<I>);
-        object.get_total_bytes = Some(get_total_bytes::<I>);
-        object.get_received_bytes = Some(get_received_bytes::<I>);
-        object.get_start_time = Some(get_start_time::<I>);
-        object.get_end_time = Some(get_end_time::<I>);
-        object.get_full_path = Some(get_full_path::<I>);
-        object.get_id = Some(get_id::<I>);
-        object.get_url = Some(get_url::<I>);
-        object.get_original_url = Some(get_original_url::<I>);
-        object.get_suggested_file_name = Some(get_suggested_file_name::<I>);
-        object.get_content_disposition = Some(get_content_disposition::<I>);
-        object.get_mime_type = Some(get_mime_type::<I>);
-    }
-    extern "C" fn is_valid<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_in_progress<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::is_in_progress(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_complete<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::is_complete(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_canceled<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::is_canceled(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_interrupted<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::is_interrupted(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_interrupt_reason<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> cef_download_interrupt_reason_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_interrupt_reason(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_current_speed<I: ImplDownloadItem>(self_: *mut _cef_download_item_t) -> i64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_current_speed(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_percent_complete<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_percent_complete(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_total_bytes<I: ImplDownloadItem>(self_: *mut _cef_download_item_t) -> i64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_total_bytes(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_received_bytes<I: ImplDownloadItem>(self_: *mut _cef_download_item_t) -> i64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_received_bytes(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_start_time<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> _cef_basetime_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_start_time(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_end_time<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> _cef_basetime_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_end_time(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_full_path<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_full_path(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_id<I: ImplDownloadItem>(self_: *mut _cef_download_item_t) -> u32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_id(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_url<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_original_url<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_original_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_suggested_file_name<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_suggested_file_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_content_disposition<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_content_disposition(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_mime_type<I: ImplDownloadItem>(
-        self_: *mut _cef_download_item_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItem::get_mime_type(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplDownloadItem for DownloadItem {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -27477,57 +18730,9 @@ impl Default for DownloadItem {
 /// See [_cef_before_download_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct BeforeDownloadCallback(RefGuard<_cef_before_download_callback_t>);
-impl BeforeDownloadCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapBeforeDownloadCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplBeforeDownloadCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapBeforeDownloadCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_before_download_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapBeforeDownloadCallback: ImplBeforeDownloadCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_before_download_callback_t, Self>);
-}
 pub trait ImplBeforeDownloadCallback: Clone + Sized + Rc {
-    fn cont(&self, download_path: Option<&CefStringUtf16>, show_dialog: ::std::os::raw::c_int) {}
-    fn init_methods(object: &mut _cef_before_download_callback_t) {
-        impl_cef_before_download_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, download_path: Option<&CefStringUtf16>, show_dialog: ::std::os::raw::c_int);
     fn get_raw(&self) -> *mut _cef_before_download_callback_t;
-}
-mod impl_cef_before_download_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplBeforeDownloadCallback>(
-        object: &mut _cef_before_download_callback_t,
-    ) {
-        object.cont = Some(cont::<I>);
-    }
-    extern "C" fn cont<I: ImplBeforeDownloadCallback>(
-        self_: *mut _cef_before_download_callback_t,
-        download_path: *const _cef_string_utf16_t,
-        show_dialog: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_download_path, arg_show_dialog) = (self_, download_path, show_dialog);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_download_path = if arg_download_path.is_null() {
-            None
-        } else {
-            Some(arg_download_path.into())
-        };
-        let arg_download_path = arg_download_path.as_ref();
-        let arg_show_dialog = arg_show_dialog.as_raw();
-        let result = ImplBeforeDownloadCallback::cont(
-            &arg_self_.interface,
-            arg_download_path,
-            arg_show_dialog,
-        );
-    }
 }
 impl ImplBeforeDownloadCallback for BeforeDownloadCallback {
     fn cont(&self, download_path: Option<&CefStringUtf16>, show_dialog: ::std::os::raw::c_int) {
@@ -27592,54 +18797,11 @@ impl Default for BeforeDownloadCallback {
 /// See [_cef_download_item_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct DownloadItemCallback(RefGuard<_cef_download_item_callback_t>);
-impl DownloadItemCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapDownloadItemCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplDownloadItemCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapDownloadItemCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_download_item_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapDownloadItemCallback: ImplDownloadItemCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_download_item_callback_t, Self>);
-}
 pub trait ImplDownloadItemCallback: Clone + Sized + Rc {
-    fn cancel(&self) {}
-    fn pause(&self) {}
-    fn resume(&self) {}
-    fn init_methods(object: &mut _cef_download_item_callback_t) {
-        impl_cef_download_item_callback_t::init_methods::<Self>(object);
-    }
+    fn cancel(&self);
+    fn pause(&self);
+    fn resume(&self);
     fn get_raw(&self) -> *mut _cef_download_item_callback_t;
-}
-mod impl_cef_download_item_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplDownloadItemCallback>(object: &mut _cef_download_item_callback_t) {
-        object.cancel = Some(cancel::<I>);
-        object.pause = Some(pause::<I>);
-        object.resume = Some(resume::<I>);
-    }
-    extern "C" fn cancel<I: ImplDownloadItemCallback>(self_: *mut _cef_download_item_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItemCallback::cancel(&arg_self_.interface);
-    }
-    extern "C" fn pause<I: ImplDownloadItemCallback>(self_: *mut _cef_download_item_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItemCallback::pause(&arg_self_.interface);
-    }
-    extern "C" fn resume<I: ImplDownloadItemCallback>(self_: *mut _cef_download_item_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDownloadItemCallback::resume(&arg_self_.interface);
-    }
 }
 impl ImplDownloadItemCallback for DownloadItemCallback {
     fn cancel(&self) {
@@ -28990,51 +20152,9 @@ impl Default for FrameHandler {
 /// See [_cef_jsdialog_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct JsdialogCallback(RefGuard<_cef_jsdialog_callback_t>);
-impl JsdialogCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapJsdialogCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplJsdialogCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapJsdialogCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_jsdialog_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapJsdialogCallback: ImplJsdialogCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_jsdialog_callback_t, Self>);
-}
 pub trait ImplJsdialogCallback: Clone + Sized + Rc {
-    fn cont(&self, success: ::std::os::raw::c_int, user_input: Option<&CefStringUtf16>) {}
-    fn init_methods(object: &mut _cef_jsdialog_callback_t) {
-        impl_cef_jsdialog_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, success: ::std::os::raw::c_int, user_input: Option<&CefStringUtf16>);
     fn get_raw(&self) -> *mut _cef_jsdialog_callback_t;
-}
-mod impl_cef_jsdialog_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplJsdialogCallback>(object: &mut _cef_jsdialog_callback_t) {
-        object.cont = Some(cont::<I>);
-    }
-    extern "C" fn cont<I: ImplJsdialogCallback>(
-        self_: *mut _cef_jsdialog_callback_t,
-        success: ::std::os::raw::c_int,
-        user_input: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_success, arg_user_input) = (self_, success, user_input);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_success = arg_success.as_raw();
-        let arg_user_input = if arg_user_input.is_null() {
-            None
-        } else {
-            Some(arg_user_input.into())
-        };
-        let arg_user_input = arg_user_input.as_ref();
-        let result = ImplJsdialogCallback::cont(&arg_self_.interface, arg_success, arg_user_input);
-    }
 }
 impl ImplJsdialogCallback for JsdialogCallback {
     fn cont(&self, success: ::std::os::raw::c_int, user_input: Option<&CefStringUtf16>) {
@@ -30732,51 +21852,10 @@ impl Default for LoadHandler {
 /// See [_cef_media_access_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaAccessCallback(RefGuard<_cef_media_access_callback_t>);
-impl MediaAccessCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMediaAccessCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMediaAccessCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMediaAccessCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_media_access_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMediaAccessCallback: ImplMediaAccessCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_media_access_callback_t, Self>);
-}
 pub trait ImplMediaAccessCallback: Clone + Sized + Rc {
-    fn cont(&self, allowed_permissions: u32) {}
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_media_access_callback_t) {
-        impl_cef_media_access_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, allowed_permissions: u32);
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_media_access_callback_t;
-}
-mod impl_cef_media_access_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplMediaAccessCallback>(object: &mut _cef_media_access_callback_t) {
-        object.cont = Some(cont::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn cont<I: ImplMediaAccessCallback>(
-        self_: *mut _cef_media_access_callback_t,
-        allowed_permissions: u32,
-    ) {
-        let (arg_self_, arg_allowed_permissions) = (self_, allowed_permissions);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_allowed_permissions = arg_allowed_permissions.as_raw();
-        let result = ImplMediaAccessCallback::cont(&arg_self_.interface, arg_allowed_permissions);
-    }
-    extern "C" fn cancel<I: ImplMediaAccessCallback>(self_: *mut _cef_media_access_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMediaAccessCallback::cancel(&arg_self_.interface);
-    }
 }
 impl ImplMediaAccessCallback for MediaAccessCallback {
     fn cont(&self, allowed_permissions: u32) {
@@ -30850,46 +21929,9 @@ impl Default for MediaAccessCallback {
 /// See [_cef_permission_prompt_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct PermissionPromptCallback(RefGuard<_cef_permission_prompt_callback_t>);
-impl PermissionPromptCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPermissionPromptCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPermissionPromptCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPermissionPromptCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_permission_prompt_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPermissionPromptCallback: ImplPermissionPromptCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_permission_prompt_callback_t, Self>);
-}
 pub trait ImplPermissionPromptCallback: Clone + Sized + Rc {
-    fn cont(&self, result: PermissionRequestResult) {}
-    fn init_methods(object: &mut _cef_permission_prompt_callback_t) {
-        impl_cef_permission_prompt_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, result: PermissionRequestResult);
     fn get_raw(&self) -> *mut _cef_permission_prompt_callback_t;
-}
-mod impl_cef_permission_prompt_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplPermissionPromptCallback>(
-        object: &mut _cef_permission_prompt_callback_t,
-    ) {
-        object.cont = Some(cont::<I>);
-    }
-    extern "C" fn cont<I: ImplPermissionPromptCallback>(
-        self_: *mut _cef_permission_prompt_callback_t,
-        result: cef_permission_request_result_t,
-    ) {
-        let (arg_self_, arg_result) = (self_, result);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_result = arg_result.as_raw();
-        let result = ImplPermissionPromptCallback::cont(&arg_self_.interface, arg_result);
-    }
 }
 impl ImplPermissionPromptCallback for PermissionPromptCallback {
     fn cont(&self, result: PermissionRequestResult) {
@@ -31317,354 +22359,35 @@ impl Default for PermissionHandler {
 /// See [_cef_print_settings_t] for more documentation.
 #[derive(Clone)]
 pub struct PrintSettings(RefGuard<_cef_print_settings_t>);
-impl PrintSettings {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPrintSettings,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPrintSettings>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPrintSettings>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_print_settings_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPrintSettings: ImplPrintSettings {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_print_settings_t, Self>);
-}
 pub trait ImplPrintSettings: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_orientation(&self, landscape: ::std::os::raw::c_int) {}
-    fn is_landscape(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn set_orientation(&self, landscape: ::std::os::raw::c_int);
+    fn is_landscape(&self) -> ::std::os::raw::c_int;
     fn set_printer_printable_area(
         &self,
         physical_size_device_units: Option<&Size>,
         printable_area_device_units: Option<&Rect>,
         landscape_needs_flip: ::std::os::raw::c_int,
-    ) {
-    }
-    fn set_device_name(&self, name: Option<&CefStringUtf16>) {}
-    fn get_device_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_dpi(&self, dpi: ::std::os::raw::c_int) {}
-    fn get_dpi(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_page_ranges(&self, ranges_count: usize, ranges: Option<&Range>) {}
-    fn get_page_ranges_count(&self) -> usize {
-        Default::default()
-    }
-    fn get_page_ranges(&self, ranges_count: Option<&mut usize>, ranges: Option<&mut Range>) {}
-    fn set_selection_only(&self, selection_only: ::std::os::raw::c_int) {}
-    fn is_selection_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_collate(&self, collate: ::std::os::raw::c_int) {}
-    fn will_collate(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_color_model(&self, model: ColorModel) {}
-    fn get_color_model(&self) -> ColorModel {
-        Default::default()
-    }
-    fn set_copies(&self, copies: ::std::os::raw::c_int) {}
-    fn get_copies(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_duplex_mode(&self, mode: DuplexMode) {}
-    fn get_duplex_mode(&self) -> DuplexMode {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_print_settings_t) {
-        impl_cef_print_settings_t::init_methods::<Self>(object);
-    }
+    );
+    fn set_device_name(&self, name: Option<&CefStringUtf16>);
+    fn get_device_name(&self) -> Option<CefStringUtf16>;
+    fn set_dpi(&self, dpi: ::std::os::raw::c_int);
+    fn get_dpi(&self) -> ::std::os::raw::c_int;
+    fn set_page_ranges(&self, ranges_count: usize, ranges: Option<&Range>);
+    fn get_page_ranges_count(&self) -> usize;
+    fn get_page_ranges(&self, ranges_count: Option<&mut usize>, ranges: Option<&mut Range>);
+    fn set_selection_only(&self, selection_only: ::std::os::raw::c_int);
+    fn is_selection_only(&self) -> ::std::os::raw::c_int;
+    fn set_collate(&self, collate: ::std::os::raw::c_int);
+    fn will_collate(&self) -> ::std::os::raw::c_int;
+    fn set_color_model(&self, model: ColorModel);
+    fn get_color_model(&self) -> ColorModel;
+    fn set_copies(&self, copies: ::std::os::raw::c_int);
+    fn get_copies(&self) -> ::std::os::raw::c_int;
+    fn set_duplex_mode(&self, mode: DuplexMode);
+    fn get_duplex_mode(&self) -> DuplexMode;
     fn get_raw(&self) -> *mut _cef_print_settings_t;
-}
-mod impl_cef_print_settings_t {
-    use super::*;
-    pub fn init_methods<I: ImplPrintSettings>(object: &mut _cef_print_settings_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.set_orientation = Some(set_orientation::<I>);
-        object.is_landscape = Some(is_landscape::<I>);
-        object.set_printer_printable_area = Some(set_printer_printable_area::<I>);
-        object.set_device_name = Some(set_device_name::<I>);
-        object.get_device_name = Some(get_device_name::<I>);
-        object.set_dpi = Some(set_dpi::<I>);
-        object.get_dpi = Some(get_dpi::<I>);
-        object.set_page_ranges = Some(set_page_ranges::<I>);
-        object.get_page_ranges_count = Some(get_page_ranges_count::<I>);
-        object.get_page_ranges = Some(get_page_ranges::<I>);
-        object.set_selection_only = Some(set_selection_only::<I>);
-        object.is_selection_only = Some(is_selection_only::<I>);
-        object.set_collate = Some(set_collate::<I>);
-        object.will_collate = Some(will_collate::<I>);
-        object.set_color_model = Some(set_color_model::<I>);
-        object.get_color_model = Some(get_color_model::<I>);
-        object.set_copies = Some(set_copies::<I>);
-        object.get_copies = Some(get_copies::<I>);
-        object.set_duplex_mode = Some(set_duplex_mode::<I>);
-        object.get_duplex_mode = Some(get_duplex_mode::<I>);
-    }
-    extern "C" fn is_valid<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_read_only<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_orientation<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        landscape: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_landscape) = (self_, landscape);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_landscape = arg_landscape.as_raw();
-        let result = ImplPrintSettings::set_orientation(&arg_self_.interface, arg_landscape);
-    }
-    extern "C" fn is_landscape<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::is_landscape(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_printer_printable_area<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        physical_size_device_units: *const _cef_size_t,
-        printable_area_device_units: *const _cef_rect_t,
-        landscape_needs_flip: ::std::os::raw::c_int,
-    ) {
-        let (
-            arg_self_,
-            arg_physical_size_device_units,
-            arg_printable_area_device_units,
-            arg_landscape_needs_flip,
-        ) = (
-            self_,
-            physical_size_device_units,
-            printable_area_device_units,
-            landscape_needs_flip,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_physical_size_device_units = if arg_physical_size_device_units.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_physical_size_device_units))
-        };
-        let arg_physical_size_device_units = arg_physical_size_device_units
-            .as_ref()
-            .map(|arg| arg.as_ref());
-        let arg_printable_area_device_units = if arg_printable_area_device_units.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Rect>::from(arg_printable_area_device_units))
-        };
-        let arg_printable_area_device_units = arg_printable_area_device_units
-            .as_ref()
-            .map(|arg| arg.as_ref());
-        let arg_landscape_needs_flip = arg_landscape_needs_flip.as_raw();
-        let result = ImplPrintSettings::set_printer_printable_area(
-            &arg_self_.interface,
-            arg_physical_size_device_units,
-            arg_printable_area_device_units,
-            arg_landscape_needs_flip,
-        );
-    }
-    extern "C" fn set_device_name<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        name: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplPrintSettings::set_device_name(&arg_self_.interface, arg_name);
-    }
-    extern "C" fn get_device_name<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::get_device_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_dpi<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        dpi: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_dpi) = (self_, dpi);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_dpi = arg_dpi.as_raw();
-        let result = ImplPrintSettings::set_dpi(&arg_self_.interface, arg_dpi);
-    }
-    extern "C" fn get_dpi<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::get_dpi(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_page_ranges<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        ranges_count: usize,
-        ranges: *const _cef_range_t,
-    ) {
-        let (arg_self_, arg_ranges_count, arg_ranges) = (self_, ranges_count, ranges);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_ranges_count = arg_ranges_count.as_raw();
-        let arg_ranges = if arg_ranges.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_ranges))
-        };
-        let arg_ranges = arg_ranges.as_ref().map(|arg| arg.as_ref());
-        let result =
-            ImplPrintSettings::set_page_ranges(&arg_self_.interface, arg_ranges_count, arg_ranges);
-    }
-    extern "C" fn get_page_ranges_count<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::get_page_ranges_count(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_page_ranges<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        ranges_count: *mut usize,
-        ranges: *mut _cef_range_t,
-    ) {
-        let (arg_self_, arg_ranges_count, arg_ranges) = (self_, ranges_count, ranges);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_ranges_count = if arg_ranges_count.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<usize>::from(arg_ranges_count))
-        };
-        let arg_ranges_count = arg_ranges_count.as_mut().map(|arg| arg.as_mut());
-        let mut arg_ranges = if arg_ranges.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_ranges))
-        };
-        let arg_ranges = arg_ranges.as_mut().map(|arg| arg.as_mut());
-        let result =
-            ImplPrintSettings::get_page_ranges(&arg_self_.interface, arg_ranges_count, arg_ranges);
-    }
-    extern "C" fn set_selection_only<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        selection_only: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_selection_only) = (self_, selection_only);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_selection_only = arg_selection_only.as_raw();
-        let result =
-            ImplPrintSettings::set_selection_only(&arg_self_.interface, arg_selection_only);
-    }
-    extern "C" fn is_selection_only<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::is_selection_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_collate<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        collate: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_collate) = (self_, collate);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_collate = arg_collate.as_raw();
-        let result = ImplPrintSettings::set_collate(&arg_self_.interface, arg_collate);
-    }
-    extern "C" fn will_collate<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::will_collate(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_color_model<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        model: cef_color_model_t,
-    ) {
-        let (arg_self_, arg_model) = (self_, model);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_model = arg_model.as_raw();
-        let result = ImplPrintSettings::set_color_model(&arg_self_.interface, arg_model);
-    }
-    extern "C" fn get_color_model<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> cef_color_model_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::get_color_model(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_copies<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        copies: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_copies) = (self_, copies);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_copies = arg_copies.as_raw();
-        let result = ImplPrintSettings::set_copies(&arg_self_.interface, arg_copies);
-    }
-    extern "C" fn get_copies<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::get_copies(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_duplex_mode<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-        mode: cef_duplex_mode_t,
-    ) {
-        let (arg_self_, arg_mode) = (self_, mode);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_mode = arg_mode.as_raw();
-        let result = ImplPrintSettings::set_duplex_mode(&arg_self_.interface, arg_mode);
-    }
-    extern "C" fn get_duplex_mode<I: ImplPrintSettings>(
-        self_: *mut _cef_print_settings_t,
-    ) -> cef_duplex_mode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintSettings::get_duplex_mode(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplPrintSettings for PrintSettings {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -32046,53 +22769,10 @@ impl Default for PrintSettings {
 /// See [_cef_print_dialog_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct PrintDialogCallback(RefGuard<_cef_print_dialog_callback_t>);
-impl PrintDialogCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPrintDialogCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPrintDialogCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPrintDialogCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_print_dialog_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPrintDialogCallback: ImplPrintDialogCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_print_dialog_callback_t, Self>);
-}
 pub trait ImplPrintDialogCallback: Clone + Sized + Rc {
-    fn cont(&self, settings: Option<&mut impl ImplPrintSettings>) {}
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_print_dialog_callback_t) {
-        impl_cef_print_dialog_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, settings: Option<&mut impl ImplPrintSettings>);
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_print_dialog_callback_t;
-}
-mod impl_cef_print_dialog_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplPrintDialogCallback>(object: &mut _cef_print_dialog_callback_t) {
-        object.cont = Some(cont::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn cont<I: ImplPrintDialogCallback>(
-        self_: *mut _cef_print_dialog_callback_t,
-        settings: *mut _cef_print_settings_t,
-    ) {
-        let (arg_self_, arg_settings) = (self_, settings);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_settings = unsafe { arg_settings.as_mut() }
-            .map(|arg| PrintSettings(unsafe { RefGuard::from_raw(arg) }));
-        let arg_settings = arg_settings.as_mut();
-        let result = ImplPrintDialogCallback::cont(&arg_self_.interface, arg_settings);
-    }
-    extern "C" fn cancel<I: ImplPrintDialogCallback>(self_: *mut _cef_print_dialog_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintDialogCallback::cancel(&arg_self_.interface);
-    }
 }
 impl ImplPrintDialogCallback for PrintDialogCallback {
     fn cont(&self, settings: Option<&mut impl ImplPrintSettings>) {
@@ -32171,40 +22851,9 @@ impl Default for PrintDialogCallback {
 /// See [_cef_print_job_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct PrintJobCallback(RefGuard<_cef_print_job_callback_t>);
-impl PrintJobCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPrintJobCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPrintJobCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPrintJobCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_print_job_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPrintJobCallback: ImplPrintJobCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_print_job_callback_t, Self>);
-}
 pub trait ImplPrintJobCallback: Clone + Sized + Rc {
-    fn cont(&self) {}
-    fn init_methods(object: &mut _cef_print_job_callback_t) {
-        impl_cef_print_job_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self);
     fn get_raw(&self) -> *mut _cef_print_job_callback_t;
-}
-mod impl_cef_print_job_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplPrintJobCallback>(object: &mut _cef_print_job_callback_t) {
-        object.cont = Some(cont::<I>);
-    }
-    extern "C" fn cont<I: ImplPrintJobCallback>(self_: *mut _cef_print_job_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPrintJobCallback::cont(&arg_self_.interface);
-    }
 }
 impl ImplPrintJobCallback for PrintJobCallback {
     fn cont(&self) {
@@ -33991,63 +24640,10 @@ impl Default for RenderHandler {
 /// See [_cef_auth_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct AuthCallback(RefGuard<_cef_auth_callback_t>);
-impl AuthCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapAuthCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplAuthCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapAuthCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_auth_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapAuthCallback: ImplAuthCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_auth_callback_t, Self>);
-}
 pub trait ImplAuthCallback: Clone + Sized + Rc {
-    fn cont(&self, username: Option<&CefStringUtf16>, password: Option<&CefStringUtf16>) {}
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_auth_callback_t) {
-        impl_cef_auth_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, username: Option<&CefStringUtf16>, password: Option<&CefStringUtf16>);
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_auth_callback_t;
-}
-mod impl_cef_auth_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplAuthCallback>(object: &mut _cef_auth_callback_t) {
-        object.cont = Some(cont::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn cont<I: ImplAuthCallback>(
-        self_: *mut _cef_auth_callback_t,
-        username: *const _cef_string_utf16_t,
-        password: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_username, arg_password) = (self_, username, password);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_username = if arg_username.is_null() {
-            None
-        } else {
-            Some(arg_username.into())
-        };
-        let arg_username = arg_username.as_ref();
-        let arg_password = if arg_password.is_null() {
-            None
-        } else {
-            Some(arg_password.into())
-        };
-        let arg_password = arg_password.as_ref();
-        let result = ImplAuthCallback::cont(&arg_self_.interface, arg_username, arg_password);
-    }
-    extern "C" fn cancel<I: ImplAuthCallback>(self_: *mut _cef_auth_callback_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplAuthCallback::cancel(&arg_self_.interface);
-    }
 }
 impl ImplAuthCallback for AuthCallback {
     fn cont(&self, username: Option<&CefStringUtf16>, password: Option<&CefStringUtf16>) {
@@ -34126,295 +24722,30 @@ impl Default for AuthCallback {
 /// See [_cef_response_t] for more documentation.
 #[derive(Clone)]
 pub struct Response(RefGuard<_cef_response_t>);
-impl Response {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapResponse,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplResponse>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapResponse>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_response_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapResponse: ImplResponse {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_response_t, Self>);
-}
 pub trait ImplResponse: Clone + Sized + Rc {
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_error(&self) -> Errorcode {
-        Default::default()
-    }
-    fn set_error(&self, error: Errorcode) {}
-    fn get_status(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_status(&self, status: ::std::os::raw::c_int) {}
-    fn get_status_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_status_text(&self, status_text: Option<&CefStringUtf16>) {}
-    fn get_mime_type(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_mime_type(&self, mime_type: Option<&CefStringUtf16>) {}
-    fn get_charset(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_charset(&self, charset: Option<&CefStringUtf16>) {}
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
-        Default::default()
-    }
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn get_error(&self) -> Errorcode;
+    fn set_error(&self, error: Errorcode);
+    fn get_status(&self) -> ::std::os::raw::c_int;
+    fn set_status(&self, status: ::std::os::raw::c_int);
+    fn get_status_text(&self) -> Option<CefStringUtf16>;
+    fn set_status_text(&self, status_text: Option<&CefStringUtf16>);
+    fn get_mime_type(&self) -> Option<CefStringUtf16>;
+    fn set_mime_type(&self, mime_type: Option<&CefStringUtf16>);
+    fn get_charset(&self) -> Option<CefStringUtf16>;
+    fn set_charset(&self, charset: Option<&CefStringUtf16>);
+    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
     fn set_header_by_name(
         &self,
         name: Option<&CefStringUtf16>,
         value: Option<&CefStringUtf16>,
         overwrite: ::std::os::raw::c_int,
-    ) {
-    }
-    fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>) {}
-    fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>) {}
-    fn get_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_url(&self, url: Option<&CefStringUtf16>) {}
-    fn init_methods(object: &mut _cef_response_t) {
-        impl_cef_response_t::init_methods::<Self>(object);
-    }
+    );
+    fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>);
+    fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>);
+    fn get_url(&self) -> Option<CefStringUtf16>;
+    fn set_url(&self, url: Option<&CefStringUtf16>);
     fn get_raw(&self) -> *mut _cef_response_t;
-}
-mod impl_cef_response_t {
-    use super::*;
-    pub fn init_methods<I: ImplResponse>(object: &mut _cef_response_t) {
-        object.is_read_only = Some(is_read_only::<I>);
-        object.get_error = Some(get_error::<I>);
-        object.set_error = Some(set_error::<I>);
-        object.get_status = Some(get_status::<I>);
-        object.set_status = Some(set_status::<I>);
-        object.get_status_text = Some(get_status_text::<I>);
-        object.set_status_text = Some(set_status_text::<I>);
-        object.get_mime_type = Some(get_mime_type::<I>);
-        object.set_mime_type = Some(set_mime_type::<I>);
-        object.get_charset = Some(get_charset::<I>);
-        object.set_charset = Some(set_charset::<I>);
-        object.get_header_by_name = Some(get_header_by_name::<I>);
-        object.set_header_by_name = Some(set_header_by_name::<I>);
-        object.get_header_map = Some(get_header_map::<I>);
-        object.set_header_map = Some(set_header_map::<I>);
-        object.get_url = Some(get_url::<I>);
-        object.set_url = Some(set_url::<I>);
-    }
-    extern "C" fn is_read_only<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplResponse::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_error<I: ImplResponse>(self_: *mut _cef_response_t) -> cef_errorcode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplResponse::get_error(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_error<I: ImplResponse>(self_: *mut _cef_response_t, error: cef_errorcode_t) {
-        let (arg_self_, arg_error) = (self_, error);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_error = arg_error.as_raw();
-        let result = ImplResponse::set_error(&arg_self_.interface, arg_error);
-    }
-    extern "C" fn get_status<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplResponse::get_status(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_status<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        status: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_status) = (self_, status);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_status = arg_status.as_raw();
-        let result = ImplResponse::set_status(&arg_self_.interface, arg_status);
-    }
-    extern "C" fn get_status_text<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplResponse::get_status_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_status_text<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        status_text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_status_text) = (self_, status_text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_status_text = if arg_status_text.is_null() {
-            None
-        } else {
-            Some(arg_status_text.into())
-        };
-        let arg_status_text = arg_status_text.as_ref();
-        let result = ImplResponse::set_status_text(&arg_self_.interface, arg_status_text);
-    }
-    extern "C" fn get_mime_type<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplResponse::get_mime_type(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_mime_type<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        mime_type: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_mime_type) = (self_, mime_type);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_mime_type = if arg_mime_type.is_null() {
-            None
-        } else {
-            Some(arg_mime_type.into())
-        };
-        let arg_mime_type = arg_mime_type.as_ref();
-        let result = ImplResponse::set_mime_type(&arg_self_.interface, arg_mime_type);
-    }
-    extern "C" fn get_charset<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplResponse::get_charset(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_charset<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        charset: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_charset) = (self_, charset);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_charset = if arg_charset.is_null() {
-            None
-        } else {
-            Some(arg_charset.into())
-        };
-        let arg_charset = arg_charset.as_ref();
-        let result = ImplResponse::set_charset(&arg_self_.interface, arg_charset);
-    }
-    extern "C" fn get_header_by_name<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        name: *const _cef_string_utf16_t,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplResponse::get_header_by_name(&arg_self_.interface, arg_name);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_header_by_name<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        name: *const _cef_string_utf16_t,
-        value: *const _cef_string_utf16_t,
-        overwrite: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_name, arg_value, arg_overwrite) = (self_, name, value, overwrite);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let arg_overwrite = arg_overwrite.as_raw();
-        let result = ImplResponse::set_header_by_name(
-            &arg_self_.interface,
-            arg_name,
-            arg_value,
-            arg_overwrite,
-        );
-    }
-    extern "C" fn get_header_map<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        header_map: *mut _cef_string_multimap_t,
-    ) {
-        let (arg_self_, arg_header_map) = (self_, header_map);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_header_map = if arg_header_map.is_null() {
-            None
-        } else {
-            Some(arg_header_map.into())
-        };
-        let arg_header_map = arg_header_map.as_mut();
-        let result = ImplResponse::get_header_map(&arg_self_.interface, arg_header_map);
-    }
-    extern "C" fn set_header_map<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        header_map: *mut _cef_string_multimap_t,
-    ) {
-        let (arg_self_, arg_header_map) = (self_, header_map);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_header_map = if arg_header_map.is_null() {
-            None
-        } else {
-            Some(arg_header_map.into())
-        };
-        let arg_header_map = arg_header_map.as_mut();
-        let result = ImplResponse::set_header_map(&arg_self_.interface, arg_header_map);
-    }
-    extern "C" fn get_url<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplResponse::get_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_url<I: ImplResponse>(
-        self_: *mut _cef_response_t,
-        url: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_url) = (self_, url);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_url = if arg_url.is_null() {
-            None
-        } else {
-            Some(arg_url.into())
-        };
-        let arg_url = arg_url.as_ref();
-        let result = ImplResponse::set_url(&arg_self_.interface, arg_url);
-    }
 }
 impl ImplResponse for Response {
     fn is_read_only(&self) -> ::std::os::raw::c_int {
@@ -34725,44 +25056,9 @@ impl Default for Response {
 /// See [_cef_resource_skip_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct ResourceSkipCallback(RefGuard<_cef_resource_skip_callback_t>);
-impl ResourceSkipCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapResourceSkipCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplResourceSkipCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapResourceSkipCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_resource_skip_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapResourceSkipCallback: ImplResourceSkipCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_resource_skip_callback_t, Self>);
-}
 pub trait ImplResourceSkipCallback: Clone + Sized + Rc {
-    fn cont(&self, bytes_skipped: i64) {}
-    fn init_methods(object: &mut _cef_resource_skip_callback_t) {
-        impl_cef_resource_skip_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, bytes_skipped: i64);
     fn get_raw(&self) -> *mut _cef_resource_skip_callback_t;
-}
-mod impl_cef_resource_skip_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplResourceSkipCallback>(object: &mut _cef_resource_skip_callback_t) {
-        object.cont = Some(cont::<I>);
-    }
-    extern "C" fn cont<I: ImplResourceSkipCallback>(
-        self_: *mut _cef_resource_skip_callback_t,
-        bytes_skipped: i64,
-    ) {
-        let (arg_self_, arg_bytes_skipped) = (self_, bytes_skipped);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_bytes_skipped = arg_bytes_skipped.as_raw();
-        let result = ImplResourceSkipCallback::cont(&arg_self_.interface, arg_bytes_skipped);
-    }
 }
 impl ImplResourceSkipCallback for ResourceSkipCallback {
     fn cont(&self, bytes_skipped: i64) {
@@ -34824,44 +25120,9 @@ impl Default for ResourceSkipCallback {
 /// See [_cef_resource_read_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct ResourceReadCallback(RefGuard<_cef_resource_read_callback_t>);
-impl ResourceReadCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapResourceReadCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplResourceReadCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapResourceReadCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_resource_read_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapResourceReadCallback: ImplResourceReadCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_resource_read_callback_t, Self>);
-}
 pub trait ImplResourceReadCallback: Clone + Sized + Rc {
-    fn cont(&self, bytes_read: ::std::os::raw::c_int) {}
-    fn init_methods(object: &mut _cef_resource_read_callback_t) {
-        impl_cef_resource_read_callback_t::init_methods::<Self>(object);
-    }
+    fn cont(&self, bytes_read: ::std::os::raw::c_int);
     fn get_raw(&self) -> *mut _cef_resource_read_callback_t;
-}
-mod impl_cef_resource_read_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplResourceReadCallback>(object: &mut _cef_resource_read_callback_t) {
-        object.cont = Some(cont::<I>);
-    }
-    extern "C" fn cont<I: ImplResourceReadCallback>(
-        self_: *mut _cef_resource_read_callback_t,
-        bytes_read: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_bytes_read) = (self_, bytes_read);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_bytes_read = arg_bytes_read.as_raw();
-        let result = ImplResourceReadCallback::cont(&arg_self_.interface, arg_bytes_read);
-    }
 }
 impl ImplResourceReadCallback for ResourceReadCallback {
     fn cont(&self, bytes_read: ::std::os::raw::c_int) {
@@ -36763,57 +27024,10 @@ impl Default for CookieAccessFilter {
 /// See [_cef_sslinfo_t] for more documentation.
 #[derive(Clone)]
 pub struct Sslinfo(RefGuard<_cef_sslinfo_t>);
-impl Sslinfo {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapSslinfo,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplSslinfo>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapSslinfo>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_sslinfo_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapSslinfo: ImplSslinfo {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_sslinfo_t, Self>);
-}
 pub trait ImplSslinfo: Clone + Sized + Rc {
-    fn get_cert_status(&self) -> CertStatus {
-        Default::default()
-    }
-    fn get_x509_certificate(&self) -> Option<X509Certificate> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_sslinfo_t) {
-        impl_cef_sslinfo_t::init_methods::<Self>(object);
-    }
+    fn get_cert_status(&self) -> CertStatus;
+    fn get_x509_certificate(&self) -> Option<X509Certificate>;
     fn get_raw(&self) -> *mut _cef_sslinfo_t;
-}
-mod impl_cef_sslinfo_t {
-    use super::*;
-    pub fn init_methods<I: ImplSslinfo>(object: &mut _cef_sslinfo_t) {
-        object.get_cert_status = Some(get_cert_status::<I>);
-        object.get_x509_certificate = Some(get_x509_certificate::<I>);
-    }
-    extern "C" fn get_cert_status<I: ImplSslinfo>(self_: *mut _cef_sslinfo_t) -> cef_cert_status_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslinfo::get_cert_status(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_x509_certificate<I: ImplSslinfo>(
-        self_: *mut _cef_sslinfo_t,
-    ) -> *mut _cef_x509_certificate_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplSslinfo::get_x509_certificate(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplSslinfo for Sslinfo {
     fn get_cert_status(&self) -> CertStatus {
@@ -36889,53 +27103,10 @@ impl Default for Sslinfo {
 /// See [_cef_unresponsive_process_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct UnresponsiveProcessCallback(RefGuard<_cef_unresponsive_process_callback_t>);
-impl UnresponsiveProcessCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapUnresponsiveProcessCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplUnresponsiveProcessCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapUnresponsiveProcessCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_unresponsive_process_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapUnresponsiveProcessCallback: ImplUnresponsiveProcessCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_unresponsive_process_callback_t, Self>);
-}
 pub trait ImplUnresponsiveProcessCallback: Clone + Sized + Rc {
-    fn wait(&self) {}
-    fn terminate(&self) {}
-    fn init_methods(object: &mut _cef_unresponsive_process_callback_t) {
-        impl_cef_unresponsive_process_callback_t::init_methods::<Self>(object);
-    }
+    fn wait(&self);
+    fn terminate(&self);
     fn get_raw(&self) -> *mut _cef_unresponsive_process_callback_t;
-}
-mod impl_cef_unresponsive_process_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplUnresponsiveProcessCallback>(
-        object: &mut _cef_unresponsive_process_callback_t,
-    ) {
-        object.wait = Some(wait::<I>);
-        object.terminate = Some(terminate::<I>);
-    }
-    extern "C" fn wait<I: ImplUnresponsiveProcessCallback>(
-        self_: *mut _cef_unresponsive_process_callback_t,
-    ) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUnresponsiveProcessCallback::wait(&arg_self_.interface);
-    }
-    extern "C" fn terminate<I: ImplUnresponsiveProcessCallback>(
-        self_: *mut _cef_unresponsive_process_callback_t,
-    ) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUnresponsiveProcessCallback::terminate(&arg_self_.interface);
-    }
 }
 impl ImplUnresponsiveProcessCallback for UnresponsiveProcessCallback {
     fn wait(&self) {
@@ -37007,48 +27178,9 @@ impl Default for UnresponsiveProcessCallback {
 /// See [_cef_select_client_certificate_callback_t] for more documentation.
 #[derive(Clone)]
 pub struct SelectClientCertificateCallback(RefGuard<_cef_select_client_certificate_callback_t>);
-impl SelectClientCertificateCallback {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapSelectClientCertificateCallback,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplSelectClientCertificateCallback>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapSelectClientCertificateCallback>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_select_client_certificate_callback_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapSelectClientCertificateCallback: ImplSelectClientCertificateCallback {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_select_client_certificate_callback_t, Self>);
-}
 pub trait ImplSelectClientCertificateCallback: Clone + Sized + Rc {
-    fn select(&self, cert: Option<&mut impl ImplX509Certificate>) {}
-    fn init_methods(object: &mut _cef_select_client_certificate_callback_t) {
-        impl_cef_select_client_certificate_callback_t::init_methods::<Self>(object);
-    }
+    fn select(&self, cert: Option<&mut impl ImplX509Certificate>);
     fn get_raw(&self) -> *mut _cef_select_client_certificate_callback_t;
-}
-mod impl_cef_select_client_certificate_callback_t {
-    use super::*;
-    pub fn init_methods<I: ImplSelectClientCertificateCallback>(
-        object: &mut _cef_select_client_certificate_callback_t,
-    ) {
-        object.select = Some(select::<I>);
-    }
-    extern "C" fn select<I: ImplSelectClientCertificateCallback>(
-        self_: *mut _cef_select_client_certificate_callback_t,
-        cert: *mut _cef_x509_certificate_t,
-    ) {
-        let (arg_self_, arg_cert) = (self_, cert);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_cert = unsafe { arg_cert.as_mut() }
-            .map(|arg| X509Certificate(unsafe { RefGuard::from_raw(arg) }));
-        let arg_cert = arg_cert.as_mut();
-        let result = ImplSelectClientCertificateCallback::select(&arg_self_.interface, arg_cert);
-    }
 }
 impl ImplSelectClientCertificateCallback for SelectClientCertificateCallback {
     fn select(&self, cert: Option<&mut impl ImplX509Certificate>) {
@@ -38894,345 +29026,36 @@ impl Default for Client {
 /// See [_cef_command_line_t] for more documentation.
 #[derive(Clone)]
 pub struct CommandLine(RefGuard<_cef_command_line_t>);
-impl CommandLine {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapCommandLine,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplCommandLine>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapCommandLine>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_command_line_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapCommandLine: ImplCommandLine {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_command_line_t, Self>);
-}
 pub trait ImplCommandLine: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn copy(&self) -> Option<CommandLine> {
-        Default::default()
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn copy(&self) -> Option<CommandLine>;
     fn init_from_argv(
         &self,
         argc: ::std::os::raw::c_int,
         argv: *const *const ::std::os::raw::c_char,
-    ) {
-    }
-    fn init_from_string(&self, command_line: Option<&CefStringUtf16>) {}
-    fn reset(&self) {}
-    fn get_argv(&self, argv: Option<&mut CefStringList>) {}
-    fn get_command_line_string(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_program(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_program(&self, program: Option<&CefStringUtf16>) {}
-    fn has_switches(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_switch(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_switches(&self, switches: Option<&mut CefStringMap>) {}
-    fn append_switch(&self, name: Option<&CefStringUtf16>) {}
+    );
+    fn init_from_string(&self, command_line: Option<&CefStringUtf16>);
+    fn reset(&self);
+    fn get_argv(&self, argv: Option<&mut CefStringList>);
+    fn get_command_line_string(&self) -> Option<CefStringUtf16>;
+    fn get_program(&self) -> Option<CefStringUtf16>;
+    fn set_program(&self, program: Option<&CefStringUtf16>);
+    fn has_switches(&self) -> ::std::os::raw::c_int;
+    fn has_switch(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn get_switches(&self, switches: Option<&mut CefStringMap>);
+    fn append_switch(&self, name: Option<&CefStringUtf16>);
     fn append_switch_with_value(
         &self,
         name: Option<&CefStringUtf16>,
         value: Option<&CefStringUtf16>,
-    ) {
-    }
-    fn has_arguments(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_arguments(&self, arguments: Option<&mut CefStringList>) {}
-    fn append_argument(&self, argument: Option<&CefStringUtf16>) {}
-    fn prepend_wrapper(&self, wrapper: Option<&CefStringUtf16>) {}
-    fn init_methods(object: &mut _cef_command_line_t) {
-        impl_cef_command_line_t::init_methods::<Self>(object);
-    }
+    );
+    fn has_arguments(&self) -> ::std::os::raw::c_int;
+    fn get_arguments(&self, arguments: Option<&mut CefStringList>);
+    fn append_argument(&self, argument: Option<&CefStringUtf16>);
+    fn prepend_wrapper(&self, wrapper: Option<&CefStringUtf16>);
     fn get_raw(&self) -> *mut _cef_command_line_t;
-}
-mod impl_cef_command_line_t {
-    use super::*;
-    pub fn init_methods<I: ImplCommandLine>(object: &mut _cef_command_line_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.copy = Some(copy::<I>);
-        object.init_from_argv = Some(init_from_argv::<I>);
-        object.init_from_string = Some(init_from_string::<I>);
-        object.reset = Some(reset::<I>);
-        object.get_argv = Some(get_argv::<I>);
-        object.get_command_line_string = Some(get_command_line_string::<I>);
-        object.get_program = Some(get_program::<I>);
-        object.set_program = Some(set_program::<I>);
-        object.has_switches = Some(has_switches::<I>);
-        object.has_switch = Some(has_switch::<I>);
-        object.get_switch_value = Some(get_switch_value::<I>);
-        object.get_switches = Some(get_switches::<I>);
-        object.append_switch = Some(append_switch::<I>);
-        object.append_switch_with_value = Some(append_switch_with_value::<I>);
-        object.has_arguments = Some(has_arguments::<I>);
-        object.get_arguments = Some(get_arguments::<I>);
-        object.append_argument = Some(append_argument::<I>);
-        object.prepend_wrapper = Some(prepend_wrapper::<I>);
-    }
-    extern "C" fn is_valid<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_read_only<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn copy<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-    ) -> *mut _cef_command_line_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::copy(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn init_from_argv<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        argc: ::std::os::raw::c_int,
-        argv: *const *const ::std::os::raw::c_char,
-    ) {
-        let (arg_self_, arg_argc, arg_argv) = (self_, argc, argv);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_argc = arg_argc.as_raw();
-        let arg_argv = arg_argv.as_raw();
-        let result = ImplCommandLine::init_from_argv(&arg_self_.interface, arg_argc, arg_argv);
-    }
-    extern "C" fn init_from_string<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        command_line: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_command_line) = (self_, command_line);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_line = if arg_command_line.is_null() {
-            None
-        } else {
-            Some(arg_command_line.into())
-        };
-        let arg_command_line = arg_command_line.as_ref();
-        let result = ImplCommandLine::init_from_string(&arg_self_.interface, arg_command_line);
-    }
-    extern "C" fn reset<I: ImplCommandLine>(self_: *mut _cef_command_line_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::reset(&arg_self_.interface);
-    }
-    extern "C" fn get_argv<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        argv: *mut _cef_string_list_t,
-    ) {
-        let (arg_self_, arg_argv) = (self_, argv);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_argv = if arg_argv.is_null() {
-            None
-        } else {
-            Some(arg_argv.into())
-        };
-        let arg_argv = arg_argv.as_mut();
-        let result = ImplCommandLine::get_argv(&arg_self_.interface, arg_argv);
-    }
-    extern "C" fn get_command_line_string<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::get_command_line_string(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_program<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::get_program(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_program<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        program: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_program) = (self_, program);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_program = if arg_program.is_null() {
-            None
-        } else {
-            Some(arg_program.into())
-        };
-        let arg_program = arg_program.as_ref();
-        let result = ImplCommandLine::set_program(&arg_self_.interface, arg_program);
-    }
-    extern "C" fn has_switches<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::has_switches(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_switch<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        name: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplCommandLine::has_switch(&arg_self_.interface, arg_name);
-        result.into()
-    }
-    extern "C" fn get_switch_value<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        name: *const _cef_string_utf16_t,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplCommandLine::get_switch_value(&arg_self_.interface, arg_name);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_switches<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        switches: *mut _cef_string_map_t,
-    ) {
-        let (arg_self_, arg_switches) = (self_, switches);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_switches = if arg_switches.is_null() {
-            None
-        } else {
-            Some(arg_switches.into())
-        };
-        let arg_switches = arg_switches.as_mut();
-        let result = ImplCommandLine::get_switches(&arg_self_.interface, arg_switches);
-    }
-    extern "C" fn append_switch<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        name: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplCommandLine::append_switch(&arg_self_.interface, arg_name);
-    }
-    extern "C" fn append_switch_with_value<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        name: *const _cef_string_utf16_t,
-        value: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_name, arg_value) = (self_, name, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let arg_value = if arg_value.is_null() {
-            None
-        } else {
-            Some(arg_value.into())
-        };
-        let arg_value = arg_value.as_ref();
-        let result =
-            ImplCommandLine::append_switch_with_value(&arg_self_.interface, arg_name, arg_value);
-    }
-    extern "C" fn has_arguments<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplCommandLine::has_arguments(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_arguments<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        arguments: *mut _cef_string_list_t,
-    ) {
-        let (arg_self_, arg_arguments) = (self_, arguments);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_arguments = if arg_arguments.is_null() {
-            None
-        } else {
-            Some(arg_arguments.into())
-        };
-        let arg_arguments = arg_arguments.as_mut();
-        let result = ImplCommandLine::get_arguments(&arg_self_.interface, arg_arguments);
-    }
-    extern "C" fn append_argument<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        argument: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_argument) = (self_, argument);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_argument = if arg_argument.is_null() {
-            None
-        } else {
-            Some(arg_argument.into())
-        };
-        let arg_argument = arg_argument.as_ref();
-        let result = ImplCommandLine::append_argument(&arg_self_.interface, arg_argument);
-    }
-    extern "C" fn prepend_wrapper<I: ImplCommandLine>(
-        self_: *mut _cef_command_line_t,
-        wrapper: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_wrapper) = (self_, wrapper);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_wrapper = if arg_wrapper.is_null() {
-            None
-        } else {
-            Some(arg_wrapper.into())
-        };
-        let arg_wrapper = arg_wrapper.as_ref();
-        let result = ImplCommandLine::prepend_wrapper(&arg_self_.interface, arg_wrapper);
-    }
 }
 impl ImplCommandLine for CommandLine {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -40282,114 +30105,17 @@ impl Default for Task {
 /// See [_cef_task_runner_t] for more documentation.
 #[derive(Clone)]
 pub struct TaskRunner(RefGuard<_cef_task_runner_t>);
-impl TaskRunner {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapTaskRunner,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplTaskRunner>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapTaskRunner>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_task_runner_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapTaskRunner: ImplTaskRunner {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_task_runner_t, Self>);
-}
 pub trait ImplTaskRunner: Clone + Sized + Rc {
-    fn is_same(&self, that: Option<&mut impl ImplTaskRunner>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn belongs_to_current_thread(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn belongs_to_thread(&self, thread_id: ThreadId) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn post_task(&self, task: Option<&mut impl ImplTask>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn is_same(&self, that: Option<&mut impl ImplTaskRunner>) -> ::std::os::raw::c_int;
+    fn belongs_to_current_thread(&self) -> ::std::os::raw::c_int;
+    fn belongs_to_thread(&self, thread_id: ThreadId) -> ::std::os::raw::c_int;
+    fn post_task(&self, task: Option<&mut impl ImplTask>) -> ::std::os::raw::c_int;
     fn post_delayed_task(
         &self,
         task: Option<&mut impl ImplTask>,
         delay_ms: i64,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_task_runner_t) {
-        impl_cef_task_runner_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_task_runner_t;
-}
-mod impl_cef_task_runner_t {
-    use super::*;
-    pub fn init_methods<I: ImplTaskRunner>(object: &mut _cef_task_runner_t) {
-        object.is_same = Some(is_same::<I>);
-        object.belongs_to_current_thread = Some(belongs_to_current_thread::<I>);
-        object.belongs_to_thread = Some(belongs_to_thread::<I>);
-        object.post_task = Some(post_task::<I>);
-        object.post_delayed_task = Some(post_delayed_task::<I>);
-    }
-    extern "C" fn is_same<I: ImplTaskRunner>(
-        self_: *mut _cef_task_runner_t,
-        that: *mut _cef_task_runner_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| TaskRunner(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplTaskRunner::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn belongs_to_current_thread<I: ImplTaskRunner>(
-        self_: *mut _cef_task_runner_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTaskRunner::belongs_to_current_thread(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn belongs_to_thread<I: ImplTaskRunner>(
-        self_: *mut _cef_task_runner_t,
-        thread_id: cef_thread_id_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_thread_id) = (self_, thread_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_thread_id = arg_thread_id.as_raw();
-        let result = ImplTaskRunner::belongs_to_thread(&arg_self_.interface, arg_thread_id);
-        result.into()
-    }
-    extern "C" fn post_task<I: ImplTaskRunner>(
-        self_: *mut _cef_task_runner_t,
-        task: *mut _cef_task_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_task) = (self_, task);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_task =
-            unsafe { arg_task.as_mut() }.map(|arg| Task(unsafe { RefGuard::from_raw(arg) }));
-        let arg_task = arg_task.as_mut();
-        let result = ImplTaskRunner::post_task(&arg_self_.interface, arg_task);
-        result.into()
-    }
-    extern "C" fn post_delayed_task<I: ImplTaskRunner>(
-        self_: *mut _cef_task_runner_t,
-        task: *mut _cef_task_t,
-        delay_ms: i64,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_task, arg_delay_ms) = (self_, task, delay_ms);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_task =
-            unsafe { arg_task.as_mut() }.map(|arg| Task(unsafe { RefGuard::from_raw(arg) }));
-        let arg_task = arg_task.as_mut();
-        let arg_delay_ms = arg_delay_ms.as_raw();
-        let result =
-            ImplTaskRunner::post_delayed_task(&arg_self_.interface, arg_task, arg_delay_ms);
-        result.into()
-    }
 }
 impl ImplTaskRunner for TaskRunner {
     fn is_same(&self, that: Option<&mut impl ImplTaskRunner>) -> ::std::os::raw::c_int {
@@ -40525,48 +30251,15 @@ impl Default for TaskRunner {
 /// See [_cef_v8_context_t] for more documentation.
 #[derive(Clone)]
 pub struct V8Context(RefGuard<_cef_v8_context_t>);
-impl V8Context {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapV8Context,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplV8Context>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8Context>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8_context_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapV8Context: ImplV8Context {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_context_t, Self>);
-}
 pub trait ImplV8Context: Clone + Sized + Rc {
-    fn get_task_runner(&self) -> Option<TaskRunner> {
-        Default::default()
-    }
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_browser(&self) -> Option<Browser> {
-        Default::default()
-    }
-    fn get_frame(&self) -> Option<Frame> {
-        Default::default()
-    }
-    fn get_global(&self) -> Option<V8Value> {
-        Default::default()
-    }
-    fn enter(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn exit(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplV8Context>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn get_task_runner(&self) -> Option<TaskRunner>;
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn get_browser(&self) -> Option<Browser>;
+    fn get_frame(&self) -> Option<Frame>;
+    fn get_global(&self) -> Option<V8Value>;
+    fn enter(&self) -> ::std::os::raw::c_int;
+    fn exit(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplV8Context>) -> ::std::os::raw::c_int;
     fn eval(
         &self,
         code: Option<&CefStringUtf16>,
@@ -40574,147 +30267,8 @@ pub trait ImplV8Context: Clone + Sized + Rc {
         start_line: ::std::os::raw::c_int,
         retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut impl ImplV8Exception>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_v8_context_t) {
-        impl_cef_v8_context_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_context_t;
-}
-mod impl_cef_v8_context_t {
-    use super::*;
-    pub fn init_methods<I: ImplV8Context>(object: &mut _cef_v8_context_t) {
-        object.get_task_runner = Some(get_task_runner::<I>);
-        object.is_valid = Some(is_valid::<I>);
-        object.get_browser = Some(get_browser::<I>);
-        object.get_frame = Some(get_frame::<I>);
-        object.get_global = Some(get_global::<I>);
-        object.enter = Some(enter::<I>);
-        object.exit = Some(exit::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.eval = Some(eval::<I>);
-    }
-    extern "C" fn get_task_runner<I: ImplV8Context>(
-        self_: *mut _cef_v8_context_t,
-    ) -> *mut _cef_task_runner_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Context::get_task_runner(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn is_valid<I: ImplV8Context>(
-        self_: *mut _cef_v8_context_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Context::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_browser<I: ImplV8Context>(
-        self_: *mut _cef_v8_context_t,
-    ) -> *mut _cef_browser_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Context::get_browser(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_frame<I: ImplV8Context>(self_: *mut _cef_v8_context_t) -> *mut _cef_frame_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Context::get_frame(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_global<I: ImplV8Context>(
-        self_: *mut _cef_v8_context_t,
-    ) -> *mut _cef_v8_value_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Context::get_global(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn enter<I: ImplV8Context>(self_: *mut _cef_v8_context_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Context::enter(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn exit<I: ImplV8Context>(self_: *mut _cef_v8_context_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Context::exit(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplV8Context>(
-        self_: *mut _cef_v8_context_t,
-        that: *mut _cef_v8_context_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| V8Context(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplV8Context::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn eval<I: ImplV8Context>(
-        self_: *mut _cef_v8_context_t,
-        code: *const _cef_string_utf16_t,
-        script_url: *const _cef_string_utf16_t,
-        start_line: ::std::os::raw::c_int,
-        retval: *mut *mut _cef_v8_value_t,
-        exception: *mut *mut _cef_v8_exception_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_code, arg_script_url, arg_start_line, arg_retval, arg_exception) =
-            (self_, code, script_url, start_line, retval, exception);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_code = if arg_code.is_null() {
-            None
-        } else {
-            Some(arg_code.into())
-        };
-        let arg_code = arg_code.as_ref();
-        let arg_script_url = if arg_script_url.is_null() {
-            None
-        } else {
-            Some(arg_script_url.into())
-        };
-        let arg_script_url = arg_script_url.as_ref();
-        let arg_start_line = arg_start_line.as_raw();
-        let mut arg_retval = unsafe { arg_retval.as_mut() }.and_then(|ptr| {
-            if ptr.is_null() {
-                None
-            } else {
-                Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
-            }
-        });
-        let arg_retval = arg_retval.as_mut();
-        let mut arg_exception = unsafe { arg_exception.as_mut() }.and_then(|ptr| {
-            if ptr.is_null() {
-                None
-            } else {
-                Some(V8Exception(unsafe { RefGuard::from_raw(*ptr) }))
-            }
-        });
-        let arg_exception = arg_exception.as_mut();
-        let result = ImplV8Context::eval(
-            &arg_self_.interface,
-            arg_code,
-            arg_script_url,
-            arg_start_line,
-            arg_retval,
-            arg_exception,
-        );
-        result.into()
-    }
 }
 impl ImplV8Context for V8Context {
     fn get_task_runner(&self) -> Option<TaskRunner> {
@@ -41817,135 +31371,16 @@ impl Default for V8Interceptor {
 /// See [_cef_v8_exception_t] for more documentation.
 #[derive(Clone)]
 pub struct V8Exception(RefGuard<_cef_v8_exception_t>);
-impl V8Exception {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapV8Exception,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplV8Exception>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8Exception>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8_exception_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapV8Exception: ImplV8Exception {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_exception_t, Self>);
-}
 pub trait ImplV8Exception: Clone + Sized + Rc {
-    fn get_message(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_source_line(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_script_resource_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_line_number(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_start_position(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_end_position(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_start_column(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_end_column(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_v8_exception_t) {
-        impl_cef_v8_exception_t::init_methods::<Self>(object);
-    }
+    fn get_message(&self) -> Option<CefStringUtf16>;
+    fn get_source_line(&self) -> Option<CefStringUtf16>;
+    fn get_script_resource_name(&self) -> Option<CefStringUtf16>;
+    fn get_line_number(&self) -> ::std::os::raw::c_int;
+    fn get_start_position(&self) -> ::std::os::raw::c_int;
+    fn get_end_position(&self) -> ::std::os::raw::c_int;
+    fn get_start_column(&self) -> ::std::os::raw::c_int;
+    fn get_end_column(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_exception_t;
-}
-mod impl_cef_v8_exception_t {
-    use super::*;
-    pub fn init_methods<I: ImplV8Exception>(object: &mut _cef_v8_exception_t) {
-        object.get_message = Some(get_message::<I>);
-        object.get_source_line = Some(get_source_line::<I>);
-        object.get_script_resource_name = Some(get_script_resource_name::<I>);
-        object.get_line_number = Some(get_line_number::<I>);
-        object.get_start_position = Some(get_start_position::<I>);
-        object.get_end_position = Some(get_end_position::<I>);
-        object.get_start_column = Some(get_start_column::<I>);
-        object.get_end_column = Some(get_end_column::<I>);
-    }
-    extern "C" fn get_message<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_message(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_source_line<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_source_line(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_script_resource_name<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_script_resource_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_line_number<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_line_number(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_start_position<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_start_position(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_end_position<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_end_position(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_start_column<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_start_column(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_end_column<I: ImplV8Exception>(
-        self_: *mut _cef_v8_exception_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Exception::get_end_column(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplV8Exception for V8Exception {
     fn get_message(&self) -> Option<CefStringUtf16> {
@@ -42207,813 +31642,85 @@ impl Default for V8ArrayBufferReleaseCallback {
 /// See [_cef_v8_value_t] for more documentation.
 #[derive(Clone)]
 pub struct V8Value(RefGuard<_cef_v8_value_t>);
-impl V8Value {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapV8Value,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplV8Value>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8Value>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8_value_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapV8Value: ImplV8Value {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_value_t, Self>);
-}
 pub trait ImplV8Value: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_undefined(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_null(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_bool(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_int(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_uint(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_double(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_date(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_string(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_object(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_array(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_array_buffer(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_function(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_promise(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_bool_value(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_int_value(&self) -> i32 {
-        Default::default()
-    }
-    fn get_uint_value(&self) -> u32 {
-        Default::default()
-    }
-    fn get_double_value(&self) -> f64 {
-        Default::default()
-    }
-    fn get_date_value(&self) -> Basetime {
-        Default::default()
-    }
-    fn get_string_value(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn is_user_created(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_exception(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_exception(&self) -> Option<V8Exception> {
-        Default::default()
-    }
-    fn clear_exception(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn will_rethrow_exceptions(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_rethrow_exceptions(&self, rethrow: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_value_byindex(&self, index: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn delete_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn delete_value_byindex(&self, index: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8Value> {
-        Default::default()
-    }
-    fn get_value_byindex(&self, index: ::std::os::raw::c_int) -> Option<V8Value> {
-        Default::default()
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_undefined(&self) -> ::std::os::raw::c_int;
+    fn is_null(&self) -> ::std::os::raw::c_int;
+    fn is_bool(&self) -> ::std::os::raw::c_int;
+    fn is_int(&self) -> ::std::os::raw::c_int;
+    fn is_uint(&self) -> ::std::os::raw::c_int;
+    fn is_double(&self) -> ::std::os::raw::c_int;
+    fn is_date(&self) -> ::std::os::raw::c_int;
+    fn is_string(&self) -> ::std::os::raw::c_int;
+    fn is_object(&self) -> ::std::os::raw::c_int;
+    fn is_array(&self) -> ::std::os::raw::c_int;
+    fn is_array_buffer(&self) -> ::std::os::raw::c_int;
+    fn is_function(&self) -> ::std::os::raw::c_int;
+    fn is_promise(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int;
+    fn get_bool_value(&self) -> ::std::os::raw::c_int;
+    fn get_int_value(&self) -> i32;
+    fn get_uint_value(&self) -> u32;
+    fn get_double_value(&self) -> f64;
+    fn get_date_value(&self) -> Basetime;
+    fn get_string_value(&self) -> Option<CefStringUtf16>;
+    fn is_user_created(&self) -> ::std::os::raw::c_int;
+    fn has_exception(&self) -> ::std::os::raw::c_int;
+    fn get_exception(&self) -> Option<V8Exception>;
+    fn clear_exception(&self) -> ::std::os::raw::c_int;
+    fn will_rethrow_exceptions(&self) -> ::std::os::raw::c_int;
+    fn set_rethrow_exceptions(&self, rethrow: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn has_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn has_value_byindex(&self, index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn delete_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn delete_value_byindex(&self, index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8Value>;
+    fn get_value_byindex(&self, index: ::std::os::raw::c_int) -> Option<V8Value>;
     fn set_value_bykey(
         &self,
         key: Option<&CefStringUtf16>,
         value: Option<&mut impl ImplV8Value>,
         attribute: V8Propertyattribute,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_value_byindex(
         &self,
         index: ::std::os::raw::c_int,
         value: Option<&mut impl ImplV8Value>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn set_value_byaccessor(
         &self,
         key: Option<&CefStringUtf16>,
         attribute: V8Propertyattribute,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_keys(&self, keys: Option<&mut CefStringList>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_user_data(&self, user_data: Option<&mut BaseRefCounted>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_user_data(&self) -> Option<BaseRefCounted> {
-        Default::default()
-    }
-    fn get_externally_allocated_memory(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn get_keys(&self, keys: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
+    fn set_user_data(&self, user_data: Option<&mut BaseRefCounted>) -> ::std::os::raw::c_int;
+    fn get_user_data(&self) -> Option<BaseRefCounted>;
+    fn get_externally_allocated_memory(&self) -> ::std::os::raw::c_int;
     fn adjust_externally_allocated_memory(
         &self,
         change_in_bytes: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_array_length(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_array_buffer_release_callback(&self) -> Option<V8ArrayBufferReleaseCallback> {
-        Default::default()
-    }
-    fn neuter_array_buffer(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_array_buffer_byte_length(&self) -> usize {
-        Default::default()
-    }
-    fn get_array_buffer_data(&self) -> *mut ::std::os::raw::c_void {
-        unsafe { std::mem::zeroed() }
-    }
-    fn get_function_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_function_handler(&self) -> Option<V8Handler> {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
+    fn get_array_length(&self) -> ::std::os::raw::c_int;
+    fn get_array_buffer_release_callback(&self) -> Option<V8ArrayBufferReleaseCallback>;
+    fn neuter_array_buffer(&self) -> ::std::os::raw::c_int;
+    fn get_array_buffer_byte_length(&self) -> usize;
+    fn get_array_buffer_data(&self) -> *mut ::std::os::raw::c_void;
+    fn get_function_name(&self) -> Option<CefStringUtf16>;
+    fn get_function_handler(&self) -> Option<V8Handler>;
     fn execute_function(
         &self,
         object: Option<&mut impl ImplV8Value>,
         arguments: Option<&[Option<impl ImplV8Value>]>,
-    ) -> Option<V8Value> {
-        Default::default()
-    }
+    ) -> Option<V8Value>;
     fn execute_function_with_context(
         &self,
         context: Option<&mut impl ImplV8Context>,
         object: Option<&mut impl ImplV8Value>,
         arguments: Option<&[Option<impl ImplV8Value>]>,
-    ) -> Option<V8Value> {
-        Default::default()
-    }
-    fn resolve_promise(&self, arg: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn reject_promise(&self, error_msg: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_v8_value_t) {
-        impl_cef_v8_value_t::init_methods::<Self>(object);
-    }
+    ) -> Option<V8Value>;
+    fn resolve_promise(&self, arg: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int;
+    fn reject_promise(&self, error_msg: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_value_t;
-}
-mod impl_cef_v8_value_t {
-    use super::*;
-    pub fn init_methods<I: ImplV8Value>(object: &mut _cef_v8_value_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_undefined = Some(is_undefined::<I>);
-        object.is_null = Some(is_null::<I>);
-        object.is_bool = Some(is_bool::<I>);
-        object.is_int = Some(is_int::<I>);
-        object.is_uint = Some(is_uint::<I>);
-        object.is_double = Some(is_double::<I>);
-        object.is_date = Some(is_date::<I>);
-        object.is_string = Some(is_string::<I>);
-        object.is_object = Some(is_object::<I>);
-        object.is_array = Some(is_array::<I>);
-        object.is_array_buffer = Some(is_array_buffer::<I>);
-        object.is_function = Some(is_function::<I>);
-        object.is_promise = Some(is_promise::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.get_bool_value = Some(get_bool_value::<I>);
-        object.get_int_value = Some(get_int_value::<I>);
-        object.get_uint_value = Some(get_uint_value::<I>);
-        object.get_double_value = Some(get_double_value::<I>);
-        object.get_date_value = Some(get_date_value::<I>);
-        object.get_string_value = Some(get_string_value::<I>);
-        object.is_user_created = Some(is_user_created::<I>);
-        object.has_exception = Some(has_exception::<I>);
-        object.get_exception = Some(get_exception::<I>);
-        object.clear_exception = Some(clear_exception::<I>);
-        object.will_rethrow_exceptions = Some(will_rethrow_exceptions::<I>);
-        object.set_rethrow_exceptions = Some(set_rethrow_exceptions::<I>);
-        object.has_value_bykey = Some(has_value_bykey::<I>);
-        object.has_value_byindex = Some(has_value_byindex::<I>);
-        object.delete_value_bykey = Some(delete_value_bykey::<I>);
-        object.delete_value_byindex = Some(delete_value_byindex::<I>);
-        object.get_value_bykey = Some(get_value_bykey::<I>);
-        object.get_value_byindex = Some(get_value_byindex::<I>);
-        object.set_value_bykey = Some(set_value_bykey::<I>);
-        object.set_value_byindex = Some(set_value_byindex::<I>);
-        object.set_value_byaccessor = Some(set_value_byaccessor::<I>);
-        object.get_keys = Some(get_keys::<I>);
-        object.set_user_data = Some(set_user_data::<I>);
-        object.get_user_data = Some(get_user_data::<I>);
-        object.get_externally_allocated_memory = Some(get_externally_allocated_memory::<I>);
-        object.adjust_externally_allocated_memory = Some(adjust_externally_allocated_memory::<I>);
-        object.get_array_length = Some(get_array_length::<I>);
-        object.get_array_buffer_release_callback = Some(get_array_buffer_release_callback::<I>);
-        object.neuter_array_buffer = Some(neuter_array_buffer::<I>);
-        object.get_array_buffer_byte_length = Some(get_array_buffer_byte_length::<I>);
-        object.get_array_buffer_data = Some(get_array_buffer_data::<I>);
-        object.get_function_name = Some(get_function_name::<I>);
-        object.get_function_handler = Some(get_function_handler::<I>);
-        object.execute_function = Some(execute_function::<I>);
-        object.execute_function_with_context = Some(execute_function_with_context::<I>);
-        object.resolve_promise = Some(resolve_promise::<I>);
-        object.reject_promise = Some(reject_promise::<I>);
-    }
-    extern "C" fn is_valid<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_undefined<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_undefined(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_null<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_null(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_bool<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_bool(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_int<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_int(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_uint<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_uint(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_double<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_double(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_date<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_date(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_string<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_string(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_object<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_object(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_array<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_array(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_array_buffer<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_array_buffer(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_function<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_function(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_promise<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_promise(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        that: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplV8Value::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn get_bool_value<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_bool_value(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_int_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> i32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_int_value(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_uint_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> u32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_uint_value(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_double_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> f64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_double_value(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_date_value<I: ImplV8Value>(self_: *mut _cef_v8_value_t) -> _cef_basetime_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_date_value(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_string_value<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_string_value(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn is_user_created<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::is_user_created(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_exception<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::has_exception(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_exception<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> *mut _cef_v8_exception_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_exception(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn clear_exception<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::clear_exception(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn will_rethrow_exceptions<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::will_rethrow_exceptions(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_rethrow_exceptions<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        rethrow: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_rethrow) = (self_, rethrow);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_rethrow = arg_rethrow.as_raw();
-        let result = ImplV8Value::set_rethrow_exceptions(&arg_self_.interface, arg_rethrow);
-        result.into()
-    }
-    extern "C" fn has_value_bykey<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplV8Value::has_value_bykey(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn has_value_byindex<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        index: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplV8Value::has_value_byindex(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn delete_value_bykey<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplV8Value::delete_value_bykey(&arg_self_.interface, arg_key);
-        result.into()
-    }
-    extern "C" fn delete_value_byindex<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        index: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplV8Value::delete_value_byindex(&arg_self_.interface, arg_index);
-        result.into()
-    }
-    extern "C" fn get_value_bykey<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        key: *const _cef_string_utf16_t,
-    ) -> *mut _cef_v8_value_t {
-        let (arg_self_, arg_key) = (self_, key);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let result = ImplV8Value::get_value_bykey(&arg_self_.interface, arg_key);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_value_byindex<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        index: ::std::os::raw::c_int,
-    ) -> *mut _cef_v8_value_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplV8Value::get_value_byindex(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_value_bykey<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        key: *const _cef_string_utf16_t,
-        value: *mut _cef_v8_value_t,
-        attribute: cef_v8_propertyattribute_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_value, arg_attribute) = (self_, key, value, attribute);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let arg_attribute = arg_attribute.as_raw();
-        let result =
-            ImplV8Value::set_value_bykey(&arg_self_.interface, arg_key, arg_value, arg_attribute);
-        result.into()
-    }
-    extern "C" fn set_value_byindex<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        index: ::std::os::raw::c_int,
-        value: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_index, arg_value) = (self_, index, value);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let mut arg_value =
-            unsafe { arg_value.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_value = arg_value.as_mut();
-        let result = ImplV8Value::set_value_byindex(&arg_self_.interface, arg_index, arg_value);
-        result.into()
-    }
-    extern "C" fn set_value_byaccessor<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        key: *const _cef_string_utf16_t,
-        attribute: cef_v8_propertyattribute_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_key, arg_attribute) = (self_, key, attribute);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key = if arg_key.is_null() {
-            None
-        } else {
-            Some(arg_key.into())
-        };
-        let arg_key = arg_key.as_ref();
-        let arg_attribute = arg_attribute.as_raw();
-        let result =
-            ImplV8Value::set_value_byaccessor(&arg_self_.interface, arg_key, arg_attribute);
-        result.into()
-    }
-    extern "C" fn get_keys<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        keys: *mut _cef_string_list_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_keys) = (self_, keys);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_keys = if arg_keys.is_null() {
-            None
-        } else {
-            Some(arg_keys.into())
-        };
-        let arg_keys = arg_keys.as_mut();
-        let result = ImplV8Value::get_keys(&arg_self_.interface, arg_keys);
-        result.into()
-    }
-    extern "C" fn set_user_data<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        user_data: *mut _cef_base_ref_counted_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_user_data) = (self_, user_data);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_user_data = unsafe { arg_user_data.as_mut() }
-            .map(|arg| BaseRefCounted(unsafe { RefGuard::from_raw(arg) }));
-        let arg_user_data = arg_user_data.as_mut();
-        let result = ImplV8Value::set_user_data(&arg_self_.interface, arg_user_data);
-        result.into()
-    }
-    extern "C" fn get_user_data<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> *mut _cef_base_ref_counted_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_user_data(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_externally_allocated_memory<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_externally_allocated_memory(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn adjust_externally_allocated_memory<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        change_in_bytes: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_change_in_bytes) = (self_, change_in_bytes);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_change_in_bytes = arg_change_in_bytes.as_raw();
-        let result = ImplV8Value::adjust_externally_allocated_memory(
-            &arg_self_.interface,
-            arg_change_in_bytes,
-        );
-        result.into()
-    }
-    extern "C" fn get_array_length<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_array_length(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_array_buffer_release_callback<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> *mut _cef_v8_array_buffer_release_callback_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_array_buffer_release_callback(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn neuter_array_buffer<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::neuter_array_buffer(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_array_buffer_byte_length<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_array_buffer_byte_length(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_array_buffer_data<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> *mut ::std::os::raw::c_void {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_array_buffer_data(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_function_name<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_function_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_function_handler<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-    ) -> *mut _cef_v8_handler_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8Value::get_function_handler(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn execute_function<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        object: *mut _cef_v8_value_t,
-        arguments_count: usize,
-        arguments: *const *mut _cef_v8_value_t,
-    ) -> *mut _cef_v8_value_t {
-        let (arg_self_, arg_object, arg_arguments_count, arg_arguments) =
-            (self_, object, arguments_count, arguments);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_object = arg_object.as_mut();
-        let vec_arguments = unsafe { arg_arguments.as_ref() }.map(|arg| {
-            let arg =
-                unsafe { std::slice::from_raw_parts(std::ptr::from_ref(arg), arg_arguments_count) };
-            arg.iter()
-                .map(|arg| {
-                    if arg.is_null() {
-                        None
-                    } else {
-                        Some(V8Value(unsafe { RefGuard::from_raw(*arg) }))
-                    }
-                })
-                .collect::<Vec<_>>()
-        });
-        let arg_arguments = vec_arguments.as_ref().map(|arg| arg.as_slice());
-        let result = ImplV8Value::execute_function(&arg_self_.interface, arg_object, arg_arguments);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn execute_function_with_context<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        context: *mut _cef_v8_context_t,
-        object: *mut _cef_v8_value_t,
-        arguments_count: usize,
-        arguments: *const *mut _cef_v8_value_t,
-    ) -> *mut _cef_v8_value_t {
-        let (arg_self_, arg_context, arg_object, arg_arguments_count, arg_arguments) =
-            (self_, context, object, arguments_count, arguments);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_context = unsafe { arg_context.as_mut() }
-            .map(|arg| V8Context(unsafe { RefGuard::from_raw(arg) }));
-        let arg_context = arg_context.as_mut();
-        let mut arg_object =
-            unsafe { arg_object.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_object = arg_object.as_mut();
-        let vec_arguments = unsafe { arg_arguments.as_ref() }.map(|arg| {
-            let arg =
-                unsafe { std::slice::from_raw_parts(std::ptr::from_ref(arg), arg_arguments_count) };
-            arg.iter()
-                .map(|arg| {
-                    if arg.is_null() {
-                        None
-                    } else {
-                        Some(V8Value(unsafe { RefGuard::from_raw(*arg) }))
-                    }
-                })
-                .collect::<Vec<_>>()
-        });
-        let arg_arguments = vec_arguments.as_ref().map(|arg| arg.as_slice());
-        let result = ImplV8Value::execute_function_with_context(
-            &arg_self_.interface,
-            arg_context,
-            arg_object,
-            arg_arguments,
-        );
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn resolve_promise<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        arg: *mut _cef_v8_value_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_arg) = (self_, arg);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_arg =
-            unsafe { arg_arg.as_mut() }.map(|arg| V8Value(unsafe { RefGuard::from_raw(arg) }));
-        let arg_arg = arg_arg.as_mut();
-        let result = ImplV8Value::resolve_promise(&arg_self_.interface, arg_arg);
-        result.into()
-    }
-    extern "C" fn reject_promise<I: ImplV8Value>(
-        self_: *mut _cef_v8_value_t,
-        error_msg: *const _cef_string_utf16_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_error_msg) = (self_, error_msg);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_error_msg = if arg_error_msg.is_null() {
-            None
-        } else {
-            Some(arg_error_msg.into())
-        };
-        let arg_error_msg = arg_error_msg.as_ref();
-        let result = ImplV8Value::reject_promise(&arg_self_.interface, arg_error_msg);
-        result.into()
-    }
 }
 impl ImplV8Value for V8Value {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -43889,73 +32596,11 @@ impl Default for V8Value {
 /// See [_cef_v8_stack_trace_t] for more documentation.
 #[derive(Clone)]
 pub struct V8StackTrace(RefGuard<_cef_v8_stack_trace_t>);
-impl V8StackTrace {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapV8StackTrace,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplV8StackTrace>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8StackTrace>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8_stack_trace_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapV8StackTrace: ImplV8StackTrace {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_stack_trace_t, Self>);
-}
 pub trait ImplV8StackTrace: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_frame_count(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_frame(&self, index: ::std::os::raw::c_int) -> Option<V8StackFrame> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_v8_stack_trace_t) {
-        impl_cef_v8_stack_trace_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn get_frame_count(&self) -> ::std::os::raw::c_int;
+    fn get_frame(&self, index: ::std::os::raw::c_int) -> Option<V8StackFrame>;
     fn get_raw(&self) -> *mut _cef_v8_stack_trace_t;
-}
-mod impl_cef_v8_stack_trace_t {
-    use super::*;
-    pub fn init_methods<I: ImplV8StackTrace>(object: &mut _cef_v8_stack_trace_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.get_frame_count = Some(get_frame_count::<I>);
-        object.get_frame = Some(get_frame::<I>);
-    }
-    extern "C" fn is_valid<I: ImplV8StackTrace>(
-        self_: *mut _cef_v8_stack_trace_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackTrace::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_frame_count<I: ImplV8StackTrace>(
-        self_: *mut _cef_v8_stack_trace_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackTrace::get_frame_count(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_frame<I: ImplV8StackTrace>(
-        self_: *mut _cef_v8_stack_trace_t,
-        index: ::std::os::raw::c_int,
-    ) -> *mut _cef_v8_stack_frame_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplV8StackTrace::get_frame(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
 }
 impl ImplV8StackTrace for V8StackTrace {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -44045,135 +32690,16 @@ impl Default for V8StackTrace {
 /// See [_cef_v8_stack_frame_t] for more documentation.
 #[derive(Clone)]
 pub struct V8StackFrame(RefGuard<_cef_v8_stack_frame_t>);
-impl V8StackFrame {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapV8StackFrame,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplV8StackFrame>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapV8StackFrame>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_v8_stack_frame_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapV8StackFrame: ImplV8StackFrame {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_v8_stack_frame_t, Self>);
-}
 pub trait ImplV8StackFrame: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_script_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_script_name_or_source_url(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_function_name(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn get_line_number(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_column(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_eval(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_constructor(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_v8_stack_frame_t) {
-        impl_cef_v8_stack_frame_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn get_script_name(&self) -> Option<CefStringUtf16>;
+    fn get_script_name_or_source_url(&self) -> Option<CefStringUtf16>;
+    fn get_function_name(&self) -> Option<CefStringUtf16>;
+    fn get_line_number(&self) -> ::std::os::raw::c_int;
+    fn get_column(&self) -> ::std::os::raw::c_int;
+    fn is_eval(&self) -> ::std::os::raw::c_int;
+    fn is_constructor(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_stack_frame_t;
-}
-mod impl_cef_v8_stack_frame_t {
-    use super::*;
-    pub fn init_methods<I: ImplV8StackFrame>(object: &mut _cef_v8_stack_frame_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.get_script_name = Some(get_script_name::<I>);
-        object.get_script_name_or_source_url = Some(get_script_name_or_source_url::<I>);
-        object.get_function_name = Some(get_function_name::<I>);
-        object.get_line_number = Some(get_line_number::<I>);
-        object.get_column = Some(get_column::<I>);
-        object.is_eval = Some(is_eval::<I>);
-        object.is_constructor = Some(is_constructor::<I>);
-    }
-    extern "C" fn is_valid<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_script_name<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::get_script_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_script_name_or_source_url<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::get_script_name_or_source_url(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_function_name<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::get_function_name(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_line_number<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::get_line_number(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_column<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::get_column(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_eval<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::is_eval(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_constructor<I: ImplV8StackFrame>(
-        self_: *mut _cef_v8_stack_frame_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplV8StackFrame::is_constructor(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplV8StackFrame for V8StackFrame {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -45736,118 +34262,15 @@ impl Default for App {
 /// See [_cef_urlrequest_t] for more documentation.
 #[derive(Clone)]
 pub struct Urlrequest(RefGuard<_cef_urlrequest_t>);
-impl Urlrequest {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapUrlrequest,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplUrlrequest>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapUrlrequest>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_urlrequest_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapUrlrequest: ImplUrlrequest {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_urlrequest_t, Self>);
-}
 pub trait ImplUrlrequest: Clone + Sized + Rc {
-    fn get_request(&self) -> Option<Request> {
-        Default::default()
-    }
-    fn get_client(&self) -> Option<UrlrequestClient> {
-        Default::default()
-    }
-    fn get_request_status(&self) -> UrlrequestStatus {
-        Default::default()
-    }
-    fn get_request_error(&self) -> Errorcode {
-        Default::default()
-    }
-    fn get_response(&self) -> Option<Response> {
-        Default::default()
-    }
-    fn response_was_cached(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn cancel(&self) {}
-    fn init_methods(object: &mut _cef_urlrequest_t) {
-        impl_cef_urlrequest_t::init_methods::<Self>(object);
-    }
+    fn get_request(&self) -> Option<Request>;
+    fn get_client(&self) -> Option<UrlrequestClient>;
+    fn get_request_status(&self) -> UrlrequestStatus;
+    fn get_request_error(&self) -> Errorcode;
+    fn get_response(&self) -> Option<Response>;
+    fn response_was_cached(&self) -> ::std::os::raw::c_int;
+    fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_urlrequest_t;
-}
-mod impl_cef_urlrequest_t {
-    use super::*;
-    pub fn init_methods<I: ImplUrlrequest>(object: &mut _cef_urlrequest_t) {
-        object.get_request = Some(get_request::<I>);
-        object.get_client = Some(get_client::<I>);
-        object.get_request_status = Some(get_request_status::<I>);
-        object.get_request_error = Some(get_request_error::<I>);
-        object.get_response = Some(get_response::<I>);
-        object.response_was_cached = Some(response_was_cached::<I>);
-        object.cancel = Some(cancel::<I>);
-    }
-    extern "C" fn get_request<I: ImplUrlrequest>(
-        self_: *mut _cef_urlrequest_t,
-    ) -> *mut _cef_request_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUrlrequest::get_request(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_client<I: ImplUrlrequest>(
-        self_: *mut _cef_urlrequest_t,
-    ) -> *mut _cef_urlrequest_client_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUrlrequest::get_client(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_request_status<I: ImplUrlrequest>(
-        self_: *mut _cef_urlrequest_t,
-    ) -> cef_urlrequest_status_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUrlrequest::get_request_status(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_request_error<I: ImplUrlrequest>(
-        self_: *mut _cef_urlrequest_t,
-    ) -> cef_errorcode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUrlrequest::get_request_error(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_response<I: ImplUrlrequest>(
-        self_: *mut _cef_urlrequest_t,
-    ) -> *mut _cef_response_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUrlrequest::get_response(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn response_was_cached<I: ImplUrlrequest>(
-        self_: *mut _cef_urlrequest_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUrlrequest::response_was_cached(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn cancel<I: ImplUrlrequest>(self_: *mut _cef_urlrequest_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplUrlrequest::cancel(&arg_self_.interface);
-    }
 }
 impl ImplUrlrequest for Urlrequest {
     fn get_request(&self) -> Option<Request> {
@@ -46363,71 +34786,11 @@ impl Default for UrlrequestClient {
 /// See [_cef_layout_t] for more documentation.
 #[derive(Clone)]
 pub struct Layout(RefGuard<_cef_layout_t>);
-impl Layout {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapLayout,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplLayout>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapLayout>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_layout_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapLayout: ImplLayout {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_layout_t, Self>);
-}
 pub trait ImplLayout: Clone + Sized + Rc {
-    fn as_box_layout(&self) -> Option<BoxLayout> {
-        Default::default()
-    }
-    fn as_fill_layout(&self) -> Option<FillLayout> {
-        Default::default()
-    }
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_layout_t) {
-        impl_cef_layout_t::init_methods::<Self>(object);
-    }
+    fn as_box_layout(&self) -> Option<BoxLayout>;
+    fn as_fill_layout(&self) -> Option<FillLayout>;
+    fn is_valid(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_layout_t;
-}
-mod impl_cef_layout_t {
-    use super::*;
-    pub fn init_methods<I: ImplLayout>(object: &mut _cef_layout_t) {
-        object.as_box_layout = Some(as_box_layout::<I>);
-        object.as_fill_layout = Some(as_fill_layout::<I>);
-        object.is_valid = Some(is_valid::<I>);
-    }
-    extern "C" fn as_box_layout<I: ImplLayout>(
-        self_: *mut _cef_layout_t,
-    ) -> *mut _cef_box_layout_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplLayout::as_box_layout(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn as_fill_layout<I: ImplLayout>(
-        self_: *mut _cef_layout_t,
-    ) -> *mut _cef_fill_layout_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplLayout::as_fill_layout(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn is_valid<I: ImplLayout>(self_: *mut _cef_layout_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplLayout::is_valid(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplLayout for Layout {
     fn as_box_layout(&self) -> Option<BoxLayout> {
@@ -46519,63 +34882,11 @@ impl Default for Layout {
 /// See [_cef_box_layout_t] for more documentation.
 #[derive(Clone)]
 pub struct BoxLayout(RefGuard<_cef_box_layout_t>);
-impl BoxLayout {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapBoxLayout,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplBoxLayout>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapBoxLayout>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_box_layout_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapBoxLayout: ImplBoxLayout {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_box_layout_t, Self>);
-}
 pub trait ImplBoxLayout: ImplLayout {
-    fn set_flex_for_view(&self, view: Option<&mut impl ImplView>, flex: ::std::os::raw::c_int) {}
-    fn clear_flex_for_view(&self, view: Option<&mut impl ImplView>) {}
-    fn init_methods(object: &mut _cef_box_layout_t) {
-        impl_cef_layout_t::init_methods::<Self>(&mut object.base);
-        impl_cef_box_layout_t::init_methods::<Self>(object);
-    }
+    fn set_flex_for_view(&self, view: Option<&mut impl ImplView>, flex: ::std::os::raw::c_int);
+    fn clear_flex_for_view(&self, view: Option<&mut impl ImplView>);
     fn get_raw(&self) -> *mut _cef_box_layout_t {
         <Self as ImplLayout>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_box_layout_t {
-    use super::*;
-    pub fn init_methods<I: ImplBoxLayout>(object: &mut _cef_box_layout_t) {
-        object.set_flex_for_view = Some(set_flex_for_view::<I>);
-        object.clear_flex_for_view = Some(clear_flex_for_view::<I>);
-    }
-    extern "C" fn set_flex_for_view<I: ImplBoxLayout>(
-        self_: *mut _cef_box_layout_t,
-        view: *mut _cef_view_t,
-        flex: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_view, arg_flex) = (self_, view, flex);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let arg_flex = arg_flex.as_raw();
-        let result = ImplBoxLayout::set_flex_for_view(&arg_self_.interface, arg_view, arg_flex);
-    }
-    extern "C" fn clear_flex_for_view<I: ImplBoxLayout>(
-        self_: *mut _cef_box_layout_t,
-        view: *mut _cef_view_t,
-    ) {
-        let (arg_self_, arg_view) = (self_, view);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let result = ImplBoxLayout::clear_flex_for_view(&arg_self_.interface, arg_view);
     }
 }
 impl ImplLayout for BoxLayout {
@@ -46680,35 +34991,10 @@ impl Default for BoxLayout {
 /// See [_cef_fill_layout_t] for more documentation.
 #[derive(Clone)]
 pub struct FillLayout(RefGuard<_cef_fill_layout_t>);
-impl FillLayout {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapFillLayout,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplFillLayout>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapFillLayout>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_fill_layout_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapFillLayout: ImplFillLayout {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_fill_layout_t, Self>);
-}
 pub trait ImplFillLayout: ImplLayout {
-    fn init_methods(object: &mut _cef_fill_layout_t) {
-        impl_cef_layout_t::init_methods::<Self>(&mut object.base);
-        impl_cef_fill_layout_t::init_methods::<Self>(object);
-    }
     fn get_raw(&self) -> *mut _cef_fill_layout_t {
         <Self as ImplLayout>::get_raw(self) as *mut _
     }
-}
-mod impl_cef_fill_layout_t {
-    use super::*;
-    pub fn init_methods<I: ImplFillLayout>(object: &mut _cef_fill_layout_t) {}
 }
 impl ImplLayout for FillLayout {
     fn as_box_layout(&self) -> Option<BoxLayout> {
@@ -47297,679 +35583,68 @@ impl Default for ViewDelegate {
 /// See [_cef_view_t] for more documentation.
 #[derive(Clone)]
 pub struct View(RefGuard<_cef_view_t>);
-impl View {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapView,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplView>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapView>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_view_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapView: ImplView {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_view_t, Self>);
-}
 pub trait ImplView: Clone + Sized + Rc {
-    fn as_browser_view(&self) -> Option<BrowserView> {
-        Default::default()
-    }
-    fn as_button(&self) -> Option<Button> {
-        Default::default()
-    }
-    fn as_panel(&self) -> Option<Panel> {
-        Default::default()
-    }
-    fn as_scroll_view(&self) -> Option<ScrollView> {
-        Default::default()
-    }
-    fn as_textfield(&self) -> Option<Textfield> {
-        Default::default()
-    }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_attached(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_delegate(&self) -> Option<ViewDelegate> {
-        Default::default()
-    }
-    fn get_window(&self) -> Option<Window> {
-        Default::default()
-    }
-    fn get_id(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_id(&self, id: ::std::os::raw::c_int) {}
-    fn get_group_id(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_group_id(&self, group_id: ::std::os::raw::c_int) {}
-    fn get_parent_view(&self) -> Option<View> {
-        Default::default()
-    }
-    fn get_view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        Default::default()
-    }
-    fn set_bounds(&self, bounds: Option<&Rect>) {}
-    fn get_bounds(&self) -> Rect {
-        Default::default()
-    }
-    fn get_bounds_in_screen(&self) -> Rect {
-        Default::default()
-    }
-    fn set_size(&self, size: Option<&Size>) {}
-    fn get_size(&self) -> Size {
-        Default::default()
-    }
-    fn set_position(&self, position: Option<&Point>) {}
-    fn get_position(&self) -> Point {
-        Default::default()
-    }
-    fn set_insets(&self, insets: Option<&Insets>) {}
-    fn get_insets(&self) -> Insets {
-        Default::default()
-    }
-    fn get_preferred_size(&self) -> Size {
-        Default::default()
-    }
-    fn size_to_preferred_size(&self) {}
-    fn get_minimum_size(&self) -> Size {
-        Default::default()
-    }
-    fn get_maximum_size(&self) -> Size {
-        Default::default()
-    }
-    fn get_height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn invalidate_layout(&self) {}
-    fn set_visible(&self, visible: ::std::os::raw::c_int) {}
-    fn is_visible(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_drawn(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_enabled(&self, enabled: ::std::os::raw::c_int) {}
-    fn is_enabled(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_focusable(&self, focusable: ::std::os::raw::c_int) {}
-    fn is_focusable(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn request_focus(&self) {}
-    fn set_background_color(&self, color: u32) {}
-    fn get_background_color(&self) -> cef_color_t {
-        Default::default()
-    }
-    fn get_theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        Default::default()
-    }
-    fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    fn as_browser_view(&self) -> Option<BrowserView>;
+    fn as_button(&self) -> Option<Button>;
+    fn as_panel(&self) -> Option<Panel>;
+    fn as_scroll_view(&self) -> Option<ScrollView>;
+    fn as_textfield(&self) -> Option<Textfield>;
+    fn get_type_string(&self) -> Option<CefStringUtf16>;
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16>;
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_attached(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int;
+    fn get_delegate(&self) -> Option<ViewDelegate>;
+    fn get_window(&self) -> Option<Window>;
+    fn get_id(&self) -> ::std::os::raw::c_int;
+    fn set_id(&self, id: ::std::os::raw::c_int);
+    fn get_group_id(&self) -> ::std::os::raw::c_int;
+    fn set_group_id(&self, group_id: ::std::os::raw::c_int);
+    fn get_parent_view(&self) -> Option<View>;
+    fn get_view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View>;
+    fn set_bounds(&self, bounds: Option<&Rect>);
+    fn get_bounds(&self) -> Rect;
+    fn get_bounds_in_screen(&self) -> Rect;
+    fn set_size(&self, size: Option<&Size>);
+    fn get_size(&self) -> Size;
+    fn set_position(&self, position: Option<&Point>);
+    fn get_position(&self) -> Point;
+    fn set_insets(&self, insets: Option<&Insets>);
+    fn get_insets(&self) -> Insets;
+    fn get_preferred_size(&self) -> Size;
+    fn size_to_preferred_size(&self);
+    fn get_minimum_size(&self) -> Size;
+    fn get_maximum_size(&self) -> Size;
+    fn get_height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    fn invalidate_layout(&self);
+    fn set_visible(&self, visible: ::std::os::raw::c_int);
+    fn is_visible(&self) -> ::std::os::raw::c_int;
+    fn is_drawn(&self) -> ::std::os::raw::c_int;
+    fn set_enabled(&self, enabled: ::std::os::raw::c_int);
+    fn is_enabled(&self) -> ::std::os::raw::c_int;
+    fn set_focusable(&self, focusable: ::std::os::raw::c_int);
+    fn is_focusable(&self) -> ::std::os::raw::c_int;
+    fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int;
+    fn has_focus(&self) -> ::std::os::raw::c_int;
+    fn request_focus(&self);
+    fn set_background_color(&self, color: u32);
+    fn get_background_color(&self) -> cef_color_t;
+    fn get_theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t;
+    fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int;
+    fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int;
+    fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int;
+    fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int;
     fn convert_point_to_view(
         &self,
         view: Option<&mut impl ImplView>,
         point: Option<&mut Point>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
+    ) -> ::std::os::raw::c_int;
     fn convert_point_from_view(
         &self,
         view: Option<&mut impl ImplView>,
         point: Option<&mut Point>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_view_t) {
-        impl_cef_view_t::init_methods::<Self>(object);
-    }
+    ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_view_t;
-}
-mod impl_cef_view_t {
-    use super::*;
-    pub fn init_methods<I: ImplView>(object: &mut _cef_view_t) {
-        object.as_browser_view = Some(as_browser_view::<I>);
-        object.as_button = Some(as_button::<I>);
-        object.as_panel = Some(as_panel::<I>);
-        object.as_scroll_view = Some(as_scroll_view::<I>);
-        object.as_textfield = Some(as_textfield::<I>);
-        object.get_type_string = Some(get_type_string::<I>);
-        object.to_string = Some(to_string::<I>);
-        object.is_valid = Some(is_valid::<I>);
-        object.is_attached = Some(is_attached::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.get_delegate = Some(get_delegate::<I>);
-        object.get_window = Some(get_window::<I>);
-        object.get_id = Some(get_id::<I>);
-        object.set_id = Some(set_id::<I>);
-        object.get_group_id = Some(get_group_id::<I>);
-        object.set_group_id = Some(set_group_id::<I>);
-        object.get_parent_view = Some(get_parent_view::<I>);
-        object.get_view_for_id = Some(get_view_for_id::<I>);
-        object.set_bounds = Some(set_bounds::<I>);
-        object.get_bounds = Some(get_bounds::<I>);
-        object.get_bounds_in_screen = Some(get_bounds_in_screen::<I>);
-        object.set_size = Some(set_size::<I>);
-        object.get_size = Some(get_size::<I>);
-        object.set_position = Some(set_position::<I>);
-        object.get_position = Some(get_position::<I>);
-        object.set_insets = Some(set_insets::<I>);
-        object.get_insets = Some(get_insets::<I>);
-        object.get_preferred_size = Some(get_preferred_size::<I>);
-        object.size_to_preferred_size = Some(size_to_preferred_size::<I>);
-        object.get_minimum_size = Some(get_minimum_size::<I>);
-        object.get_maximum_size = Some(get_maximum_size::<I>);
-        object.get_height_for_width = Some(get_height_for_width::<I>);
-        object.invalidate_layout = Some(invalidate_layout::<I>);
-        object.set_visible = Some(set_visible::<I>);
-        object.is_visible = Some(is_visible::<I>);
-        object.is_drawn = Some(is_drawn::<I>);
-        object.set_enabled = Some(set_enabled::<I>);
-        object.is_enabled = Some(is_enabled::<I>);
-        object.set_focusable = Some(set_focusable::<I>);
-        object.is_focusable = Some(is_focusable::<I>);
-        object.is_accessibility_focusable = Some(is_accessibility_focusable::<I>);
-        object.has_focus = Some(has_focus::<I>);
-        object.request_focus = Some(request_focus::<I>);
-        object.set_background_color = Some(set_background_color::<I>);
-        object.get_background_color = Some(get_background_color::<I>);
-        object.get_theme_color = Some(get_theme_color::<I>);
-        object.convert_point_to_screen = Some(convert_point_to_screen::<I>);
-        object.convert_point_from_screen = Some(convert_point_from_screen::<I>);
-        object.convert_point_to_window = Some(convert_point_to_window::<I>);
-        object.convert_point_from_window = Some(convert_point_from_window::<I>);
-        object.convert_point_to_view = Some(convert_point_to_view::<I>);
-        object.convert_point_from_view = Some(convert_point_from_view::<I>);
-    }
-    extern "C" fn as_browser_view<I: ImplView>(
-        self_: *mut _cef_view_t,
-    ) -> *mut _cef_browser_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::as_browser_view(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn as_button<I: ImplView>(self_: *mut _cef_view_t) -> *mut _cef_button_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::as_button(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn as_panel<I: ImplView>(self_: *mut _cef_view_t) -> *mut _cef_panel_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::as_panel(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn as_scroll_view<I: ImplView>(self_: *mut _cef_view_t) -> *mut _cef_scroll_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::as_scroll_view(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn as_textfield<I: ImplView>(self_: *mut _cef_view_t) -> *mut _cef_textfield_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::as_textfield(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_type_string<I: ImplView>(
-        self_: *mut _cef_view_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_type_string(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn to_string<I: ImplView>(
-        self_: *mut _cef_view_t,
-        include_children: ::std::os::raw::c_int,
-    ) -> *mut _cef_string_utf16_t {
-        let (arg_self_, arg_include_children) = (self_, include_children);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_include_children = arg_include_children.as_raw();
-        let result = ImplView::to_string(&arg_self_.interface, arg_include_children);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn is_valid<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_attached<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::is_attached(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplView>(
-        self_: *mut _cef_view_t,
-        that: *mut _cef_view_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that =
-            unsafe { arg_that.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplView::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn get_delegate<I: ImplView>(self_: *mut _cef_view_t) -> *mut _cef_view_delegate_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_delegate(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_window<I: ImplView>(self_: *mut _cef_view_t) -> *mut _cef_window_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_window(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_id<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_id(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_id<I: ImplView>(self_: *mut _cef_view_t, id: ::std::os::raw::c_int) {
-        let (arg_self_, arg_id) = (self_, id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_id = arg_id.as_raw();
-        let result = ImplView::set_id(&arg_self_.interface, arg_id);
-    }
-    extern "C" fn get_group_id<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_group_id(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_group_id<I: ImplView>(
-        self_: *mut _cef_view_t,
-        group_id: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_group_id) = (self_, group_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_group_id = arg_group_id.as_raw();
-        let result = ImplView::set_group_id(&arg_self_.interface, arg_group_id);
-    }
-    extern "C" fn get_parent_view<I: ImplView>(self_: *mut _cef_view_t) -> *mut _cef_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_parent_view(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_view_for_id<I: ImplView>(
-        self_: *mut _cef_view_t,
-        id: ::std::os::raw::c_int,
-    ) -> *mut _cef_view_t {
-        let (arg_self_, arg_id) = (self_, id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_id = arg_id.as_raw();
-        let result = ImplView::get_view_for_id(&arg_self_.interface, arg_id);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_bounds<I: ImplView>(self_: *mut _cef_view_t, bounds: *const _cef_rect_t) {
-        let (arg_self_, arg_bounds) = (self_, bounds);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_bounds = if arg_bounds.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Rect>::from(arg_bounds))
-        };
-        let arg_bounds = arg_bounds.as_ref().map(|arg| arg.as_ref());
-        let result = ImplView::set_bounds(&arg_self_.interface, arg_bounds);
-    }
-    extern "C" fn get_bounds<I: ImplView>(self_: *mut _cef_view_t) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_bounds(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_bounds_in_screen<I: ImplView>(self_: *mut _cef_view_t) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_bounds_in_screen(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_size<I: ImplView>(self_: *mut _cef_view_t, size: *const _cef_size_t) {
-        let (arg_self_, arg_size) = (self_, size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = if arg_size.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_size))
-        };
-        let arg_size = arg_size.as_ref().map(|arg| arg.as_ref());
-        let result = ImplView::set_size(&arg_self_.interface, arg_size);
-    }
-    extern "C" fn get_size<I: ImplView>(self_: *mut _cef_view_t) -> _cef_size_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_position<I: ImplView>(
-        self_: *mut _cef_view_t,
-        position: *const _cef_point_t,
-    ) {
-        let (arg_self_, arg_position) = (self_, position);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_position = if arg_position.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_position))
-        };
-        let arg_position = arg_position.as_ref().map(|arg| arg.as_ref());
-        let result = ImplView::set_position(&arg_self_.interface, arg_position);
-    }
-    extern "C" fn get_position<I: ImplView>(self_: *mut _cef_view_t) -> _cef_point_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_position(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_insets<I: ImplView>(self_: *mut _cef_view_t, insets: *const _cef_insets_t) {
-        let (arg_self_, arg_insets) = (self_, insets);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_insets = if arg_insets.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Insets>::from(arg_insets))
-        };
-        let arg_insets = arg_insets.as_ref().map(|arg| arg.as_ref());
-        let result = ImplView::set_insets(&arg_self_.interface, arg_insets);
-    }
-    extern "C" fn get_insets<I: ImplView>(self_: *mut _cef_view_t) -> _cef_insets_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_insets(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_preferred_size<I: ImplView>(self_: *mut _cef_view_t) -> _cef_size_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_preferred_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn size_to_preferred_size<I: ImplView>(self_: *mut _cef_view_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::size_to_preferred_size(&arg_self_.interface);
-    }
-    extern "C" fn get_minimum_size<I: ImplView>(self_: *mut _cef_view_t) -> _cef_size_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_minimum_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_maximum_size<I: ImplView>(self_: *mut _cef_view_t) -> _cef_size_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_maximum_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_height_for_width<I: ImplView>(
-        self_: *mut _cef_view_t,
-        width: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_width) = (self_, width);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_width = arg_width.as_raw();
-        let result = ImplView::get_height_for_width(&arg_self_.interface, arg_width);
-        result.into()
-    }
-    extern "C" fn invalidate_layout<I: ImplView>(self_: *mut _cef_view_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::invalidate_layout(&arg_self_.interface);
-    }
-    extern "C" fn set_visible<I: ImplView>(
-        self_: *mut _cef_view_t,
-        visible: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_visible) = (self_, visible);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_visible = arg_visible.as_raw();
-        let result = ImplView::set_visible(&arg_self_.interface, arg_visible);
-    }
-    extern "C" fn is_visible<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::is_visible(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_drawn<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::is_drawn(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_enabled<I: ImplView>(
-        self_: *mut _cef_view_t,
-        enabled: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_enabled) = (self_, enabled);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_enabled = arg_enabled.as_raw();
-        let result = ImplView::set_enabled(&arg_self_.interface, arg_enabled);
-    }
-    extern "C" fn is_enabled<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::is_enabled(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_focusable<I: ImplView>(
-        self_: *mut _cef_view_t,
-        focusable: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_focusable) = (self_, focusable);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_focusable = arg_focusable.as_raw();
-        let result = ImplView::set_focusable(&arg_self_.interface, arg_focusable);
-    }
-    extern "C" fn is_focusable<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::is_focusable(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_accessibility_focusable<I: ImplView>(
-        self_: *mut _cef_view_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::is_accessibility_focusable(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_focus<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::has_focus(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn request_focus<I: ImplView>(self_: *mut _cef_view_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::request_focus(&arg_self_.interface);
-    }
-    extern "C" fn set_background_color<I: ImplView>(self_: *mut _cef_view_t, color: u32) {
-        let (arg_self_, arg_color) = (self_, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color = arg_color.as_raw();
-        let result = ImplView::set_background_color(&arg_self_.interface, arg_color);
-    }
-    extern "C" fn get_background_color<I: ImplView>(self_: *mut _cef_view_t) -> u32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::get_background_color(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_theme_color<I: ImplView>(
-        self_: *mut _cef_view_t,
-        color_id: ::std::os::raw::c_int,
-    ) -> u32 {
-        let (arg_self_, arg_color_id) = (self_, color_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color_id = arg_color_id.as_raw();
-        let result = ImplView::get_theme_color(&arg_self_.interface, arg_color_id);
-        result.into()
-    }
-    extern "C" fn convert_point_to_screen<I: ImplView>(
-        self_: *mut _cef_view_t,
-        point: *mut _cef_point_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_point) = (self_, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplView::convert_point_to_screen(&arg_self_.interface, arg_point);
-        result.into()
-    }
-    extern "C" fn convert_point_from_screen<I: ImplView>(
-        self_: *mut _cef_view_t,
-        point: *mut _cef_point_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_point) = (self_, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplView::convert_point_from_screen(&arg_self_.interface, arg_point);
-        result.into()
-    }
-    extern "C" fn convert_point_to_window<I: ImplView>(
-        self_: *mut _cef_view_t,
-        point: *mut _cef_point_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_point) = (self_, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplView::convert_point_to_window(&arg_self_.interface, arg_point);
-        result.into()
-    }
-    extern "C" fn convert_point_from_window<I: ImplView>(
-        self_: *mut _cef_view_t,
-        point: *mut _cef_point_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_point) = (self_, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplView::convert_point_from_window(&arg_self_.interface, arg_point);
-        result.into()
-    }
-    extern "C" fn convert_point_to_view<I: ImplView>(
-        self_: *mut _cef_view_t,
-        view: *mut _cef_view_t,
-        point: *mut _cef_point_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_view, arg_point) = (self_, view, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplView::convert_point_to_view(&arg_self_.interface, arg_view, arg_point);
-        result.into()
-    }
-    extern "C" fn convert_point_from_view<I: ImplView>(
-        self_: *mut _cef_view_t,
-        view: *mut _cef_view_t,
-        point: *mut _cef_point_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_view, arg_point) = (self_, view, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplView::convert_point_from_view(&arg_self_.interface, arg_view, arg_point);
-        result.into()
-    }
 }
 impl ImplView for View {
     fn as_browser_view(&self) -> Option<BrowserView> {
@@ -48792,110 +36467,15 @@ impl Default for View {
 /// See [_cef_button_t] for more documentation.
 #[derive(Clone)]
 pub struct Button(RefGuard<_cef_button_t>);
-impl Button {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapButton,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplButton>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapButton>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_button_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapButton: ImplButton {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_button_t, Self>);
-}
 pub trait ImplButton: ImplView {
-    fn as_label_button(&self) -> Option<LabelButton> {
-        Default::default()
-    }
-    fn set_state(&self, state: ButtonState) {}
-    fn get_state(&self) -> ButtonState {
-        Default::default()
-    }
-    fn set_ink_drop_enabled(&self, enabled: ::std::os::raw::c_int) {}
-    fn set_tooltip_text(&self, tooltip_text: Option<&CefStringUtf16>) {}
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>) {}
-    fn init_methods(object: &mut _cef_button_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base);
-        impl_cef_button_t::init_methods::<Self>(object);
-    }
+    fn as_label_button(&self) -> Option<LabelButton>;
+    fn set_state(&self, state: ButtonState);
+    fn get_state(&self) -> ButtonState;
+    fn set_ink_drop_enabled(&self, enabled: ::std::os::raw::c_int);
+    fn set_tooltip_text(&self, tooltip_text: Option<&CefStringUtf16>);
+    fn set_accessible_name(&self, name: Option<&CefStringUtf16>);
     fn get_raw(&self) -> *mut _cef_button_t {
         <Self as ImplView>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_button_t {
-    use super::*;
-    pub fn init_methods<I: ImplButton>(object: &mut _cef_button_t) {
-        object.as_label_button = Some(as_label_button::<I>);
-        object.set_state = Some(set_state::<I>);
-        object.get_state = Some(get_state::<I>);
-        object.set_ink_drop_enabled = Some(set_ink_drop_enabled::<I>);
-        object.set_tooltip_text = Some(set_tooltip_text::<I>);
-        object.set_accessible_name = Some(set_accessible_name::<I>);
-    }
-    extern "C" fn as_label_button<I: ImplButton>(
-        self_: *mut _cef_button_t,
-    ) -> *mut _cef_label_button_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplButton::as_label_button(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_state<I: ImplButton>(self_: *mut _cef_button_t, state: cef_button_state_t) {
-        let (arg_self_, arg_state) = (self_, state);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_state = arg_state.as_raw();
-        let result = ImplButton::set_state(&arg_self_.interface, arg_state);
-    }
-    extern "C" fn get_state<I: ImplButton>(self_: *mut _cef_button_t) -> cef_button_state_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplButton::get_state(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_ink_drop_enabled<I: ImplButton>(
-        self_: *mut _cef_button_t,
-        enabled: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_enabled) = (self_, enabled);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_enabled = arg_enabled.as_raw();
-        let result = ImplButton::set_ink_drop_enabled(&arg_self_.interface, arg_enabled);
-    }
-    extern "C" fn set_tooltip_text<I: ImplButton>(
-        self_: *mut _cef_button_t,
-        tooltip_text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_tooltip_text) = (self_, tooltip_text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_tooltip_text = if arg_tooltip_text.is_null() {
-            None
-        } else {
-            Some(arg_tooltip_text.into())
-        };
-        let arg_tooltip_text = arg_tooltip_text.as_ref();
-        let result = ImplButton::set_tooltip_text(&arg_self_.interface, arg_tooltip_text);
-    }
-    extern "C" fn set_accessible_name<I: ImplButton>(
-        self_: *mut _cef_button_t,
-        name: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplButton::set_accessible_name(&arg_self_.interface, arg_name);
     }
 }
 impl ImplView for Button {
@@ -49447,195 +37027,20 @@ impl Default for ButtonDelegate {
 /// See [_cef_label_button_t] for more documentation.
 #[derive(Clone)]
 pub struct LabelButton(RefGuard<_cef_label_button_t>);
-impl LabelButton {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapLabelButton,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplLabelButton>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapLabelButton>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_label_button_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapLabelButton: ImplLabelButton {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_label_button_t, Self>);
-}
 pub trait ImplLabelButton: ImplButton {
-    fn as_menu_button(&self) -> Option<MenuButton> {
-        Default::default()
-    }
-    fn set_text(&self, text: Option<&CefStringUtf16>) {}
-    fn get_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_image(&self, button_state: ButtonState, image: Option<&mut impl ImplImage>) {}
-    fn get_image(&self, button_state: ButtonState) -> Option<Image> {
-        Default::default()
-    }
-    fn set_text_color(&self, for_state: ButtonState, color: u32) {}
-    fn set_enabled_text_colors(&self, color: u32) {}
-    fn set_font_list(&self, font_list: Option<&CefStringUtf16>) {}
-    fn set_horizontal_alignment(&self, alignment: HorizontalAlignment) {}
-    fn set_minimum_size(&self, size: Option<&Size>) {}
-    fn set_maximum_size(&self, size: Option<&Size>) {}
-    fn init_methods(object: &mut _cef_label_button_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base.base);
-        impl_cef_button_t::init_methods::<Self>(&mut object.base);
-        impl_cef_label_button_t::init_methods::<Self>(object);
-    }
+    fn as_menu_button(&self) -> Option<MenuButton>;
+    fn set_text(&self, text: Option<&CefStringUtf16>);
+    fn get_text(&self) -> Option<CefStringUtf16>;
+    fn set_image(&self, button_state: ButtonState, image: Option<&mut impl ImplImage>);
+    fn get_image(&self, button_state: ButtonState) -> Option<Image>;
+    fn set_text_color(&self, for_state: ButtonState, color: u32);
+    fn set_enabled_text_colors(&self, color: u32);
+    fn set_font_list(&self, font_list: Option<&CefStringUtf16>);
+    fn set_horizontal_alignment(&self, alignment: HorizontalAlignment);
+    fn set_minimum_size(&self, size: Option<&Size>);
+    fn set_maximum_size(&self, size: Option<&Size>);
     fn get_raw(&self) -> *mut _cef_label_button_t {
         <Self as ImplButton>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_label_button_t {
-    use super::*;
-    pub fn init_methods<I: ImplLabelButton>(object: &mut _cef_label_button_t) {
-        object.as_menu_button = Some(as_menu_button::<I>);
-        object.set_text = Some(set_text::<I>);
-        object.get_text = Some(get_text::<I>);
-        object.set_image = Some(set_image::<I>);
-        object.get_image = Some(get_image::<I>);
-        object.set_text_color = Some(set_text_color::<I>);
-        object.set_enabled_text_colors = Some(set_enabled_text_colors::<I>);
-        object.set_font_list = Some(set_font_list::<I>);
-        object.set_horizontal_alignment = Some(set_horizontal_alignment::<I>);
-        object.set_minimum_size = Some(set_minimum_size::<I>);
-        object.set_maximum_size = Some(set_maximum_size::<I>);
-    }
-    extern "C" fn as_menu_button<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-    ) -> *mut _cef_menu_button_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplLabelButton::as_menu_button(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_text<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_text) = (self_, text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let result = ImplLabelButton::set_text(&arg_self_.interface, arg_text);
-    }
-    extern "C" fn get_text<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplLabelButton::get_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_image<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        button_state: cef_button_state_t,
-        image: *mut _cef_image_t,
-    ) {
-        let (arg_self_, arg_button_state, arg_image) = (self_, button_state, image);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_button_state = arg_button_state.as_raw();
-        let mut arg_image =
-            unsafe { arg_image.as_mut() }.map(|arg| Image(unsafe { RefGuard::from_raw(arg) }));
-        let arg_image = arg_image.as_mut();
-        let result = ImplLabelButton::set_image(&arg_self_.interface, arg_button_state, arg_image);
-    }
-    extern "C" fn get_image<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        button_state: cef_button_state_t,
-    ) -> *mut _cef_image_t {
-        let (arg_self_, arg_button_state) = (self_, button_state);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_button_state = arg_button_state.as_raw();
-        let result = ImplLabelButton::get_image(&arg_self_.interface, arg_button_state);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_text_color<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        for_state: cef_button_state_t,
-        color: u32,
-    ) {
-        let (arg_self_, arg_for_state, arg_color) = (self_, for_state, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_for_state = arg_for_state.as_raw();
-        let arg_color = arg_color.as_raw();
-        let result =
-            ImplLabelButton::set_text_color(&arg_self_.interface, arg_for_state, arg_color);
-    }
-    extern "C" fn set_enabled_text_colors<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        color: u32,
-    ) {
-        let (arg_self_, arg_color) = (self_, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color = arg_color.as_raw();
-        let result = ImplLabelButton::set_enabled_text_colors(&arg_self_.interface, arg_color);
-    }
-    extern "C" fn set_font_list<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        font_list: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_font_list) = (self_, font_list);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_font_list = if arg_font_list.is_null() {
-            None
-        } else {
-            Some(arg_font_list.into())
-        };
-        let arg_font_list = arg_font_list.as_ref();
-        let result = ImplLabelButton::set_font_list(&arg_self_.interface, arg_font_list);
-    }
-    extern "C" fn set_horizontal_alignment<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        alignment: cef_horizontal_alignment_t,
-    ) {
-        let (arg_self_, arg_alignment) = (self_, alignment);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_alignment = arg_alignment.as_raw();
-        let result = ImplLabelButton::set_horizontal_alignment(&arg_self_.interface, arg_alignment);
-    }
-    extern "C" fn set_minimum_size<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        size: *const _cef_size_t,
-    ) {
-        let (arg_self_, arg_size) = (self_, size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = if arg_size.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_size))
-        };
-        let arg_size = arg_size.as_ref().map(|arg| arg.as_ref());
-        let result = ImplLabelButton::set_minimum_size(&arg_self_.interface, arg_size);
-    }
-    extern "C" fn set_maximum_size<I: ImplLabelButton>(
-        self_: *mut _cef_label_button_t,
-        size: *const _cef_size_t,
-    ) {
-        let (arg_self_, arg_size) = (self_, size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = if arg_size.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_size))
-        };
-        let arg_size = arg_size.as_ref().map(|arg| arg.as_ref());
-        let result = ImplLabelButton::set_maximum_size(&arg_self_.interface, arg_size);
     }
 }
 impl ImplView for LabelButton {
@@ -50105,35 +37510,8 @@ impl Default for LabelButton {
 /// See [_cef_menu_button_pressed_lock_t] for more documentation.
 #[derive(Clone)]
 pub struct MenuButtonPressedLock(RefGuard<_cef_menu_button_pressed_lock_t>);
-impl MenuButtonPressedLock {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMenuButtonPressedLock,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMenuButtonPressedLock>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMenuButtonPressedLock>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_menu_button_pressed_lock_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMenuButtonPressedLock: ImplMenuButtonPressedLock {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_menu_button_pressed_lock_t, Self>);
-}
 pub trait ImplMenuButtonPressedLock: Clone + Sized + Rc {
-    fn init_methods(object: &mut _cef_menu_button_pressed_lock_t) {
-        impl_cef_menu_button_pressed_lock_t::init_methods::<Self>(object);
-    }
     fn get_raw(&self) -> *mut _cef_menu_button_pressed_lock_t;
-}
-mod impl_cef_menu_button_pressed_lock_t {
-    use super::*;
-    pub fn init_methods<I: ImplMenuButtonPressedLock>(
-        object: &mut _cef_menu_button_pressed_lock_t,
-    ) {
-    }
 }
 impl ImplMenuButtonPressedLock for MenuButtonPressedLock {
     fn get_raw(&self) -> *mut _cef_menu_button_pressed_lock_t {
@@ -50412,78 +37790,16 @@ impl Default for MenuButtonDelegate {
 /// See [_cef_menu_button_t] for more documentation.
 #[derive(Clone)]
 pub struct MenuButton(RefGuard<_cef_menu_button_t>);
-impl MenuButton {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapMenuButton,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplMenuButton>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapMenuButton>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_menu_button_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapMenuButton: ImplMenuButton {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_menu_button_t, Self>);
-}
 pub trait ImplMenuButton: ImplLabelButton {
     fn show_menu(
         &self,
         menu_model: Option<&mut impl ImplMenuModel>,
         screen_point: Option<&Point>,
         anchor_position: MenuAnchorPosition,
-    ) {
-    }
-    fn trigger_menu(&self) {}
-    fn init_methods(object: &mut _cef_menu_button_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base.base.base);
-        impl_cef_button_t::init_methods::<Self>(&mut object.base.base);
-        impl_cef_label_button_t::init_methods::<Self>(&mut object.base);
-        impl_cef_menu_button_t::init_methods::<Self>(object);
-    }
+    );
+    fn trigger_menu(&self);
     fn get_raw(&self) -> *mut _cef_menu_button_t {
         <Self as ImplLabelButton>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_menu_button_t {
-    use super::*;
-    pub fn init_methods<I: ImplMenuButton>(object: &mut _cef_menu_button_t) {
-        object.show_menu = Some(show_menu::<I>);
-        object.trigger_menu = Some(trigger_menu::<I>);
-    }
-    extern "C" fn show_menu<I: ImplMenuButton>(
-        self_: *mut _cef_menu_button_t,
-        menu_model: *mut _cef_menu_model_t,
-        screen_point: *const _cef_point_t,
-        anchor_position: cef_menu_anchor_position_t,
-    ) {
-        let (arg_self_, arg_menu_model, arg_screen_point, arg_anchor_position) =
-            (self_, menu_model, screen_point, anchor_position);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_menu_model = unsafe { arg_menu_model.as_mut() }
-            .map(|arg| MenuModel(unsafe { RefGuard::from_raw(arg) }));
-        let arg_menu_model = arg_menu_model.as_mut();
-        let arg_screen_point = if arg_screen_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_screen_point))
-        };
-        let arg_screen_point = arg_screen_point.as_ref().map(|arg| arg.as_ref());
-        let arg_anchor_position = arg_anchor_position.as_raw();
-        let result = ImplMenuButton::show_menu(
-            &arg_self_.interface,
-            arg_menu_model,
-            arg_screen_point,
-            arg_anchor_position,
-        );
-    }
-    extern "C" fn trigger_menu<I: ImplMenuButton>(self_: *mut _cef_menu_button_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplMenuButton::trigger_menu(&arg_self_.interface);
     }
 }
 impl ImplView for MenuButton {
@@ -51100,437 +38416,40 @@ impl Default for TextfieldDelegate {
 /// See [_cef_textfield_t] for more documentation.
 #[derive(Clone)]
 pub struct Textfield(RefGuard<_cef_textfield_t>);
-impl Textfield {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapTextfield,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplTextfield>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapTextfield>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_textfield_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapTextfield: ImplTextfield {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_textfield_t, Self>);
-}
 pub trait ImplTextfield: ImplView {
-    fn set_password_input(&self, password_input: ::std::os::raw::c_int) {}
-    fn is_password_input(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn set_read_only(&self, read_only: ::std::os::raw::c_int) {}
-    fn is_read_only(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_text(&self, text: Option<&CefStringUtf16>) {}
-    fn append_text(&self, text: Option<&CefStringUtf16>) {}
-    fn insert_or_replace_text(&self, text: Option<&CefStringUtf16>) {}
-    fn has_selection(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_selected_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn select_all(&self, reversed: ::std::os::raw::c_int) {}
-    fn clear_selection(&self) {}
-    fn get_selected_range(&self) -> Range {
-        Default::default()
-    }
-    fn select_range(&self, range: Option<&Range>) {}
-    fn get_cursor_position(&self) -> usize {
-        Default::default()
-    }
-    fn set_text_color(&self, color: u32) {}
-    fn get_text_color(&self) -> cef_color_t {
-        Default::default()
-    }
-    fn set_selection_text_color(&self, color: u32) {}
-    fn get_selection_text_color(&self) -> cef_color_t {
-        Default::default()
-    }
-    fn set_selection_background_color(&self, color: u32) {}
-    fn get_selection_background_color(&self) -> cef_color_t {
-        Default::default()
-    }
-    fn set_font_list(&self, font_list: Option<&CefStringUtf16>) {}
-    fn apply_text_color(&self, color: u32, range: Option<&Range>) {}
-    fn apply_text_style(
-        &self,
-        style: TextStyle,
-        add: ::std::os::raw::c_int,
-        range: Option<&Range>,
-    ) {
-    }
-    fn is_command_enabled(&self, command_id: TextFieldCommands) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn execute_command(&self, command_id: TextFieldCommands) {}
-    fn clear_edit_history(&self) {}
-    fn set_placeholder_text(&self, text: Option<&CefStringUtf16>) {}
-    fn get_placeholder_text(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_placeholder_text_color(&self, color: u32) {}
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>) {}
-    fn init_methods(object: &mut _cef_textfield_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base);
-        impl_cef_textfield_t::init_methods::<Self>(object);
-    }
+    fn set_password_input(&self, password_input: ::std::os::raw::c_int);
+    fn is_password_input(&self) -> ::std::os::raw::c_int;
+    fn set_read_only(&self, read_only: ::std::os::raw::c_int);
+    fn is_read_only(&self) -> ::std::os::raw::c_int;
+    fn get_text(&self) -> Option<CefStringUtf16>;
+    fn set_text(&self, text: Option<&CefStringUtf16>);
+    fn append_text(&self, text: Option<&CefStringUtf16>);
+    fn insert_or_replace_text(&self, text: Option<&CefStringUtf16>);
+    fn has_selection(&self) -> ::std::os::raw::c_int;
+    fn get_selected_text(&self) -> Option<CefStringUtf16>;
+    fn select_all(&self, reversed: ::std::os::raw::c_int);
+    fn clear_selection(&self);
+    fn get_selected_range(&self) -> Range;
+    fn select_range(&self, range: Option<&Range>);
+    fn get_cursor_position(&self) -> usize;
+    fn set_text_color(&self, color: u32);
+    fn get_text_color(&self) -> cef_color_t;
+    fn set_selection_text_color(&self, color: u32);
+    fn get_selection_text_color(&self) -> cef_color_t;
+    fn set_selection_background_color(&self, color: u32);
+    fn get_selection_background_color(&self) -> cef_color_t;
+    fn set_font_list(&self, font_list: Option<&CefStringUtf16>);
+    fn apply_text_color(&self, color: u32, range: Option<&Range>);
+    fn apply_text_style(&self, style: TextStyle, add: ::std::os::raw::c_int, range: Option<&Range>);
+    fn is_command_enabled(&self, command_id: TextFieldCommands) -> ::std::os::raw::c_int;
+    fn execute_command(&self, command_id: TextFieldCommands);
+    fn clear_edit_history(&self);
+    fn set_placeholder_text(&self, text: Option<&CefStringUtf16>);
+    fn get_placeholder_text(&self) -> Option<CefStringUtf16>;
+    fn set_placeholder_text_color(&self, color: u32);
+    fn set_accessible_name(&self, name: Option<&CefStringUtf16>);
     fn get_raw(&self) -> *mut _cef_textfield_t {
         <Self as ImplView>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_textfield_t {
-    use super::*;
-    pub fn init_methods<I: ImplTextfield>(object: &mut _cef_textfield_t) {
-        object.set_password_input = Some(set_password_input::<I>);
-        object.is_password_input = Some(is_password_input::<I>);
-        object.set_read_only = Some(set_read_only::<I>);
-        object.is_read_only = Some(is_read_only::<I>);
-        object.get_text = Some(get_text::<I>);
-        object.set_text = Some(set_text::<I>);
-        object.append_text = Some(append_text::<I>);
-        object.insert_or_replace_text = Some(insert_or_replace_text::<I>);
-        object.has_selection = Some(has_selection::<I>);
-        object.get_selected_text = Some(get_selected_text::<I>);
-        object.select_all = Some(select_all::<I>);
-        object.clear_selection = Some(clear_selection::<I>);
-        object.get_selected_range = Some(get_selected_range::<I>);
-        object.select_range = Some(select_range::<I>);
-        object.get_cursor_position = Some(get_cursor_position::<I>);
-        object.set_text_color = Some(set_text_color::<I>);
-        object.get_text_color = Some(get_text_color::<I>);
-        object.set_selection_text_color = Some(set_selection_text_color::<I>);
-        object.get_selection_text_color = Some(get_selection_text_color::<I>);
-        object.set_selection_background_color = Some(set_selection_background_color::<I>);
-        object.get_selection_background_color = Some(get_selection_background_color::<I>);
-        object.set_font_list = Some(set_font_list::<I>);
-        object.apply_text_color = Some(apply_text_color::<I>);
-        object.apply_text_style = Some(apply_text_style::<I>);
-        object.is_command_enabled = Some(is_command_enabled::<I>);
-        object.execute_command = Some(execute_command::<I>);
-        object.clear_edit_history = Some(clear_edit_history::<I>);
-        object.set_placeholder_text = Some(set_placeholder_text::<I>);
-        object.get_placeholder_text = Some(get_placeholder_text::<I>);
-        object.set_placeholder_text_color = Some(set_placeholder_text_color::<I>);
-        object.set_accessible_name = Some(set_accessible_name::<I>);
-    }
-    extern "C" fn set_password_input<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        password_input: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_password_input) = (self_, password_input);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_password_input = arg_password_input.as_raw();
-        let result = ImplTextfield::set_password_input(&arg_self_.interface, arg_password_input);
-    }
-    extern "C" fn is_password_input<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::is_password_input(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_read_only<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        read_only: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_read_only) = (self_, read_only);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_read_only = arg_read_only.as_raw();
-        let result = ImplTextfield::set_read_only(&arg_self_.interface, arg_read_only);
-    }
-    extern "C" fn is_read_only<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::is_read_only(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_text<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_text<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_text) = (self_, text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let result = ImplTextfield::set_text(&arg_self_.interface, arg_text);
-    }
-    extern "C" fn append_text<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_text) = (self_, text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let result = ImplTextfield::append_text(&arg_self_.interface, arg_text);
-    }
-    extern "C" fn insert_or_replace_text<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_text) = (self_, text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let result = ImplTextfield::insert_or_replace_text(&arg_self_.interface, arg_text);
-    }
-    extern "C" fn has_selection<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::has_selection(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_selected_text<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_selected_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn select_all<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        reversed: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_reversed) = (self_, reversed);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_reversed = arg_reversed.as_raw();
-        let result = ImplTextfield::select_all(&arg_self_.interface, arg_reversed);
-    }
-    extern "C" fn clear_selection<I: ImplTextfield>(self_: *mut _cef_textfield_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::clear_selection(&arg_self_.interface);
-    }
-    extern "C" fn get_selected_range<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> _cef_range_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_selected_range(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn select_range<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        range: *const _cef_range_t,
-    ) {
-        let (arg_self_, arg_range) = (self_, range);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_range = if arg_range.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_range))
-        };
-        let arg_range = arg_range.as_ref().map(|arg| arg.as_ref());
-        let result = ImplTextfield::select_range(&arg_self_.interface, arg_range);
-    }
-    extern "C" fn get_cursor_position<I: ImplTextfield>(self_: *mut _cef_textfield_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_cursor_position(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_text_color<I: ImplTextfield>(self_: *mut _cef_textfield_t, color: u32) {
-        let (arg_self_, arg_color) = (self_, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color = arg_color.as_raw();
-        let result = ImplTextfield::set_text_color(&arg_self_.interface, arg_color);
-    }
-    extern "C" fn get_text_color<I: ImplTextfield>(self_: *mut _cef_textfield_t) -> u32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_text_color(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_selection_text_color<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        color: u32,
-    ) {
-        let (arg_self_, arg_color) = (self_, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color = arg_color.as_raw();
-        let result = ImplTextfield::set_selection_text_color(&arg_self_.interface, arg_color);
-    }
-    extern "C" fn get_selection_text_color<I: ImplTextfield>(self_: *mut _cef_textfield_t) -> u32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_selection_text_color(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_selection_background_color<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        color: u32,
-    ) {
-        let (arg_self_, arg_color) = (self_, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color = arg_color.as_raw();
-        let result = ImplTextfield::set_selection_background_color(&arg_self_.interface, arg_color);
-    }
-    extern "C" fn get_selection_background_color<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> u32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_selection_background_color(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_font_list<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        font_list: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_font_list) = (self_, font_list);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_font_list = if arg_font_list.is_null() {
-            None
-        } else {
-            Some(arg_font_list.into())
-        };
-        let arg_font_list = arg_font_list.as_ref();
-        let result = ImplTextfield::set_font_list(&arg_self_.interface, arg_font_list);
-    }
-    extern "C" fn apply_text_color<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        color: u32,
-        range: *const _cef_range_t,
-    ) {
-        let (arg_self_, arg_color, arg_range) = (self_, color, range);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color = arg_color.as_raw();
-        let arg_range = if arg_range.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_range))
-        };
-        let arg_range = arg_range.as_ref().map(|arg| arg.as_ref());
-        let result = ImplTextfield::apply_text_color(&arg_self_.interface, arg_color, arg_range);
-    }
-    extern "C" fn apply_text_style<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        style: cef_text_style_t,
-        add: ::std::os::raw::c_int,
-        range: *const _cef_range_t,
-    ) {
-        let (arg_self_, arg_style, arg_add, arg_range) = (self_, style, add, range);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_style = arg_style.as_raw();
-        let arg_add = arg_add.as_raw();
-        let arg_range = if arg_range.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Range>::from(arg_range))
-        };
-        let arg_range = arg_range.as_ref().map(|arg| arg.as_ref());
-        let result =
-            ImplTextfield::apply_text_style(&arg_self_.interface, arg_style, arg_add, arg_range);
-    }
-    extern "C" fn is_command_enabled<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        command_id: cef_text_field_commands_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplTextfield::is_command_enabled(&arg_self_.interface, arg_command_id);
-        result.into()
-    }
-    extern "C" fn execute_command<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        command_id: cef_text_field_commands_t,
-    ) {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplTextfield::execute_command(&arg_self_.interface, arg_command_id);
-    }
-    extern "C" fn clear_edit_history<I: ImplTextfield>(self_: *mut _cef_textfield_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::clear_edit_history(&arg_self_.interface);
-    }
-    extern "C" fn set_placeholder_text<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        text: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_text) = (self_, text);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_text = if arg_text.is_null() {
-            None
-        } else {
-            Some(arg_text.into())
-        };
-        let arg_text = arg_text.as_ref();
-        let result = ImplTextfield::set_placeholder_text(&arg_self_.interface, arg_text);
-    }
-    extern "C" fn get_placeholder_text<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-    ) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplTextfield::get_placeholder_text(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_placeholder_text_color<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        color: u32,
-    ) {
-        let (arg_self_, arg_color) = (self_, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color = arg_color.as_raw();
-        let result = ImplTextfield::set_placeholder_text_color(&arg_self_.interface, arg_color);
-    }
-    extern "C" fn set_accessible_name<I: ImplTextfield>(
-        self_: *mut _cef_textfield_t,
-        name: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_name) = (self_, name);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_name = if arg_name.is_null() {
-            None
-        } else {
-            Some(arg_name.into())
-        };
-        let arg_name = arg_name.as_ref();
-        let result = ImplTextfield::set_accessible_name(&arg_self_.interface, arg_name);
     }
 }
 impl ImplView for Textfield {
@@ -52810,87 +39729,13 @@ impl Default for BrowserViewDelegate {
 /// See [_cef_browser_view_t] for more documentation.
 #[derive(Clone)]
 pub struct BrowserView(RefGuard<_cef_browser_view_t>);
-impl BrowserView {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapBrowserView,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplBrowserView>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapBrowserView>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_browser_view_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapBrowserView: ImplBrowserView {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_browser_view_t, Self>);
-}
 pub trait ImplBrowserView: ImplView {
-    fn get_browser(&self) -> Option<Browser> {
-        Default::default()
-    }
-    fn get_chrome_toolbar(&self) -> Option<View> {
-        Default::default()
-    }
-    fn set_prefer_accelerators(&self, prefer_accelerators: ::std::os::raw::c_int) {}
-    fn get_runtime_style(&self) -> RuntimeStyle {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_browser_view_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base);
-        impl_cef_browser_view_t::init_methods::<Self>(object);
-    }
+    fn get_browser(&self) -> Option<Browser>;
+    fn get_chrome_toolbar(&self) -> Option<View>;
+    fn set_prefer_accelerators(&self, prefer_accelerators: ::std::os::raw::c_int);
+    fn get_runtime_style(&self) -> RuntimeStyle;
     fn get_raw(&self) -> *mut _cef_browser_view_t {
         <Self as ImplView>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_browser_view_t {
-    use super::*;
-    pub fn init_methods<I: ImplBrowserView>(object: &mut _cef_browser_view_t) {
-        object.get_browser = Some(get_browser::<I>);
-        object.get_chrome_toolbar = Some(get_chrome_toolbar::<I>);
-        object.set_prefer_accelerators = Some(set_prefer_accelerators::<I>);
-        object.get_runtime_style = Some(get_runtime_style::<I>);
-    }
-    extern "C" fn get_browser<I: ImplBrowserView>(
-        self_: *mut _cef_browser_view_t,
-    ) -> *mut _cef_browser_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserView::get_browser(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_chrome_toolbar<I: ImplBrowserView>(
-        self_: *mut _cef_browser_view_t,
-    ) -> *mut _cef_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserView::get_chrome_toolbar(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_prefer_accelerators<I: ImplBrowserView>(
-        self_: *mut _cef_browser_view_t,
-        prefer_accelerators: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_prefer_accelerators) = (self_, prefer_accelerators);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_prefer_accelerators = arg_prefer_accelerators.as_raw();
-        let result =
-            ImplBrowserView::set_prefer_accelerators(&arg_self_.interface, arg_prefer_accelerators);
-    }
-    extern "C" fn get_runtime_style<I: ImplBrowserView>(
-        self_: *mut _cef_browser_view_t,
-    ) -> cef_runtime_style_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserView::get_runtime_style(&arg_self_.interface);
-        result.into()
     }
 }
 impl ImplView for BrowserView {
@@ -53210,122 +40055,16 @@ impl Default for BrowserView {
 /// See [_cef_scroll_view_t] for more documentation.
 #[derive(Clone)]
 pub struct ScrollView(RefGuard<_cef_scroll_view_t>);
-impl ScrollView {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapScrollView,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplScrollView>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapScrollView>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_scroll_view_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapScrollView: ImplScrollView {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_scroll_view_t, Self>);
-}
 pub trait ImplScrollView: ImplView {
-    fn set_content_view(&self, view: Option<&mut impl ImplView>) {}
-    fn get_content_view(&self) -> Option<View> {
-        Default::default()
-    }
-    fn get_visible_content_rect(&self) -> Rect {
-        Default::default()
-    }
-    fn has_horizontal_scrollbar(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_horizontal_scrollbar_height(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn has_vertical_scrollbar(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_vertical_scrollbar_width(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_scroll_view_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base);
-        impl_cef_scroll_view_t::init_methods::<Self>(object);
-    }
+    fn set_content_view(&self, view: Option<&mut impl ImplView>);
+    fn get_content_view(&self) -> Option<View>;
+    fn get_visible_content_rect(&self) -> Rect;
+    fn has_horizontal_scrollbar(&self) -> ::std::os::raw::c_int;
+    fn get_horizontal_scrollbar_height(&self) -> ::std::os::raw::c_int;
+    fn has_vertical_scrollbar(&self) -> ::std::os::raw::c_int;
+    fn get_vertical_scrollbar_width(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_scroll_view_t {
         <Self as ImplView>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_scroll_view_t {
-    use super::*;
-    pub fn init_methods<I: ImplScrollView>(object: &mut _cef_scroll_view_t) {
-        object.set_content_view = Some(set_content_view::<I>);
-        object.get_content_view = Some(get_content_view::<I>);
-        object.get_visible_content_rect = Some(get_visible_content_rect::<I>);
-        object.has_horizontal_scrollbar = Some(has_horizontal_scrollbar::<I>);
-        object.get_horizontal_scrollbar_height = Some(get_horizontal_scrollbar_height::<I>);
-        object.has_vertical_scrollbar = Some(has_vertical_scrollbar::<I>);
-        object.get_vertical_scrollbar_width = Some(get_vertical_scrollbar_width::<I>);
-    }
-    extern "C" fn set_content_view<I: ImplScrollView>(
-        self_: *mut _cef_scroll_view_t,
-        view: *mut _cef_view_t,
-    ) {
-        let (arg_self_, arg_view) = (self_, view);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let result = ImplScrollView::set_content_view(&arg_self_.interface, arg_view);
-    }
-    extern "C" fn get_content_view<I: ImplScrollView>(
-        self_: *mut _cef_scroll_view_t,
-    ) -> *mut _cef_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplScrollView::get_content_view(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_visible_content_rect<I: ImplScrollView>(
-        self_: *mut _cef_scroll_view_t,
-    ) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplScrollView::get_visible_content_rect(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_horizontal_scrollbar<I: ImplScrollView>(
-        self_: *mut _cef_scroll_view_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplScrollView::has_horizontal_scrollbar(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_horizontal_scrollbar_height<I: ImplScrollView>(
-        self_: *mut _cef_scroll_view_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplScrollView::get_horizontal_scrollbar_height(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_vertical_scrollbar<I: ImplScrollView>(
-        self_: *mut _cef_scroll_view_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplScrollView::has_vertical_scrollbar(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_vertical_scrollbar_width<I: ImplScrollView>(
-        self_: *mut _cef_scroll_view_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplScrollView::get_vertical_scrollbar_width(&arg_self_.interface);
-        result.into()
     }
 }
 impl ImplView for ScrollView {
@@ -53682,117 +40421,15 @@ impl Default for ScrollView {
 /// See [_cef_display_t] for more documentation.
 #[derive(Clone)]
 pub struct Display(RefGuard<_cef_display_t>);
-impl Display {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapDisplay,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplDisplay>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapDisplay>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_display_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapDisplay: ImplDisplay {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_display_t, Self>);
-}
 pub trait ImplDisplay: Clone + Sized + Rc {
-    fn get_id(&self) -> i64 {
-        Default::default()
-    }
-    fn get_device_scale_factor(&self) -> f32 {
-        Default::default()
-    }
-    fn convert_point_to_pixels(&self, point: Option<&mut Point>) {}
-    fn convert_point_from_pixels(&self, point: Option<&mut Point>) {}
-    fn get_bounds(&self) -> Rect {
-        Default::default()
-    }
-    fn get_work_area(&self) -> Rect {
-        Default::default()
-    }
-    fn get_rotation(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_display_t) {
-        impl_cef_display_t::init_methods::<Self>(object);
-    }
+    fn get_id(&self) -> i64;
+    fn get_device_scale_factor(&self) -> f32;
+    fn convert_point_to_pixels(&self, point: Option<&mut Point>);
+    fn convert_point_from_pixels(&self, point: Option<&mut Point>);
+    fn get_bounds(&self) -> Rect;
+    fn get_work_area(&self) -> Rect;
+    fn get_rotation(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_display_t;
-}
-mod impl_cef_display_t {
-    use super::*;
-    pub fn init_methods<I: ImplDisplay>(object: &mut _cef_display_t) {
-        object.get_id = Some(get_id::<I>);
-        object.get_device_scale_factor = Some(get_device_scale_factor::<I>);
-        object.convert_point_to_pixels = Some(convert_point_to_pixels::<I>);
-        object.convert_point_from_pixels = Some(convert_point_from_pixels::<I>);
-        object.get_bounds = Some(get_bounds::<I>);
-        object.get_work_area = Some(get_work_area::<I>);
-        object.get_rotation = Some(get_rotation::<I>);
-    }
-    extern "C" fn get_id<I: ImplDisplay>(self_: *mut _cef_display_t) -> i64 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDisplay::get_id(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_device_scale_factor<I: ImplDisplay>(self_: *mut _cef_display_t) -> f32 {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDisplay::get_device_scale_factor(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn convert_point_to_pixels<I: ImplDisplay>(
-        self_: *mut _cef_display_t,
-        point: *mut _cef_point_t,
-    ) {
-        let (arg_self_, arg_point) = (self_, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplDisplay::convert_point_to_pixels(&arg_self_.interface, arg_point);
-    }
-    extern "C" fn convert_point_from_pixels<I: ImplDisplay>(
-        self_: *mut _cef_display_t,
-        point: *mut _cef_point_t,
-    ) {
-        let (arg_self_, arg_point) = (self_, point);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_point = if arg_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_point))
-        };
-        let arg_point = arg_point.as_mut().map(|arg| arg.as_mut());
-        let result = ImplDisplay::convert_point_from_pixels(&arg_self_.interface, arg_point);
-    }
-    extern "C" fn get_bounds<I: ImplDisplay>(self_: *mut _cef_display_t) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDisplay::get_bounds(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_work_area<I: ImplDisplay>(self_: *mut _cef_display_t) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDisplay::get_work_area(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_rotation<I: ImplDisplay>(
-        self_: *mut _cef_display_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplDisplay::get_rotation(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplDisplay for Display {
     fn get_id(&self) -> i64 {
@@ -53936,276 +40573,27 @@ impl Default for Display {
 /// See [_cef_overlay_controller_t] for more documentation.
 #[derive(Clone)]
 pub struct OverlayController(RefGuard<_cef_overlay_controller_t>);
-impl OverlayController {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapOverlayController,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplOverlayController>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapOverlayController>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_overlay_controller_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapOverlayController: ImplOverlayController {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_overlay_controller_t, Self>);
-}
 pub trait ImplOverlayController: Clone + Sized + Rc {
-    fn is_valid(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_same(&self, that: Option<&mut impl ImplOverlayController>) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_contents_view(&self) -> Option<View> {
-        Default::default()
-    }
-    fn get_window(&self) -> Option<Window> {
-        Default::default()
-    }
-    fn get_docking_mode(&self) -> DockingMode {
-        Default::default()
-    }
-    fn destroy(&self) {}
-    fn set_bounds(&self, bounds: Option<&Rect>) {}
-    fn get_bounds(&self) -> Rect {
-        Default::default()
-    }
-    fn get_bounds_in_screen(&self) -> Rect {
-        Default::default()
-    }
-    fn set_size(&self, size: Option<&Size>) {}
-    fn get_size(&self) -> Size {
-        Default::default()
-    }
-    fn set_position(&self, position: Option<&Point>) {}
-    fn get_position(&self) -> Point {
-        Default::default()
-    }
-    fn set_insets(&self, insets: Option<&Insets>) {}
-    fn get_insets(&self) -> Insets {
-        Default::default()
-    }
-    fn size_to_preferred_size(&self) {}
-    fn set_visible(&self, visible: ::std::os::raw::c_int) {}
-    fn is_visible(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_drawn(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_overlay_controller_t) {
-        impl_cef_overlay_controller_t::init_methods::<Self>(object);
-    }
+    fn is_valid(&self) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut impl ImplOverlayController>) -> ::std::os::raw::c_int;
+    fn get_contents_view(&self) -> Option<View>;
+    fn get_window(&self) -> Option<Window>;
+    fn get_docking_mode(&self) -> DockingMode;
+    fn destroy(&self);
+    fn set_bounds(&self, bounds: Option<&Rect>);
+    fn get_bounds(&self) -> Rect;
+    fn get_bounds_in_screen(&self) -> Rect;
+    fn set_size(&self, size: Option<&Size>);
+    fn get_size(&self) -> Size;
+    fn set_position(&self, position: Option<&Point>);
+    fn get_position(&self) -> Point;
+    fn set_insets(&self, insets: Option<&Insets>);
+    fn get_insets(&self) -> Insets;
+    fn size_to_preferred_size(&self);
+    fn set_visible(&self, visible: ::std::os::raw::c_int);
+    fn is_visible(&self) -> ::std::os::raw::c_int;
+    fn is_drawn(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_overlay_controller_t;
-}
-mod impl_cef_overlay_controller_t {
-    use super::*;
-    pub fn init_methods<I: ImplOverlayController>(object: &mut _cef_overlay_controller_t) {
-        object.is_valid = Some(is_valid::<I>);
-        object.is_same = Some(is_same::<I>);
-        object.get_contents_view = Some(get_contents_view::<I>);
-        object.get_window = Some(get_window::<I>);
-        object.get_docking_mode = Some(get_docking_mode::<I>);
-        object.destroy = Some(destroy::<I>);
-        object.set_bounds = Some(set_bounds::<I>);
-        object.get_bounds = Some(get_bounds::<I>);
-        object.get_bounds_in_screen = Some(get_bounds_in_screen::<I>);
-        object.set_size = Some(set_size::<I>);
-        object.get_size = Some(get_size::<I>);
-        object.set_position = Some(set_position::<I>);
-        object.get_position = Some(get_position::<I>);
-        object.set_insets = Some(set_insets::<I>);
-        object.get_insets = Some(get_insets::<I>);
-        object.size_to_preferred_size = Some(size_to_preferred_size::<I>);
-        object.set_visible = Some(set_visible::<I>);
-        object.is_visible = Some(is_visible::<I>);
-        object.is_drawn = Some(is_drawn::<I>);
-    }
-    extern "C" fn is_valid<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::is_valid(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_same<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-        that: *mut _cef_overlay_controller_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_that) = (self_, that);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_that = unsafe { arg_that.as_mut() }
-            .map(|arg| OverlayController(unsafe { RefGuard::from_raw(arg) }));
-        let arg_that = arg_that.as_mut();
-        let result = ImplOverlayController::is_same(&arg_self_.interface, arg_that);
-        result.into()
-    }
-    extern "C" fn get_contents_view<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> *mut _cef_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_contents_view(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_window<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> *mut _cef_window_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_window(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_docking_mode<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> cef_docking_mode_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_docking_mode(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn destroy<I: ImplOverlayController>(self_: *mut _cef_overlay_controller_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::destroy(&arg_self_.interface);
-    }
-    extern "C" fn set_bounds<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-        bounds: *const _cef_rect_t,
-    ) {
-        let (arg_self_, arg_bounds) = (self_, bounds);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_bounds = if arg_bounds.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Rect>::from(arg_bounds))
-        };
-        let arg_bounds = arg_bounds.as_ref().map(|arg| arg.as_ref());
-        let result = ImplOverlayController::set_bounds(&arg_self_.interface, arg_bounds);
-    }
-    extern "C" fn get_bounds<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_bounds(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_bounds_in_screen<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_bounds_in_screen(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_size<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-        size: *const _cef_size_t,
-    ) {
-        let (arg_self_, arg_size) = (self_, size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = if arg_size.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_size))
-        };
-        let arg_size = arg_size.as_ref().map(|arg| arg.as_ref());
-        let result = ImplOverlayController::set_size(&arg_self_.interface, arg_size);
-    }
-    extern "C" fn get_size<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> _cef_size_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_size(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_position<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-        position: *const _cef_point_t,
-    ) {
-        let (arg_self_, arg_position) = (self_, position);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_position = if arg_position.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_position))
-        };
-        let arg_position = arg_position.as_ref().map(|arg| arg.as_ref());
-        let result = ImplOverlayController::set_position(&arg_self_.interface, arg_position);
-    }
-    extern "C" fn get_position<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> _cef_point_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_position(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_insets<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-        insets: *const _cef_insets_t,
-    ) {
-        let (arg_self_, arg_insets) = (self_, insets);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_insets = if arg_insets.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Insets>::from(arg_insets))
-        };
-        let arg_insets = arg_insets.as_ref().map(|arg| arg.as_ref());
-        let result = ImplOverlayController::set_insets(&arg_self_.interface, arg_insets);
-    }
-    extern "C" fn get_insets<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> _cef_insets_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::get_insets(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn size_to_preferred_size<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::size_to_preferred_size(&arg_self_.interface);
-    }
-    extern "C" fn set_visible<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-        visible: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_visible) = (self_, visible);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_visible = arg_visible.as_raw();
-        let result = ImplOverlayController::set_visible(&arg_self_.interface, arg_visible);
-    }
-    extern "C" fn is_visible<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::is_visible(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_drawn<I: ImplOverlayController>(
-        self_: *mut _cef_overlay_controller_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplOverlayController::is_drawn(&arg_self_.interface);
-        result.into()
-    }
 }
 impl ImplOverlayController for OverlayController {
     fn is_valid(&self) -> ::std::os::raw::c_int {
@@ -54661,187 +41049,21 @@ impl Default for PanelDelegate {
 /// See [_cef_panel_t] for more documentation.
 #[derive(Clone)]
 pub struct Panel(RefGuard<_cef_panel_t>);
-impl Panel {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapPanel,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplPanel>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapPanel>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_panel_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapPanel: ImplPanel {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_panel_t, Self>);
-}
 pub trait ImplPanel: ImplView {
-    fn as_window(&self) -> Option<Window> {
-        Default::default()
-    }
-    fn set_to_fill_layout(&self) -> Option<FillLayout> {
-        Default::default()
-    }
-    fn set_to_box_layout(&self, settings: Option<&BoxLayoutSettings>) -> Option<BoxLayout> {
-        Default::default()
-    }
-    fn get_layout(&self) -> Option<Layout> {
-        Default::default()
-    }
-    fn layout(&self) {}
-    fn add_child_view(&self, view: Option<&mut impl ImplView>) {}
-    fn add_child_view_at(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int) {}
-    fn reorder_child_view(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int) {}
-    fn remove_child_view(&self, view: Option<&mut impl ImplView>) {}
-    fn remove_all_child_views(&self) {}
-    fn get_child_view_count(&self) -> usize {
-        Default::default()
-    }
-    fn get_child_view_at(&self, index: ::std::os::raw::c_int) -> Option<View> {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_panel_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base);
-        impl_cef_panel_t::init_methods::<Self>(object);
-    }
+    fn as_window(&self) -> Option<Window>;
+    fn set_to_fill_layout(&self) -> Option<FillLayout>;
+    fn set_to_box_layout(&self, settings: Option<&BoxLayoutSettings>) -> Option<BoxLayout>;
+    fn get_layout(&self) -> Option<Layout>;
+    fn layout(&self);
+    fn add_child_view(&self, view: Option<&mut impl ImplView>);
+    fn add_child_view_at(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int);
+    fn reorder_child_view(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int);
+    fn remove_child_view(&self, view: Option<&mut impl ImplView>);
+    fn remove_all_child_views(&self);
+    fn get_child_view_count(&self) -> usize;
+    fn get_child_view_at(&self, index: ::std::os::raw::c_int) -> Option<View>;
     fn get_raw(&self) -> *mut _cef_panel_t {
         <Self as ImplView>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_panel_t {
-    use super::*;
-    pub fn init_methods<I: ImplPanel>(object: &mut _cef_panel_t) {
-        object.as_window = Some(as_window::<I>);
-        object.set_to_fill_layout = Some(set_to_fill_layout::<I>);
-        object.set_to_box_layout = Some(set_to_box_layout::<I>);
-        object.get_layout = Some(get_layout::<I>);
-        object.layout = Some(layout::<I>);
-        object.add_child_view = Some(add_child_view::<I>);
-        object.add_child_view_at = Some(add_child_view_at::<I>);
-        object.reorder_child_view = Some(reorder_child_view::<I>);
-        object.remove_child_view = Some(remove_child_view::<I>);
-        object.remove_all_child_views = Some(remove_all_child_views::<I>);
-        object.get_child_view_count = Some(get_child_view_count::<I>);
-        object.get_child_view_at = Some(get_child_view_at::<I>);
-    }
-    extern "C" fn as_window<I: ImplPanel>(self_: *mut _cef_panel_t) -> *mut _cef_window_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPanel::as_window(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_to_fill_layout<I: ImplPanel>(
-        self_: *mut _cef_panel_t,
-    ) -> *mut _cef_fill_layout_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPanel::set_to_fill_layout(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_to_box_layout<I: ImplPanel>(
-        self_: *mut _cef_panel_t,
-        settings: *const _cef_box_layout_settings_t,
-    ) -> *mut _cef_box_layout_t {
-        let (arg_self_, arg_settings) = (self_, settings);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_settings = if arg_settings.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<BoxLayoutSettings>::from(arg_settings))
-        };
-        let arg_settings = arg_settings.as_ref().map(|arg| arg.as_ref());
-        let result = ImplPanel::set_to_box_layout(&arg_self_.interface, arg_settings);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_layout<I: ImplPanel>(self_: *mut _cef_panel_t) -> *mut _cef_layout_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPanel::get_layout(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn layout<I: ImplPanel>(self_: *mut _cef_panel_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPanel::layout(&arg_self_.interface);
-    }
-    extern "C" fn add_child_view<I: ImplPanel>(self_: *mut _cef_panel_t, view: *mut _cef_view_t) {
-        let (arg_self_, arg_view) = (self_, view);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let result = ImplPanel::add_child_view(&arg_self_.interface, arg_view);
-    }
-    extern "C" fn add_child_view_at<I: ImplPanel>(
-        self_: *mut _cef_panel_t,
-        view: *mut _cef_view_t,
-        index: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_view, arg_index) = (self_, view, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let arg_index = arg_index.as_raw();
-        let result = ImplPanel::add_child_view_at(&arg_self_.interface, arg_view, arg_index);
-    }
-    extern "C" fn reorder_child_view<I: ImplPanel>(
-        self_: *mut _cef_panel_t,
-        view: *mut _cef_view_t,
-        index: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_view, arg_index) = (self_, view, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let arg_index = arg_index.as_raw();
-        let result = ImplPanel::reorder_child_view(&arg_self_.interface, arg_view, arg_index);
-    }
-    extern "C" fn remove_child_view<I: ImplPanel>(
-        self_: *mut _cef_panel_t,
-        view: *mut _cef_view_t,
-    ) {
-        let (arg_self_, arg_view) = (self_, view);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let result = ImplPanel::remove_child_view(&arg_self_.interface, arg_view);
-    }
-    extern "C" fn remove_all_child_views<I: ImplPanel>(self_: *mut _cef_panel_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPanel::remove_all_child_views(&arg_self_.interface);
-    }
-    extern "C" fn get_child_view_count<I: ImplPanel>(self_: *mut _cef_panel_t) -> usize {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplPanel::get_child_view_count(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_child_view_at<I: ImplPanel>(
-        self_: *mut _cef_panel_t,
-        index: ::std::os::raw::c_int,
-    ) -> *mut _cef_view_t {
-        let (arg_self_, arg_index) = (self_, index);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_index = arg_index.as_raw();
-        let result = ImplPanel::get_child_view_at(&arg_self_.interface, arg_index);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
     }
 }
 impl ImplView for Panel {
@@ -56433,105 +42655,58 @@ impl Default for WindowDelegate {
 /// See [_cef_window_t] for more documentation.
 #[derive(Clone)]
 pub struct Window(RefGuard<_cef_window_t>);
-impl Window {
-    pub fn new<T>(interface: T) -> Self
-    where
-        T: WrapWindow,
-    {
-        unsafe {
-            let mut cef_object = std::mem::zeroed();
-            <T as ImplWindow>::init_methods(&mut cef_object);
-            let object = RcImpl::new(cef_object, interface);
-            <T as WrapWindow>::wrap_rc(&mut (*object).interface, object);
-            (object as *mut _cef_window_t).as_wrapper()
-        }
-    }
-}
-pub trait WrapWindow: ImplWindow {
-    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_window_t, Self>);
-}
 pub trait ImplWindow: ImplPanel {
-    fn show(&self) {}
-    fn show_as_browser_modal_dialog(&self, browser_view: Option<&mut impl ImplBrowserView>) {}
-    fn hide(&self) {}
-    fn center_window(&self, size: Option<&Size>) {}
-    fn close(&self) {}
-    fn is_closed(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn activate(&self) {}
-    fn deactivate(&self) {}
-    fn is_active(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn bring_to_top(&self) {}
-    fn set_always_on_top(&self, on_top: ::std::os::raw::c_int) {}
-    fn is_always_on_top(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn maximize(&self) {}
-    fn minimize(&self) {}
-    fn restore(&self) {}
-    fn set_fullscreen(&self, fullscreen: ::std::os::raw::c_int) {}
-    fn is_maximized(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_minimized(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn is_fullscreen(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_focused_view(&self) -> Option<View> {
-        Default::default()
-    }
-    fn set_title(&self, title: Option<&CefStringUtf16>) {}
-    fn get_title(&self) -> Option<CefStringUtf16> {
-        Default::default()
-    }
-    fn set_window_icon(&self, image: Option<&mut impl ImplImage>) {}
-    fn get_window_icon(&self) -> Option<Image> {
-        Default::default()
-    }
-    fn set_window_app_icon(&self, image: Option<&mut impl ImplImage>) {}
-    fn get_window_app_icon(&self) -> Option<Image> {
-        Default::default()
-    }
+    fn show(&self);
+    fn show_as_browser_modal_dialog(&self, browser_view: Option<&mut impl ImplBrowserView>);
+    fn hide(&self);
+    fn center_window(&self, size: Option<&Size>);
+    fn close(&self);
+    fn is_closed(&self) -> ::std::os::raw::c_int;
+    fn activate(&self);
+    fn deactivate(&self);
+    fn is_active(&self) -> ::std::os::raw::c_int;
+    fn bring_to_top(&self);
+    fn set_always_on_top(&self, on_top: ::std::os::raw::c_int);
+    fn is_always_on_top(&self) -> ::std::os::raw::c_int;
+    fn maximize(&self);
+    fn minimize(&self);
+    fn restore(&self);
+    fn set_fullscreen(&self, fullscreen: ::std::os::raw::c_int);
+    fn is_maximized(&self) -> ::std::os::raw::c_int;
+    fn is_minimized(&self) -> ::std::os::raw::c_int;
+    fn is_fullscreen(&self) -> ::std::os::raw::c_int;
+    fn get_focused_view(&self) -> Option<View>;
+    fn set_title(&self, title: Option<&CefStringUtf16>);
+    fn get_title(&self) -> Option<CefStringUtf16>;
+    fn set_window_icon(&self, image: Option<&mut impl ImplImage>);
+    fn get_window_icon(&self) -> Option<Image>;
+    fn set_window_app_icon(&self, image: Option<&mut impl ImplImage>);
+    fn get_window_app_icon(&self) -> Option<Image>;
     fn add_overlay_view(
         &self,
         view: Option<&mut impl ImplView>,
         docking_mode: DockingMode,
         can_activate: ::std::os::raw::c_int,
-    ) -> Option<OverlayController> {
-        Default::default()
-    }
+    ) -> Option<OverlayController>;
     fn show_menu(
         &self,
         menu_model: Option<&mut impl ImplMenuModel>,
         screen_point: Option<&Point>,
         anchor_position: MenuAnchorPosition,
-    ) {
-    }
-    fn cancel_menu(&self) {}
-    fn get_display(&self) -> Option<Display> {
-        Default::default()
-    }
-    fn get_client_area_bounds_in_screen(&self) -> Rect {
-        Default::default()
-    }
-    fn set_draggable_regions(&self, regions_count: usize, regions: Option<&DraggableRegion>) {}
-    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void {
-        unsafe { std::mem::zeroed() }
-    }
-    fn send_key_press(&self, key_code: ::std::os::raw::c_int, event_flags: u32) {}
-    fn send_mouse_move(&self, screen_x: ::std::os::raw::c_int, screen_y: ::std::os::raw::c_int) {}
+    );
+    fn cancel_menu(&self);
+    fn get_display(&self) -> Option<Display>;
+    fn get_client_area_bounds_in_screen(&self) -> Rect;
+    fn set_draggable_regions(&self, regions_count: usize, regions: Option<&DraggableRegion>);
+    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void;
+    fn send_key_press(&self, key_code: ::std::os::raw::c_int, event_flags: u32);
+    fn send_mouse_move(&self, screen_x: ::std::os::raw::c_int, screen_y: ::std::os::raw::c_int);
     fn send_mouse_events(
         &self,
         button: MouseButtonType,
         mouse_down: ::std::os::raw::c_int,
         mouse_up: ::std::os::raw::c_int,
-    ) {
-    }
+    );
     fn set_accelerator(
         &self,
         command_id: ::std::os::raw::c_int,
@@ -56540,485 +42715,14 @@ pub trait ImplWindow: ImplPanel {
         ctrl_pressed: ::std::os::raw::c_int,
         alt_pressed: ::std::os::raw::c_int,
         high_priority: ::std::os::raw::c_int,
-    ) {
-    }
-    fn remove_accelerator(&self, command_id: ::std::os::raw::c_int) {}
-    fn remove_all_accelerators(&self) {}
-    fn set_theme_color(&self, color_id: ::std::os::raw::c_int, color: u32) {}
-    fn theme_changed(&self) {}
-    fn get_runtime_style(&self) -> RuntimeStyle {
-        Default::default()
-    }
-    fn init_methods(object: &mut _cef_window_t) {
-        impl_cef_view_t::init_methods::<Self>(&mut object.base.base);
-        impl_cef_panel_t::init_methods::<Self>(&mut object.base);
-        impl_cef_window_t::init_methods::<Self>(object);
-    }
+    );
+    fn remove_accelerator(&self, command_id: ::std::os::raw::c_int);
+    fn remove_all_accelerators(&self);
+    fn set_theme_color(&self, color_id: ::std::os::raw::c_int, color: u32);
+    fn theme_changed(&self);
+    fn get_runtime_style(&self) -> RuntimeStyle;
     fn get_raw(&self) -> *mut _cef_window_t {
         <Self as ImplPanel>::get_raw(self) as *mut _
-    }
-}
-mod impl_cef_window_t {
-    use super::*;
-    pub fn init_methods<I: ImplWindow>(object: &mut _cef_window_t) {
-        object.show = Some(show::<I>);
-        object.show_as_browser_modal_dialog = Some(show_as_browser_modal_dialog::<I>);
-        object.hide = Some(hide::<I>);
-        object.center_window = Some(center_window::<I>);
-        object.close = Some(close::<I>);
-        object.is_closed = Some(is_closed::<I>);
-        object.activate = Some(activate::<I>);
-        object.deactivate = Some(deactivate::<I>);
-        object.is_active = Some(is_active::<I>);
-        object.bring_to_top = Some(bring_to_top::<I>);
-        object.set_always_on_top = Some(set_always_on_top::<I>);
-        object.is_always_on_top = Some(is_always_on_top::<I>);
-        object.maximize = Some(maximize::<I>);
-        object.minimize = Some(minimize::<I>);
-        object.restore = Some(restore::<I>);
-        object.set_fullscreen = Some(set_fullscreen::<I>);
-        object.is_maximized = Some(is_maximized::<I>);
-        object.is_minimized = Some(is_minimized::<I>);
-        object.is_fullscreen = Some(is_fullscreen::<I>);
-        object.get_focused_view = Some(get_focused_view::<I>);
-        object.set_title = Some(set_title::<I>);
-        object.get_title = Some(get_title::<I>);
-        object.set_window_icon = Some(set_window_icon::<I>);
-        object.get_window_icon = Some(get_window_icon::<I>);
-        object.set_window_app_icon = Some(set_window_app_icon::<I>);
-        object.get_window_app_icon = Some(get_window_app_icon::<I>);
-        object.add_overlay_view = Some(add_overlay_view::<I>);
-        object.show_menu = Some(show_menu::<I>);
-        object.cancel_menu = Some(cancel_menu::<I>);
-        object.get_display = Some(get_display::<I>);
-        object.get_client_area_bounds_in_screen = Some(get_client_area_bounds_in_screen::<I>);
-        object.set_draggable_regions = Some(set_draggable_regions::<I>);
-        object.get_window_handle = Some(get_window_handle::<I>);
-        object.send_key_press = Some(send_key_press::<I>);
-        object.send_mouse_move = Some(send_mouse_move::<I>);
-        object.send_mouse_events = Some(send_mouse_events::<I>);
-        object.set_accelerator = Some(set_accelerator::<I>);
-        object.remove_accelerator = Some(remove_accelerator::<I>);
-        object.remove_all_accelerators = Some(remove_all_accelerators::<I>);
-        object.set_theme_color = Some(set_theme_color::<I>);
-        object.theme_changed = Some(theme_changed::<I>);
-        object.get_runtime_style = Some(get_runtime_style::<I>);
-    }
-    extern "C" fn show<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::show(&arg_self_.interface);
-    }
-    extern "C" fn show_as_browser_modal_dialog<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        browser_view: *mut _cef_browser_view_t,
-    ) {
-        let (arg_self_, arg_browser_view) = (self_, browser_view);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_browser_view = unsafe { arg_browser_view.as_mut() }
-            .map(|arg| BrowserView(unsafe { RefGuard::from_raw(arg) }));
-        let arg_browser_view = arg_browser_view.as_mut();
-        let result =
-            ImplWindow::show_as_browser_modal_dialog(&arg_self_.interface, arg_browser_view);
-    }
-    extern "C" fn hide<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::hide(&arg_self_.interface);
-    }
-    extern "C" fn center_window<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        size: *const _cef_size_t,
-    ) {
-        let (arg_self_, arg_size) = (self_, size);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_size = if arg_size.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Size>::from(arg_size))
-        };
-        let arg_size = arg_size.as_ref().map(|arg| arg.as_ref());
-        let result = ImplWindow::center_window(&arg_self_.interface, arg_size);
-    }
-    extern "C" fn close<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::close(&arg_self_.interface);
-    }
-    extern "C" fn is_closed<I: ImplWindow>(self_: *mut _cef_window_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::is_closed(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn activate<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::activate(&arg_self_.interface);
-    }
-    extern "C" fn deactivate<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::deactivate(&arg_self_.interface);
-    }
-    extern "C" fn is_active<I: ImplWindow>(self_: *mut _cef_window_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::is_active(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn bring_to_top<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::bring_to_top(&arg_self_.interface);
-    }
-    extern "C" fn set_always_on_top<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        on_top: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_on_top) = (self_, on_top);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_on_top = arg_on_top.as_raw();
-        let result = ImplWindow::set_always_on_top(&arg_self_.interface, arg_on_top);
-    }
-    extern "C" fn is_always_on_top<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::is_always_on_top(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn maximize<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::maximize(&arg_self_.interface);
-    }
-    extern "C" fn minimize<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::minimize(&arg_self_.interface);
-    }
-    extern "C" fn restore<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::restore(&arg_self_.interface);
-    }
-    extern "C" fn set_fullscreen<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        fullscreen: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_fullscreen) = (self_, fullscreen);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_fullscreen = arg_fullscreen.as_raw();
-        let result = ImplWindow::set_fullscreen(&arg_self_.interface, arg_fullscreen);
-    }
-    extern "C" fn is_maximized<I: ImplWindow>(self_: *mut _cef_window_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::is_maximized(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_minimized<I: ImplWindow>(self_: *mut _cef_window_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::is_minimized(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn is_fullscreen<I: ImplWindow>(self_: *mut _cef_window_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::is_fullscreen(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_focused_view<I: ImplWindow>(self_: *mut _cef_window_t) -> *mut _cef_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_focused_view(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_title<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        title: *const _cef_string_utf16_t,
-    ) {
-        let (arg_self_, arg_title) = (self_, title);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_title = if arg_title.is_null() {
-            None
-        } else {
-            Some(arg_title.into())
-        };
-        let arg_title = arg_title.as_ref();
-        let result = ImplWindow::set_title(&arg_self_.interface, arg_title);
-    }
-    extern "C" fn get_title<I: ImplWindow>(self_: *mut _cef_window_t) -> *mut _cef_string_utf16_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_title(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_window_icon<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        image: *mut _cef_image_t,
-    ) {
-        let (arg_self_, arg_image) = (self_, image);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_image =
-            unsafe { arg_image.as_mut() }.map(|arg| Image(unsafe { RefGuard::from_raw(arg) }));
-        let arg_image = arg_image.as_mut();
-        let result = ImplWindow::set_window_icon(&arg_self_.interface, arg_image);
-    }
-    extern "C" fn get_window_icon<I: ImplWindow>(self_: *mut _cef_window_t) -> *mut _cef_image_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_window_icon(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn set_window_app_icon<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        image: *mut _cef_image_t,
-    ) {
-        let (arg_self_, arg_image) = (self_, image);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_image =
-            unsafe { arg_image.as_mut() }.map(|arg| Image(unsafe { RefGuard::from_raw(arg) }));
-        let arg_image = arg_image.as_mut();
-        let result = ImplWindow::set_window_app_icon(&arg_self_.interface, arg_image);
-    }
-    extern "C" fn get_window_app_icon<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-    ) -> *mut _cef_image_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_window_app_icon(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn add_overlay_view<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        view: *mut _cef_view_t,
-        docking_mode: cef_docking_mode_t,
-        can_activate: ::std::os::raw::c_int,
-    ) -> *mut _cef_overlay_controller_t {
-        let (arg_self_, arg_view, arg_docking_mode, arg_can_activate) =
-            (self_, view, docking_mode, can_activate);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_view =
-            unsafe { arg_view.as_mut() }.map(|arg| View(unsafe { RefGuard::from_raw(arg) }));
-        let arg_view = arg_view.as_mut();
-        let arg_docking_mode = arg_docking_mode.as_raw();
-        let arg_can_activate = arg_can_activate.as_raw();
-        let result = ImplWindow::add_overlay_view(
-            &arg_self_.interface,
-            arg_view,
-            arg_docking_mode,
-            arg_can_activate,
-        );
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn show_menu<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        menu_model: *mut _cef_menu_model_t,
-        screen_point: *const _cef_point_t,
-        anchor_position: cef_menu_anchor_position_t,
-    ) {
-        let (arg_self_, arg_menu_model, arg_screen_point, arg_anchor_position) =
-            (self_, menu_model, screen_point, anchor_position);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_menu_model = unsafe { arg_menu_model.as_mut() }
-            .map(|arg| MenuModel(unsafe { RefGuard::from_raw(arg) }));
-        let arg_menu_model = arg_menu_model.as_mut();
-        let arg_screen_point = if arg_screen_point.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<Point>::from(arg_screen_point))
-        };
-        let arg_screen_point = arg_screen_point.as_ref().map(|arg| arg.as_ref());
-        let arg_anchor_position = arg_anchor_position.as_raw();
-        let result = ImplWindow::show_menu(
-            &arg_self_.interface,
-            arg_menu_model,
-            arg_screen_point,
-            arg_anchor_position,
-        );
-    }
-    extern "C" fn cancel_menu<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::cancel_menu(&arg_self_.interface);
-    }
-    extern "C" fn get_display<I: ImplWindow>(self_: *mut _cef_window_t) -> *mut _cef_display_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_display(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
-    }
-    extern "C" fn get_client_area_bounds_in_screen<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-    ) -> _cef_rect_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_client_area_bounds_in_screen(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn set_draggable_regions<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        regions_count: usize,
-        regions: *const _cef_draggable_region_t,
-    ) {
-        let (arg_self_, arg_regions_count, arg_regions) = (self_, regions_count, regions);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_regions_count = arg_regions_count.as_raw();
-        let arg_regions = if arg_regions.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<DraggableRegion>::from(arg_regions))
-        };
-        let arg_regions = arg_regions.as_ref().map(|arg| arg.as_ref());
-        let result =
-            ImplWindow::set_draggable_regions(&arg_self_.interface, arg_regions_count, arg_regions);
-    }
-    extern "C" fn get_window_handle<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-    ) -> *mut ::std::os::raw::c_void {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_window_handle(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn send_key_press<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        key_code: ::std::os::raw::c_int,
-        event_flags: u32,
-    ) {
-        let (arg_self_, arg_key_code, arg_event_flags) = (self_, key_code, event_flags);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_key_code = arg_key_code.as_raw();
-        let arg_event_flags = arg_event_flags.as_raw();
-        let result =
-            ImplWindow::send_key_press(&arg_self_.interface, arg_key_code, arg_event_flags);
-    }
-    extern "C" fn send_mouse_move<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        screen_x: ::std::os::raw::c_int,
-        screen_y: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_screen_x, arg_screen_y) = (self_, screen_x, screen_y);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_screen_x = arg_screen_x.as_raw();
-        let arg_screen_y = arg_screen_y.as_raw();
-        let result = ImplWindow::send_mouse_move(&arg_self_.interface, arg_screen_x, arg_screen_y);
-    }
-    extern "C" fn send_mouse_events<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        button: cef_mouse_button_type_t,
-        mouse_down: ::std::os::raw::c_int,
-        mouse_up: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_button, arg_mouse_down, arg_mouse_up) =
-            (self_, button, mouse_down, mouse_up);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_button = arg_button.as_raw();
-        let arg_mouse_down = arg_mouse_down.as_raw();
-        let arg_mouse_up = arg_mouse_up.as_raw();
-        let result = ImplWindow::send_mouse_events(
-            &arg_self_.interface,
-            arg_button,
-            arg_mouse_down,
-            arg_mouse_up,
-        );
-    }
-    extern "C" fn set_accelerator<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        command_id: ::std::os::raw::c_int,
-        key_code: ::std::os::raw::c_int,
-        shift_pressed: ::std::os::raw::c_int,
-        ctrl_pressed: ::std::os::raw::c_int,
-        alt_pressed: ::std::os::raw::c_int,
-        high_priority: ::std::os::raw::c_int,
-    ) {
-        let (
-            arg_self_,
-            arg_command_id,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-            arg_high_priority,
-        ) = (
-            self_,
-            command_id,
-            key_code,
-            shift_pressed,
-            ctrl_pressed,
-            alt_pressed,
-            high_priority,
-        );
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let arg_key_code = arg_key_code.as_raw();
-        let arg_shift_pressed = arg_shift_pressed.as_raw();
-        let arg_ctrl_pressed = arg_ctrl_pressed.as_raw();
-        let arg_alt_pressed = arg_alt_pressed.as_raw();
-        let arg_high_priority = arg_high_priority.as_raw();
-        let result = ImplWindow::set_accelerator(
-            &arg_self_.interface,
-            arg_command_id,
-            arg_key_code,
-            arg_shift_pressed,
-            arg_ctrl_pressed,
-            arg_alt_pressed,
-            arg_high_priority,
-        );
-    }
-    extern "C" fn remove_accelerator<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        command_id: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_command_id) = (self_, command_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_command_id = arg_command_id.as_raw();
-        let result = ImplWindow::remove_accelerator(&arg_self_.interface, arg_command_id);
-    }
-    extern "C" fn remove_all_accelerators<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::remove_all_accelerators(&arg_self_.interface);
-    }
-    extern "C" fn set_theme_color<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-        color_id: ::std::os::raw::c_int,
-        color: u32,
-    ) {
-        let (arg_self_, arg_color_id, arg_color) = (self_, color_id, color);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let arg_color_id = arg_color_id.as_raw();
-        let arg_color = arg_color.as_raw();
-        let result = ImplWindow::set_theme_color(&arg_self_.interface, arg_color_id, arg_color);
-    }
-    extern "C" fn theme_changed<I: ImplWindow>(self_: *mut _cef_window_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::theme_changed(&arg_self_.interface);
-    }
-    extern "C" fn get_runtime_style<I: ImplWindow>(
-        self_: *mut _cef_window_t,
-    ) -> cef_runtime_style_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_runtime_style(&arg_self_.interface);
-        result.into()
     }
 }
 impl ImplView for Window {
