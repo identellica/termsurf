@@ -88,9 +88,11 @@ fn main() -> anyhow::Result<()> {
         fs::remove_file(archive)?;
     }
 
-    let archive_version = serde_json::to_string_pretty(version.minimal()?)?;
-    let mut archive_json = File::create(extracted_dir.join("archive.json"))?;
-    archive_json.write_all(archive_version.as_bytes())?;
+    {
+        let archive_version = serde_json::to_string_pretty(version.minimal()?)?;
+        let mut archive_json = File::create(extracted_dir.join("archive.json"))?;
+        archive_json.write_all(archive_version.as_bytes())?;
+    }
 
     if output != cef_dir {
         println!("Renaming: {}", output.display());

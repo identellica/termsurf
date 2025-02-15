@@ -272,6 +272,8 @@ fn main() {
         loader
     };
 
+    let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
+
     let args = Args::new();
     let cmd = args.as_cmd_line().unwrap();
 
