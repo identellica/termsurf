@@ -29,6 +29,7 @@ bindgen = "0.71"
 clap = { version = "4", features = ["derive"] }
 cmake = "0.1"
 convert_case = "0.8"
+plist = "1"
 proc-macro2 = "1"
 quote = "1"
 regex = "1"
