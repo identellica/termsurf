@@ -5,10 +5,12 @@ pub const CEF_API_VERSION_13301: i32 = 13301;
 pub const CEF_API_VERSION_13302: i32 = 13302;
 pub const CEF_API_VERSION_13303: i32 = 13303;
 pub const CEF_API_VERSION_13304: i32 = 13304;
+pub const CEF_API_VERSION_13400: i32 = 13400;
+pub const CEF_API_VERSION_13401: i32 = 13401;
 pub const CEF_API_VERSION_999998: i32 = 999998;
 pub const CEF_API_VERSION_999999: i32 = 999999;
 pub const CEF_API_VERSION_MIN: i32 = 13300;
-pub const CEF_API_VERSION_LAST: i32 = 13304;
+pub const CEF_API_VERSION_LAST: i32 = 13401;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
@@ -21,7 +23,7 @@ unsafe extern "C" {
     pub fn cef_sandbox_info_destroy(sandbox_info: *mut ::std::os::raw::c_void);
 }
 unsafe extern "C" {
-    #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n"]
+    #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n"]
     pub fn cef_api_hash(
         version: ::std::os::raw::c_int,
         entry: ::std::os::raw::c_int,
@@ -746,8 +748,11 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_DIRECT_SOCKETS_PRIVATE_NETWORK_ACCESS = 114,
     #[doc = " Content settings for legacy cookie scope.\n Checks whether cookies scope is handled according to origin-bound cookies\n or legacy behavior."]
     CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_SCOPE = 115,
-    #[doc = " Content settings for legacy cookie scope.\n Checks whether cookies scope is handled according to origin-bound cookies\n or legacy behavior."]
-    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 116,
+    #[doc = " Website setting to indicate whether the user has allowlisted suspicious\n notifications for the origin."]
+    CEF_CONTENT_SETTING_TYPE_ARE_SUSPICIOUS_NOTIFICATIONS_ALLOWLISTED_BY_USER = 116,
+    #[doc = " Content settings for access to the Controlled Frame API."]
+    CEF_CONTENT_SETTING_TYPE_CONTROLLED_FRAME = 117,
+    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 118,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -1035,6 +1040,10 @@ pub enum cef_runtime_style_t {
     #[doc = "\n Use Alloy style.\n"]
     CEF_RUNTIME_STYLE_ALLOY = 2,
 }
+pub type cef_cursor_handle_t = HCURSOR;
+pub type cef_event_handle_t = *mut MSG;
+pub type cef_window_handle_t = HWND;
+pub type cef_shared_texture_handle_t = HANDLE;
 #[doc = "\n Structure representing CefExecuteProcess arguments.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1060,7 +1069,7 @@ pub struct _cef_window_info_t {
     pub window_name: cef_string_t,
     pub style: DWORD,
     pub bounds: cef_rect_t,
-    pub parent_window: HWND,
+    pub parent_window: cef_window_handle_t,
     pub menu: HMENU,
     #[doc = "\n Set to true (1) to create the browser using windowless (off-screen)\n rendering. No window will be created for the browser and all rendering\n will occur via the CefRenderHandler interface. The |parent_window| value\n will be used to identify monitor info and to act as the parent window for\n dialogs, context menus, etc. If |parent_window| is not provided then the\n main screen monitor will be used and some functionality that requires a\n parent window may not function correctly. In order to create windowless\n browsers the CefSettings.windowless_rendering_enabled value must be set to\n true. Transparent painting is enabled by default but can be disabled by\n setting CefBrowserSettings.background_color to an opaque value.\n"]
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
@@ -1069,7 +1078,7 @@ pub struct _cef_window_info_t {
     #[doc = "\n Set to true (1) to enable the ability to issue BeginFrame requests from\n the client application by calling CefBrowserHost::SendExternalBeginFrame.\n"]
     pub external_begin_frame_enabled: ::std::os::raw::c_int,
     #[doc = "\n Handle for the new browser window. Only used with windowed rendering.\n"]
-    pub window: HWND,
+    pub window: cef_window_handle_t,
     #[doc = "\n Optionally change the runtime style. Alloy style will always be used if\n |windowless_rendering_enabled| is true. See cef_runtime_style_t\n documentation for details.\n"]
     pub runtime_style: cef_runtime_style_t,
 }
@@ -1111,7 +1120,7 @@ pub struct _cef_accelerated_paint_info_t {
     #[doc = "\n Size of this structure.\n"]
     pub size: usize,
     #[doc = "\n Handle for the shared texture. The shared texture is instantiated\n without a keyed mutex.\n"]
-    pub shared_texture_handle: HANDLE,
+    pub shared_texture_handle: cef_shared_texture_handle_t,
     #[doc = "\n The pixel format of the texture.\n"]
     pub format: cef_color_type_t,
     #[doc = "\n The extra common info.\n"]
@@ -1721,6 +1730,7 @@ pub enum cef_errorcode_t {
     ERR_H2_OR_QUIC_REQUIRED = -31,
     ERR_BLOCKED_BY_ORB = -32,
     ERR_NETWORK_ACCESS_REVOKED = -33,
+    ERR_BLOCKED_BY_FINGERPRINTING_PROTECTION = -34,
     ERR_CONNECTION_CLOSED = -100,
     ERR_CONNECTION_RESET = -101,
     ERR_CONNECTION_REFUSED = -102,
@@ -3863,7 +3873,8 @@ pub enum cef_chrome_page_action_icon_type_t {
     CEF_CPAIT_DISCOUNTS = 30,
     CEF_CPAIT_OPTIMIZATION_GUIDE = 31,
     CEF_CPAIT_COLLABORATION_MESSAGING = 32,
-    CEF_CPAIT_NUM_VALUES = 33,
+    CEF_CPAIT_CHANGE_PASSWORD = 33,
+    CEF_CPAIT_NUM_VALUES = 34,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -7452,6 +7463,30 @@ const _: () = {
 };
 #[doc = "\n Structure that manages custom preference registrations.\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_preference_registrar_t = _cef_preference_registrar_t;
+#[doc = "\n Implemented by the client to observe preference changes and registered via\n cef_preference_manager_t::AddPreferenceObserver. The functions of this\n structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_preference_observer_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Called when a preference has changed. The new value can be retrieved using\n cef_preference_manager_t::GetPreference.\n"]
+    pub on_preference_changed: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_preference_observer_t, name: *const cef_string_t),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_preference_observer_t"]
+        [::std::mem::size_of::<_cef_preference_observer_t>() - 48usize];
+    ["Alignment of _cef_preference_observer_t"]
+        [::std::mem::align_of::<_cef_preference_observer_t>() - 8usize];
+    ["Offset of field: _cef_preference_observer_t::base"]
+        [::std::mem::offset_of!(_cef_preference_observer_t, base) - 0usize];
+    ["Offset of field: _cef_preference_observer_t::on_preference_changed"]
+        [::std::mem::offset_of!(_cef_preference_observer_t, on_preference_changed) - 40usize];
+};
+#[doc = "\n Implemented by the client to observe preference changes and registered via\n cef_preference_manager_t::AddPreferenceObserver. The functions of this\n structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_preference_observer_t = _cef_preference_observer_t;
 #[doc = "\n Manage access to preferences. Many built-in preferences are registered by\n Chromium. Custom preferences can be registered in\n cef_browser_process_handler_t::OnRegisterCustomPreferences.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -7495,11 +7530,19 @@ pub struct _cef_preference_manager_t {
             error: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
+    #[doc = "\n Add an observer for preference changes. |name| is the name of the\n preference to observe. If |name| is NULL then all preferences will be\n observed. Observing all preferences has performance consequences and is\n not recommended outside of testing scenarios. The observer will remain\n registered until the returned Registration object is destroyed. This\n function must be called on the browser process UI thread.\n"]
+    pub add_preference_observer: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_preference_manager_t,
+            name: *const cef_string_t,
+            observer: *mut _cef_preference_observer_t,
+        ) -> *mut _cef_registration_t,
+    >,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of _cef_preference_manager_t"]
-        [::std::mem::size_of::<_cef_preference_manager_t>() - 80usize];
+        [::std::mem::size_of::<_cef_preference_manager_t>() - 88usize];
     ["Alignment of _cef_preference_manager_t"]
         [::std::mem::align_of::<_cef_preference_manager_t>() - 8usize];
     ["Offset of field: _cef_preference_manager_t::base"]
@@ -7514,9 +7557,19 @@ const _: () = {
         [::std::mem::offset_of!(_cef_preference_manager_t, can_set_preference) - 64usize];
     ["Offset of field: _cef_preference_manager_t::set_preference"]
         [::std::mem::offset_of!(_cef_preference_manager_t, set_preference) - 72usize];
+    ["Offset of field: _cef_preference_manager_t::add_preference_observer"]
+        [::std::mem::offset_of!(_cef_preference_manager_t, add_preference_observer) - 80usize];
 };
 #[doc = "\n Manage access to preferences. Many built-in preferences are registered by\n Chromium. Custom preferences can be registered in\n cef_browser_process_handler_t::OnRegisterCustomPreferences.\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_preference_manager_t = _cef_preference_manager_t;
+unsafe extern "C" {
+    #[doc = "\n Returns the current Chrome Variations configuration (combination of field\n trials and chrome://flags) as equivalent command-line switches\n (`--[enable|disable]-features=XXXX`, etc). These switches can be used to\n apply the same configuration when launching a CEF-based application. See\n https://developer.chrome.com/docs/web-platform/chrome-variations for\n background and details. Note that field trial tests are disabled by default\n in Official CEF builds (via the `disable_fieldtrial_testing_config=true (1)`\n GN flag). This function must be called on the browser process UI thread.\n"]
+    pub fn cef_preference_manager_get_chrome_variations_as_switches(switches: cef_string_list_t);
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the current Chrome Variations configuration (combination of field\n trials and chrome://flags) as human-readable strings. This is the human-\n readable equivalent of the \"Active Variations\" section of chrome://version.\n See https://developer.chrome.com/docs/web-platform/chrome-variations for\n background and details. Note that field trial tests are disabled by default\n in Official CEF builds (via the `disable_fieldtrial_testing_config=true (1)`\n GN flag). This function must be called on the browser process UI thread.\n"]
+    pub fn cef_preference_manager_get_chrome_variations_as_strings(strings: cef_string_list_t);
+}
 unsafe extern "C" {
     #[doc = "\n Returns the global preference manager object.\n"]
     pub fn cef_preference_manager_get_global() -> *mut cef_preference_manager_t;
@@ -7548,6 +7601,34 @@ const _: () = {
 };
 #[doc = "\n Callback structure for cef_request_context_t::ResolveHost.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_resolve_callback_t = _cef_resolve_callback_t;
+#[doc = "\n Implemented by the client to observe content and website setting changes and\n registered via cef_request_context_t::AddSettingObserver. The functions of\n this structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_setting_observer_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Called when a content or website setting has changed. The new value can be\n retrieved using cef_request_context_t::GetContentSetting or\n cef_request_context_t::GetWebsiteSetting.\n"]
+    pub on_setting_changed: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_setting_observer_t,
+            requesting_url: *const cef_string_t,
+            top_level_url: *const cef_string_t,
+            content_type: cef_content_setting_types_t,
+        ),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_setting_observer_t"][::std::mem::size_of::<_cef_setting_observer_t>() - 48usize];
+    ["Alignment of _cef_setting_observer_t"]
+        [::std::mem::align_of::<_cef_setting_observer_t>() - 8usize];
+    ["Offset of field: _cef_setting_observer_t::base"]
+        [::std::mem::offset_of!(_cef_setting_observer_t, base) - 0usize];
+    ["Offset of field: _cef_setting_observer_t::on_setting_changed"]
+        [::std::mem::offset_of!(_cef_setting_observer_t, on_setting_changed) - 40usize];
+};
+#[doc = "\n Implemented by the client to observe content and website setting changes and\n registered via cef_request_context_t::AddSettingObserver. The functions of\n this structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_setting_observer_t = _cef_setting_observer_t;
 #[doc = "\n A request context provides request handling for a set of related browser or\n URL request objects. A request context can be specified when creating a new\n browser via the cef_browser_host_t static factory functions or when creating\n a new URL request via the cef_urlrequest_t static factory functions. Browser\n objects with different request contexts will never be hosted in the same\n render process. Browser objects with the same request context may or may not\n be hosted in the same render process depending on the process model. Browser\n objects created indirectly via the JavaScript window.open function or\n targeted links will share the same render process and the same request\n context as the source browser. When running in single-process mode there is\n only a single render process (the main process) and so all browsers created\n in single-process mode will share the same request context. This will be the\n first request context passed into a cef_browser_host_t static factory\n function and all other request context objects will be ignored.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -7696,60 +7777,69 @@ pub struct _cef_request_context_t {
     pub get_chrome_color_scheme_variant: ::std::option::Option<
         unsafe extern "C" fn(self_: *mut _cef_request_context_t) -> cef_color_variant_t,
     >,
+    #[doc = "\n Add an observer for content and website setting changes. The observer will\n remain registered until the returned Registration object is destroyed.\n This function must be called on the browser process UI thread.\n"]
+    pub add_setting_observer: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_request_context_t,
+            observer: *mut _cef_setting_observer_t,
+        ) -> *mut _cef_registration_t,
+    >,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_request_context_t"][::std::mem::size_of::<_cef_request_context_t>() - 248usize];
+    ["Size of _cef_request_context_t"][::std::mem::size_of::<_cef_request_context_t>() - 264usize];
     ["Alignment of _cef_request_context_t"]
         [::std::mem::align_of::<_cef_request_context_t>() - 8usize];
     ["Offset of field: _cef_request_context_t::base"]
         [::std::mem::offset_of!(_cef_request_context_t, base) - 0usize];
     ["Offset of field: _cef_request_context_t::is_same"]
-        [::std::mem::offset_of!(_cef_request_context_t, is_same) - 80usize];
+        [::std::mem::offset_of!(_cef_request_context_t, is_same) - 88usize];
     ["Offset of field: _cef_request_context_t::is_sharing_with"]
-        [::std::mem::offset_of!(_cef_request_context_t, is_sharing_with) - 88usize];
+        [::std::mem::offset_of!(_cef_request_context_t, is_sharing_with) - 96usize];
     ["Offset of field: _cef_request_context_t::is_global"]
-        [::std::mem::offset_of!(_cef_request_context_t, is_global) - 96usize];
+        [::std::mem::offset_of!(_cef_request_context_t, is_global) - 104usize];
     ["Offset of field: _cef_request_context_t::get_handler"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_handler) - 104usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_handler) - 112usize];
     ["Offset of field: _cef_request_context_t::get_cache_path"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_cache_path) - 112usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_cache_path) - 120usize];
     ["Offset of field: _cef_request_context_t::get_cookie_manager"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_cookie_manager) - 120usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_cookie_manager) - 128usize];
     ["Offset of field: _cef_request_context_t::register_scheme_handler_factory"][::std::mem::offset_of!(
         _cef_request_context_t,
         register_scheme_handler_factory
-    ) - 128usize];
+    ) - 136usize];
     ["Offset of field: _cef_request_context_t::clear_scheme_handler_factories"]
-        [::std::mem::offset_of!(_cef_request_context_t, clear_scheme_handler_factories) - 136usize];
+        [::std::mem::offset_of!(_cef_request_context_t, clear_scheme_handler_factories) - 144usize];
     ["Offset of field: _cef_request_context_t::clear_certificate_exceptions"]
-        [::std::mem::offset_of!(_cef_request_context_t, clear_certificate_exceptions) - 144usize];
+        [::std::mem::offset_of!(_cef_request_context_t, clear_certificate_exceptions) - 152usize];
     ["Offset of field: _cef_request_context_t::clear_http_auth_credentials"]
-        [::std::mem::offset_of!(_cef_request_context_t, clear_http_auth_credentials) - 152usize];
+        [::std::mem::offset_of!(_cef_request_context_t, clear_http_auth_credentials) - 160usize];
     ["Offset of field: _cef_request_context_t::close_all_connections"]
-        [::std::mem::offset_of!(_cef_request_context_t, close_all_connections) - 160usize];
+        [::std::mem::offset_of!(_cef_request_context_t, close_all_connections) - 168usize];
     ["Offset of field: _cef_request_context_t::resolve_host"]
-        [::std::mem::offset_of!(_cef_request_context_t, resolve_host) - 168usize];
+        [::std::mem::offset_of!(_cef_request_context_t, resolve_host) - 176usize];
     ["Offset of field: _cef_request_context_t::get_media_router"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_media_router) - 176usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_media_router) - 184usize];
     ["Offset of field: _cef_request_context_t::get_website_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_website_setting) - 184usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_website_setting) - 192usize];
     ["Offset of field: _cef_request_context_t::set_website_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, set_website_setting) - 192usize];
+        [::std::mem::offset_of!(_cef_request_context_t, set_website_setting) - 200usize];
     ["Offset of field: _cef_request_context_t::get_content_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_content_setting) - 200usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_content_setting) - 208usize];
     ["Offset of field: _cef_request_context_t::set_content_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, set_content_setting) - 208usize];
+        [::std::mem::offset_of!(_cef_request_context_t, set_content_setting) - 216usize];
     ["Offset of field: _cef_request_context_t::set_chrome_color_scheme"]
-        [::std::mem::offset_of!(_cef_request_context_t, set_chrome_color_scheme) - 216usize];
+        [::std::mem::offset_of!(_cef_request_context_t, set_chrome_color_scheme) - 224usize];
     ["Offset of field: _cef_request_context_t::get_chrome_color_scheme_mode"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_mode) - 224usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_mode) - 232usize];
     ["Offset of field: _cef_request_context_t::get_chrome_color_scheme_color"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_color) - 232usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_color) - 240usize];
     ["Offset of field: _cef_request_context_t::get_chrome_color_scheme_variant"][::std::mem::offset_of!(
         _cef_request_context_t,
         get_chrome_color_scheme_variant
-    ) - 240usize];
+    ) - 248usize];
+    ["Offset of field: _cef_request_context_t::add_setting_observer"]
+        [::std::mem::offset_of!(_cef_request_context_t, add_setting_observer) - 256usize];
 };
 #[doc = "\n A request context provides request handling for a set of related browser or\n URL request objects. A request context can be specified when creating a new\n browser via the cef_browser_host_t static factory functions or when creating\n a new URL request via the cef_urlrequest_t static factory functions. Browser\n objects with different request contexts will never be hosted in the same\n render process. Browser objects with the same request context may or may not\n be hosted in the same render process depending on the process model. Browser\n objects created indirectly via the JavaScript window.open function or\n targeted links will share the same render process and the same request\n context as the source browser. When running in single-process mode there is\n only a single render process (the main process) and so all browsers created\n in single-process mode will share the same request context. This will be the\n first request context passed into a cef_browser_host_t static factory\n function and all other request context objects will be ignored.\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_request_context_t = _cef_request_context_t;
@@ -8057,11 +8147,13 @@ pub struct _cef_browser_host_t {
         unsafe extern "C" fn(self_: *mut _cef_browser_host_t, focus: ::std::os::raw::c_int),
     >,
     #[doc = "\n Retrieve the window handle (if any) for this browser. If this browser is\n wrapped in a cef_browser_view_t this function should be called on the\n browser process UI thread and it will return the handle for the top-level\n native window.\n"]
-    pub get_window_handle:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_browser_host_t) -> HWND>,
+    pub get_window_handle: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_browser_host_t) -> cef_window_handle_t,
+    >,
     #[doc = "\n Retrieve the window handle (if any) of the browser that opened this\n browser. Will return NULL for non-popup browsers or if this browser is\n wrapped in a cef_browser_view_t. This function can be used in combination\n with custom handling of modal windows.\n"]
-    pub get_opener_window_handle:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_browser_host_t) -> HWND>,
+    pub get_opener_window_handle: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_browser_host_t) -> cef_window_handle_t,
+    >,
     #[doc = "\n Retrieve the unique identifier of the browser that opened this browser.\n Will return 0 for non-popup browsers.\n"]
     pub get_opener_identifier: ::std::option::Option<
         unsafe extern "C" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
@@ -9797,7 +9889,7 @@ pub struct _cef_display_handler_t {
         unsafe extern "C" fn(
             self_: *mut _cef_display_handler_t,
             browser: *mut _cef_browser_t,
-            cursor: HCURSOR,
+            cursor: cef_cursor_handle_t,
             type_: cef_cursor_type_t,
             custom_cursor_info: *const cef_cursor_info_t,
         ) -> ::std::os::raw::c_int,
@@ -10357,7 +10449,7 @@ pub struct _cef_keyboard_handler_t {
             self_: *mut _cef_keyboard_handler_t,
             browser: *mut _cef_browser_t,
             event: *const cef_key_event_t,
-            os_event: *mut MSG,
+            os_event: cef_event_handle_t,
             is_keyboard_shortcut: *mut ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
@@ -10367,7 +10459,7 @@ pub struct _cef_keyboard_handler_t {
             self_: *mut _cef_keyboard_handler_t,
             browser: *mut _cef_browser_t,
             event: *const cef_key_event_t,
-            os_event: *mut MSG,
+            os_event: cef_event_handle_t,
         ) -> ::std::os::raw::c_int,
     >,
 }
@@ -15750,8 +15842,9 @@ pub struct _cef_window_t {
         ),
     >,
     #[doc = "\n Retrieve the platform window handle for this Window.\n"]
-    pub get_window_handle:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_window_t) -> HWND>,
+    pub get_window_handle: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_window_t) -> cef_window_handle_t,
+    >,
     #[doc = "\n Simulate a key press. |key_code| is the VKEY_* value from Chromium's\n ui/events/keycodes/keyboard_codes.h header (VK_* values on Windows).\n |event_flags| is some combination of EVENTFLAG_SHIFT_DOWN,\n EVENTFLAG_CONTROL_DOWN and/or EVENTFLAG_ALT_DOWN. This function is exposed\n primarily for testing purposes.\n"]
     pub send_key_press: ::std::option::Option<
         unsafe extern "C" fn(

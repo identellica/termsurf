@@ -10583,6 +10583,110 @@ impl Default for PreferenceRegistrar {
     }
 }
 
+/// See [_cef_preference_observer_t] for more documentation.
+#[derive(Clone)]
+pub struct PreferenceObserver(RefGuard<_cef_preference_observer_t>);
+impl PreferenceObserver {
+    pub fn new<T>(interface: T) -> Self
+    where
+        T: WrapPreferenceObserver,
+    {
+        unsafe {
+            let mut cef_object = std::mem::zeroed();
+            <T as ImplPreferenceObserver>::init_methods(&mut cef_object);
+            let object = RcImpl::new(cef_object, interface);
+            <T as WrapPreferenceObserver>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_preference_observer_t).as_wrapper()
+        }
+    }
+}
+pub trait WrapPreferenceObserver: ImplPreferenceObserver {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_preference_observer_t, Self>);
+}
+pub trait ImplPreferenceObserver: Clone + Sized + Rc {
+    fn on_preference_changed(&self, name: Option<&CefStringUtf16>) {}
+    fn init_methods(object: &mut _cef_preference_observer_t) {
+        impl_cef_preference_observer_t::init_methods::<Self>(object);
+    }
+    fn get_raw(&self) -> *mut _cef_preference_observer_t;
+}
+mod impl_cef_preference_observer_t {
+    use super::*;
+    pub fn init_methods<I: ImplPreferenceObserver>(object: &mut _cef_preference_observer_t) {
+        object.on_preference_changed = Some(on_preference_changed::<I>);
+    }
+    extern "C" fn on_preference_changed<I: ImplPreferenceObserver>(
+        self_: *mut _cef_preference_observer_t,
+        name: *const _cef_string_utf16_t,
+    ) {
+        let (arg_self_, arg_name) = (self_, name);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let arg_name = if arg_name.is_null() {
+            None
+        } else {
+            Some(arg_name.into())
+        };
+        let arg_name = arg_name.as_ref();
+        let result = ImplPreferenceObserver::on_preference_changed(&arg_self_.interface, arg_name);
+    }
+}
+impl ImplPreferenceObserver for PreferenceObserver {
+    fn on_preference_changed(&self, name: Option<&CefStringUtf16>) {
+        unsafe {
+            self.0
+                .on_preference_changed
+                .map(|f| {
+                    let arg_name = name;
+                    let arg_self_ = self.as_raw();
+                    let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_name);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_preference_observer_t {
+        unsafe { RefGuard::as_raw(&self.0) }
+    }
+}
+impl Rc for _cef_preference_observer_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for PreferenceObserver {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_preference_observer_t> for &PreferenceObserver {
+    fn as_raw(self) -> *mut _cef_preference_observer_t {
+        ImplPreferenceObserver::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_preference_observer_t> for &mut PreferenceObserver {
+    fn as_raw(self) -> *mut _cef_preference_observer_t {
+        ImplPreferenceObserver::get_raw(self)
+    }
+}
+impl ConvertReturnValue<PreferenceObserver> for *mut _cef_preference_observer_t {
+    fn as_wrapper(self) -> PreferenceObserver {
+        PreferenceObserver(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl Into<*mut _cef_preference_observer_t> for PreferenceObserver {
+    fn into(self) -> *mut _cef_preference_observer_t {
+        let object = ImplPreferenceObserver::get_raw(&self);
+        std::mem::forget(self);
+        object
+    }
+}
+impl Default for PreferenceObserver {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [_cef_preference_manager_t] for more documentation.
 #[derive(Clone)]
 pub struct PreferenceManager(RefGuard<_cef_preference_manager_t>);
@@ -10600,6 +10704,11 @@ pub trait ImplPreferenceManager: Clone + Sized + Rc {
         value: Option<&mut impl ImplValue>,
         error: Option<&mut CefStringUtf16>,
     ) -> ::std::os::raw::c_int;
+    fn add_preference_observer(
+        &self,
+        name: Option<&CefStringUtf16>,
+        observer: Option<&mut impl ImplPreferenceObserver>,
+    ) -> Option<Registration>;
     fn get_raw(&self) -> *mut _cef_preference_manager_t;
 }
 impl ImplPreferenceManager for PreferenceManager {
@@ -10694,6 +10803,34 @@ impl ImplPreferenceManager for PreferenceManager {
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_name, arg_value, arg_error);
                     result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn add_preference_observer(
+        &self,
+        name: Option<&CefStringUtf16>,
+        observer: Option<&mut impl ImplPreferenceObserver>,
+    ) -> Option<Registration> {
+        unsafe {
+            self.0
+                .add_preference_observer
+                .map(|f| {
+                    let (arg_name, arg_observer) = (name, observer);
+                    let arg_self_ = self.as_raw();
+                    let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+                    let arg_observer = arg_observer
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplPreferenceObserver::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_name, arg_observer);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
                 })
                 .unwrap_or_default()
         }
@@ -10853,6 +10990,148 @@ impl Default for ResolveCallback {
     }
 }
 
+/// See [_cef_setting_observer_t] for more documentation.
+#[derive(Clone)]
+pub struct SettingObserver(RefGuard<_cef_setting_observer_t>);
+impl SettingObserver {
+    pub fn new<T>(interface: T) -> Self
+    where
+        T: WrapSettingObserver,
+    {
+        unsafe {
+            let mut cef_object = std::mem::zeroed();
+            <T as ImplSettingObserver>::init_methods(&mut cef_object);
+            let object = RcImpl::new(cef_object, interface);
+            <T as WrapSettingObserver>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_setting_observer_t).as_wrapper()
+        }
+    }
+}
+pub trait WrapSettingObserver: ImplSettingObserver {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_setting_observer_t, Self>);
+}
+pub trait ImplSettingObserver: Clone + Sized + Rc {
+    fn on_setting_changed(
+        &self,
+        requesting_url: Option<&CefStringUtf16>,
+        top_level_url: Option<&CefStringUtf16>,
+        content_type: ContentSettingTypes,
+    ) {
+    }
+    fn init_methods(object: &mut _cef_setting_observer_t) {
+        impl_cef_setting_observer_t::init_methods::<Self>(object);
+    }
+    fn get_raw(&self) -> *mut _cef_setting_observer_t;
+}
+mod impl_cef_setting_observer_t {
+    use super::*;
+    pub fn init_methods<I: ImplSettingObserver>(object: &mut _cef_setting_observer_t) {
+        object.on_setting_changed = Some(on_setting_changed::<I>);
+    }
+    extern "C" fn on_setting_changed<I: ImplSettingObserver>(
+        self_: *mut _cef_setting_observer_t,
+        requesting_url: *const _cef_string_utf16_t,
+        top_level_url: *const _cef_string_utf16_t,
+        content_type: cef_content_setting_types_t,
+    ) {
+        let (arg_self_, arg_requesting_url, arg_top_level_url, arg_content_type) =
+            (self_, requesting_url, top_level_url, content_type);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let arg_requesting_url = if arg_requesting_url.is_null() {
+            None
+        } else {
+            Some(arg_requesting_url.into())
+        };
+        let arg_requesting_url = arg_requesting_url.as_ref();
+        let arg_top_level_url = if arg_top_level_url.is_null() {
+            None
+        } else {
+            Some(arg_top_level_url.into())
+        };
+        let arg_top_level_url = arg_top_level_url.as_ref();
+        let arg_content_type = arg_content_type.as_raw();
+        let result = ImplSettingObserver::on_setting_changed(
+            &arg_self_.interface,
+            arg_requesting_url,
+            arg_top_level_url,
+            arg_content_type,
+        );
+    }
+}
+impl ImplSettingObserver for SettingObserver {
+    fn on_setting_changed(
+        &self,
+        requesting_url: Option<&CefStringUtf16>,
+        top_level_url: Option<&CefStringUtf16>,
+        content_type: ContentSettingTypes,
+    ) {
+        unsafe {
+            self.0
+                .on_setting_changed
+                .map(|f| {
+                    let (arg_requesting_url, arg_top_level_url, arg_content_type) =
+                        (requesting_url, top_level_url, content_type);
+                    let arg_self_ = self.as_raw();
+                    let arg_requesting_url = arg_requesting_url
+                        .map(|arg| arg.as_raw())
+                        .unwrap_or(std::ptr::null());
+                    let arg_top_level_url = arg_top_level_url
+                        .map(|arg| arg.as_raw())
+                        .unwrap_or(std::ptr::null());
+                    let arg_content_type = arg_content_type.as_raw();
+                    let result = f(
+                        arg_self_,
+                        arg_requesting_url,
+                        arg_top_level_url,
+                        arg_content_type,
+                    );
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_setting_observer_t {
+        unsafe { RefGuard::as_raw(&self.0) }
+    }
+}
+impl Rc for _cef_setting_observer_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for SettingObserver {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_setting_observer_t> for &SettingObserver {
+    fn as_raw(self) -> *mut _cef_setting_observer_t {
+        ImplSettingObserver::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_setting_observer_t> for &mut SettingObserver {
+    fn as_raw(self) -> *mut _cef_setting_observer_t {
+        ImplSettingObserver::get_raw(self)
+    }
+}
+impl ConvertReturnValue<SettingObserver> for *mut _cef_setting_observer_t {
+    fn as_wrapper(self) -> SettingObserver {
+        SettingObserver(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl Into<*mut _cef_setting_observer_t> for SettingObserver {
+    fn into(self) -> *mut _cef_setting_observer_t {
+        let object = ImplSettingObserver::get_raw(&self);
+        std::mem::forget(self);
+        object
+    }
+}
+impl Default for SettingObserver {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [_cef_request_context_t] for more documentation.
 #[derive(Clone)]
 pub struct RequestContext(RefGuard<_cef_request_context_t>);
@@ -10916,6 +11195,10 @@ pub trait ImplRequestContext: ImplPreferenceManager {
     fn get_chrome_color_scheme_mode(&self) -> ColorVariant;
     fn get_chrome_color_scheme_color(&self) -> cef_color_t;
     fn get_chrome_color_scheme_variant(&self) -> ColorVariant;
+    fn add_setting_observer(
+        &self,
+        observer: Option<&mut impl ImplSettingObserver>,
+    ) -> Option<Registration>;
     fn get_raw(&self) -> *mut _cef_request_context_t {
         <Self as ImplPreferenceManager>::get_raw(self) as *mut _
     }
@@ -10958,6 +11241,16 @@ impl ImplPreferenceManager for RequestContext {
             RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
         })
         .set_preference(name, value, error)
+    }
+    fn add_preference_observer(
+        &self,
+        name: Option<&CefStringUtf16>,
+        observer: Option<&mut impl ImplPreferenceObserver>,
+    ) -> Option<Registration> {
+        PreferenceManager(unsafe {
+            RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
+        })
+        .add_preference_observer(name, observer)
     }
     fn get_raw(&self) -> *mut _cef_preference_manager_t {
         unsafe { RefGuard::as_raw(&self.0) as *mut _ }
@@ -11413,6 +11706,32 @@ impl ImplRequestContext for RequestContext {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
                     result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn add_setting_observer(
+        &self,
+        observer: Option<&mut impl ImplSettingObserver>,
+    ) -> Option<Registration> {
+        unsafe {
+            self.0
+                .add_setting_observer
+                .map(|f| {
+                    let arg_observer = observer;
+                    let arg_self_ = self.as_raw();
+                    let arg_observer = arg_observer
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplSettingObserver::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_observer);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
                 })
                 .unwrap_or_default()
         }
@@ -12327,8 +12646,8 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn try_close_browser(&self) -> ::std::os::raw::c_int;
     fn is_ready_to_be_closed(&self) -> ::std::os::raw::c_int;
     fn set_focus(&self, focus: ::std::os::raw::c_int);
-    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void;
-    fn get_opener_window_handle(&self) -> *mut ::std::os::raw::c_void;
+    fn get_window_handle(&self) -> cef_window_handle_t;
+    fn get_opener_window_handle(&self) -> cef_window_handle_t;
     fn get_opener_identifier(&self) -> ::std::os::raw::c_int;
     fn has_view(&self) -> ::std::os::raw::c_int;
     fn get_client(&self) -> Option<Client>;
@@ -12549,7 +12868,7 @@ impl ImplBrowserHost for BrowserHost {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void {
+    fn get_window_handle(&self) -> cef_window_handle_t {
         unsafe {
             self.0
                 .get_window_handle
@@ -12561,7 +12880,7 @@ impl ImplBrowserHost for BrowserHost {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_opener_window_handle(&self) -> *mut ::std::os::raw::c_void {
+    fn get_opener_window_handle(&self) -> cef_window_handle_t {
         unsafe {
             self.0
                 .get_opener_window_handle
@@ -42698,7 +43017,7 @@ pub trait ImplWindow: ImplPanel {
     fn get_display(&self) -> Option<Display>;
     fn get_client_area_bounds_in_screen(&self) -> Rect;
     fn set_draggable_regions(&self, regions_count: usize, regions: Option<&DraggableRegion>);
-    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void;
+    fn get_window_handle(&self) -> cef_window_handle_t;
     fn send_key_press(&self, key_code: ::std::os::raw::c_int, event_flags: u32);
     fn send_mouse_move(&self, screen_x: ::std::os::raw::c_int, screen_y: ::std::os::raw::c_int);
     fn send_mouse_events(
@@ -43480,7 +43799,7 @@ impl ImplWindow for Window {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_window_handle(&self) -> *mut ::std::os::raw::c_void {
+    fn get_window_handle(&self) -> cef_window_handle_t {
         unsafe {
             self.0
                 .get_window_handle
@@ -47848,6 +48167,30 @@ pub fn media_router_get_global(
         } else {
             Some(result.as_wrapper())
         }
+    }
+}
+
+/// See [cef_preference_manager_get_chrome_variations_as_switches] for more documentation.
+pub fn preference_manager_get_chrome_variations_as_switches(switches: Option<&mut CefStringList>) {
+    unsafe {
+        let arg_switches = switches;
+        let arg_switches = arg_switches
+            .map(|arg| arg.as_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_preference_manager_get_chrome_variations_as_switches(arg_switches);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_preference_manager_get_chrome_variations_as_strings] for more documentation.
+pub fn preference_manager_get_chrome_variations_as_strings(strings: Option<&mut CefStringList>) {
+    unsafe {
+        let arg_strings = strings;
+        let arg_strings = arg_strings
+            .map(|arg| arg.as_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_preference_manager_get_chrome_variations_as_strings(arg_strings);
+        result.as_wrapper()
     }
 }
 

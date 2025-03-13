@@ -38,6 +38,18 @@ pub type CefStringUserfree = *mut CefStringUtf16;
 /// See [cef_string_utf16_t] for more documentation.
 pub type CefString = CefStringUtf16;
 
+/// See [HCURSOR] for more documentation.
+pub type CursorHandle = HCURSOR;
+
+/// See [MSG] for more documentation.
+pub type EventHandle = *mut MSG;
+
+/// See [HWND] for more documentation.
+pub type WindowHandle = HWND;
+
+/// See [HANDLE] for more documentation.
+pub type SharedTextureHandle = HANDLE;
+
 /// See [u32] for more documentation.
 pub type Color = u32;
 
@@ -4791,6 +4803,39 @@ impl Default for PreferenceRegistrar {
     }
 }
 
+/// See [_cef_preference_observer_t] for more documentation.
+#[derive(Clone)]
+pub struct PreferenceObserver {
+    pub base: BaseRefCounted,
+    pub on_preference_changed: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_preference_observer_t,
+            name: *const cef_string_t,
+        ),
+    >,
+}
+impl From<_cef_preference_observer_t> for PreferenceObserver {
+    fn from(value: _cef_preference_observer_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_preference_changed: value.on_preference_changed.into(),
+        }
+    }
+}
+impl Into<_cef_preference_observer_t> for PreferenceObserver {
+    fn into(self) -> _cef_preference_observer_t {
+        _cef_preference_observer_t {
+            base: self.base.into(),
+            on_preference_changed: self.on_preference_changed.into(),
+        }
+    }
+}
+impl Default for PreferenceObserver {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [_cef_preference_manager_t] for more documentation.
 #[derive(Clone)]
 pub struct PreferenceManager {
@@ -4827,6 +4872,13 @@ pub struct PreferenceManager {
             error: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
+    pub add_preference_observer: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_preference_manager_t,
+            name: *const cef_string_t,
+            observer: *mut _cef_preference_observer_t,
+        ) -> *mut _cef_registration_t,
+    >,
 }
 impl From<_cef_preference_manager_t> for PreferenceManager {
     fn from(value: _cef_preference_manager_t) -> Self {
@@ -4837,6 +4889,7 @@ impl From<_cef_preference_manager_t> for PreferenceManager {
             get_all_preferences: value.get_all_preferences.into(),
             can_set_preference: value.can_set_preference.into(),
             set_preference: value.set_preference.into(),
+            add_preference_observer: value.add_preference_observer.into(),
         }
     }
 }
@@ -4849,6 +4902,7 @@ impl Into<_cef_preference_manager_t> for PreferenceManager {
             get_all_preferences: self.get_all_preferences.into(),
             can_set_preference: self.can_set_preference.into(),
             set_preference: self.set_preference.into(),
+            add_preference_observer: self.add_preference_observer.into(),
         }
     }
 }
@@ -4887,6 +4941,41 @@ impl Into<_cef_resolve_callback_t> for ResolveCallback {
     }
 }
 impl Default for ResolveCallback {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [_cef_setting_observer_t] for more documentation.
+#[derive(Clone)]
+pub struct SettingObserver {
+    pub base: BaseRefCounted,
+    pub on_setting_changed: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_setting_observer_t,
+            requesting_url: *const cef_string_t,
+            top_level_url: *const cef_string_t,
+            content_type: cef_content_setting_types_t,
+        ),
+    >,
+}
+impl From<_cef_setting_observer_t> for SettingObserver {
+    fn from(value: _cef_setting_observer_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_setting_changed: value.on_setting_changed.into(),
+        }
+    }
+}
+impl Into<_cef_setting_observer_t> for SettingObserver {
+    fn into(self) -> _cef_setting_observer_t {
+        _cef_setting_observer_t {
+            base: self.base.into(),
+            on_setting_changed: self.on_setting_changed.into(),
+        }
+    }
+}
+impl Default for SettingObserver {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -5017,6 +5106,12 @@ pub struct RequestContext {
     pub get_chrome_color_scheme_variant: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_request_context_t) -> cef_color_variant_t,
     >,
+    pub add_setting_observer: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            observer: *mut _cef_setting_observer_t,
+        ) -> *mut _cef_registration_t,
+    >,
 }
 impl From<_cef_request_context_t> for RequestContext {
     fn from(value: _cef_request_context_t) -> Self {
@@ -5043,6 +5138,7 @@ impl From<_cef_request_context_t> for RequestContext {
             get_chrome_color_scheme_mode: value.get_chrome_color_scheme_mode.into(),
             get_chrome_color_scheme_color: value.get_chrome_color_scheme_color.into(),
             get_chrome_color_scheme_variant: value.get_chrome_color_scheme_variant.into(),
+            add_setting_observer: value.add_setting_observer.into(),
         }
     }
 }
@@ -5071,6 +5167,7 @@ impl Into<_cef_request_context_t> for RequestContext {
             get_chrome_color_scheme_mode: self.get_chrome_color_scheme_mode.into(),
             get_chrome_color_scheme_color: self.get_chrome_color_scheme_color.into(),
             get_chrome_color_scheme_variant: self.get_chrome_color_scheme_variant.into(),
+            add_setting_observer: self.add_setting_observer.into(),
         }
     }
 }
@@ -5369,10 +5466,12 @@ pub struct BrowserHost {
     pub set_focus: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t, focus: ::std::os::raw::c_int),
     >,
-    pub get_window_handle:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> HWND>,
-    pub get_opener_window_handle:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> HWND>,
+    pub get_window_handle: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> cef_window_handle_t,
+    >,
+    pub get_opener_window_handle: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> cef_window_handle_t,
+    >,
     pub get_opener_identifier: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
     >,
@@ -7031,7 +7130,7 @@ pub struct DisplayHandler {
         unsafe extern "stdcall" fn(
             self_: *mut _cef_display_handler_t,
             browser: *mut _cef_browser_t,
-            cursor: HCURSOR,
+            cursor: cef_cursor_handle_t,
             type_: cef_cursor_type_t,
             custom_cursor_info: *const cef_cursor_info_t,
         ) -> ::std::os::raw::c_int,
@@ -7648,7 +7747,7 @@ pub struct KeyboardHandler {
             self_: *mut _cef_keyboard_handler_t,
             browser: *mut _cef_browser_t,
             event: *const cef_key_event_t,
-            os_event: *mut MSG,
+            os_event: cef_event_handle_t,
             is_keyboard_shortcut: *mut ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
@@ -7657,7 +7756,7 @@ pub struct KeyboardHandler {
             self_: *mut _cef_keyboard_handler_t,
             browser: *mut _cef_browser_t,
             event: *const cef_key_event_t,
-            os_event: *mut MSG,
+            os_event: cef_event_handle_t,
         ) -> ::std::os::raw::c_int,
     >,
 }
@@ -12843,8 +12942,9 @@ pub struct Window {
             regions: *const cef_draggable_region_t,
         ),
     >,
-    pub get_window_handle:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_window_t) -> HWND>,
+    pub get_window_handle: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_window_t) -> cef_window_handle_t,
+    >,
     pub send_key_press: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_window_t,
@@ -17116,6 +17216,30 @@ pub fn media_router_get_global(callback: Option<&mut CompletionCallback>) -> Opt
         } else {
             Some(result.as_wrapper())
         }
+    }
+}
+
+/// See [cef_preference_manager_get_chrome_variations_as_switches] for more documentation.
+pub fn preference_manager_get_chrome_variations_as_switches(switches: Option<&mut CefStringList>) {
+    unsafe {
+        let arg_switches = switches;
+        let arg_switches = arg_switches
+            .map(|arg| arg.as_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_preference_manager_get_chrome_variations_as_switches(arg_switches);
+        result.as_wrapper()
+    }
+}
+
+/// See [cef_preference_manager_get_chrome_variations_as_strings] for more documentation.
+pub fn preference_manager_get_chrome_variations_as_strings(strings: Option<&mut CefStringList>) {
+    unsafe {
+        let arg_strings = strings;
+        let arg_strings = arg_strings
+            .map(|arg| arg.as_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_preference_manager_get_chrome_variations_as_strings(arg_strings);
+        result.as_wrapper()
     }
 }
 
