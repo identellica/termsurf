@@ -1609,10 +1609,13 @@ impl<'a> ParseTree<'a> {
 
     pub fn write_aliases(&self, f: &mut Formatter<'_>) -> fmt::Result {
         for TypeAliasRef { name, ty } in self.type_aliases.iter() {
-            let comment_ty = syn::parse2::<ModifiedType>(ty.to_token_stream())
+            let comment_ty: String = syn::parse2::<ModifiedType>(ty.to_token_stream())
                 .map(|ty| ty.ty.to_token_stream())
                 .unwrap_or_else(|_| ty.to_token_stream())
-                .to_string();
+                .to_string()
+                .split_whitespace()
+                .flat_map(|word| word.chars())
+                .collect();
             let comment = format!("See [{comment_ty}] for more documentation.");
             let (Some(rust_name), Some(arg_ty)) = (
                 make_rust_type_name(name.as_str()),
@@ -1629,7 +1632,7 @@ impl<'a> ParseTree<'a> {
                 continue;
             }
             let name = format_ident!("{rust_name}");
-            let ty = format_ident!("{ty}");
+            let ty = syn::parse_str::<syn::Type>(&ty).unwrap_or(arg_ty.ty);
             let modifiers = arg_ty
                 .modifiers
                 .iter()
