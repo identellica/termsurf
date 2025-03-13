@@ -61,7 +61,7 @@ cargo run --example cefsimple
 #### macOS
 
 ```sh
-./cef/examples/cefsimple/bundle_script.rs
+cargo run --example bundle_cefsimple
 open target/debug/examples/cefsimple.app
 ```
 
