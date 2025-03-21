@@ -1258,6 +1258,10 @@ const CUSTOM_STRING_USERFREE_ALIASES: &[&str] = &[
     "cef_string_userfree_wide_t",
 ];
 
+fn is_custom_string_userfree_alias(name: &str) -> bool {
+    name == "cef_string_userfree_t" || CUSTOM_STRING_USERFREE_ALIASES.contains(&name)
+}
+
 struct StructDeclarationRef<'a> {
     name: String,
     fields: Vec<FieldRef<'a>>,
@@ -1341,6 +1345,24 @@ impl ModifiedType {
             }
             Some(NameMapEntry {
                 name,
+                ty: NameMapType::TypeAlias,
+            }) if is_custom_string_userfree_alias(elem_string.as_str()) => {
+                let name = format_ident!("{name}");
+
+                match self.modifiers.as_slice() {
+                    [] => Some(quote! { #name }),
+                    [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
+                    [TypeModifier::MutPtr] => Some(quote! { Option<&mut #name> }),
+                    [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
+                        Some(quote! { Option<&mut #name> })
+                    }
+                    [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
+                    [TypeModifier::MutSlice] => Some(quote! { Option<&mut Vec<Option<#name>>> }),
+                    _ => None,
+                }
+            }
+            Some(NameMapEntry {
+                name,
                 ty: NameMapType::EnumName,
             }) => {
                 let name = format_ident!("{name}");
@@ -1411,6 +1433,25 @@ impl ModifiedType {
                     name,
                     ty: NameMapType::StructDeclaration,
                 } => {
+                    let name = format_ident!("{name}");
+
+                    match self.modifiers.as_slice() {
+                        [] => Some(quote! { #name }),
+                        [TypeModifier::MutPtr] => Some(quote! { Option<#name> }),
+                        [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
+                        [TypeModifier::ConstPtr, TypeModifier::MutPtr] => {
+                            Some(quote! { Option<&mut [#name>]> })
+                        }
+                        [TypeModifier::ConstPtr, TypeModifier::ConstPtr] => {
+                            Some(quote! { Option<&[#name]> })
+                        }
+                        _ => None,
+                    }
+                }
+                NameMapEntry {
+                    name,
+                    ty: NameMapType::TypeAlias,
+                } if is_custom_string_userfree_alias(elem_name.as_str()) => {
                     let name = format_ident!("{name}");
 
                     match self.modifiers.as_slice() {
@@ -1569,7 +1610,7 @@ impl<'a> ParseTree<'a> {
         match ty {
             syn::Type::Path(syn::TypePath { qself: None, path }) => {
                 let ty = path.to_token_stream().to_string();
-                if CUSTOM_STRING_USERFREE_ALIASES.contains(&ty.as_str()) {
+                if is_custom_string_userfree_alias(ty.as_str()) {
                     path.to_token_stream()
                 } else {
                     match self.cef_name_map.get(&ty) {
