@@ -21,19 +21,19 @@ where
 }
 
 /// See [cef_string_wide_t] for more documentation.
-pub type CefStringUserfreeWide = *mut CefStringWide;
+pub use crate::string::CefStringUserfreeWide;
 
 /// See [cef_string_utf8_t] for more documentation.
-pub type CefStringUserfreeUtf8 = *mut CefStringUtf8;
+pub use crate::string::CefStringUserfreeUtf8;
 
 /// See [cef_string_utf16_t] for more documentation.
-pub type CefStringUserfreeUtf16 = *mut CefStringUtf16;
+pub use crate::string::CefStringUserfreeUtf16;
 
 /// See [char16_t] for more documentation.
 pub type Char = char16_t;
 
 /// See [cef_string_userfree_utf16_t] for more documentation.
-pub type CefStringUserfree = *mut CefStringUtf16;
+pub type CefStringUserfree = CefStringUserfreeUtf16;
 
 /// See [cef_string_utf16_t] for more documentation.
 pub type CefString = CefStringUtf16;
@@ -16324,72 +16324,54 @@ pub fn string_ascii_to_utf16(
 }
 
 /// See [cef_string_userfree_wide_alloc] for more documentation.
-pub fn string_userfree_wide_alloc() -> Option<CefStringWide> {
+pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
     unsafe {
         let result = cef_string_userfree_wide_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf8_alloc] for more documentation.
-pub fn string_userfree_utf8_alloc() -> Option<CefStringUtf8> {
+pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
     unsafe {
         let result = cef_string_userfree_utf8_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf16_alloc] for more documentation.
-pub fn string_userfree_utf16_alloc() -> Option<CefStringUtf16> {
+pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
     unsafe {
         let result = cef_string_userfree_utf16_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_wide_free] for more documentation.
-pub fn string_userfree_wide_free(str_: Option<&mut CefStringWide>) {
+pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_wide_free(arg_str_);
         result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf8_free] for more documentation.
-pub fn string_userfree_utf8_free(str_: Option<&mut CefStringUtf8>) {
+pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_utf8_free(arg_str_);
         result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf16_free] for more documentation.
-pub fn string_userfree_utf16_free(str_: Option<&mut CefStringUtf16>) {
+pub fn string_userfree_utf16_free(str_: CefStringUserfreeUtf16) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_utf16_free(arg_str_);
         result.as_wrapper()
     }
