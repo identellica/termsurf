@@ -34,7 +34,7 @@ impl Args {
             .ok()
             .map(|args| {
                 let args = CefStringUserfreeUtf16::from(args);
-                cmd_line.init_from_string(Some(&CefStringUtf16::from(args)));
+                cmd_line.init_from_string(Some(&CefStringUtf16::from(&args)));
                 cmd_line
             })
         });
