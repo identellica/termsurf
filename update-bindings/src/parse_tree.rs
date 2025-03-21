@@ -1570,7 +1570,6 @@ impl<'a> ParseTree<'a> {
             syn::Type::Path(syn::TypePath { qself: None, path }) => {
                 let ty = path.to_token_stream().to_string();
                 if CUSTOM_STRING_USERFREE_ALIASES.contains(&ty.as_str()) {
-                    println!("Resolved {ty} as self");
                     path.to_token_stream()
                 } else {
                     match self.cef_name_map.get(&ty) {
