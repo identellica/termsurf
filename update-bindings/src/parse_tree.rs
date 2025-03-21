@@ -485,7 +485,7 @@ impl SignatureRef<'_> {
                                     .get(&ty_string)
                                     .and_then(|i| tree.struct_declarations.get(*i))
                                     .map(|s| s.methods.is_empty()
-                                        &&!s.fields.is_empty()
+                                        && !s.fields.is_empty()
                                         && !s.fields.iter().map(|f| f.name.as_str()).eq(["_unused"]))
                                     .unwrap_or_default() =>
                             {
@@ -509,6 +509,24 @@ impl SignatureRef<'_> {
                                 ty: NameMapType::StructDeclaration,
                                 ..
                             }) => {
+                                let impl_default = match modifiers {
+                                    [TypeModifier::ConstPtr] => {
+                                        quote! { unwrap_or(std::ptr::null()) }
+                                    }
+                                    [TypeModifier::MutPtr] => {
+                                        quote! { unwrap_or(std::ptr::null_mut()) }
+                                    }
+                                    _ => quote! { unwrap_or_default() },
+                                };
+
+                                Some(quote! {
+                                    let #name = #name.map(|arg| arg.as_raw()).#impl_default;
+                                })
+                            }
+                            Some(NameMapEntry {
+                                ty: NameMapType::TypeAlias,
+                                ..
+                            }) if ty_string.as_str() == "cef_string_t" => {
                                 let impl_default = match modifiers {
                                     [TypeModifier::ConstPtr] => {
                                         quote! { unwrap_or(std::ptr::null()) }
@@ -839,7 +857,9 @@ impl SignatureRef<'_> {
                                 }),
                                 _ => None,
                             }
-                        } else if CUSTOM_STRING_TYPES.contains(&ty_string.as_str()) {
+                        } else if ty_string.as_str() == "cef_string_t" ||
+                            CUSTOM_STRING_TYPES.contains(&ty_string.as_str())
+                        {
                             match modifiers {
                                 [TypeModifier::MutPtr] => Some(quote! {
                                     let mut #arg_name = if #arg_name.is_null() { None } else { Some(#arg_name.into()) };
@@ -969,7 +989,9 @@ impl SignatureRef<'_> {
                     })
                     .flatten()
                     .or_else(|| {
-                        if CUSTOM_STRING_TYPES.contains(&ty_string.as_str()) {
+                        if ty_string.as_str() == "cef_string_t" ||
+                            CUSTOM_STRING_TYPES.contains(&ty_string.as_str())
+                        {
                             None
                         } else {
                             let ty =
@@ -1252,6 +1274,18 @@ const CUSTOM_STRING_TYPES: &[&str] = &[
     "_cef_string_multimap_t",
 ];
 
+const CUSTOM_STRING_USERFREE_ALIASES: &[&str] = &[
+    "cef_string_userfree_utf8_t",
+    "cef_string_userfree_utf16_t",
+    "cef_string_userfree_wide_t",
+];
+
+fn is_custom_string_userfree_alias(name: &str) -> bool {
+    name == "cef_string_t"
+        || name == "cef_string_userfree_t"
+        || CUSTOM_STRING_USERFREE_ALIASES.contains(&name)
+}
+
 struct StructDeclarationRef<'a> {
     name: String,
     fields: Vec<FieldRef<'a>>,
@@ -1335,6 +1369,24 @@ impl ModifiedType {
             }
             Some(NameMapEntry {
                 name,
+                ty: NameMapType::TypeAlias,
+            }) if is_custom_string_userfree_alias(elem_string.as_str()) => {
+                let name = format_ident!("{name}");
+
+                match self.modifiers.as_slice() {
+                    [] => Some(quote! { #name }),
+                    [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
+                    [TypeModifier::MutPtr] => Some(quote! { Option<&mut #name> }),
+                    [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
+                        Some(quote! { Option<&mut #name> })
+                    }
+                    [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
+                    [TypeModifier::MutSlice] => Some(quote! { Option<&mut Vec<Option<#name>>> }),
+                    _ => None,
+                }
+            }
+            Some(NameMapEntry {
+                name,
                 ty: NameMapType::EnumName,
             }) => {
                 let name = format_ident!("{name}");
@@ -1397,13 +1449,33 @@ impl ModifiedType {
 
     fn get_output_type(&self, tree: &ParseTree) -> Option<proc_macro2::TokenStream> {
         let elem = self.ty.to_token_stream();
+        let elem_name = elem.to_string();
         tree.cef_name_map
-            .get(&elem.to_string())
+            .get(&elem_name)
             .and_then(|entry| match entry {
                 NameMapEntry {
                     name,
                     ty: NameMapType::StructDeclaration,
                 } => {
+                    let name = format_ident!("{name}");
+
+                    match self.modifiers.as_slice() {
+                        [] => Some(quote! { #name }),
+                        [TypeModifier::MutPtr] => Some(quote! { Option<#name> }),
+                        [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
+                        [TypeModifier::ConstPtr, TypeModifier::MutPtr] => {
+                            Some(quote! { Option<&mut [#name>]> })
+                        }
+                        [TypeModifier::ConstPtr, TypeModifier::ConstPtr] => {
+                            Some(quote! { Option<&[#name]> })
+                        }
+                        _ => None,
+                    }
+                }
+                NameMapEntry {
+                    name,
+                    ty: NameMapType::TypeAlias,
+                } if is_custom_string_userfree_alias(elem_name.as_str()) => {
                     let name = format_ident!("{name}");
 
                     match self.modifiers.as_slice() {
@@ -1562,17 +1634,21 @@ impl<'a> ParseTree<'a> {
         match ty {
             syn::Type::Path(syn::TypePath { qself: None, path }) => {
                 let ty = path.to_token_stream().to_string();
-                match self.cef_name_map.get(&ty) {
-                    Some(NameMapEntry {
-                        ty: NameMapType::TypeAlias,
-                        ..
-                    }) => self
-                        .lookup_type_alias
-                        .get(&ty)
-                        .and_then(|&i| self.type_aliases.get(i))
-                        .map(|alias| self.resolve_type_aliases(&alias.ty))
-                        .unwrap_or_else(|| path.to_token_stream()),
-                    _ => path.to_token_stream(),
+                if is_custom_string_userfree_alias(ty.as_str()) {
+                    path.to_token_stream()
+                } else {
+                    match self.cef_name_map.get(&ty) {
+                        Some(NameMapEntry {
+                            ty: NameMapType::TypeAlias,
+                            ..
+                        }) => self
+                            .lookup_type_alias
+                            .get(&ty)
+                            .and_then(|&i| self.type_aliases.get(i))
+                            .map(|alias| self.resolve_type_aliases(&alias.ty))
+                            .unwrap_or_else(|| path.to_token_stream()),
+                        _ => path.to_token_stream(),
+                    }
                 }
             }
             syn::Type::Tuple(syn::TypeTuple { elems, .. }) => {
@@ -1624,6 +1700,14 @@ impl<'a> ParseTree<'a> {
                 continue;
             };
             let ty = arg_ty.ty.to_token_stream().to_string();
+            let rust_name_ident = format_ident!("{rust_name}");
+
+            if CUSTOM_STRING_USERFREE_ALIASES.contains(&name.as_str()) {
+                writeln!(f, "\n/// {comment}")?;
+                self.write_custom_string_type(f, &rust_name_ident)?;
+                continue;
+            }
+
             if ty == quote! { ::std::os::raw::c_void }.to_string() {
                 continue;
             }
@@ -1631,7 +1715,6 @@ impl<'a> ParseTree<'a> {
             if rust_name == ty.as_str() {
                 continue;
             }
-            let name = format_ident!("{rust_name}");
             let ty = syn::parse_str::<syn::Type>(&ty).unwrap_or(arg_ty.ty);
             let modifiers = arg_ty
                 .modifiers
@@ -1651,7 +1734,7 @@ impl<'a> ParseTree<'a> {
             };
 
             let alias = quote! {
-                pub type #name = #(#modifiers)* #ty;
+                pub type #rust_name_ident = #(#modifiers)* #ty;
             }
             .to_string();
 

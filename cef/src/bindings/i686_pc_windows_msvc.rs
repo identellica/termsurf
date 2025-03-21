@@ -21,19 +21,19 @@ where
 }
 
 /// See [cef_string_wide_t] for more documentation.
-pub type CefStringUserfreeWide = *mut CefStringWide;
+pub use crate::string::CefStringUserfreeWide;
 
 /// See [cef_string_utf8_t] for more documentation.
-pub type CefStringUserfreeUtf8 = *mut CefStringUtf8;
+pub use crate::string::CefStringUserfreeUtf8;
 
 /// See [cef_string_utf16_t] for more documentation.
-pub type CefStringUserfreeUtf16 = *mut CefStringUtf16;
+pub use crate::string::CefStringUserfreeUtf16;
 
 /// See [char16_t] for more documentation.
 pub type Char = char16_t;
 
 /// See [cef_string_userfree_utf16_t] for more documentation.
-pub type CefStringUserfree = *mut CefStringUtf16;
+pub type CefStringUserfree = CefStringUserfreeUtf16;
 
 /// See [cef_string_utf16_t] for more documentation.
 pub type CefString = CefStringUtf16;
@@ -360,7 +360,7 @@ impl Default for MainArgs {
 pub struct WindowInfo {
     pub size: usize,
     pub ex_style: DWORD,
-    pub window_name: CefStringUtf16,
+    pub window_name: CefString,
     pub style: DWORD,
     pub bounds: Rect,
     pub parent_window: HWND,
@@ -458,32 +458,32 @@ impl Default for AcceleratedPaintInfo {
 pub struct Settings {
     pub size: usize,
     pub no_sandbox: ::std::os::raw::c_int,
-    pub browser_subprocess_path: CefStringUtf16,
-    pub framework_dir_path: CefStringUtf16,
-    pub main_bundle_path: CefStringUtf16,
+    pub browser_subprocess_path: CefString,
+    pub framework_dir_path: CefString,
+    pub main_bundle_path: CefString,
     pub multi_threaded_message_loop: ::std::os::raw::c_int,
     pub external_message_pump: ::std::os::raw::c_int,
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
     pub command_line_args_disabled: ::std::os::raw::c_int,
-    pub cache_path: CefStringUtf16,
-    pub root_cache_path: CefStringUtf16,
+    pub cache_path: CefString,
+    pub root_cache_path: CefString,
     pub persist_session_cookies: ::std::os::raw::c_int,
-    pub user_agent: CefStringUtf16,
-    pub user_agent_product: CefStringUtf16,
-    pub locale: CefStringUtf16,
-    pub log_file: CefStringUtf16,
+    pub user_agent: CefString,
+    pub user_agent_product: CefString,
+    pub locale: CefString,
+    pub log_file: CefString,
     pub log_severity: LogSeverity,
     pub log_items: LogItems,
-    pub javascript_flags: CefStringUtf16,
-    pub resources_dir_path: CefStringUtf16,
-    pub locales_dir_path: CefStringUtf16,
+    pub javascript_flags: CefString,
+    pub resources_dir_path: CefString,
+    pub locales_dir_path: CefString,
     pub remote_debugging_port: ::std::os::raw::c_int,
     pub uncaught_exception_stack_size: ::std::os::raw::c_int,
     pub background_color: u32,
-    pub accept_language_list: CefStringUtf16,
-    pub cookieable_schemes_list: CefStringUtf16,
+    pub accept_language_list: CefString,
+    pub cookieable_schemes_list: CefString,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
-    pub chrome_policy_id: CefStringUtf16,
+    pub chrome_policy_id: CefString,
     pub chrome_app_icon_id: ::std::os::raw::c_int,
     pub disable_signal_handlers: ::std::os::raw::c_int,
 }
@@ -572,10 +572,10 @@ impl Default for Settings {
 #[derive(Clone)]
 pub struct RequestContextSettings {
     pub size: usize,
-    pub cache_path: CefStringUtf16,
+    pub cache_path: CefString,
     pub persist_session_cookies: ::std::os::raw::c_int,
-    pub accept_language_list: CefStringUtf16,
-    pub cookieable_schemes_list: CefStringUtf16,
+    pub accept_language_list: CefString,
+    pub cookieable_schemes_list: CefString,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
 }
 impl From<_cef_request_context_settings_t> for RequestContextSettings {
@@ -616,17 +616,17 @@ impl Default for RequestContextSettings {
 pub struct BrowserSettings {
     pub size: usize,
     pub windowless_frame_rate: ::std::os::raw::c_int,
-    pub standard_font_family: CefStringUtf16,
-    pub fixed_font_family: CefStringUtf16,
-    pub serif_font_family: CefStringUtf16,
-    pub sans_serif_font_family: CefStringUtf16,
-    pub cursive_font_family: CefStringUtf16,
-    pub fantasy_font_family: CefStringUtf16,
+    pub standard_font_family: CefString,
+    pub fixed_font_family: CefString,
+    pub serif_font_family: CefString,
+    pub sans_serif_font_family: CefString,
+    pub cursive_font_family: CefString,
+    pub fantasy_font_family: CefString,
     pub default_font_size: ::std::os::raw::c_int,
     pub default_fixed_font_size: ::std::os::raw::c_int,
     pub minimum_font_size: ::std::os::raw::c_int,
     pub minimum_logical_font_size: ::std::os::raw::c_int,
-    pub default_encoding: CefStringUtf16,
+    pub default_encoding: CefString,
     pub remote_fonts: State,
     pub javascript: State,
     pub javascript_close_windows: State,
@@ -724,16 +724,16 @@ impl Default for BrowserSettings {
 #[derive(Clone)]
 pub struct Urlparts {
     pub size: usize,
-    pub spec: CefStringUtf16,
-    pub scheme: CefStringUtf16,
-    pub username: CefStringUtf16,
-    pub password: CefStringUtf16,
-    pub host: CefStringUtf16,
-    pub port: CefStringUtf16,
-    pub origin: CefStringUtf16,
-    pub path: CefStringUtf16,
-    pub query: CefStringUtf16,
-    pub fragment: CefStringUtf16,
+    pub spec: CefString,
+    pub scheme: CefString,
+    pub username: CefString,
+    pub password: CefString,
+    pub host: CefString,
+    pub port: CefString,
+    pub origin: CefString,
+    pub path: CefString,
+    pub query: CefString,
+    pub fragment: CefString,
 }
 impl From<_cef_urlparts_t> for Urlparts {
     fn from(value: _cef_urlparts_t) -> Self {
@@ -782,10 +782,10 @@ impl Default for Urlparts {
 #[derive(Clone)]
 pub struct Cookie {
     pub size: usize,
-    pub name: CefStringUtf16,
-    pub value: CefStringUtf16,
-    pub domain: CefStringUtf16,
-    pub path: CefStringUtf16,
+    pub name: CefString,
+    pub value: CefString,
+    pub domain: CefString,
+    pub path: CefString,
     pub secure: ::std::os::raw::c_int,
     pub httponly: ::std::os::raw::c_int,
     pub creation: Basetime,
@@ -920,10 +920,10 @@ impl Default for ScreenInfo {
 #[derive(Clone)]
 pub struct LinuxWindowProperties {
     pub size: usize,
-    pub wayland_app_id: CefStringUtf16,
-    pub wm_class_class: CefStringUtf16,
-    pub wm_class_name: CefStringUtf16,
-    pub wm_role_name: CefStringUtf16,
+    pub wayland_app_id: CefString,
+    pub wm_class_class: CefString,
+    pub wm_class_name: CefString,
+    pub wm_role_name: CefString,
 }
 impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn from(value: _cef_linux_window_properties_t) -> Self {
@@ -1195,10 +1195,10 @@ pub struct PdfPrintSettings {
     pub margin_right: f64,
     pub margin_bottom: f64,
     pub margin_left: f64,
-    pub page_ranges: CefStringUtf16,
+    pub page_ranges: CefString,
     pub display_header_footer: ::std::os::raw::c_int,
-    pub header_template: CefStringUtf16,
-    pub footer_template: CefStringUtf16,
+    pub header_template: CefString,
+    pub footer_template: CefString,
     pub generate_tagged_pdf: ::std::os::raw::c_int,
     pub generate_document_outline: ::std::os::raw::c_int,
 }
@@ -1426,9 +1426,9 @@ impl Default for AudioParameters {
 #[derive(Clone)]
 pub struct MediaSinkDeviceInfo {
     pub size: usize,
-    pub ip_address: CefStringUtf16,
+    pub ip_address: CefString,
     pub port: ::std::os::raw::c_int,
-    pub model_name: CefStringUtf16,
+    pub model_name: CefString,
 }
 impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn from(value: _cef_media_sink_device_info_t) -> Self {
@@ -1518,7 +1518,7 @@ pub struct TaskInfo {
     pub id: i64,
     pub type_: TaskType,
     pub is_killable: ::std::os::raw::c_int,
-    pub title: CefStringUtf16,
+    pub title: CefString,
     pub cpu_usage: f64,
     pub number_of_processors: ::std::os::raw::c_int,
     pub memory: i64,
@@ -16324,72 +16324,54 @@ pub fn string_ascii_to_utf16(
 }
 
 /// See [cef_string_userfree_wide_alloc] for more documentation.
-pub fn string_userfree_wide_alloc() -> Option<CefStringWide> {
+pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
     unsafe {
         let result = cef_string_userfree_wide_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf8_alloc] for more documentation.
-pub fn string_userfree_utf8_alloc() -> Option<CefStringUtf8> {
+pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
     unsafe {
         let result = cef_string_userfree_utf8_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf16_alloc] for more documentation.
-pub fn string_userfree_utf16_alloc() -> Option<CefStringUtf16> {
+pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
     unsafe {
         let result = cef_string_userfree_utf16_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_wide_free] for more documentation.
-pub fn string_userfree_wide_free(str_: Option<&mut CefStringWide>) {
+pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_wide_free(arg_str_);
         result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf8_free] for more documentation.
-pub fn string_userfree_utf8_free(str_: Option<&mut CefStringUtf8>) {
+pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_utf8_free(arg_str_);
         result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf16_free] for more documentation.
-pub fn string_userfree_utf16_free(str_: Option<&mut CefStringUtf16>) {
+pub fn string_userfree_utf16_free(str_: CefStringUserfreeUtf16) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_utf16_free(arg_str_);
         result.as_wrapper()
     }
@@ -16473,7 +16455,7 @@ pub fn string_list_size(list: Option<&mut CefStringList>) -> usize {
 pub fn string_list_value(
     list: Option<&mut CefStringList>,
     index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_list, arg_index, arg_value) = (list, index, value);
@@ -16490,7 +16472,7 @@ pub fn string_list_value(
 }
 
 /// See [cef_string_list_append] for more documentation.
-pub fn string_list_append(list: Option<&mut CefStringList>, value: Option<&CefStringUtf16>) {
+pub fn string_list_append(list: Option<&mut CefStringList>, value: Option<&CefString>) {
     unsafe {
         let (arg_list, arg_value) = (list, value);
         let arg_list = arg_list
@@ -16571,8 +16553,8 @@ pub fn string_map_size(map: Option<&mut CefStringMap>) -> usize {
 /// See [cef_string_map_find] for more documentation.
 pub fn string_map_find(
     map: Option<&mut CefStringMap>,
-    key: Option<&CefStringUtf16>,
-    value: Option<&mut CefStringUtf16>,
+    key: Option<&CefString>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
@@ -16592,7 +16574,7 @@ pub fn string_map_find(
 pub fn string_map_key(
     map: Option<&mut CefStringMap>,
     index: usize,
-    key: Option<&mut CefStringUtf16>,
+    key: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_key) = (map, index, key);
@@ -16612,7 +16594,7 @@ pub fn string_map_key(
 pub fn string_map_value(
     map: Option<&mut CefStringMap>,
     index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_value) = (map, index, value);
@@ -16631,8 +16613,8 @@ pub fn string_map_value(
 /// See [cef_string_map_append] for more documentation.
 pub fn string_map_append(
     map: Option<&mut CefStringMap>,
-    key: Option<&CefStringUtf16>,
-    value: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
+    value: Option<&CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
@@ -16699,7 +16681,7 @@ pub fn string_multimap_size(map: Option<&mut CefStringMultimap>) -> usize {
 /// See [cef_string_multimap_find_count] for more documentation.
 pub fn string_multimap_find_count(
     map: Option<&mut CefStringMultimap>,
-    key: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
 ) -> usize {
     unsafe {
         let (arg_map, arg_key) = (map, key);
@@ -16715,9 +16697,9 @@ pub fn string_multimap_find_count(
 /// See [cef_string_multimap_enumerate] for more documentation.
 pub fn string_multimap_enumerate(
     map: Option<&mut CefStringMultimap>,
-    key: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
     value_index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value_index, arg_value) = (map, key, value_index, value);
@@ -16738,7 +16720,7 @@ pub fn string_multimap_enumerate(
 pub fn string_multimap_key(
     map: Option<&mut CefStringMultimap>,
     index: usize,
-    key: Option<&mut CefStringUtf16>,
+    key: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_key) = (map, index, key);
@@ -16758,7 +16740,7 @@ pub fn string_multimap_key(
 pub fn string_multimap_value(
     map: Option<&mut CefStringMultimap>,
     index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_value) = (map, index, value);
@@ -16777,8 +16759,8 @@ pub fn string_multimap_value(
 /// See [cef_string_multimap_append] for more documentation.
 pub fn string_multimap_append(
     map: Option<&mut CefStringMultimap>,
-    key: Option<&CefStringUtf16>,
-    value: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
+    value: Option<&CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
@@ -17035,7 +17017,7 @@ pub fn image_create() -> Option<Image> {
 }
 
 /// See [cef_stream_reader_create_for_file] for more documentation.
-pub fn stream_reader_create_for_file(file_name: Option<&CefStringUtf16>) -> Option<StreamReader> {
+pub fn stream_reader_create_for_file(file_name: Option<&CefString>) -> Option<StreamReader> {
     unsafe {
         let arg_file_name = file_name;
         let arg_file_name = arg_file_name
@@ -17084,7 +17066,7 @@ pub fn stream_reader_create_for_handler(handler: Option<&mut ReadHandler>) -> Op
 }
 
 /// See [cef_stream_writer_create_for_file] for more documentation.
-pub fn stream_writer_create_for_file(file_name: Option<&CefStringUtf16>) -> Option<StreamWriter> {
+pub fn stream_writer_create_for_file(file_name: Option<&CefString>) -> Option<StreamWriter> {
     unsafe {
         let arg_file_name = file_name;
         let arg_file_name = arg_file_name
@@ -17132,7 +17114,7 @@ pub fn drag_data_create() -> Option<DragData> {
 }
 
 /// See [cef_process_message_create] for more documentation.
-pub fn process_message_create(name: Option<&CefStringUtf16>) -> Option<ProcessMessage> {
+pub fn process_message_create(name: Option<&CefString>) -> Option<ProcessMessage> {
     unsafe {
         let arg_name = name;
         let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
@@ -17323,7 +17305,7 @@ pub fn request_context_cef_create_context_shared(
 pub fn browser_host_create_browser(
     window_info: Option<&WindowInfo>,
     client: Option<&mut Client>,
-    url: Option<&CefStringUtf16>,
+    url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut DictionaryValue>,
     request_context: Option<&mut RequestContext>,
@@ -17386,7 +17368,7 @@ pub fn browser_host_create_browser(
 pub fn browser_host_create_browser_sync(
     window_info: Option<&WindowInfo>,
     client: Option<&mut Client>,
-    url: Option<&CefStringUtf16>,
+    url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut DictionaryValue>,
     request_context: Option<&mut RequestContext>,
@@ -17738,7 +17720,7 @@ pub fn v8_value_create_date(date: _cef_basetime_t) -> Option<V8Value> {
 }
 
 /// See [cef_v8_value_create_string] for more documentation.
-pub fn v8_value_create_string(value: Option<&CefStringUtf16>) -> Option<V8Value> {
+pub fn v8_value_create_string(value: Option<&CefString>) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value
@@ -17834,7 +17816,7 @@ pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) ->
 
 /// See [cef_v8_value_create_function] for more documentation.
 pub fn v8_value_create_function(
-    name: Option<&CefStringUtf16>,
+    name: Option<&CefString>,
     handler: Option<&mut V8Handler>,
 ) -> Option<V8Value> {
     unsafe {
@@ -17882,8 +17864,8 @@ pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<
 
 /// See [cef_register_extension] for more documentation.
 pub fn register_extension(
-    extension_name: Option<&CefStringUtf16>,
-    javascript_code: Option<&CefStringUtf16>,
+    extension_name: Option<&CefString>,
+    javascript_code: Option<&CefString>,
     handler: Option<&mut V8Handler>,
 ) -> ::std::os::raw::c_int {
     unsafe {
@@ -17907,8 +17889,8 @@ pub fn register_extension(
 
 /// See [cef_register_scheme_handler_factory] for more documentation.
 pub fn register_scheme_handler_factory(
-    scheme_name: Option<&CefStringUtf16>,
-    domain_name: Option<&CefStringUtf16>,
+    scheme_name: Option<&CefString>,
+    domain_name: Option<&CefString>,
     factory: Option<&mut SchemeHandlerFactory>,
 ) -> ::std::os::raw::c_int {
     unsafe {
@@ -18074,7 +18056,7 @@ pub fn urlrequest_create(
 /// See [cef_label_button_create] for more documentation.
 pub fn label_button_create(
     delegate: Option<&mut ButtonDelegate>,
-    text: Option<&CefStringUtf16>,
+    text: Option<&CefString>,
 ) -> Option<LabelButton> {
     unsafe {
         let (arg_delegate, arg_text) = (delegate, text);
@@ -18096,7 +18078,7 @@ pub fn label_button_create(
 /// See [cef_menu_button_create] for more documentation.
 pub fn menu_button_create(
     delegate: Option<&mut MenuButtonDelegate>,
-    text: Option<&CefStringUtf16>,
+    text: Option<&CefString>,
 ) -> Option<MenuButton> {
     unsafe {
         let (arg_delegate, arg_text) = (delegate, text);
@@ -18136,7 +18118,7 @@ pub fn textfield_create(delegate: Option<&mut TextfieldDelegate>) -> Option<Text
 /// See [cef_browser_view_create] for more documentation.
 pub fn browser_view_create(
     client: Option<&mut Client>,
-    url: Option<&CefStringUtf16>,
+    url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut DictionaryValue>,
     request_context: Option<&mut RequestContext>,

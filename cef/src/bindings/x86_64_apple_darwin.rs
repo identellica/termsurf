@@ -21,19 +21,19 @@ where
 }
 
 /// See [cef_string_wide_t] for more documentation.
-pub type CefStringUserfreeWide = *mut CefStringWide;
+pub use crate::string::CefStringUserfreeWide;
 
 /// See [cef_string_utf8_t] for more documentation.
-pub type CefStringUserfreeUtf8 = *mut CefStringUtf8;
+pub use crate::string::CefStringUserfreeUtf8;
 
 /// See [cef_string_utf16_t] for more documentation.
-pub type CefStringUserfreeUtf16 = *mut CefStringUtf16;
+pub use crate::string::CefStringUserfreeUtf16;
 
 /// See [char16_t] for more documentation.
 pub type Char = char16_t;
 
 /// See [cef_string_userfree_utf16_t] for more documentation.
-pub type CefStringUserfree = *mut CefStringUtf16;
+pub type CefStringUserfree = CefStringUserfreeUtf16;
 
 /// See [cef_string_utf16_t] for more documentation.
 pub type CefString = CefStringUtf16;
@@ -350,7 +350,7 @@ impl Default for MainArgs {
 #[derive(Clone)]
 pub struct WindowInfo {
     pub size: usize,
-    pub window_name: CefStringUtf16,
+    pub window_name: CefString,
     pub bounds: Rect,
     pub hidden: ::std::os::raw::c_int,
     pub parent_view: *mut ::std::os::raw::c_void,
@@ -443,32 +443,32 @@ impl Default for AcceleratedPaintInfo {
 pub struct Settings {
     pub size: usize,
     pub no_sandbox: ::std::os::raw::c_int,
-    pub browser_subprocess_path: CefStringUtf16,
-    pub framework_dir_path: CefStringUtf16,
-    pub main_bundle_path: CefStringUtf16,
+    pub browser_subprocess_path: CefString,
+    pub framework_dir_path: CefString,
+    pub main_bundle_path: CefString,
     pub multi_threaded_message_loop: ::std::os::raw::c_int,
     pub external_message_pump: ::std::os::raw::c_int,
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
     pub command_line_args_disabled: ::std::os::raw::c_int,
-    pub cache_path: CefStringUtf16,
-    pub root_cache_path: CefStringUtf16,
+    pub cache_path: CefString,
+    pub root_cache_path: CefString,
     pub persist_session_cookies: ::std::os::raw::c_int,
-    pub user_agent: CefStringUtf16,
-    pub user_agent_product: CefStringUtf16,
-    pub locale: CefStringUtf16,
-    pub log_file: CefStringUtf16,
+    pub user_agent: CefString,
+    pub user_agent_product: CefString,
+    pub locale: CefString,
+    pub log_file: CefString,
     pub log_severity: LogSeverity,
     pub log_items: LogItems,
-    pub javascript_flags: CefStringUtf16,
-    pub resources_dir_path: CefStringUtf16,
-    pub locales_dir_path: CefStringUtf16,
+    pub javascript_flags: CefString,
+    pub resources_dir_path: CefString,
+    pub locales_dir_path: CefString,
     pub remote_debugging_port: ::std::os::raw::c_int,
     pub uncaught_exception_stack_size: ::std::os::raw::c_int,
     pub background_color: u32,
-    pub accept_language_list: CefStringUtf16,
-    pub cookieable_schemes_list: CefStringUtf16,
+    pub accept_language_list: CefString,
+    pub cookieable_schemes_list: CefString,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
-    pub chrome_policy_id: CefStringUtf16,
+    pub chrome_policy_id: CefString,
     pub chrome_app_icon_id: ::std::os::raw::c_int,
     pub disable_signal_handlers: ::std::os::raw::c_int,
 }
@@ -557,10 +557,10 @@ impl Default for Settings {
 #[derive(Clone)]
 pub struct RequestContextSettings {
     pub size: usize,
-    pub cache_path: CefStringUtf16,
+    pub cache_path: CefString,
     pub persist_session_cookies: ::std::os::raw::c_int,
-    pub accept_language_list: CefStringUtf16,
-    pub cookieable_schemes_list: CefStringUtf16,
+    pub accept_language_list: CefString,
+    pub cookieable_schemes_list: CefString,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
 }
 impl From<_cef_request_context_settings_t> for RequestContextSettings {
@@ -601,17 +601,17 @@ impl Default for RequestContextSettings {
 pub struct BrowserSettings {
     pub size: usize,
     pub windowless_frame_rate: ::std::os::raw::c_int,
-    pub standard_font_family: CefStringUtf16,
-    pub fixed_font_family: CefStringUtf16,
-    pub serif_font_family: CefStringUtf16,
-    pub sans_serif_font_family: CefStringUtf16,
-    pub cursive_font_family: CefStringUtf16,
-    pub fantasy_font_family: CefStringUtf16,
+    pub standard_font_family: CefString,
+    pub fixed_font_family: CefString,
+    pub serif_font_family: CefString,
+    pub sans_serif_font_family: CefString,
+    pub cursive_font_family: CefString,
+    pub fantasy_font_family: CefString,
     pub default_font_size: ::std::os::raw::c_int,
     pub default_fixed_font_size: ::std::os::raw::c_int,
     pub minimum_font_size: ::std::os::raw::c_int,
     pub minimum_logical_font_size: ::std::os::raw::c_int,
-    pub default_encoding: CefStringUtf16,
+    pub default_encoding: CefString,
     pub remote_fonts: State,
     pub javascript: State,
     pub javascript_close_windows: State,
@@ -709,16 +709,16 @@ impl Default for BrowserSettings {
 #[derive(Clone)]
 pub struct Urlparts {
     pub size: usize,
-    pub spec: CefStringUtf16,
-    pub scheme: CefStringUtf16,
-    pub username: CefStringUtf16,
-    pub password: CefStringUtf16,
-    pub host: CefStringUtf16,
-    pub port: CefStringUtf16,
-    pub origin: CefStringUtf16,
-    pub path: CefStringUtf16,
-    pub query: CefStringUtf16,
-    pub fragment: CefStringUtf16,
+    pub spec: CefString,
+    pub scheme: CefString,
+    pub username: CefString,
+    pub password: CefString,
+    pub host: CefString,
+    pub port: CefString,
+    pub origin: CefString,
+    pub path: CefString,
+    pub query: CefString,
+    pub fragment: CefString,
 }
 impl From<_cef_urlparts_t> for Urlparts {
     fn from(value: _cef_urlparts_t) -> Self {
@@ -767,10 +767,10 @@ impl Default for Urlparts {
 #[derive(Clone)]
 pub struct Cookie {
     pub size: usize,
-    pub name: CefStringUtf16,
-    pub value: CefStringUtf16,
-    pub domain: CefStringUtf16,
-    pub path: CefStringUtf16,
+    pub name: CefString,
+    pub value: CefString,
+    pub domain: CefString,
+    pub path: CefString,
     pub secure: ::std::os::raw::c_int,
     pub httponly: ::std::os::raw::c_int,
     pub creation: Basetime,
@@ -905,10 +905,10 @@ impl Default for ScreenInfo {
 #[derive(Clone)]
 pub struct LinuxWindowProperties {
     pub size: usize,
-    pub wayland_app_id: CefStringUtf16,
-    pub wm_class_class: CefStringUtf16,
-    pub wm_class_name: CefStringUtf16,
-    pub wm_role_name: CefStringUtf16,
+    pub wayland_app_id: CefString,
+    pub wm_class_class: CefString,
+    pub wm_class_name: CefString,
+    pub wm_role_name: CefString,
 }
 impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn from(value: _cef_linux_window_properties_t) -> Self {
@@ -1180,10 +1180,10 @@ pub struct PdfPrintSettings {
     pub margin_right: f64,
     pub margin_bottom: f64,
     pub margin_left: f64,
-    pub page_ranges: CefStringUtf16,
+    pub page_ranges: CefString,
     pub display_header_footer: ::std::os::raw::c_int,
-    pub header_template: CefStringUtf16,
-    pub footer_template: CefStringUtf16,
+    pub header_template: CefString,
+    pub footer_template: CefString,
     pub generate_tagged_pdf: ::std::os::raw::c_int,
     pub generate_document_outline: ::std::os::raw::c_int,
 }
@@ -1411,9 +1411,9 @@ impl Default for AudioParameters {
 #[derive(Clone)]
 pub struct MediaSinkDeviceInfo {
     pub size: usize,
-    pub ip_address: CefStringUtf16,
+    pub ip_address: CefString,
     pub port: ::std::os::raw::c_int,
-    pub model_name: CefStringUtf16,
+    pub model_name: CefString,
 }
 impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn from(value: _cef_media_sink_device_info_t) -> Self {
@@ -1503,7 +1503,7 @@ pub struct TaskInfo {
     pub id: i64,
     pub type_: TaskType,
     pub is_killable: ::std::os::raw::c_int,
-    pub title: CefStringUtf16,
+    pub title: CefString,
     pub cpu_usage: f64,
     pub number_of_processors: ::std::os::raw::c_int,
     pub memory: i64,
@@ -1665,7 +1665,7 @@ pub trait ImplDevToolsMessageObserver: Clone + Sized + Rc {
     fn on_dev_tools_event(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        method: Option<&CefStringUtf16>,
+        method: Option<&CefString>,
         params: Option<&[u8]>,
     ) {
     }
@@ -1739,7 +1739,7 @@ mod impl_cef_dev_tools_message_observer_t {
     extern "C" fn on_dev_tools_event<I: ImplDevToolsMessageObserver>(
         self_: *mut _cef_dev_tools_message_observer_t,
         browser: *mut _cef_browser_t,
-        method: *const _cef_string_utf16_t,
+        method: *const cef_string_t,
         params: *const ::std::os::raw::c_void,
         params_size: usize,
     ) {
@@ -1880,7 +1880,7 @@ impl ImplDevToolsMessageObserver for DevToolsMessageObserver {
     fn on_dev_tools_event(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        method: Option<&CefStringUtf16>,
+        method: Option<&CefString>,
         params: Option<&[u8]>,
     ) {
         unsafe {
@@ -2015,7 +2015,7 @@ pub trait ImplValue: Clone + Sized + Rc {
     fn get_bool(&self) -> ::std::os::raw::c_int;
     fn get_int(&self) -> ::std::os::raw::c_int;
     fn get_double(&self) -> f64;
-    fn get_string(&self) -> Option<CefStringUtf16>;
+    fn get_string(&self) -> CefStringUserfree;
     fn get_binary(&self) -> Option<BinaryValue>;
     fn get_dictionary(&self) -> Option<DictionaryValue>;
     fn get_list(&self) -> Option<ListValue>;
@@ -2023,7 +2023,7 @@ pub trait ImplValue: Clone + Sized + Rc {
     fn set_bool(&self, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
     fn set_int(&self, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
     fn set_double(&self, value: f64) -> ::std::os::raw::c_int;
-    fn set_string(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn set_string(&self, value: Option<&CefString>) -> ::std::os::raw::c_int;
     fn set_binary(&self, value: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int;
     fn set_dictionary(&self, value: Option<&mut impl ImplDictionaryValue>)
         -> ::std::os::raw::c_int;
@@ -2169,18 +2169,14 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn get_string(&self) -> Option<CefStringUtf16> {
+    fn get_string(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_string
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -2287,7 +2283,7 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn set_string(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn set_string(&self, value: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_string
@@ -2603,53 +2599,53 @@ pub trait ImplDictionaryValue: Clone + Sized + Rc {
     fn copy(&self, exclude_empty_children: ::std::os::raw::c_int) -> Option<DictionaryValue>;
     fn get_size(&self) -> usize;
     fn clear(&self) -> ::std::os::raw::c_int;
-    fn has_key(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn has_key(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
     fn get_keys(&self, keys: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
-    fn remove(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_type(&self, key: Option<&CefStringUtf16>) -> ValueType;
-    fn get_value(&self, key: Option<&CefStringUtf16>) -> Option<Value>;
-    fn get_bool(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_int(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_double(&self, key: Option<&CefStringUtf16>) -> f64;
-    fn get_string(&self, key: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
-    fn get_binary(&self, key: Option<&CefStringUtf16>) -> Option<BinaryValue>;
-    fn get_dictionary(&self, key: Option<&CefStringUtf16>) -> Option<DictionaryValue>;
-    fn get_list(&self, key: Option<&CefStringUtf16>) -> Option<ListValue>;
+    fn remove(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
+    fn get_type(&self, key: Option<&CefString>) -> ValueType;
+    fn get_value(&self, key: Option<&CefString>) -> Option<Value>;
+    fn get_bool(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
+    fn get_int(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
+    fn get_double(&self, key: Option<&CefString>) -> f64;
+    fn get_string(&self, key: Option<&CefString>) -> CefStringUserfree;
+    fn get_binary(&self, key: Option<&CefString>) -> Option<BinaryValue>;
+    fn get_dictionary(&self, key: Option<&CefString>) -> Option<DictionaryValue>;
+    fn get_list(&self, key: Option<&CefString>) -> Option<ListValue>;
     fn set_value(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplValue>,
     ) -> ::std::os::raw::c_int;
-    fn set_null(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn set_null(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
     fn set_bool(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
     fn set_int(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
-    fn set_double(&self, key: Option<&CefStringUtf16>, value: f64) -> ::std::os::raw::c_int;
+    fn set_double(&self, key: Option<&CefString>, value: f64) -> ::std::os::raw::c_int;
     fn set_string(
         &self,
-        key: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
+        value: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
     fn set_binary(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplBinaryValue>,
     ) -> ::std::os::raw::c_int;
     fn set_dictionary(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplDictionaryValue>,
     ) -> ::std::os::raw::c_int;
     fn set_list(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplListValue>,
     ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_dictionary_value_t;
@@ -2771,7 +2767,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn has_key(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn has_key(&self, key: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .has_key
@@ -2801,7 +2797,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn remove(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn remove(&self, key: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .remove
@@ -2815,7 +2811,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_type(&self, key: Option<&CefStringUtf16>) -> ValueType {
+    fn get_type(&self, key: Option<&CefString>) -> ValueType {
         unsafe {
             self.0
                 .get_type
@@ -2829,7 +2825,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_value(&self, key: Option<&CefStringUtf16>) -> Option<Value> {
+    fn get_value(&self, key: Option<&CefString>) -> Option<Value> {
         unsafe {
             self.0
                 .get_value
@@ -2847,7 +2843,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_bool(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn get_bool(&self, key: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .get_bool
@@ -2861,7 +2857,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_int(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn get_int(&self, key: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .get_int
@@ -2875,7 +2871,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_double(&self, key: Option<&CefStringUtf16>) -> f64 {
+    fn get_double(&self, key: Option<&CefString>) -> f64 {
         unsafe {
             self.0
                 .get_double
@@ -2889,7 +2885,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_string(&self, key: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
+    fn get_string(&self, key: Option<&CefString>) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_string
@@ -2898,16 +2894,12 @@ impl ImplDictionaryValue for DictionaryValue {
                     let arg_self_ = self.as_raw();
                     let arg_key = arg_key.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
                     let result = f(arg_self_, arg_key);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_binary(&self, key: Option<&CefStringUtf16>) -> Option<BinaryValue> {
+    fn get_binary(&self, key: Option<&CefString>) -> Option<BinaryValue> {
         unsafe {
             self.0
                 .get_binary
@@ -2925,7 +2917,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_dictionary(&self, key: Option<&CefStringUtf16>) -> Option<DictionaryValue> {
+    fn get_dictionary(&self, key: Option<&CefString>) -> Option<DictionaryValue> {
         unsafe {
             self.0
                 .get_dictionary
@@ -2943,7 +2935,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_list(&self, key: Option<&CefStringUtf16>) -> Option<ListValue> {
+    fn get_list(&self, key: Option<&CefString>) -> Option<ListValue> {
         unsafe {
             self.0
                 .get_list
@@ -2963,7 +2955,7 @@ impl ImplDictionaryValue for DictionaryValue {
     }
     fn set_value(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -2985,7 +2977,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn set_null(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn set_null(&self, key: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_null
@@ -3001,7 +2993,7 @@ impl ImplDictionaryValue for DictionaryValue {
     }
     fn set_bool(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -3020,7 +3012,7 @@ impl ImplDictionaryValue for DictionaryValue {
     }
     fn set_int(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -3037,7 +3029,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn set_double(&self, key: Option<&CefStringUtf16>, value: f64) -> ::std::os::raw::c_int {
+    fn set_double(&self, key: Option<&CefString>, value: f64) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_double
@@ -3054,8 +3046,8 @@ impl ImplDictionaryValue for DictionaryValue {
     }
     fn set_string(
         &self,
-        key: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
+        value: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -3075,7 +3067,7 @@ impl ImplDictionaryValue for DictionaryValue {
     }
     fn set_binary(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplBinaryValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -3099,7 +3091,7 @@ impl ImplDictionaryValue for DictionaryValue {
     }
     fn set_dictionary(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplDictionaryValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -3123,7 +3115,7 @@ impl ImplDictionaryValue for DictionaryValue {
     }
     fn set_list(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplListValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -3206,7 +3198,7 @@ pub trait ImplListValue: Clone + Sized + Rc {
     fn get_bool(&self, index: usize) -> ::std::os::raw::c_int;
     fn get_int(&self, index: usize) -> ::std::os::raw::c_int;
     fn get_double(&self, index: usize) -> f64;
-    fn get_string(&self, index: usize) -> Option<CefStringUtf16>;
+    fn get_string(&self, index: usize) -> CefStringUserfree;
     fn get_binary(&self, index: usize) -> Option<BinaryValue>;
     fn get_dictionary(&self, index: usize) -> Option<DictionaryValue>;
     fn get_list(&self, index: usize) -> Option<ListValue>;
@@ -3215,7 +3207,7 @@ pub trait ImplListValue: Clone + Sized + Rc {
     fn set_bool(&self, index: usize, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
     fn set_int(&self, index: usize, value: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
     fn set_double(&self, index: usize, value: f64) -> ::std::os::raw::c_int;
-    fn set_string(&self, index: usize, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn set_string(&self, index: usize, value: Option<&CefString>) -> ::std::os::raw::c_int;
     fn set_binary(
         &self,
         index: usize,
@@ -3450,7 +3442,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn get_string(&self, index: usize) -> Option<CefStringUtf16> {
+    fn get_string(&self, index: usize) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_string
@@ -3459,11 +3451,7 @@ impl ImplListValue for ListValue {
                     let arg_self_ = self.as_raw();
                     let arg_index = arg_index;
                     let result = f(arg_self_, arg_index);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -3601,7 +3589,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn set_string(&self, index: usize, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn set_string(&self, index: usize, value: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_string
@@ -4872,24 +4860,24 @@ pub trait ImplDragData: Clone + Sized + Rc {
     fn is_link(&self) -> ::std::os::raw::c_int;
     fn is_fragment(&self) -> ::std::os::raw::c_int;
     fn is_file(&self) -> ::std::os::raw::c_int;
-    fn get_link_url(&self) -> Option<CefStringUtf16>;
-    fn get_link_title(&self) -> Option<CefStringUtf16>;
-    fn get_link_metadata(&self) -> Option<CefStringUtf16>;
-    fn get_fragment_text(&self) -> Option<CefStringUtf16>;
-    fn get_fragment_html(&self) -> Option<CefStringUtf16>;
-    fn get_fragment_base_url(&self) -> Option<CefStringUtf16>;
-    fn get_file_name(&self) -> Option<CefStringUtf16>;
+    fn get_link_url(&self) -> CefStringUserfree;
+    fn get_link_title(&self) -> CefStringUserfree;
+    fn get_link_metadata(&self) -> CefStringUserfree;
+    fn get_fragment_text(&self) -> CefStringUserfree;
+    fn get_fragment_html(&self) -> CefStringUserfree;
+    fn get_fragment_base_url(&self) -> CefStringUserfree;
+    fn get_file_name(&self) -> CefStringUserfree;
     fn get_file_contents(&self, writer: Option<&mut impl ImplStreamWriter>) -> usize;
     fn get_file_names(&self, names: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
     fn get_file_paths(&self, paths: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
-    fn set_link_url(&self, url: Option<&CefStringUtf16>);
-    fn set_link_title(&self, title: Option<&CefStringUtf16>);
-    fn set_link_metadata(&self, data: Option<&CefStringUtf16>);
-    fn set_fragment_text(&self, text: Option<&CefStringUtf16>);
-    fn set_fragment_html(&self, html: Option<&CefStringUtf16>);
-    fn set_fragment_base_url(&self, base_url: Option<&CefStringUtf16>);
+    fn set_link_url(&self, url: Option<&CefString>);
+    fn set_link_title(&self, title: Option<&CefString>);
+    fn set_link_metadata(&self, data: Option<&CefString>);
+    fn set_fragment_text(&self, text: Option<&CefString>);
+    fn set_fragment_html(&self, html: Option<&CefString>);
+    fn set_fragment_base_url(&self, base_url: Option<&CefString>);
     fn reset_file_contents(&self);
-    fn add_file(&self, path: Option<&CefStringUtf16>, display_name: Option<&CefStringUtf16>);
+    fn add_file(&self, path: Option<&CefString>, display_name: Option<&CefString>);
     fn clear_filenames(&self);
     fn get_image(&self) -> Option<Image>;
     fn get_image_hotspot(&self) -> Point;
@@ -4961,114 +4949,86 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_link_url(&self) -> Option<CefStringUtf16> {
+    fn get_link_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_link_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_link_title(&self) -> Option<CefStringUtf16> {
+    fn get_link_title(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_link_title
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_link_metadata(&self) -> Option<CefStringUtf16> {
+    fn get_link_metadata(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_link_metadata
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_fragment_text(&self) -> Option<CefStringUtf16> {
+    fn get_fragment_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_fragment_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_fragment_html(&self) -> Option<CefStringUtf16> {
+    fn get_fragment_html(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_fragment_html
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_fragment_base_url(&self) -> Option<CefStringUtf16> {
+    fn get_fragment_base_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_fragment_base_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_file_name(&self) -> Option<CefStringUtf16> {
+    fn get_file_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_file_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -5124,7 +5084,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn set_link_url(&self, url: Option<&CefStringUtf16>) {
+    fn set_link_url(&self, url: Option<&CefString>) {
         unsafe {
             self.0
                 .set_link_url
@@ -5138,7 +5098,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_link_title(&self, title: Option<&CefStringUtf16>) {
+    fn set_link_title(&self, title: Option<&CefString>) {
         unsafe {
             self.0
                 .set_link_title
@@ -5154,7 +5114,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_link_metadata(&self, data: Option<&CefStringUtf16>) {
+    fn set_link_metadata(&self, data: Option<&CefString>) {
         unsafe {
             self.0
                 .set_link_metadata
@@ -5168,7 +5128,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_fragment_text(&self, text: Option<&CefStringUtf16>) {
+    fn set_fragment_text(&self, text: Option<&CefString>) {
         unsafe {
             self.0
                 .set_fragment_text
@@ -5182,7 +5142,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_fragment_html(&self, html: Option<&CefStringUtf16>) {
+    fn set_fragment_html(&self, html: Option<&CefString>) {
         unsafe {
             self.0
                 .set_fragment_html
@@ -5196,7 +5156,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_fragment_base_url(&self, base_url: Option<&CefStringUtf16>) {
+    fn set_fragment_base_url(&self, base_url: Option<&CefString>) {
         unsafe {
             self.0
                 .set_fragment_base_url
@@ -5224,7 +5184,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn add_file(&self, path: Option<&CefStringUtf16>, display_name: Option<&CefStringUtf16>) {
+    fn add_file(&self, path: Option<&CefString>, display_name: Option<&CefString>) {
         unsafe {
             self.0
                 .add_file
@@ -5449,16 +5409,16 @@ pub trait ImplDomdocument: Clone + Sized + Rc {
     fn get_document(&self) -> Option<Domnode>;
     fn get_body(&self) -> Option<Domnode>;
     fn get_head(&self) -> Option<Domnode>;
-    fn get_title(&self) -> Option<CefStringUtf16>;
-    fn get_element_by_id(&self, id: Option<&CefStringUtf16>) -> Option<Domnode>;
+    fn get_title(&self) -> CefStringUserfree;
+    fn get_element_by_id(&self, id: Option<&CefString>) -> Option<Domnode>;
     fn get_focused_node(&self) -> Option<Domnode>;
     fn has_selection(&self) -> ::std::os::raw::c_int;
     fn get_selection_start_offset(&self) -> ::std::os::raw::c_int;
     fn get_selection_end_offset(&self) -> ::std::os::raw::c_int;
-    fn get_selection_as_markup(&self) -> Option<CefStringUtf16>;
-    fn get_selection_as_text(&self) -> Option<CefStringUtf16>;
-    fn get_base_url(&self) -> Option<CefStringUtf16>;
-    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn get_selection_as_markup(&self) -> CefStringUserfree;
+    fn get_selection_as_text(&self) -> CefStringUserfree;
+    fn get_base_url(&self) -> CefStringUserfree;
+    fn get_complete_url(&self, partial_url: Option<&CefString>) -> CefStringUserfree;
     fn get_raw(&self) -> *mut _cef_domdocument_t;
 }
 impl ImplDomdocument for Domdocument {
@@ -5522,23 +5482,19 @@ impl ImplDomdocument for Domdocument {
                 .unwrap_or_default()
         }
     }
-    fn get_title(&self) -> Option<CefStringUtf16> {
+    fn get_title(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_title
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_element_by_id(&self, id: Option<&CefStringUtf16>) -> Option<Domnode> {
+    fn get_element_by_id(&self, id: Option<&CefString>) -> Option<Domnode> {
         unsafe {
             self.0
                 .get_element_by_id
@@ -5608,55 +5564,43 @@ impl ImplDomdocument for Domdocument {
                 .unwrap_or_default()
         }
     }
-    fn get_selection_as_markup(&self) -> Option<CefStringUtf16> {
+    fn get_selection_as_markup(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_selection_as_markup
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_selection_as_text(&self) -> Option<CefStringUtf16> {
+    fn get_selection_as_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_selection_as_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_base_url(&self) -> Option<CefStringUtf16> {
+    fn get_base_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_base_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
+    fn get_complete_url(&self, partial_url: Option<&CefString>) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_complete_url
@@ -5667,11 +5611,7 @@ impl ImplDomdocument for Domdocument {
                         .map(|arg| arg.as_raw())
                         .unwrap_or(std::ptr::null());
                     let result = f(arg_self_, arg_partial_url);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -5729,10 +5669,10 @@ pub trait ImplDomnode: Clone + Sized + Rc {
     fn is_form_control_element(&self) -> ::std::os::raw::c_int;
     fn get_form_control_element_type(&self) -> DomFormControlType;
     fn is_same(&self, that: Option<&mut impl ImplDomnode>) -> ::std::os::raw::c_int;
-    fn get_name(&self) -> Option<CefStringUtf16>;
-    fn get_value(&self) -> Option<CefStringUtf16>;
-    fn set_value(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_as_markup(&self) -> Option<CefStringUtf16>;
+    fn get_name(&self) -> CefStringUserfree;
+    fn get_value(&self) -> CefStringUserfree;
+    fn set_value(&self, value: Option<&CefString>) -> ::std::os::raw::c_int;
+    fn get_as_markup(&self) -> CefStringUserfree;
     fn get_document(&self) -> Option<Domdocument>;
     fn get_parent(&self) -> Option<Domnode>;
     fn get_previous_sibling(&self) -> Option<Domnode>;
@@ -5740,17 +5680,17 @@ pub trait ImplDomnode: Clone + Sized + Rc {
     fn has_children(&self) -> ::std::os::raw::c_int;
     fn get_first_child(&self) -> Option<Domnode>;
     fn get_last_child(&self) -> Option<Domnode>;
-    fn get_element_tag_name(&self) -> Option<CefStringUtf16>;
+    fn get_element_tag_name(&self) -> CefStringUserfree;
     fn has_element_attributes(&self) -> ::std::os::raw::c_int;
-    fn has_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn has_element_attribute(&self, attr_name: Option<&CefString>) -> ::std::os::raw::c_int;
+    fn get_element_attribute(&self, attr_name: Option<&CefString>) -> CefStringUserfree;
     fn get_element_attributes(&self, attr_map: Option<&mut CefStringMap>);
     fn set_element_attribute(
         &self,
-        attr_name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        attr_name: Option<&CefString>,
+        value: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
-    fn get_element_inner_text(&self) -> Option<CefStringUtf16>;
+    fn get_element_inner_text(&self) -> CefStringUserfree;
     fn get_element_bounds(&self) -> Rect;
     fn get_raw(&self) -> *mut _cef_domnode_t;
 }
@@ -5846,39 +5786,31 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> Option<CefStringUtf16> {
+    fn get_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_value(&self) -> Option<CefStringUtf16> {
+    fn get_value(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_value
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_value(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn set_value(&self, value: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_value
@@ -5894,18 +5826,14 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_as_markup(&self) -> Option<CefStringUtf16> {
+    fn get_as_markup(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_as_markup
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -6018,18 +5946,14 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_element_tag_name(&self) -> Option<CefStringUtf16> {
+    fn get_element_tag_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_element_tag_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -6046,7 +5970,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn has_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn has_element_attribute(&self, attr_name: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .has_element_attribute
@@ -6062,7 +5986,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
+    fn get_element_attribute(&self, attr_name: Option<&CefString>) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_element_attribute
@@ -6073,11 +5997,7 @@ impl ImplDomnode for Domnode {
                         .map(|arg| arg.as_raw())
                         .unwrap_or(std::ptr::null());
                     let result = f(arg_self_, arg_attr_name);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -6100,8 +6020,8 @@ impl ImplDomnode for Domnode {
     }
     fn set_element_attribute(
         &self,
-        attr_name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        attr_name: Option<&CefString>,
+        value: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -6121,18 +6041,14 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_element_inner_text(&self) -> Option<CefStringUtf16> {
+    fn get_element_inner_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_element_inner_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -6286,7 +6202,7 @@ pub trait ImplProcessMessage: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int;
     fn is_read_only(&self) -> ::std::os::raw::c_int;
     fn copy(&self) -> Option<ProcessMessage>;
-    fn get_name(&self) -> Option<CefStringUtf16>;
+    fn get_name(&self) -> CefStringUserfree;
     fn get_argument_list(&self) -> Option<ListValue>;
     fn get_shared_memory_region(&self) -> Option<SharedMemoryRegion>;
     fn get_raw(&self) -> *mut _cef_process_message_t;
@@ -6332,18 +6248,14 @@ impl ImplProcessMessage for ProcessMessage {
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> Option<CefStringUtf16> {
+    fn get_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -6427,35 +6339,35 @@ impl Default for ProcessMessage {
 pub struct Request(RefGuard<_cef_request_t>);
 pub trait ImplRequest: Clone + Sized + Rc {
     fn is_read_only(&self) -> ::std::os::raw::c_int;
-    fn get_url(&self) -> Option<CefStringUtf16>;
-    fn set_url(&self, url: Option<&CefStringUtf16>);
-    fn get_method(&self) -> Option<CefStringUtf16>;
-    fn set_method(&self, method: Option<&CefStringUtf16>);
-    fn set_referrer(&self, referrer_url: Option<&CefStringUtf16>, policy: ReferrerPolicy);
-    fn get_referrer_url(&self) -> Option<CefStringUtf16>;
+    fn get_url(&self) -> CefStringUserfree;
+    fn set_url(&self, url: Option<&CefString>);
+    fn get_method(&self) -> CefStringUserfree;
+    fn set_method(&self, method: Option<&CefString>);
+    fn set_referrer(&self, referrer_url: Option<&CefString>, policy: ReferrerPolicy);
+    fn get_referrer_url(&self) -> CefStringUserfree;
     fn get_referrer_policy(&self) -> ReferrerPolicy;
     fn get_post_data(&self) -> Option<PostData>;
     fn set_post_data(&self, post_data: Option<&mut impl ImplPostData>);
     fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>);
     fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>);
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn get_header_by_name(&self, name: Option<&CefString>) -> CefStringUserfree;
     fn set_header_by_name(
         &self,
-        name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
+        value: Option<&CefString>,
         overwrite: ::std::os::raw::c_int,
     );
     fn set(
         &self,
-        url: Option<&CefStringUtf16>,
-        method: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
+        method: Option<&CefString>,
         post_data: Option<&mut impl ImplPostData>,
         header_map: Option<&mut CefStringMultimap>,
     );
     fn get_flags(&self) -> ::std::os::raw::c_int;
     fn set_flags(&self, flags: ::std::os::raw::c_int);
-    fn get_first_party_for_cookies(&self) -> Option<CefStringUtf16>;
-    fn set_first_party_for_cookies(&self, url: Option<&CefStringUtf16>);
+    fn get_first_party_for_cookies(&self) -> CefStringUserfree;
+    fn set_first_party_for_cookies(&self, url: Option<&CefString>);
     fn get_resource_type(&self) -> ResourceType;
     fn get_transition_type(&self) -> TransitionType;
     fn get_identifier(&self) -> u64;
@@ -6474,23 +6386,19 @@ impl ImplRequest for Request {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> Option<CefStringUtf16> {
+    fn get_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_url(&self, url: Option<&CefStringUtf16>) {
+    fn set_url(&self, url: Option<&CefString>) {
         unsafe {
             self.0
                 .set_url
@@ -6504,23 +6412,19 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_method(&self) -> Option<CefStringUtf16> {
+    fn get_method(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_method
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_method(&self, method: Option<&CefStringUtf16>) {
+    fn set_method(&self, method: Option<&CefString>) {
         unsafe {
             self.0
                 .set_method
@@ -6536,7 +6440,7 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_referrer(&self, referrer_url: Option<&CefStringUtf16>, policy: ReferrerPolicy) {
+    fn set_referrer(&self, referrer_url: Option<&CefString>, policy: ReferrerPolicy) {
         unsafe {
             self.0
                 .set_referrer
@@ -6553,18 +6457,14 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_referrer_url(&self) -> Option<CefStringUtf16> {
+    fn get_referrer_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_referrer_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -6648,7 +6548,7 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
+    fn get_header_by_name(&self, name: Option<&CefString>) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_header_by_name
@@ -6657,19 +6557,15 @@ impl ImplRequest for Request {
                     let arg_self_ = self.as_raw();
                     let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
                     let result = f(arg_self_, arg_name);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
     fn set_header_by_name(
         &self,
-        name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
+        value: Option<&CefString>,
         overwrite: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -6691,8 +6587,8 @@ impl ImplRequest for Request {
     }
     fn set(
         &self,
-        url: Option<&CefStringUtf16>,
-        method: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
+        method: Option<&CefString>,
         post_data: Option<&mut impl ImplPostData>,
         header_map: Option<&mut CefStringMultimap>,
     ) {
@@ -6754,23 +6650,19 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_first_party_for_cookies(&self) -> Option<CefStringUtf16> {
+    fn get_first_party_for_cookies(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_first_party_for_cookies
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_first_party_for_cookies(&self, url: Option<&CefStringUtf16>) {
+    fn set_first_party_for_cookies(&self, url: Option<&CefString>) {
         unsafe {
             self.0
                 .set_first_party_for_cookies
@@ -7068,10 +6960,10 @@ pub struct PostDataElement(RefGuard<_cef_post_data_element_t>);
 pub trait ImplPostDataElement: Clone + Sized + Rc {
     fn is_read_only(&self) -> ::std::os::raw::c_int;
     fn set_to_empty(&self);
-    fn set_to_file(&self, file_name: Option<&CefStringUtf16>);
+    fn set_to_file(&self, file_name: Option<&CefString>);
     fn set_to_bytes(&self, size: usize, bytes: *const u8);
     fn get_type(&self) -> PostdataelementType;
-    fn get_file(&self) -> Option<CefStringUtf16>;
+    fn get_file(&self) -> CefStringUserfree;
     fn get_bytes_count(&self) -> usize;
     fn get_bytes(&self, size: usize, bytes: *mut u8) -> usize;
     fn get_raw(&self) -> *mut _cef_post_data_element_t;
@@ -7101,7 +6993,7 @@ impl ImplPostDataElement for PostDataElement {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_to_file(&self, file_name: Option<&CefStringUtf16>) {
+    fn set_to_file(&self, file_name: Option<&CefString>) {
         unsafe {
             self.0
                 .set_to_file
@@ -7144,18 +7036,14 @@ impl ImplPostDataElement for PostDataElement {
                 .unwrap_or_default()
         }
     }
-    fn get_file(&self) -> Option<CefStringUtf16> {
+    fn get_file(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_file
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -7250,7 +7138,7 @@ pub trait WrapCefStringVisitor: ImplCefStringVisitor {
     fn wrap_rc(&mut self, object: *mut RcImpl<_cef_string_visitor_t, Self>);
 }
 pub trait ImplCefStringVisitor: Clone + Sized + Rc {
-    fn visit(&self, string: Option<&CefStringUtf16>) {}
+    fn visit(&self, string: Option<&CefString>) {}
     fn init_methods(object: &mut _cef_string_visitor_t) {
         impl_cef_string_visitor_t::init_methods::<Self>(object);
     }
@@ -7263,7 +7151,7 @@ mod impl_cef_string_visitor_t {
     }
     extern "C" fn visit<I: ImplCefStringVisitor>(
         self_: *mut _cef_string_visitor_t,
-        string: *const _cef_string_utf16_t,
+        string: *const cef_string_t,
     ) {
         let (arg_self_, arg_string) = (self_, string);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -7277,7 +7165,7 @@ mod impl_cef_string_visitor_t {
     }
 }
 impl ImplCefStringVisitor for CefStringVisitor {
-    fn visit(&self, string: Option<&CefStringUtf16>) {
+    fn visit(&self, string: Option<&CefString>) {
         unsafe {
             self.0
                 .visit
@@ -7352,19 +7240,19 @@ pub trait ImplFrame: Clone + Sized + Rc {
     fn get_source(&self, visitor: Option<&mut impl ImplCefStringVisitor>);
     fn get_text(&self, visitor: Option<&mut impl ImplCefStringVisitor>);
     fn load_request(&self, request: Option<&mut impl ImplRequest>);
-    fn load_url(&self, url: Option<&CefStringUtf16>);
+    fn load_url(&self, url: Option<&CefString>);
     fn execute_java_script(
         &self,
-        code: Option<&CefStringUtf16>,
-        script_url: Option<&CefStringUtf16>,
+        code: Option<&CefString>,
+        script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
     );
     fn is_main(&self) -> ::std::os::raw::c_int;
     fn is_focused(&self) -> ::std::os::raw::c_int;
-    fn get_name(&self) -> Option<CefStringUtf16>;
-    fn get_identifier(&self) -> Option<CefStringUtf16>;
+    fn get_name(&self) -> CefStringUserfree;
+    fn get_identifier(&self) -> CefStringUserfree;
     fn get_parent(&self) -> Option<Frame>;
-    fn get_url(&self) -> Option<CefStringUtf16>;
+    fn get_url(&self) -> CefStringUserfree;
     fn get_browser(&self) -> Option<Browser>;
     fn get_v8_context(&self) -> Option<V8Context>;
     fn visit_dom(&self, visitor: Option<&mut impl ImplDomvisitor>);
@@ -7558,7 +7446,7 @@ impl ImplFrame for Frame {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn load_url(&self, url: Option<&CefStringUtf16>) {
+    fn load_url(&self, url: Option<&CefString>) {
         unsafe {
             self.0
                 .load_url
@@ -7574,8 +7462,8 @@ impl ImplFrame for Frame {
     }
     fn execute_java_script(
         &self,
-        code: Option<&CefStringUtf16>,
-        script_url: Option<&CefStringUtf16>,
+        code: Option<&CefString>,
+        script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -7619,34 +7507,26 @@ impl ImplFrame for Frame {
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> Option<CefStringUtf16> {
+    fn get_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_identifier(&self) -> Option<CefStringUtf16> {
+    fn get_identifier(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_identifier
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -7667,18 +7547,14 @@ impl ImplFrame for Frame {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> Option<CefStringUtf16> {
+    fn get_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -7837,92 +7713,72 @@ impl Default for Frame {
 #[derive(Clone)]
 pub struct X509CertPrincipal(RefGuard<_cef_x509_cert_principal_t>);
 pub trait ImplX509CertPrincipal: Clone + Sized + Rc {
-    fn get_display_name(&self) -> Option<CefStringUtf16>;
-    fn get_common_name(&self) -> Option<CefStringUtf16>;
-    fn get_locality_name(&self) -> Option<CefStringUtf16>;
-    fn get_state_or_province_name(&self) -> Option<CefStringUtf16>;
-    fn get_country_name(&self) -> Option<CefStringUtf16>;
+    fn get_display_name(&self) -> CefStringUserfree;
+    fn get_common_name(&self) -> CefStringUserfree;
+    fn get_locality_name(&self) -> CefStringUserfree;
+    fn get_state_or_province_name(&self) -> CefStringUserfree;
+    fn get_country_name(&self) -> CefStringUserfree;
     fn get_organization_names(&self, names: Option<&mut CefStringList>);
     fn get_organization_unit_names(&self, names: Option<&mut CefStringList>);
     fn get_raw(&self) -> *mut _cef_x509_cert_principal_t;
 }
 impl ImplX509CertPrincipal for X509CertPrincipal {
-    fn get_display_name(&self) -> Option<CefStringUtf16> {
+    fn get_display_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_display_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_common_name(&self) -> Option<CefStringUtf16> {
+    fn get_common_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_common_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_locality_name(&self) -> Option<CefStringUtf16> {
+    fn get_locality_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_locality_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_state_or_province_name(&self) -> Option<CefStringUtf16> {
+    fn get_state_or_province_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_state_or_province_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_country_name(&self) -> Option<CefStringUtf16> {
+    fn get_country_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_country_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -8399,10 +8255,10 @@ impl Default for Sslstatus {
 pub struct NavigationEntry(RefGuard<_cef_navigation_entry_t>);
 pub trait ImplNavigationEntry: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int;
-    fn get_url(&self) -> Option<CefStringUtf16>;
-    fn get_display_url(&self) -> Option<CefStringUtf16>;
-    fn get_original_url(&self) -> Option<CefStringUtf16>;
-    fn get_title(&self) -> Option<CefStringUtf16>;
+    fn get_url(&self) -> CefStringUserfree;
+    fn get_display_url(&self) -> CefStringUserfree;
+    fn get_original_url(&self) -> CefStringUserfree;
+    fn get_title(&self) -> CefStringUserfree;
     fn get_transition_type(&self) -> TransitionType;
     fn has_post_data(&self) -> ::std::os::raw::c_int;
     fn get_completion_time(&self) -> Basetime;
@@ -8423,66 +8279,50 @@ impl ImplNavigationEntry for NavigationEntry {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> Option<CefStringUtf16> {
+    fn get_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_display_url(&self) -> Option<CefStringUtf16> {
+    fn get_display_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_display_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_original_url(&self) -> Option<CefStringUtf16> {
+    fn get_original_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_original_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_title(&self) -> Option<CefStringUtf16> {
+    fn get_title(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_title
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -8820,20 +8660,20 @@ pub trait ImplCookieManager: Clone + Sized + Rc {
     ) -> ::std::os::raw::c_int;
     fn visit_url_cookies(
         &self,
-        url: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
         include_http_only: ::std::os::raw::c_int,
         visitor: Option<&mut impl ImplCookieVisitor>,
     ) -> ::std::os::raw::c_int;
     fn set_cookie(
         &self,
-        url: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
         cookie: Option<&Cookie>,
         callback: Option<&mut impl ImplSetCookieCallback>,
     ) -> ::std::os::raw::c_int;
     fn delete_cookies(
         &self,
-        url: Option<&CefStringUtf16>,
-        cookie_name: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
+        cookie_name: Option<&CefString>,
         callback: Option<&mut impl ImplDeleteCookiesCallback>,
     ) -> ::std::os::raw::c_int;
     fn flush_store(
@@ -8867,7 +8707,7 @@ impl ImplCookieManager for CookieManager {
     }
     fn visit_url_cookies(
         &self,
-        url: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
         include_http_only: ::std::os::raw::c_int,
         visitor: Option<&mut impl ImplCookieVisitor>,
     ) -> ::std::os::raw::c_int {
@@ -8894,7 +8734,7 @@ impl ImplCookieManager for CookieManager {
     }
     fn set_cookie(
         &self,
-        url: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
         cookie: Option<&Cookie>,
         callback: Option<&mut impl ImplSetCookieCallback>,
     ) -> ::std::os::raw::c_int {
@@ -8924,8 +8764,8 @@ impl ImplCookieManager for CookieManager {
     }
     fn delete_cookies(
         &self,
-        url: Option<&CefStringUtf16>,
-        cookie_name: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
+        cookie_name: Option<&CefString>,
         callback: Option<&mut impl ImplDeleteCookiesCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -9372,7 +9212,7 @@ impl Default for DeleteCookiesCallback {
 pub struct MediaRouter(RefGuard<_cef_media_router_t>);
 pub trait ImplMediaRouter: Clone + Sized + Rc {
     fn add_observer(&self, observer: Option<&mut impl ImplMediaObserver>) -> Option<Registration>;
-    fn get_source(&self, urn: Option<&CefStringUtf16>) -> Option<MediaSource>;
+    fn get_source(&self, urn: Option<&CefString>) -> Option<MediaSource>;
     fn notify_current_sinks(&self);
     fn create_route(
         &self,
@@ -9407,7 +9247,7 @@ impl ImplMediaRouter for MediaRouter {
                 .unwrap_or_default()
         }
     }
-    fn get_source(&self, urn: Option<&CefStringUtf16>) -> Option<MediaSource> {
+    fn get_source(&self, urn: Option<&CefString>) -> Option<MediaSource> {
         unsafe {
             self.0
                 .get_source
@@ -9834,7 +9674,7 @@ impl Default for MediaObserver {
 #[derive(Clone)]
 pub struct MediaRoute(RefGuard<_cef_media_route_t>);
 pub trait ImplMediaRoute: Clone + Sized + Rc {
-    fn get_id(&self) -> Option<CefStringUtf16>;
+    fn get_id(&self) -> CefStringUserfree;
     fn get_source(&self) -> Option<MediaSource>;
     fn get_sink(&self) -> Option<MediaSink>;
     fn send_route_message(&self, message: Option<&[u8]>);
@@ -9842,18 +9682,14 @@ pub trait ImplMediaRoute: Clone + Sized + Rc {
     fn get_raw(&self) -> *mut _cef_media_route_t;
 }
 impl ImplMediaRoute for MediaRoute {
-    fn get_id(&self) -> Option<CefStringUtf16> {
+    fn get_id(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_id
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -9994,7 +9830,7 @@ pub trait ImplMediaRouteCreateCallback: Clone + Sized + Rc {
     fn on_media_route_create_finished(
         &self,
         result: MediaRouteCreateResult,
-        error: Option<&CefStringUtf16>,
+        error: Option<&CefString>,
         route: Option<&mut impl ImplMediaRoute>,
     ) {
     }
@@ -10013,7 +9849,7 @@ mod impl_cef_media_route_create_callback_t {
     extern "C" fn on_media_route_create_finished<I: ImplMediaRouteCreateCallback>(
         self_: *mut _cef_media_route_create_callback_t,
         result: cef_media_route_create_result_t,
-        error: *const _cef_string_utf16_t,
+        error: *const cef_string_t,
         route: *mut _cef_media_route_t,
     ) {
         let (arg_self_, arg_result, arg_error, arg_route) = (self_, result, error, route);
@@ -10040,7 +9876,7 @@ impl ImplMediaRouteCreateCallback for MediaRouteCreateCallback {
     fn on_media_route_create_finished(
         &self,
         result: MediaRouteCreateResult,
-        error: Option<&CefStringUtf16>,
+        error: Option<&CefString>,
         route: Option<&mut impl ImplMediaRoute>,
     ) {
         unsafe {
@@ -10111,8 +9947,8 @@ impl Default for MediaRouteCreateCallback {
 #[derive(Clone)]
 pub struct MediaSink(RefGuard<_cef_media_sink_t>);
 pub trait ImplMediaSink: Clone + Sized + Rc {
-    fn get_id(&self) -> Option<CefStringUtf16>;
-    fn get_name(&self) -> Option<CefStringUtf16>;
+    fn get_id(&self) -> CefStringUserfree;
+    fn get_name(&self) -> CefStringUserfree;
     fn get_icon_type(&self) -> MediaSinkIconType;
     fn get_device_info(&self, callback: Option<&mut impl ImplMediaSinkDeviceInfoCallback>);
     fn is_cast_sink(&self) -> ::std::os::raw::c_int;
@@ -10124,34 +9960,26 @@ pub trait ImplMediaSink: Clone + Sized + Rc {
     fn get_raw(&self) -> *mut _cef_media_sink_t;
 }
 impl ImplMediaSink for MediaSink {
-    fn get_id(&self) -> Option<CefStringUtf16> {
+    fn get_id(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_id
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> Option<CefStringUtf16> {
+    fn get_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -10396,24 +10224,20 @@ impl Default for MediaSinkDeviceInfoCallback {
 #[derive(Clone)]
 pub struct MediaSource(RefGuard<_cef_media_source_t>);
 pub trait ImplMediaSource: Clone + Sized + Rc {
-    fn get_id(&self) -> Option<CefStringUtf16>;
+    fn get_id(&self) -> CefStringUserfree;
     fn is_cast_source(&self) -> ::std::os::raw::c_int;
     fn is_dial_source(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_media_source_t;
 }
 impl ImplMediaSource for MediaSource {
-    fn get_id(&self) -> Option<CefStringUtf16> {
+    fn get_id(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_id
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -10490,7 +10314,7 @@ pub struct PreferenceRegistrar(*mut _cef_preference_registrar_t);
 pub trait ImplPreferenceRegistrar: Sized {
     fn add_preference(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         default_value: Option<&mut impl ImplValue>,
     ) -> ::std::os::raw::c_int;
     fn init_methods(object: &mut _cef_preference_registrar_t) {
@@ -10505,7 +10329,7 @@ mod impl_cef_preference_registrar_t {
     }
     extern "C" fn add_preference<I: ImplPreferenceRegistrar>(
         self_: *mut _cef_preference_registrar_t,
-        name: *const _cef_string_utf16_t,
+        name: *const cef_string_t,
         default_value: *mut _cef_value_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_default_value) = (self_, name, default_value);
@@ -10530,7 +10354,7 @@ mod impl_cef_preference_registrar_t {
 impl ImplPreferenceRegistrar for PreferenceRegistrar {
     fn add_preference(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         default_value: Option<&mut impl ImplValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -10604,7 +10428,7 @@ pub trait WrapPreferenceObserver: ImplPreferenceObserver {
     fn wrap_rc(&mut self, object: *mut RcImpl<_cef_preference_observer_t, Self>);
 }
 pub trait ImplPreferenceObserver: Clone + Sized + Rc {
-    fn on_preference_changed(&self, name: Option<&CefStringUtf16>) {}
+    fn on_preference_changed(&self, name: Option<&CefString>) {}
     fn init_methods(object: &mut _cef_preference_observer_t) {
         impl_cef_preference_observer_t::init_methods::<Self>(object);
     }
@@ -10617,7 +10441,7 @@ mod impl_cef_preference_observer_t {
     }
     extern "C" fn on_preference_changed<I: ImplPreferenceObserver>(
         self_: *mut _cef_preference_observer_t,
-        name: *const _cef_string_utf16_t,
+        name: *const cef_string_t,
     ) {
         let (arg_self_, arg_name) = (self_, name);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -10631,7 +10455,7 @@ mod impl_cef_preference_observer_t {
     }
 }
 impl ImplPreferenceObserver for PreferenceObserver {
-    fn on_preference_changed(&self, name: Option<&CefStringUtf16>) {
+    fn on_preference_changed(&self, name: Option<&CefString>) {
         unsafe {
             self.0
                 .on_preference_changed
@@ -10691,28 +10515,28 @@ impl Default for PreferenceObserver {
 #[derive(Clone)]
 pub struct PreferenceManager(RefGuard<_cef_preference_manager_t>);
 pub trait ImplPreferenceManager: Clone + Sized + Rc {
-    fn has_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_preference(&self, name: Option<&CefStringUtf16>) -> Option<Value>;
+    fn has_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int;
+    fn get_preference(&self, name: Option<&CefString>) -> Option<Value>;
     fn get_all_preferences(
         &self,
         include_defaults: ::std::os::raw::c_int,
     ) -> Option<DictionaryValue>;
-    fn can_set_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn can_set_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int;
     fn set_preference(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         value: Option<&mut impl ImplValue>,
-        error: Option<&mut CefStringUtf16>,
+        error: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int;
     fn add_preference_observer(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         observer: Option<&mut impl ImplPreferenceObserver>,
     ) -> Option<Registration>;
     fn get_raw(&self) -> *mut _cef_preference_manager_t;
 }
 impl ImplPreferenceManager for PreferenceManager {
-    fn has_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn has_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .has_preference
@@ -10726,7 +10550,7 @@ impl ImplPreferenceManager for PreferenceManager {
                 .unwrap_or_default()
         }
     }
-    fn get_preference(&self, name: Option<&CefStringUtf16>) -> Option<Value> {
+    fn get_preference(&self, name: Option<&CefString>) -> Option<Value> {
         unsafe {
             self.0
                 .get_preference
@@ -10765,7 +10589,7 @@ impl ImplPreferenceManager for PreferenceManager {
                 .unwrap_or_default()
         }
     }
-    fn can_set_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn can_set_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .can_set_preference
@@ -10781,9 +10605,9 @@ impl ImplPreferenceManager for PreferenceManager {
     }
     fn set_preference(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         value: Option<&mut impl ImplValue>,
-        error: Option<&mut CefStringUtf16>,
+        error: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -10809,7 +10633,7 @@ impl ImplPreferenceManager for PreferenceManager {
     }
     fn add_preference_observer(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         observer: Option<&mut impl ImplPreferenceObserver>,
     ) -> Option<Registration> {
         unsafe {
@@ -11013,8 +10837,8 @@ pub trait WrapSettingObserver: ImplSettingObserver {
 pub trait ImplSettingObserver: Clone + Sized + Rc {
     fn on_setting_changed(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
     ) {
     }
@@ -11030,8 +10854,8 @@ mod impl_cef_setting_observer_t {
     }
     extern "C" fn on_setting_changed<I: ImplSettingObserver>(
         self_: *mut _cef_setting_observer_t,
-        requesting_url: *const _cef_string_utf16_t,
-        top_level_url: *const _cef_string_utf16_t,
+        requesting_url: *const cef_string_t,
+        top_level_url: *const cef_string_t,
         content_type: cef_content_setting_types_t,
     ) {
         let (arg_self_, arg_requesting_url, arg_top_level_url, arg_content_type) =
@@ -11061,8 +10885,8 @@ mod impl_cef_setting_observer_t {
 impl ImplSettingObserver for SettingObserver {
     fn on_setting_changed(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
     ) {
         unsafe {
@@ -11141,15 +10965,15 @@ pub trait ImplRequestContext: ImplPreferenceManager {
         -> ::std::os::raw::c_int;
     fn is_global(&self) -> ::std::os::raw::c_int;
     fn get_handler(&self) -> Option<RequestContextHandler>;
-    fn get_cache_path(&self) -> Option<CefStringUtf16>;
+    fn get_cache_path(&self) -> CefStringUserfree;
     fn get_cookie_manager(
         &self,
         callback: Option<&mut impl ImplCompletionCallback>,
     ) -> Option<CookieManager>;
     fn register_scheme_handler_factory(
         &self,
-        scheme_name: Option<&CefStringUtf16>,
-        domain_name: Option<&CefStringUtf16>,
+        scheme_name: Option<&CefString>,
+        domain_name: Option<&CefString>,
         factory: Option<&mut impl ImplSchemeHandlerFactory>,
     ) -> ::std::os::raw::c_int;
     fn clear_scheme_handler_factories(&self) -> ::std::os::raw::c_int;
@@ -11158,7 +10982,7 @@ pub trait ImplRequestContext: ImplPreferenceManager {
     fn close_all_connections(&self, callback: Option<&mut impl ImplCompletionCallback>);
     fn resolve_host(
         &self,
-        origin: Option<&CefStringUtf16>,
+        origin: Option<&CefString>,
         callback: Option<&mut impl ImplResolveCallback>,
     );
     fn get_media_router(
@@ -11167,27 +10991,27 @@ pub trait ImplRequestContext: ImplPreferenceManager {
     ) -> Option<MediaRouter>;
     fn get_website_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
     ) -> Option<Value>;
     fn set_website_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
         value: Option<&mut impl ImplValue>,
     );
     fn get_content_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
     ) -> ContentSettingValues;
     fn set_content_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
         value: ContentSettingValues,
     );
@@ -11204,13 +11028,13 @@ pub trait ImplRequestContext: ImplPreferenceManager {
     }
 }
 impl ImplPreferenceManager for RequestContext {
-    fn has_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn has_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int {
         PreferenceManager(unsafe {
             RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
         })
         .has_preference(name)
     }
-    fn get_preference(&self, name: Option<&CefStringUtf16>) -> Option<Value> {
+    fn get_preference(&self, name: Option<&CefString>) -> Option<Value> {
         PreferenceManager(unsafe {
             RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
         })
@@ -11225,7 +11049,7 @@ impl ImplPreferenceManager for RequestContext {
         })
         .get_all_preferences(include_defaults)
     }
-    fn can_set_preference(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn can_set_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int {
         PreferenceManager(unsafe {
             RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
         })
@@ -11233,9 +11057,9 @@ impl ImplPreferenceManager for RequestContext {
     }
     fn set_preference(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         value: Option<&mut impl ImplValue>,
-        error: Option<&mut CefStringUtf16>,
+        error: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         PreferenceManager(unsafe {
             RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
@@ -11244,7 +11068,7 @@ impl ImplPreferenceManager for RequestContext {
     }
     fn add_preference_observer(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         observer: Option<&mut impl ImplPreferenceObserver>,
     ) -> Option<Registration> {
         PreferenceManager(unsafe {
@@ -11326,18 +11150,14 @@ impl ImplRequestContext for RequestContext {
                 .unwrap_or_default()
         }
     }
-    fn get_cache_path(&self) -> Option<CefStringUtf16> {
+    fn get_cache_path(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_cache_path
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -11370,8 +11190,8 @@ impl ImplRequestContext for RequestContext {
     }
     fn register_scheme_handler_factory(
         &self,
-        scheme_name: Option<&CefStringUtf16>,
-        domain_name: Option<&CefStringUtf16>,
+        scheme_name: Option<&CefString>,
+        domain_name: Option<&CefString>,
         factory: Option<&mut impl ImplSchemeHandlerFactory>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -11470,7 +11290,7 @@ impl ImplRequestContext for RequestContext {
     }
     fn resolve_host(
         &self,
-        origin: Option<&CefStringUtf16>,
+        origin: Option<&CefString>,
         callback: Option<&mut impl ImplResolveCallback>,
     ) {
         unsafe {
@@ -11522,8 +11342,8 @@ impl ImplRequestContext for RequestContext {
     }
     fn get_website_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
     ) -> Option<Value> {
         unsafe {
@@ -11557,8 +11377,8 @@ impl ImplRequestContext for RequestContext {
     }
     fn set_website_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
         value: Option<&mut impl ImplValue>,
     ) {
@@ -11596,8 +11416,8 @@ impl ImplRequestContext for RequestContext {
     }
     fn get_content_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
     ) -> ContentSettingValues {
         unsafe {
@@ -11627,8 +11447,8 @@ impl ImplRequestContext for RequestContext {
     }
     fn set_content_setting(
         &self,
-        requesting_url: Option<&CefStringUtf16>,
-        top_level_url: Option<&CefStringUtf16>,
+        requesting_url: Option<&CefString>,
+        top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
         value: ContentSettingValues,
     ) {
@@ -11798,8 +11618,8 @@ pub trait ImplBrowser: Clone + Sized + Rc {
     fn has_document(&self) -> ::std::os::raw::c_int;
     fn get_main_frame(&self) -> Option<Frame>;
     fn get_focused_frame(&self) -> Option<Frame>;
-    fn get_frame_by_identifier(&self, identifier: Option<&CefStringUtf16>) -> Option<Frame>;
-    fn get_frame_by_name(&self, name: Option<&CefStringUtf16>) -> Option<Frame>;
+    fn get_frame_by_identifier(&self, identifier: Option<&CefString>) -> Option<Frame>;
+    fn get_frame_by_name(&self, name: Option<&CefString>) -> Option<Frame>;
     fn get_frame_count(&self) -> usize;
     fn get_frame_identifiers(&self, identifiers: Option<&mut CefStringList>);
     fn get_frame_names(&self, names: Option<&mut CefStringList>);
@@ -12017,7 +11837,7 @@ impl ImplBrowser for Browser {
                 .unwrap_or_default()
         }
     }
-    fn get_frame_by_identifier(&self, identifier: Option<&CefStringUtf16>) -> Option<Frame> {
+    fn get_frame_by_identifier(&self, identifier: Option<&CefString>) -> Option<Frame> {
         unsafe {
             self.0
                 .get_frame_by_identifier
@@ -12037,7 +11857,7 @@ impl ImplBrowser for Browser {
                 .unwrap_or_default()
         }
     }
-    fn get_frame_by_name(&self, name: Option<&CefStringUtf16>) -> Option<Frame> {
+    fn get_frame_by_name(&self, name: Option<&CefString>) -> Option<Frame> {
         unsafe {
             self.0
                 .get_frame_by_name
@@ -12413,7 +12233,7 @@ pub trait WrapPdfPrintCallback: ImplPdfPrintCallback {
     fn wrap_rc(&mut self, object: *mut RcImpl<_cef_pdf_print_callback_t, Self>);
 }
 pub trait ImplPdfPrintCallback: Clone + Sized + Rc {
-    fn on_pdf_print_finished(&self, path: Option<&CefStringUtf16>, ok: ::std::os::raw::c_int) {}
+    fn on_pdf_print_finished(&self, path: Option<&CefString>, ok: ::std::os::raw::c_int) {}
     fn init_methods(object: &mut _cef_pdf_print_callback_t) {
         impl_cef_pdf_print_callback_t::init_methods::<Self>(object);
     }
@@ -12426,7 +12246,7 @@ mod impl_cef_pdf_print_callback_t {
     }
     extern "C" fn on_pdf_print_finished<I: ImplPdfPrintCallback>(
         self_: *mut _cef_pdf_print_callback_t,
-        path: *const _cef_string_utf16_t,
+        path: *const cef_string_t,
         ok: ::std::os::raw::c_int,
     ) {
         let (arg_self_, arg_path, arg_ok) = (self_, path, ok);
@@ -12443,7 +12263,7 @@ mod impl_cef_pdf_print_callback_t {
     }
 }
 impl ImplPdfPrintCallback for PdfPrintCallback {
-    fn on_pdf_print_finished(&self, path: Option<&CefStringUtf16>, ok: ::std::os::raw::c_int) {
+    fn on_pdf_print_finished(&self, path: Option<&CefString>, ok: ::std::os::raw::c_int) {
         unsafe {
             self.0
                 .on_pdf_print_finished
@@ -12523,7 +12343,7 @@ pub trait WrapDownloadImageCallback: ImplDownloadImageCallback {
 pub trait ImplDownloadImageCallback: Clone + Sized + Rc {
     fn on_download_image_finished(
         &self,
-        image_url: Option<&CefStringUtf16>,
+        image_url: Option<&CefString>,
         http_status_code: ::std::os::raw::c_int,
         image: Option<&mut impl ImplImage>,
     ) {
@@ -12540,7 +12360,7 @@ mod impl_cef_download_image_callback_t {
     }
     extern "C" fn on_download_image_finished<I: ImplDownloadImageCallback>(
         self_: *mut _cef_download_image_callback_t,
-        image_url: *const _cef_string_utf16_t,
+        image_url: *const cef_string_t,
         http_status_code: ::std::os::raw::c_int,
         image: *mut _cef_image_t,
     ) {
@@ -12568,7 +12388,7 @@ mod impl_cef_download_image_callback_t {
 impl ImplDownloadImageCallback for DownloadImageCallback {
     fn on_download_image_finished(
         &self,
-        image_url: Option<&CefStringUtf16>,
+        image_url: Option<&CefString>,
         http_status_code: ::std::os::raw::c_int,
         image: Option<&mut impl ImplImage>,
     ) {
@@ -12660,15 +12480,15 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn run_file_dialog(
         &self,
         mode: FileDialogMode,
-        title: Option<&CefStringUtf16>,
-        default_file_path: Option<&CefStringUtf16>,
+        title: Option<&CefString>,
+        default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
         callback: Option<&mut impl ImplRunFileDialogCallback>,
     );
-    fn start_download(&self, url: Option<&CefStringUtf16>);
+    fn start_download(&self, url: Option<&CefString>);
     fn download_image(
         &self,
-        image_url: Option<&CefStringUtf16>,
+        image_url: Option<&CefString>,
         is_favicon: ::std::os::raw::c_int,
         max_image_size: u32,
         bypass_cache: ::std::os::raw::c_int,
@@ -12677,13 +12497,13 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn print(&self);
     fn print_to_pdf(
         &self,
-        path: Option<&CefStringUtf16>,
+        path: Option<&CefString>,
         settings: Option<&PdfPrintSettings>,
         callback: Option<&mut impl ImplPdfPrintCallback>,
     );
     fn find(
         &self,
-        search_text: Option<&CefStringUtf16>,
+        search_text: Option<&CefString>,
         forward: ::std::os::raw::c_int,
         match_case: ::std::os::raw::c_int,
         find_next: ::std::os::raw::c_int,
@@ -12702,7 +12522,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn execute_dev_tools_method(
         &self,
         message_id: ::std::os::raw::c_int,
-        method: Option<&CefStringUtf16>,
+        method: Option<&CefString>,
         params: Option<&mut impl ImplDictionaryValue>,
     ) -> ::std::os::raw::c_int;
     fn add_dev_tools_message_observer(
@@ -12714,8 +12534,8 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         visitor: Option<&mut impl ImplNavigationEntryVisitor>,
         current_only: ::std::os::raw::c_int,
     );
-    fn replace_misspelling(&self, word: Option<&CefStringUtf16>);
-    fn add_word_to_dictionary(&self, word: Option<&CefStringUtf16>);
+    fn replace_misspelling(&self, word: Option<&CefString>);
+    fn add_word_to_dictionary(&self, word: Option<&CefString>);
     fn is_window_rendering_disabled(&self) -> ::std::os::raw::c_int;
     fn was_resized(&self);
     fn was_hidden(&self, hidden: ::std::os::raw::c_int);
@@ -12744,7 +12564,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn set_windowless_frame_rate(&self, frame_rate: ::std::os::raw::c_int);
     fn ime_set_composition(
         &self,
-        text: Option<&CefStringUtf16>,
+        text: Option<&CefString>,
         underlines_count: usize,
         underlines: Option<&CompositionUnderline>,
         replacement_range: Option<&Range>,
@@ -12752,7 +12572,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     );
     fn ime_commit_text(
         &self,
-        text: Option<&CefStringUtf16>,
+        text: Option<&CefString>,
         replacement_range: Option<&Range>,
         relative_cursor_pos: ::std::os::raw::c_int,
     );
@@ -13017,8 +12837,8 @@ impl ImplBrowserHost for BrowserHost {
     fn run_file_dialog(
         &self,
         mode: FileDialogMode,
-        title: Option<&CefStringUtf16>,
-        default_file_path: Option<&CefStringUtf16>,
+        title: Option<&CefString>,
+        default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
         callback: Option<&mut impl ImplRunFileDialogCallback>,
     ) {
@@ -13063,7 +12883,7 @@ impl ImplBrowserHost for BrowserHost {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn start_download(&self, url: Option<&CefStringUtf16>) {
+    fn start_download(&self, url: Option<&CefString>) {
         unsafe {
             self.0
                 .start_download
@@ -13079,7 +12899,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn download_image(
         &self,
-        image_url: Option<&CefStringUtf16>,
+        image_url: Option<&CefString>,
         is_favicon: ::std::os::raw::c_int,
         max_image_size: u32,
         bypass_cache: ::std::os::raw::c_int,
@@ -13142,7 +12962,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn print_to_pdf(
         &self,
-        path: Option<&CefStringUtf16>,
+        path: Option<&CefString>,
         settings: Option<&PdfPrintSettings>,
         callback: Option<&mut impl ImplPdfPrintCallback>,
     ) {
@@ -13172,7 +12992,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn find(
         &self,
-        search_text: Option<&CefStringUtf16>,
+        search_text: Option<&CefString>,
         forward: ::std::os::raw::c_int,
         match_case: ::std::os::raw::c_int,
         find_next: ::std::os::raw::c_int,
@@ -13317,7 +13137,7 @@ impl ImplBrowserHost for BrowserHost {
     fn execute_dev_tools_method(
         &self,
         message_id: ::std::os::raw::c_int,
-        method: Option<&CefStringUtf16>,
+        method: Option<&CefString>,
         params: Option<&mut impl ImplDictionaryValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -13392,7 +13212,7 @@ impl ImplBrowserHost for BrowserHost {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn replace_misspelling(&self, word: Option<&CefStringUtf16>) {
+    fn replace_misspelling(&self, word: Option<&CefString>) {
         unsafe {
             self.0
                 .replace_misspelling
@@ -13406,7 +13226,7 @@ impl ImplBrowserHost for BrowserHost {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn add_word_to_dictionary(&self, word: Option<&CefStringUtf16>) {
+    fn add_word_to_dictionary(&self, word: Option<&CefString>) {
         unsafe {
             self.0
                 .add_word_to_dictionary
@@ -13666,7 +13486,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn ime_set_composition(
         &self,
-        text: Option<&CefStringUtf16>,
+        text: Option<&CefString>,
         underlines_count: usize,
         underlines: Option<&CompositionUnderline>,
         replacement_range: Option<&Range>,
@@ -13723,7 +13543,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn ime_commit_text(
         &self,
-        text: Option<&CefStringUtf16>,
+        text: Option<&CefString>,
         replacement_range: Option<&Range>,
         relative_cursor_pos: ::std::os::raw::c_int,
     ) {
@@ -14152,7 +13972,7 @@ pub trait ImplAudioHandler: Clone + Sized + Rc {
     fn on_audio_stream_error(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        message: Option<&CefStringUtf16>,
+        message: Option<&CefString>,
     ) {
     }
     fn init_methods(object: &mut _cef_audio_handler_t) {
@@ -14252,7 +14072,7 @@ mod impl_cef_audio_handler_t {
     extern "C" fn on_audio_stream_error<I: ImplAudioHandler>(
         self_: *mut _cef_audio_handler_t,
         browser: *mut _cef_browser_t,
-        message: *const _cef_string_utf16_t,
+        message: *const cef_string_t,
     ) {
         let (arg_self_, arg_browser, arg_message) = (self_, browser, message);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -14378,7 +14198,7 @@ impl ImplAudioHandler for AudioHandler {
     fn on_audio_stream_error(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        message: Option<&CefStringUtf16>,
+        message: Option<&CefString>,
     ) {
         unsafe {
             self.0
@@ -14800,7 +14620,7 @@ pub trait ImplMenuModelDelegate: Clone + Sized + Rc {
     fn format_label(
         &self,
         menu_model: Option<&mut impl ImplMenuModel>,
-        label: Option<&mut CefStringUtf16>,
+        label: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -14922,7 +14742,7 @@ mod impl_cef_menu_model_delegate_t {
     extern "C" fn format_label<I: ImplMenuModelDelegate>(
         self_: *mut _cef_menu_model_delegate_t,
         menu_model: *mut _cef_menu_model_t,
-        label: *mut _cef_string_utf16_t,
+        label: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_menu_model, arg_label) = (self_, menu_model, label);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -15085,7 +14905,7 @@ impl ImplMenuModelDelegate for MenuModelDelegate {
     fn format_label(
         &self,
         menu_model: Option<&mut impl ImplMenuModel>,
-        label: Option<&mut CefStringUtf16>,
+        label: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -15161,49 +14981,49 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
     fn add_item(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
     fn add_check_item(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
     fn add_radio_item(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
         group_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
     fn add_sub_menu(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> Option<MenuModel>;
     fn insert_separator_at(&self, index: usize) -> ::std::os::raw::c_int;
     fn insert_item_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
     fn insert_check_item_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
     fn insert_radio_item_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
         group_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
     fn insert_sub_menu_at(
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> Option<MenuModel>;
     fn remove(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
     fn remove_at(&self, index: usize) -> ::std::os::raw::c_int;
@@ -15214,14 +15034,14 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
         index: usize,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
-    fn get_label(&self, command_id: ::std::os::raw::c_int) -> Option<CefStringUtf16>;
-    fn get_label_at(&self, index: usize) -> Option<CefStringUtf16>;
+    fn get_label(&self, command_id: ::std::os::raw::c_int) -> CefStringUserfree;
+    fn get_label_at(&self, index: usize) -> CefStringUserfree;
     fn set_label(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
-    fn set_label_at(&self, index: usize, label: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn set_label_at(&self, index: usize, label: Option<&CefString>) -> ::std::os::raw::c_int;
     fn get_type(&self, command_id: ::std::os::raw::c_int) -> MenuItemType;
     fn get_type_at(&self, index: usize) -> MenuItemType;
     fn get_group_id(&self, command_id: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
@@ -15328,12 +15148,12 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
     fn set_font_list(
         &self,
         command_id: ::std::os::raw::c_int,
-        font_list: Option<&CefStringUtf16>,
+        font_list: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
     fn set_font_list_at(
         &self,
         index: ::std::os::raw::c_int,
-        font_list: Option<&CefStringUtf16>,
+        font_list: Option<&CefString>,
     ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_menu_model_t;
 }
@@ -15389,7 +15209,7 @@ impl ImplMenuModel for MenuModel {
     fn add_item(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -15410,7 +15230,7 @@ impl ImplMenuModel for MenuModel {
     fn add_check_item(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -15431,7 +15251,7 @@ impl ImplMenuModel for MenuModel {
     fn add_radio_item(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
         group_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -15454,7 +15274,7 @@ impl ImplMenuModel for MenuModel {
     fn add_sub_menu(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> Option<MenuModel> {
         unsafe {
             self.0
@@ -15494,7 +15314,7 @@ impl ImplMenuModel for MenuModel {
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -15517,7 +15337,7 @@ impl ImplMenuModel for MenuModel {
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -15540,7 +15360,7 @@ impl ImplMenuModel for MenuModel {
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
         group_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -15572,7 +15392,7 @@ impl ImplMenuModel for MenuModel {
         &self,
         index: usize,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> Option<MenuModel> {
         unsafe {
             self.0
@@ -15670,7 +15490,7 @@ impl ImplMenuModel for MenuModel {
                 .unwrap_or_default()
         }
     }
-    fn get_label(&self, command_id: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn get_label(&self, command_id: ::std::os::raw::c_int) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_label
@@ -15679,16 +15499,12 @@ impl ImplMenuModel for MenuModel {
                     let arg_self_ = self.as_raw();
                     let arg_command_id = arg_command_id;
                     let result = f(arg_self_, arg_command_id);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_label_at(&self, index: usize) -> Option<CefStringUtf16> {
+    fn get_label_at(&self, index: usize) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_label_at
@@ -15697,11 +15513,7 @@ impl ImplMenuModel for MenuModel {
                     let arg_self_ = self.as_raw();
                     let arg_index = arg_index;
                     let result = f(arg_self_, arg_index);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -15709,7 +15521,7 @@ impl ImplMenuModel for MenuModel {
     fn set_label(
         &self,
         command_id: ::std::os::raw::c_int,
-        label: Option<&CefStringUtf16>,
+        label: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -15727,7 +15539,7 @@ impl ImplMenuModel for MenuModel {
                 .unwrap_or_default()
         }
     }
-    fn set_label_at(&self, index: usize, label: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn set_label_at(&self, index: usize, label: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_label_at
@@ -16401,7 +16213,7 @@ impl ImplMenuModel for MenuModel {
     fn set_font_list(
         &self,
         command_id: ::std::os::raw::c_int,
-        font_list: Option<&CefStringUtf16>,
+        font_list: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -16422,7 +16234,7 @@ impl ImplMenuModel for MenuModel {
     fn set_font_list_at(
         &self,
         index: ::std::os::raw::c_int,
-        font_list: Option<&CefStringUtf16>,
+        font_list: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -17322,18 +17134,18 @@ pub trait ImplContextMenuParams: Clone + Sized + Rc {
     fn get_xcoord(&self) -> ::std::os::raw::c_int;
     fn get_ycoord(&self) -> ::std::os::raw::c_int;
     fn get_type_flags(&self) -> ContextMenuTypeFlags;
-    fn get_link_url(&self) -> Option<CefStringUtf16>;
-    fn get_unfiltered_link_url(&self) -> Option<CefStringUtf16>;
-    fn get_source_url(&self) -> Option<CefStringUtf16>;
+    fn get_link_url(&self) -> CefStringUserfree;
+    fn get_unfiltered_link_url(&self) -> CefStringUserfree;
+    fn get_source_url(&self) -> CefStringUserfree;
     fn has_image_contents(&self) -> ::std::os::raw::c_int;
-    fn get_title_text(&self) -> Option<CefStringUtf16>;
-    fn get_page_url(&self) -> Option<CefStringUtf16>;
-    fn get_frame_url(&self) -> Option<CefStringUtf16>;
-    fn get_frame_charset(&self) -> Option<CefStringUtf16>;
+    fn get_title_text(&self) -> CefStringUserfree;
+    fn get_page_url(&self) -> CefStringUserfree;
+    fn get_frame_url(&self) -> CefStringUserfree;
+    fn get_frame_charset(&self) -> CefStringUserfree;
     fn get_media_type(&self) -> ContextMenuMediaType;
     fn get_media_state_flags(&self) -> ContextMenuMediaStateFlags;
-    fn get_selection_text(&self) -> Option<CefStringUtf16>;
-    fn get_misspelled_word(&self) -> Option<CefStringUtf16>;
+    fn get_selection_text(&self) -> CefStringUserfree;
+    fn get_misspelled_word(&self) -> CefStringUserfree;
     fn get_dictionary_suggestions(
         &self,
         suggestions: Option<&mut CefStringList>,
@@ -17381,50 +17193,38 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_link_url(&self) -> Option<CefStringUtf16> {
+    fn get_link_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_link_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_unfiltered_link_url(&self) -> Option<CefStringUtf16> {
+    fn get_unfiltered_link_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_unfiltered_link_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_source_url(&self) -> Option<CefStringUtf16> {
+    fn get_source_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_source_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -17441,66 +17241,50 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_title_text(&self) -> Option<CefStringUtf16> {
+    fn get_title_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_title_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_page_url(&self) -> Option<CefStringUtf16> {
+    fn get_page_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_page_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_frame_url(&self) -> Option<CefStringUtf16> {
+    fn get_frame_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_frame_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_frame_charset(&self) -> Option<CefStringUtf16> {
+    fn get_frame_charset(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_frame_charset
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -17529,34 +17313,26 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_selection_text(&self) -> Option<CefStringUtf16> {
+    fn get_selection_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_selection_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_misspelled_word(&self) -> Option<CefStringUtf16> {
+    fn get_misspelled_word(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_misspelled_word
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -17774,8 +17550,8 @@ pub trait ImplDialogHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         mode: FileDialogMode,
-        title: Option<&CefStringUtf16>,
-        default_file_path: Option<&CefStringUtf16>,
+        title: Option<&CefString>,
+        default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
         accept_extensions: Option<&mut CefStringList>,
         accept_descriptions: Option<&mut CefStringList>,
@@ -17797,8 +17573,8 @@ mod impl_cef_dialog_handler_t {
         self_: *mut _cef_dialog_handler_t,
         browser: *mut _cef_browser_t,
         mode: cef_file_dialog_mode_t,
-        title: *const _cef_string_utf16_t,
-        default_file_path: *const _cef_string_utf16_t,
+        title: *const cef_string_t,
+        default_file_path: *const cef_string_t,
         accept_filters: *mut _cef_string_list_t,
         accept_extensions: *mut _cef_string_list_t,
         accept_descriptions: *mut _cef_string_list_t,
@@ -17882,8 +17658,8 @@ impl ImplDialogHandler for DialogHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         mode: FileDialogMode,
-        title: Option<&CefStringUtf16>,
-        default_file_path: Option<&CefStringUtf16>,
+        title: Option<&CefString>,
+        default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
         accept_extensions: Option<&mut CefStringList>,
         accept_descriptions: Option<&mut CefStringList>,
@@ -18024,15 +17800,10 @@ pub trait ImplDisplayHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        url: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
     ) {
     }
-    fn on_title_change(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        title: Option<&CefStringUtf16>,
-    ) {
-    }
+    fn on_title_change(&self, browser: Option<&mut impl ImplBrowser>, title: Option<&CefString>) {}
     fn on_favicon_urlchange(
         &self,
         browser: Option<&mut impl ImplBrowser>,
@@ -18048,22 +17819,18 @@ pub trait ImplDisplayHandler: Clone + Sized + Rc {
     fn on_tooltip(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        text: Option<&mut CefStringUtf16>,
+        text: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn on_status_message(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        value: Option<&CefStringUtf16>,
-    ) {
+    fn on_status_message(&self, browser: Option<&mut impl ImplBrowser>, value: Option<&CefString>) {
     }
     fn on_console_message(
         &self,
         browser: Option<&mut impl ImplBrowser>,
         level: LogSeverity,
-        message: Option<&CefStringUtf16>,
-        source: Option<&CefStringUtf16>,
+        message: Option<&CefString>,
+        source: Option<&CefString>,
         line: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -18116,7 +17883,7 @@ mod impl_cef_display_handler_t {
         self_: *mut _cef_display_handler_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        url: *const _cef_string_utf16_t,
+        url: *const cef_string_t,
     ) {
         let (arg_self_, arg_browser, arg_frame, arg_url) = (self_, browser, frame, url);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -18142,7 +17909,7 @@ mod impl_cef_display_handler_t {
     extern "C" fn on_title_change<I: ImplDisplayHandler>(
         self_: *mut _cef_display_handler_t,
         browser: *mut _cef_browser_t,
-        title: *const _cef_string_utf16_t,
+        title: *const cef_string_t,
     ) {
         let (arg_self_, arg_browser, arg_title) = (self_, browser, title);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -18200,7 +17967,7 @@ mod impl_cef_display_handler_t {
     extern "C" fn on_tooltip<I: ImplDisplayHandler>(
         self_: *mut _cef_display_handler_t,
         browser: *mut _cef_browser_t,
-        text: *mut _cef_string_utf16_t,
+        text: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_browser, arg_text) = (self_, browser, text);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -18219,7 +17986,7 @@ mod impl_cef_display_handler_t {
     extern "C" fn on_status_message<I: ImplDisplayHandler>(
         self_: *mut _cef_display_handler_t,
         browser: *mut _cef_browser_t,
-        value: *const _cef_string_utf16_t,
+        value: *const cef_string_t,
     ) {
         let (arg_self_, arg_browser, arg_value) = (self_, browser, value);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -18239,8 +18006,8 @@ mod impl_cef_display_handler_t {
         self_: *mut _cef_display_handler_t,
         browser: *mut _cef_browser_t,
         level: cef_log_severity_t,
-        message: *const _cef_string_utf16_t,
-        source: *const _cef_string_utf16_t,
+        message: *const cef_string_t,
+        source: *const cef_string_t,
         line: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_browser, arg_level, arg_message, arg_source, arg_line) =
@@ -18367,7 +18134,7 @@ impl ImplDisplayHandler for DisplayHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        url: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
     ) {
         unsafe {
             self.0
@@ -18394,11 +18161,7 @@ impl ImplDisplayHandler for DisplayHandler {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn on_title_change(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        title: Option<&CefStringUtf16>,
-    ) {
+    fn on_title_change(&self, browser: Option<&mut impl ImplBrowser>, title: Option<&CefString>) {
         unsafe {
             self.0
                 .on_title_change
@@ -18473,7 +18236,7 @@ impl ImplDisplayHandler for DisplayHandler {
     fn on_tooltip(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        text: Option<&mut CefStringUtf16>,
+        text: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -18496,11 +18259,7 @@ impl ImplDisplayHandler for DisplayHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_status_message(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        value: Option<&CefStringUtf16>,
-    ) {
+    fn on_status_message(&self, browser: Option<&mut impl ImplBrowser>, value: Option<&CefString>) {
         unsafe {
             self.0
                 .on_status_message
@@ -18526,8 +18285,8 @@ impl ImplDisplayHandler for DisplayHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         level: LogSeverity,
-        message: Option<&CefStringUtf16>,
-        source: Option<&CefStringUtf16>,
+        message: Option<&CefString>,
+        source: Option<&CefString>,
         line: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -18742,13 +18501,13 @@ pub trait ImplDownloadItem: Clone + Sized + Rc {
     fn get_received_bytes(&self) -> i64;
     fn get_start_time(&self) -> Basetime;
     fn get_end_time(&self) -> Basetime;
-    fn get_full_path(&self) -> Option<CefStringUtf16>;
+    fn get_full_path(&self) -> CefStringUserfree;
     fn get_id(&self) -> u32;
-    fn get_url(&self) -> Option<CefStringUtf16>;
-    fn get_original_url(&self) -> Option<CefStringUtf16>;
-    fn get_suggested_file_name(&self) -> Option<CefStringUtf16>;
-    fn get_content_disposition(&self) -> Option<CefStringUtf16>;
-    fn get_mime_type(&self) -> Option<CefStringUtf16>;
+    fn get_url(&self) -> CefStringUserfree;
+    fn get_original_url(&self) -> CefStringUserfree;
+    fn get_suggested_file_name(&self) -> CefStringUserfree;
+    fn get_content_disposition(&self) -> CefStringUserfree;
+    fn get_mime_type(&self) -> CefStringUserfree;
     fn get_raw(&self) -> *mut _cef_download_item_t;
 }
 impl ImplDownloadItem for DownloadItem {
@@ -18896,18 +18655,14 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_full_path(&self) -> Option<CefStringUtf16> {
+    fn get_full_path(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_full_path
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -18924,82 +18679,62 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> Option<CefStringUtf16> {
+    fn get_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_original_url(&self) -> Option<CefStringUtf16> {
+    fn get_original_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_original_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_suggested_file_name(&self) -> Option<CefStringUtf16> {
+    fn get_suggested_file_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_suggested_file_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_content_disposition(&self) -> Option<CefStringUtf16> {
+    fn get_content_disposition(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_content_disposition
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_mime_type(&self) -> Option<CefStringUtf16> {
+    fn get_mime_type(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_mime_type
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -19050,11 +18785,11 @@ impl Default for DownloadItem {
 #[derive(Clone)]
 pub struct BeforeDownloadCallback(RefGuard<_cef_before_download_callback_t>);
 pub trait ImplBeforeDownloadCallback: Clone + Sized + Rc {
-    fn cont(&self, download_path: Option<&CefStringUtf16>, show_dialog: ::std::os::raw::c_int);
+    fn cont(&self, download_path: Option<&CefString>, show_dialog: ::std::os::raw::c_int);
     fn get_raw(&self) -> *mut _cef_before_download_callback_t;
 }
 impl ImplBeforeDownloadCallback for BeforeDownloadCallback {
-    fn cont(&self, download_path: Option<&CefStringUtf16>, show_dialog: ::std::os::raw::c_int) {
+    fn cont(&self, download_path: Option<&CefString>, show_dialog: ::std::os::raw::c_int) {
         unsafe {
             self.0
                 .cont
@@ -19225,8 +18960,8 @@ pub trait ImplDownloadHandler: Clone + Sized + Rc {
     fn can_download(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        url: Option<&CefStringUtf16>,
-        request_method: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
+        request_method: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -19234,7 +18969,7 @@ pub trait ImplDownloadHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         download_item: Option<&mut impl ImplDownloadItem>,
-        suggested_name: Option<&CefStringUtf16>,
+        suggested_name: Option<&CefString>,
         callback: Option<&mut impl ImplBeforeDownloadCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -19261,8 +18996,8 @@ mod impl_cef_download_handler_t {
     extern "C" fn can_download<I: ImplDownloadHandler>(
         self_: *mut _cef_download_handler_t,
         browser: *mut _cef_browser_t,
-        url: *const _cef_string_utf16_t,
-        request_method: *const _cef_string_utf16_t,
+        url: *const cef_string_t,
+        request_method: *const cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_browser, arg_url, arg_request_method) =
             (self_, browser, url, request_method);
@@ -19294,7 +19029,7 @@ mod impl_cef_download_handler_t {
         self_: *mut _cef_download_handler_t,
         browser: *mut _cef_browser_t,
         download_item: *mut _cef_download_item_t,
-        suggested_name: *const _cef_string_utf16_t,
+        suggested_name: *const cef_string_t,
         callback: *mut _cef_before_download_callback_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_browser, arg_download_item, arg_suggested_name, arg_callback) =
@@ -19354,8 +19089,8 @@ impl ImplDownloadHandler for DownloadHandler {
     fn can_download(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        url: Option<&CefStringUtf16>,
-        request_method: Option<&CefStringUtf16>,
+        url: Option<&CefString>,
+        request_method: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -19383,7 +19118,7 @@ impl ImplDownloadHandler for DownloadHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         download_item: Option<&mut impl ImplDownloadItem>,
-        suggested_name: Option<&CefStringUtf16>,
+        suggested_name: Option<&CefString>,
         callback: Option<&mut impl ImplBeforeDownloadCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -20472,11 +20207,11 @@ impl Default for FrameHandler {
 #[derive(Clone)]
 pub struct JsdialogCallback(RefGuard<_cef_jsdialog_callback_t>);
 pub trait ImplJsdialogCallback: Clone + Sized + Rc {
-    fn cont(&self, success: ::std::os::raw::c_int, user_input: Option<&CefStringUtf16>);
+    fn cont(&self, success: ::std::os::raw::c_int, user_input: Option<&CefString>);
     fn get_raw(&self) -> *mut _cef_jsdialog_callback_t;
 }
 impl ImplJsdialogCallback for JsdialogCallback {
-    fn cont(&self, success: ::std::os::raw::c_int, user_input: Option<&CefStringUtf16>) {
+    fn cont(&self, success: ::std::os::raw::c_int, user_input: Option<&CefString>) {
         unsafe {
             self.0
                 .cont
@@ -20559,10 +20294,10 @@ pub trait ImplJsdialogHandler: Clone + Sized + Rc {
     fn on_jsdialog(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        origin_url: Option<&CefStringUtf16>,
+        origin_url: Option<&CefString>,
         dialog_type: JsdialogType,
-        message_text: Option<&CefStringUtf16>,
-        default_prompt_text: Option<&CefStringUtf16>,
+        message_text: Option<&CefString>,
+        default_prompt_text: Option<&CefString>,
         callback: Option<&mut impl ImplJsdialogCallback>,
         suppress_message: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
@@ -20571,7 +20306,7 @@ pub trait ImplJsdialogHandler: Clone + Sized + Rc {
     fn on_before_unload_dialog(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        message_text: Option<&CefStringUtf16>,
+        message_text: Option<&CefString>,
         is_reload: ::std::os::raw::c_int,
         callback: Option<&mut impl ImplJsdialogCallback>,
     ) -> ::std::os::raw::c_int {
@@ -20595,10 +20330,10 @@ mod impl_cef_jsdialog_handler_t {
     extern "C" fn on_jsdialog<I: ImplJsdialogHandler>(
         self_: *mut _cef_jsdialog_handler_t,
         browser: *mut _cef_browser_t,
-        origin_url: *const _cef_string_utf16_t,
+        origin_url: *const cef_string_t,
         dialog_type: cef_jsdialog_type_t,
-        message_text: *const _cef_string_utf16_t,
-        default_prompt_text: *const _cef_string_utf16_t,
+        message_text: *const cef_string_t,
+        default_prompt_text: *const cef_string_t,
         callback: *mut _cef_jsdialog_callback_t,
         suppress_message: *mut ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
@@ -20670,7 +20405,7 @@ mod impl_cef_jsdialog_handler_t {
     extern "C" fn on_before_unload_dialog<I: ImplJsdialogHandler>(
         self_: *mut _cef_jsdialog_handler_t,
         browser: *mut _cef_browser_t,
-        message_text: *const _cef_string_utf16_t,
+        message_text: *const cef_string_t,
         is_reload: ::std::os::raw::c_int,
         callback: *mut _cef_jsdialog_callback_t,
     ) -> ::std::os::raw::c_int {
@@ -20726,10 +20461,10 @@ impl ImplJsdialogHandler for JsdialogHandler {
     fn on_jsdialog(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        origin_url: Option<&CefStringUtf16>,
+        origin_url: Option<&CefString>,
         dialog_type: JsdialogType,
-        message_text: Option<&CefStringUtf16>,
-        default_prompt_text: Option<&CefStringUtf16>,
+        message_text: Option<&CefString>,
+        default_prompt_text: Option<&CefString>,
         callback: Option<&mut impl ImplJsdialogCallback>,
         suppress_message: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
@@ -20798,7 +20533,7 @@ impl ImplJsdialogHandler for JsdialogHandler {
     fn on_before_unload_dialog(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        message_text: Option<&CefStringUtf16>,
+        message_text: Option<&CefString>,
         is_reload: ::std::os::raw::c_int,
         callback: Option<&mut impl ImplJsdialogCallback>,
     ) -> ::std::os::raw::c_int {
@@ -21170,8 +20905,8 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
         popup_id: ::std::os::raw::c_int,
-        target_url: Option<&CefStringUtf16>,
-        target_frame_name: Option<&CefStringUtf16>,
+        target_url: Option<&CefString>,
+        target_frame_name: Option<&CefString>,
         target_disposition: WindowOpenDisposition,
         user_gesture: ::std::os::raw::c_int,
         popup_features: Option<&PopupFeatures>,
@@ -21224,8 +20959,8 @@ mod impl_cef_life_span_handler_t {
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
         popup_id: ::std::os::raw::c_int,
-        target_url: *const _cef_string_utf16_t,
-        target_frame_name: *const _cef_string_utf16_t,
+        target_url: *const cef_string_t,
+        target_frame_name: *const cef_string_t,
         target_disposition: cef_window_open_disposition_t,
         user_gesture: ::std::os::raw::c_int,
         popup_features: *const _cef_popup_features_t,
@@ -21482,8 +21217,8 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
         popup_id: ::std::os::raw::c_int,
-        target_url: Option<&CefStringUtf16>,
-        target_frame_name: Option<&CefStringUtf16>,
+        target_url: Option<&CefString>,
+        target_frame_name: Option<&CefString>,
         target_disposition: WindowOpenDisposition,
         user_gesture: ::std::os::raw::c_int,
         popup_features: Option<&PopupFeatures>,
@@ -21852,8 +21587,8 @@ pub trait ImplLoadHandler: Clone + Sized + Rc {
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
         error_code: Errorcode,
-        error_text: Option<&CefStringUtf16>,
-        failed_url: Option<&CefStringUtf16>,
+        error_text: Option<&CefString>,
+        failed_url: Option<&CefString>,
     ) {
     }
     fn init_methods(object: &mut _cef_load_handler_t) {
@@ -21944,8 +21679,8 @@ mod impl_cef_load_handler_t {
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
         error_code: cef_errorcode_t,
-        error_text: *const _cef_string_utf16_t,
-        failed_url: *const _cef_string_utf16_t,
+        error_text: *const cef_string_t,
+        failed_url: *const cef_string_t,
     ) {
         let (arg_self_, arg_browser, arg_frame, arg_error_code, arg_error_text, arg_failed_url) =
             (self_, browser, frame, error_code, error_text, failed_url);
@@ -22084,8 +21819,8 @@ impl ImplLoadHandler for LoadHandler {
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
         error_code: Errorcode,
-        error_text: Option<&CefStringUtf16>,
-        failed_url: Option<&CefStringUtf16>,
+        error_text: Option<&CefString>,
+        failed_url: Option<&CefString>,
     ) {
         unsafe {
             self.0
@@ -22334,7 +22069,7 @@ pub trait ImplPermissionHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        requesting_origin: Option<&CefStringUtf16>,
+        requesting_origin: Option<&CefString>,
         requested_permissions: u32,
         callback: Option<&mut impl ImplMediaAccessCallback>,
     ) -> ::std::os::raw::c_int {
@@ -22344,7 +22079,7 @@ pub trait ImplPermissionHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         prompt_id: u64,
-        requesting_origin: Option<&CefStringUtf16>,
+        requesting_origin: Option<&CefString>,
         requested_permissions: u32,
         callback: Option<&mut impl ImplPermissionPromptCallback>,
     ) -> ::std::os::raw::c_int {
@@ -22373,7 +22108,7 @@ mod impl_cef_permission_handler_t {
         self_: *mut _cef_permission_handler_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        requesting_origin: *const _cef_string_utf16_t,
+        requesting_origin: *const cef_string_t,
         requested_permissions: u32,
         callback: *mut _cef_media_access_callback_t,
     ) -> ::std::os::raw::c_int {
@@ -22423,7 +22158,7 @@ mod impl_cef_permission_handler_t {
         self_: *mut _cef_permission_handler_t,
         browser: *mut _cef_browser_t,
         prompt_id: u64,
-        requesting_origin: *const _cef_string_utf16_t,
+        requesting_origin: *const cef_string_t,
         requested_permissions: u32,
         callback: *mut _cef_permission_prompt_callback_t,
     ) -> ::std::os::raw::c_int {
@@ -22494,7 +22229,7 @@ impl ImplPermissionHandler for PermissionHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        requesting_origin: Option<&CefStringUtf16>,
+        requesting_origin: Option<&CefString>,
         requested_permissions: u32,
         callback: Option<&mut impl ImplMediaAccessCallback>,
     ) -> ::std::os::raw::c_int {
@@ -22555,7 +22290,7 @@ impl ImplPermissionHandler for PermissionHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         prompt_id: u64,
-        requesting_origin: Option<&CefStringUtf16>,
+        requesting_origin: Option<&CefString>,
         requested_permissions: u32,
         callback: Option<&mut impl ImplPermissionPromptCallback>,
     ) -> ::std::os::raw::c_int {
@@ -22689,8 +22424,8 @@ pub trait ImplPrintSettings: Clone + Sized + Rc {
         printable_area_device_units: Option<&Rect>,
         landscape_needs_flip: ::std::os::raw::c_int,
     );
-    fn set_device_name(&self, name: Option<&CefStringUtf16>);
-    fn get_device_name(&self) -> Option<CefStringUtf16>;
+    fn set_device_name(&self, name: Option<&CefString>);
+    fn get_device_name(&self) -> CefStringUserfree;
     fn set_dpi(&self, dpi: ::std::os::raw::c_int);
     fn get_dpi(&self) -> ::std::os::raw::c_int;
     fn set_page_ranges(&self, ranges_count: usize, ranges: Option<&Range>);
@@ -22805,7 +22540,7 @@ impl ImplPrintSettings for PrintSettings {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_device_name(&self, name: Option<&CefStringUtf16>) {
+    fn set_device_name(&self, name: Option<&CefString>) {
         unsafe {
             self.0
                 .set_device_name
@@ -22819,18 +22554,14 @@ impl ImplPrintSettings for PrintSettings {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_device_name(&self) -> Option<CefStringUtf16> {
+    fn get_device_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_device_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -23269,8 +23000,8 @@ pub trait ImplPrintHandler: Clone + Sized + Rc {
     fn on_print_job(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        document_name: Option<&CefStringUtf16>,
-        pdf_file_path: Option<&CefStringUtf16>,
+        document_name: Option<&CefString>,
+        pdf_file_path: Option<&CefString>,
         callback: Option<&mut impl ImplPrintJobCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -23359,8 +23090,8 @@ mod impl_cef_print_handler_t {
     extern "C" fn on_print_job<I: ImplPrintHandler>(
         self_: *mut _cef_print_handler_t,
         browser: *mut _cef_browser_t,
-        document_name: *const _cef_string_utf16_t,
-        pdf_file_path: *const _cef_string_utf16_t,
+        document_name: *const cef_string_t,
+        pdf_file_path: *const cef_string_t,
         callback: *mut _cef_print_job_callback_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_browser, arg_document_name, arg_pdf_file_path, arg_callback) =
@@ -23511,8 +23242,8 @@ impl ImplPrintHandler for PrintHandler {
     fn on_print_job(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        document_name: Option<&CefStringUtf16>,
-        pdf_file_path: Option<&CefStringUtf16>,
+        document_name: Option<&CefString>,
+        pdf_file_path: Option<&CefString>,
         callback: Option<&mut impl ImplPrintJobCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -23891,7 +23622,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     fn on_text_selection_changed(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        selected_text: Option<&CefStringUtf16>,
+        selected_text: Option<&CefString>,
         selected_range: Option<&Range>,
     ) {
     }
@@ -24316,7 +24047,7 @@ mod impl_cef_render_handler_t {
     extern "C" fn on_text_selection_changed<I: ImplRenderHandler>(
         self_: *mut _cef_render_handler_t,
         browser: *mut _cef_browser_t,
-        selected_text: *const _cef_string_utf16_t,
+        selected_text: *const cef_string_t,
         selected_range: *const _cef_range_t,
     ) {
         let (arg_self_, arg_browser, arg_selected_text, arg_selected_range) =
@@ -24855,7 +24586,7 @@ impl ImplRenderHandler for RenderHandler {
     fn on_text_selection_changed(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        selected_text: Option<&CefStringUtf16>,
+        selected_text: Option<&CefString>,
         selected_range: Option<&Range>,
     ) {
         unsafe {
@@ -24960,12 +24691,12 @@ impl Default for RenderHandler {
 #[derive(Clone)]
 pub struct AuthCallback(RefGuard<_cef_auth_callback_t>);
 pub trait ImplAuthCallback: Clone + Sized + Rc {
-    fn cont(&self, username: Option<&CefStringUtf16>, password: Option<&CefStringUtf16>);
+    fn cont(&self, username: Option<&CefString>, password: Option<&CefString>);
     fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_auth_callback_t;
 }
 impl ImplAuthCallback for AuthCallback {
-    fn cont(&self, username: Option<&CefStringUtf16>, password: Option<&CefStringUtf16>) {
+    fn cont(&self, username: Option<&CefString>, password: Option<&CefString>) {
         unsafe {
             self.0
                 .cont
@@ -25047,23 +24778,23 @@ pub trait ImplResponse: Clone + Sized + Rc {
     fn set_error(&self, error: Errorcode);
     fn get_status(&self) -> ::std::os::raw::c_int;
     fn set_status(&self, status: ::std::os::raw::c_int);
-    fn get_status_text(&self) -> Option<CefStringUtf16>;
-    fn set_status_text(&self, status_text: Option<&CefStringUtf16>);
-    fn get_mime_type(&self) -> Option<CefStringUtf16>;
-    fn set_mime_type(&self, mime_type: Option<&CefStringUtf16>);
-    fn get_charset(&self) -> Option<CefStringUtf16>;
-    fn set_charset(&self, charset: Option<&CefStringUtf16>);
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn get_status_text(&self) -> CefStringUserfree;
+    fn set_status_text(&self, status_text: Option<&CefString>);
+    fn get_mime_type(&self) -> CefStringUserfree;
+    fn set_mime_type(&self, mime_type: Option<&CefString>);
+    fn get_charset(&self) -> CefStringUserfree;
+    fn set_charset(&self, charset: Option<&CefString>);
+    fn get_header_by_name(&self, name: Option<&CefString>) -> CefStringUserfree;
     fn set_header_by_name(
         &self,
-        name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
+        value: Option<&CefString>,
         overwrite: ::std::os::raw::c_int,
     );
     fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>);
     fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>);
-    fn get_url(&self) -> Option<CefStringUtf16>;
-    fn set_url(&self, url: Option<&CefStringUtf16>);
+    fn get_url(&self) -> CefStringUserfree;
+    fn set_url(&self, url: Option<&CefString>);
     fn get_raw(&self) -> *mut _cef_response_t;
 }
 impl ImplResponse for Response {
@@ -25131,23 +24862,19 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_status_text(&self) -> Option<CefStringUtf16> {
+    fn get_status_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_status_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_status_text(&self, status_text: Option<&CefStringUtf16>) {
+    fn set_status_text(&self, status_text: Option<&CefString>) {
         unsafe {
             self.0
                 .set_status_text
@@ -25163,23 +24890,19 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_mime_type(&self) -> Option<CefStringUtf16> {
+    fn get_mime_type(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_mime_type
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_mime_type(&self, mime_type: Option<&CefStringUtf16>) {
+    fn set_mime_type(&self, mime_type: Option<&CefString>) {
         unsafe {
             self.0
                 .set_mime_type
@@ -25195,23 +24918,19 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_charset(&self) -> Option<CefStringUtf16> {
+    fn get_charset(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_charset
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_charset(&self, charset: Option<&CefStringUtf16>) {
+    fn set_charset(&self, charset: Option<&CefString>) {
         unsafe {
             self.0
                 .set_charset
@@ -25227,7 +24946,7 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
+    fn get_header_by_name(&self, name: Option<&CefString>) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_header_by_name
@@ -25236,19 +24955,15 @@ impl ImplResponse for Response {
                     let arg_self_ = self.as_raw();
                     let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
                     let result = f(arg_self_, arg_name);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
     fn set_header_by_name(
         &self,
-        name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
+        value: Option<&CefString>,
         overwrite: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -25300,23 +25015,19 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_url(&self) -> Option<CefStringUtf16> {
+    fn get_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_url(&self, url: Option<&CefStringUtf16>) {
+    fn set_url(&self, url: Option<&CefString>) {
         unsafe {
             self.0
                 .set_url
@@ -25540,7 +25251,7 @@ pub trait ImplResourceHandler: Clone + Sized + Rc {
         &self,
         response: Option<&mut impl ImplResponse>,
         response_length: Option<&mut i64>,
-        redirect_url: Option<&mut CefStringUtf16>,
+        redirect_url: Option<&mut CefString>,
     ) {
     }
     fn skip(
@@ -25638,7 +25349,7 @@ mod impl_cef_resource_handler_t {
         self_: *mut _cef_resource_handler_t,
         response: *mut _cef_response_t,
         response_length: *mut i64,
-        redirect_url: *mut _cef_string_utf16_t,
+        redirect_url: *mut cef_string_t,
     ) {
         let (arg_self_, arg_response, arg_response_length, arg_redirect_url) =
             (self_, response, response_length, redirect_url);
@@ -25826,7 +25537,7 @@ impl ImplResourceHandler for ResourceHandler {
         &self,
         response: Option<&mut impl ImplResponse>,
         response_length: Option<&mut i64>,
-        redirect_url: Option<&mut CefStringUtf16>,
+        redirect_url: Option<&mut CefString>,
     ) {
         unsafe {
             self.0
@@ -26310,7 +26021,7 @@ pub trait ImplResourceRequestHandler: Clone + Sized + Rc {
         frame: Option<&mut impl ImplFrame>,
         request: Option<&mut impl ImplRequest>,
         response: Option<&mut impl ImplResponse>,
-        new_url: Option<&mut CefStringUtf16>,
+        new_url: Option<&mut CefString>,
     ) {
     }
     fn on_resource_response(
@@ -26459,7 +26170,7 @@ mod impl_cef_resource_request_handler_t {
         frame: *mut _cef_frame_t,
         request: *mut _cef_request_t,
         response: *mut _cef_response_t,
-        new_url: *mut _cef_string_utf16_t,
+        new_url: *mut cef_string_t,
     ) {
         let (arg_self_, arg_browser, arg_frame, arg_request, arg_response, arg_new_url) =
             (self_, browser, frame, request, response, new_url);
@@ -26773,7 +26484,7 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
         frame: Option<&mut impl ImplFrame>,
         request: Option<&mut impl ImplRequest>,
         response: Option<&mut impl ImplResponse>,
-        new_url: Option<&mut CefStringUtf16>,
+        new_url: Option<&mut CefString>,
     ) {
         unsafe {
             self.0
@@ -27604,7 +27315,7 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        target_url: Option<&CefStringUtf16>,
+        target_url: Option<&CefString>,
         target_disposition: WindowOpenDisposition,
         user_gesture: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
@@ -27617,7 +27328,7 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
         request: Option<&mut impl ImplRequest>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
-        request_initiator: Option<&CefStringUtf16>,
+        request_initiator: Option<&CefString>,
         disable_default_handling: Option<&mut ::std::os::raw::c_int>,
     ) -> Option<ResourceRequestHandler> {
         Default::default()
@@ -27625,12 +27336,12 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
     fn get_auth_credentials(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        origin_url: Option<&CefStringUtf16>,
+        origin_url: Option<&CefString>,
         is_proxy: ::std::os::raw::c_int,
-        host: Option<&CefStringUtf16>,
+        host: Option<&CefString>,
         port: ::std::os::raw::c_int,
-        realm: Option<&CefStringUtf16>,
-        scheme: Option<&CefStringUtf16>,
+        realm: Option<&CefString>,
+        scheme: Option<&CefString>,
         callback: Option<&mut impl ImplAuthCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -27639,7 +27350,7 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         cert_error: Errorcode,
-        request_url: Option<&CefStringUtf16>,
+        request_url: Option<&CefString>,
         ssl_info: Option<&mut impl ImplSslinfo>,
         callback: Option<&mut impl ImplCallback>,
     ) -> ::std::os::raw::c_int {
@@ -27649,7 +27360,7 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         is_proxy: ::std::os::raw::c_int,
-        host: Option<&CefStringUtf16>,
+        host: Option<&CefString>,
         port: ::std::os::raw::c_int,
         certificates: Option<&[Option<impl ImplX509Certificate>]>,
         callback: Option<&mut impl ImplSelectClientCertificateCallback>,
@@ -27670,7 +27381,7 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
         browser: Option<&mut impl ImplBrowser>,
         status: TerminationStatus,
         error_code: ::std::os::raw::c_int,
-        error_string: Option<&CefStringUtf16>,
+        error_string: Option<&CefString>,
     ) {
     }
     fn on_document_available_in_main_frame(&self, browser: Option<&mut impl ImplBrowser>) {}
@@ -27730,7 +27441,7 @@ mod impl_cef_request_handler_t {
         self_: *mut _cef_request_handler_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        target_url: *const _cef_string_utf16_t,
+        target_url: *const cef_string_t,
         target_disposition: cef_window_open_disposition_t,
         user_gesture: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
@@ -27781,7 +27492,7 @@ mod impl_cef_request_handler_t {
         request: *mut _cef_request_t,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
-        request_initiator: *const _cef_string_utf16_t,
+        request_initiator: *const cef_string_t,
         disable_default_handling: *mut ::std::os::raw::c_int,
     ) -> *mut _cef_resource_request_handler_t {
         let (
@@ -27848,12 +27559,12 @@ mod impl_cef_request_handler_t {
     extern "C" fn get_auth_credentials<I: ImplRequestHandler>(
         self_: *mut _cef_request_handler_t,
         browser: *mut _cef_browser_t,
-        origin_url: *const _cef_string_utf16_t,
+        origin_url: *const cef_string_t,
         is_proxy: ::std::os::raw::c_int,
-        host: *const _cef_string_utf16_t,
+        host: *const cef_string_t,
         port: ::std::os::raw::c_int,
-        realm: *const _cef_string_utf16_t,
-        scheme: *const _cef_string_utf16_t,
+        realm: *const cef_string_t,
+        scheme: *const cef_string_t,
         callback: *mut _cef_auth_callback_t,
     ) -> ::std::os::raw::c_int {
         let (
@@ -27919,7 +27630,7 @@ mod impl_cef_request_handler_t {
         self_: *mut _cef_request_handler_t,
         browser: *mut _cef_browser_t,
         cert_error: cef_errorcode_t,
-        request_url: *const _cef_string_utf16_t,
+        request_url: *const cef_string_t,
         ssl_info: *mut _cef_sslinfo_t,
         callback: *mut _cef_callback_t,
     ) -> ::std::os::raw::c_int {
@@ -27956,7 +27667,7 @@ mod impl_cef_request_handler_t {
         self_: *mut _cef_request_handler_t,
         browser: *mut _cef_browser_t,
         is_proxy: ::std::os::raw::c_int,
-        host: *const _cef_string_utf16_t,
+        host: *const cef_string_t,
         port: ::std::os::raw::c_int,
         certificates_count: usize,
         certificates: *const *mut _cef_x509_certificate_t,
@@ -28070,7 +27781,7 @@ mod impl_cef_request_handler_t {
         browser: *mut _cef_browser_t,
         status: cef_termination_status_t,
         error_code: ::std::os::raw::c_int,
-        error_string: *const _cef_string_utf16_t,
+        error_string: *const cef_string_t,
     ) {
         let (arg_self_, arg_browser, arg_status, arg_error_code, arg_error_string) =
             (self_, browser, status, error_code, error_string);
@@ -28162,7 +27873,7 @@ impl ImplRequestHandler for RequestHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        target_url: Option<&CefStringUtf16>,
+        target_url: Option<&CefString>,
         target_disposition: WindowOpenDisposition,
         user_gesture: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
@@ -28215,7 +27926,7 @@ impl ImplRequestHandler for RequestHandler {
         request: Option<&mut impl ImplRequest>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
-        request_initiator: Option<&CefStringUtf16>,
+        request_initiator: Option<&CefString>,
         disable_default_handling: Option<&mut ::std::os::raw::c_int>,
     ) -> Option<ResourceRequestHandler> {
         unsafe {
@@ -28288,12 +27999,12 @@ impl ImplRequestHandler for RequestHandler {
     fn get_auth_credentials(
         &self,
         browser: Option<&mut impl ImplBrowser>,
-        origin_url: Option<&CefStringUtf16>,
+        origin_url: Option<&CefString>,
         is_proxy: ::std::os::raw::c_int,
-        host: Option<&CefStringUtf16>,
+        host: Option<&CefString>,
         port: ::std::os::raw::c_int,
-        realm: Option<&CefStringUtf16>,
-        scheme: Option<&CefStringUtf16>,
+        realm: Option<&CefString>,
+        scheme: Option<&CefString>,
         callback: Option<&mut impl ImplAuthCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -28357,7 +28068,7 @@ impl ImplRequestHandler for RequestHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         cert_error: Errorcode,
-        request_url: Option<&CefStringUtf16>,
+        request_url: Option<&CefString>,
         ssl_info: Option<&mut impl ImplSslinfo>,
         callback: Option<&mut impl ImplCallback>,
     ) -> ::std::os::raw::c_int {
@@ -28407,7 +28118,7 @@ impl ImplRequestHandler for RequestHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         is_proxy: ::std::os::raw::c_int,
-        host: Option<&CefStringUtf16>,
+        host: Option<&CefString>,
         port: ::std::os::raw::c_int,
         certificates: Option<&[Option<impl ImplX509Certificate>]>,
         callback: Option<&mut impl ImplSelectClientCertificateCallback>,
@@ -28551,7 +28262,7 @@ impl ImplRequestHandler for RequestHandler {
         browser: Option<&mut impl ImplBrowser>,
         status: TerminationStatus,
         error_code: ::std::os::raw::c_int,
-        error_string: Option<&CefStringUtf16>,
+        error_string: Option<&CefString>,
     ) {
         unsafe {
             self.0
@@ -29354,26 +29065,22 @@ pub trait ImplCommandLine: Clone + Sized + Rc {
         argc: ::std::os::raw::c_int,
         argv: *const *const ::std::os::raw::c_char,
     );
-    fn init_from_string(&self, command_line: Option<&CefStringUtf16>);
+    fn init_from_string(&self, command_line: Option<&CefString>);
     fn reset(&self);
     fn get_argv(&self, argv: Option<&mut CefStringList>);
-    fn get_command_line_string(&self) -> Option<CefStringUtf16>;
-    fn get_program(&self) -> Option<CefStringUtf16>;
-    fn set_program(&self, program: Option<&CefStringUtf16>);
+    fn get_command_line_string(&self) -> CefStringUserfree;
+    fn get_program(&self) -> CefStringUserfree;
+    fn set_program(&self, program: Option<&CefString>);
     fn has_switches(&self) -> ::std::os::raw::c_int;
-    fn has_switch(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16>;
+    fn has_switch(&self, name: Option<&CefString>) -> ::std::os::raw::c_int;
+    fn get_switch_value(&self, name: Option<&CefString>) -> CefStringUserfree;
     fn get_switches(&self, switches: Option<&mut CefStringMap>);
-    fn append_switch(&self, name: Option<&CefStringUtf16>);
-    fn append_switch_with_value(
-        &self,
-        name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
-    );
+    fn append_switch(&self, name: Option<&CefString>);
+    fn append_switch_with_value(&self, name: Option<&CefString>, value: Option<&CefString>);
     fn has_arguments(&self) -> ::std::os::raw::c_int;
     fn get_arguments(&self, arguments: Option<&mut CefStringList>);
-    fn append_argument(&self, argument: Option<&CefStringUtf16>);
-    fn prepend_wrapper(&self, wrapper: Option<&CefStringUtf16>);
+    fn append_argument(&self, argument: Option<&CefString>);
+    fn prepend_wrapper(&self, wrapper: Option<&CefString>);
     fn get_raw(&self) -> *mut _cef_command_line_t;
 }
 impl ImplCommandLine for CommandLine {
@@ -29436,7 +29143,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn init_from_string(&self, command_line: Option<&CefStringUtf16>) {
+    fn init_from_string(&self, command_line: Option<&CefString>) {
         unsafe {
             self.0
                 .init_from_string
@@ -29480,39 +29187,31 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_command_line_string(&self) -> Option<CefStringUtf16> {
+    fn get_command_line_string(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_command_line_string
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_program(&self) -> Option<CefStringUtf16> {
+    fn get_program(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_program
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_program(&self, program: Option<&CefStringUtf16>) {
+    fn set_program(&self, program: Option<&CefString>) {
         unsafe {
             self.0
                 .set_program
@@ -29540,7 +29239,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_default()
         }
     }
-    fn has_switch(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn has_switch(&self, name: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .has_switch
@@ -29554,7 +29253,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_default()
         }
     }
-    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> Option<CefStringUtf16> {
+    fn get_switch_value(&self, name: Option<&CefString>) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_switch_value
@@ -29563,11 +29262,7 @@ impl ImplCommandLine for CommandLine {
                     let arg_self_ = self.as_raw();
                     let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
                     let result = f(arg_self_, arg_name);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -29588,7 +29283,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn append_switch(&self, name: Option<&CefStringUtf16>) {
+    fn append_switch(&self, name: Option<&CefString>) {
         unsafe {
             self.0
                 .append_switch
@@ -29602,11 +29297,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn append_switch_with_value(
-        &self,
-        name: Option<&CefStringUtf16>,
-        value: Option<&CefStringUtf16>,
-    ) {
+    fn append_switch_with_value(&self, name: Option<&CefString>, value: Option<&CefString>) {
         unsafe {
             self.0
                 .append_switch_with_value
@@ -29651,7 +29342,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn append_argument(&self, argument: Option<&CefStringUtf16>) {
+    fn append_argument(&self, argument: Option<&CefString>) {
         unsafe {
             self.0
                 .append_argument
@@ -29667,7 +29358,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn prepend_wrapper(&self, wrapper: Option<&CefStringUtf16>) {
+    fn prepend_wrapper(&self, wrapper: Option<&CefString>) {
         unsafe {
             self.0
                 .prepend_wrapper
@@ -29758,7 +29449,7 @@ pub trait ImplRequestContextHandler: Clone + Sized + Rc {
         request: Option<&mut impl ImplRequest>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
-        request_initiator: Option<&CefStringUtf16>,
+        request_initiator: Option<&CefString>,
         disable_default_handling: Option<&mut ::std::os::raw::c_int>,
     ) -> Option<ResourceRequestHandler> {
         Default::default()
@@ -29795,7 +29486,7 @@ mod impl_cef_request_context_handler_t {
         request: *mut _cef_request_t,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
-        request_initiator: *const _cef_string_utf16_t,
+        request_initiator: *const cef_string_t,
         disable_default_handling: *mut ::std::os::raw::c_int,
     ) -> *mut _cef_resource_request_handler_t {
         let (
@@ -29890,7 +29581,7 @@ impl ImplRequestContextHandler for RequestContextHandler {
         request: Option<&mut impl ImplRequest>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
-        request_initiator: Option<&CefStringUtf16>,
+        request_initiator: Option<&CefString>,
         disable_default_handling: Option<&mut ::std::os::raw::c_int>,
     ) -> Option<ResourceRequestHandler> {
         unsafe {
@@ -30034,7 +29725,7 @@ pub trait ImplBrowserProcessHandler: Clone + Sized + Rc {
     fn on_already_running_app_relaunch(
         &self,
         command_line: Option<&mut impl ImplCommandLine>,
-        current_directory: Option<&CefStringUtf16>,
+        current_directory: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -30105,7 +29796,7 @@ mod impl_cef_browser_process_handler_t {
     extern "C" fn on_already_running_app_relaunch<I: ImplBrowserProcessHandler>(
         self_: *mut _cef_browser_process_handler_t,
         command_line: *mut _cef_command_line_t,
-        current_directory: *const _cef_string_utf16_t,
+        current_directory: *const cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_command_line, arg_current_directory) =
             (self_, command_line, current_directory);
@@ -30216,7 +29907,7 @@ impl ImplBrowserProcessHandler for BrowserProcessHandler {
     fn on_already_running_app_relaunch(
         &self,
         command_line: Option<&mut impl ImplCommandLine>,
-        current_directory: Option<&CefStringUtf16>,
+        current_directory: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -30581,8 +30272,8 @@ pub trait ImplV8Context: Clone + Sized + Rc {
     fn is_same(&self, that: Option<&mut impl ImplV8Context>) -> ::std::os::raw::c_int;
     fn eval(
         &self,
-        code: Option<&CefStringUtf16>,
-        script_url: Option<&CefStringUtf16>,
+        code: Option<&CefString>,
+        script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
         retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut impl ImplV8Exception>,
@@ -30711,8 +30402,8 @@ impl ImplV8Context for V8Context {
     }
     fn eval(
         &self,
-        code: Option<&CefStringUtf16>,
-        script_url: Option<&CefStringUtf16>,
+        code: Option<&CefString>,
+        script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
         retval: Option<&mut impl ImplV8Value>,
         exception: Option<&mut impl ImplV8Exception>,
@@ -30823,11 +30514,11 @@ pub trait WrapV8Handler: ImplV8Handler {
 pub trait ImplV8Handler: Clone + Sized + Rc {
     fn execute(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         arguments: Option<&[Option<impl ImplV8Value>]>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -30843,12 +30534,12 @@ mod impl_cef_v8_handler_t {
     }
     extern "C" fn execute<I: ImplV8Handler>(
         self_: *mut _cef_v8_handler_t,
-        name: *const _cef_string_utf16_t,
+        name: *const cef_string_t,
         object: *mut _cef_v8_value_t,
         arguments_count: usize,
         arguments: *const *mut _cef_v8_value_t,
         retval: *mut *mut _cef_v8_value_t,
-        exception: *mut _cef_string_utf16_t,
+        exception: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (
             arg_self_,
@@ -30919,11 +30610,11 @@ mod impl_cef_v8_handler_t {
 impl ImplV8Handler for V8Handler {
     fn execute(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         arguments: Option<&[Option<impl ImplV8Value>]>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -31053,19 +30744,19 @@ pub trait WrapV8Accessor: ImplV8Accessor {
 pub trait ImplV8Accessor: Clone + Sized + Rc {
     fn get(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     fn set(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         value: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -31082,10 +30773,10 @@ mod impl_cef_v8_accessor_t {
     }
     extern "C" fn get<I: ImplV8Accessor>(
         self_: *mut _cef_v8_accessor_t,
-        name: *const _cef_string_utf16_t,
+        name: *const cef_string_t,
         object: *mut _cef_v8_value_t,
         retval: *mut *mut _cef_v8_value_t,
-        exception: *mut _cef_string_utf16_t,
+        exception: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_retval, arg_exception) =
             (self_, name, object, retval, exception);
@@ -31124,10 +30815,10 @@ mod impl_cef_v8_accessor_t {
     }
     extern "C" fn set<I: ImplV8Accessor>(
         self_: *mut _cef_v8_accessor_t,
-        name: *const _cef_string_utf16_t,
+        name: *const cef_string_t,
         object: *mut _cef_v8_value_t,
         value: *mut _cef_v8_value_t,
-        exception: *mut _cef_string_utf16_t,
+        exception: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_value, arg_exception) =
             (self_, name, object, value, exception);
@@ -31163,10 +30854,10 @@ mod impl_cef_v8_accessor_t {
 impl ImplV8Accessor for V8Accessor {
     fn get(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -31201,10 +30892,10 @@ impl ImplV8Accessor for V8Accessor {
     }
     fn set(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         value: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -31300,10 +30991,10 @@ pub trait WrapV8Interceptor: ImplV8Interceptor {
 pub trait ImplV8Interceptor: Clone + Sized + Rc {
     fn get_byname(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -31312,16 +31003,16 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
         index: ::std::os::raw::c_int,
         object: Option<&mut impl ImplV8Value>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     fn set_byname(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         value: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -31330,7 +31021,7 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
         index: ::std::os::raw::c_int,
         object: Option<&mut impl ImplV8Value>,
         value: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -31349,10 +31040,10 @@ mod impl_cef_v8_interceptor_t {
     }
     extern "C" fn get_byname<I: ImplV8Interceptor>(
         self_: *mut _cef_v8_interceptor_t,
-        name: *const _cef_string_utf16_t,
+        name: *const cef_string_t,
         object: *mut _cef_v8_value_t,
         retval: *mut *mut _cef_v8_value_t,
-        exception: *mut _cef_string_utf16_t,
+        exception: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_retval, arg_exception) =
             (self_, name, object, retval, exception);
@@ -31394,7 +31085,7 @@ mod impl_cef_v8_interceptor_t {
         index: ::std::os::raw::c_int,
         object: *mut _cef_v8_value_t,
         retval: *mut *mut _cef_v8_value_t,
-        exception: *mut _cef_string_utf16_t,
+        exception: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_index, arg_object, arg_retval, arg_exception) =
             (self_, index, object, retval, exception);
@@ -31428,10 +31119,10 @@ mod impl_cef_v8_interceptor_t {
     }
     extern "C" fn set_byname<I: ImplV8Interceptor>(
         self_: *mut _cef_v8_interceptor_t,
-        name: *const _cef_string_utf16_t,
+        name: *const cef_string_t,
         object: *mut _cef_v8_value_t,
         value: *mut _cef_v8_value_t,
-        exception: *mut _cef_string_utf16_t,
+        exception: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_name, arg_object, arg_value, arg_exception) =
             (self_, name, object, value, exception);
@@ -31468,7 +31159,7 @@ mod impl_cef_v8_interceptor_t {
         index: ::std::os::raw::c_int,
         object: *mut _cef_v8_value_t,
         value: *mut _cef_v8_value_t,
-        exception: *mut _cef_string_utf16_t,
+        exception: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_index, arg_object, arg_value, arg_exception) =
             (self_, index, object, value, exception);
@@ -31499,10 +31190,10 @@ mod impl_cef_v8_interceptor_t {
 impl ImplV8Interceptor for V8Interceptor {
     fn get_byname(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -31540,7 +31231,7 @@ impl ImplV8Interceptor for V8Interceptor {
         index: ::std::os::raw::c_int,
         object: Option<&mut impl ImplV8Value>,
         retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -31575,10 +31266,10 @@ impl ImplV8Interceptor for V8Interceptor {
     }
     fn set_byname(
         &self,
-        name: Option<&CefStringUtf16>,
+        name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         value: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -31614,7 +31305,7 @@ impl ImplV8Interceptor for V8Interceptor {
         index: ::std::os::raw::c_int,
         object: Option<&mut impl ImplV8Value>,
         value: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut CefStringUtf16>,
+        exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -31691,9 +31382,9 @@ impl Default for V8Interceptor {
 #[derive(Clone)]
 pub struct V8Exception(RefGuard<_cef_v8_exception_t>);
 pub trait ImplV8Exception: Clone + Sized + Rc {
-    fn get_message(&self) -> Option<CefStringUtf16>;
-    fn get_source_line(&self) -> Option<CefStringUtf16>;
-    fn get_script_resource_name(&self) -> Option<CefStringUtf16>;
+    fn get_message(&self) -> CefStringUserfree;
+    fn get_source_line(&self) -> CefStringUserfree;
+    fn get_script_resource_name(&self) -> CefStringUserfree;
     fn get_line_number(&self) -> ::std::os::raw::c_int;
     fn get_start_position(&self) -> ::std::os::raw::c_int;
     fn get_end_position(&self) -> ::std::os::raw::c_int;
@@ -31702,50 +31393,38 @@ pub trait ImplV8Exception: Clone + Sized + Rc {
     fn get_raw(&self) -> *mut _cef_v8_exception_t;
 }
 impl ImplV8Exception for V8Exception {
-    fn get_message(&self) -> Option<CefStringUtf16> {
+    fn get_message(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_message
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_source_line(&self) -> Option<CefStringUtf16> {
+    fn get_source_line(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_source_line
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_script_resource_name(&self) -> Option<CefStringUtf16> {
+    fn get_script_resource_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_script_resource_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -31982,22 +31661,22 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     fn get_uint_value(&self) -> u32;
     fn get_double_value(&self) -> f64;
     fn get_date_value(&self) -> Basetime;
-    fn get_string_value(&self) -> Option<CefStringUtf16>;
+    fn get_string_value(&self) -> CefStringUserfree;
     fn is_user_created(&self) -> ::std::os::raw::c_int;
     fn has_exception(&self) -> ::std::os::raw::c_int;
     fn get_exception(&self) -> Option<V8Exception>;
     fn clear_exception(&self) -> ::std::os::raw::c_int;
     fn will_rethrow_exceptions(&self) -> ::std::os::raw::c_int;
     fn set_rethrow_exceptions(&self, rethrow: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-    fn has_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn has_value_bykey(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
     fn has_value_byindex(&self, index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-    fn delete_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn delete_value_bykey(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
     fn delete_value_byindex(&self, index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8Value>;
+    fn get_value_bykey(&self, key: Option<&CefString>) -> Option<V8Value>;
     fn get_value_byindex(&self, index: ::std::os::raw::c_int) -> Option<V8Value>;
     fn set_value_bykey(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplV8Value>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int;
@@ -32008,7 +31687,7 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     ) -> ::std::os::raw::c_int;
     fn set_value_byaccessor(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int;
     fn get_keys(&self, keys: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
@@ -32024,7 +31703,7 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     fn neuter_array_buffer(&self) -> ::std::os::raw::c_int;
     fn get_array_buffer_byte_length(&self) -> usize;
     fn get_array_buffer_data(&self) -> *mut ::std::os::raw::c_void;
-    fn get_function_name(&self) -> Option<CefStringUtf16>;
+    fn get_function_name(&self) -> CefStringUserfree;
     fn get_function_handler(&self) -> Option<V8Handler>;
     fn execute_function(
         &self,
@@ -32038,7 +31717,7 @@ pub trait ImplV8Value: Clone + Sized + Rc {
         arguments: Option<&[Option<impl ImplV8Value>]>,
     ) -> Option<V8Value>;
     fn resolve_promise(&self, arg: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int;
-    fn reject_promise(&self, error_msg: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
+    fn reject_promise(&self, error_msg: Option<&CefString>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_value_t;
 }
 impl ImplV8Value for V8Value {
@@ -32289,18 +31968,14 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn get_string_value(&self) -> Option<CefStringUtf16> {
+    fn get_string_value(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_string_value
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -32383,7 +32058,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn has_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn has_value_bykey(&self, key: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .has_value_bykey
@@ -32411,7 +32086,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn delete_value_bykey(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn delete_value_bykey(&self, key: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .delete_value_bykey
@@ -32439,7 +32114,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn get_value_bykey(&self, key: Option<&CefStringUtf16>) -> Option<V8Value> {
+    fn get_value_bykey(&self, key: Option<&CefString>) -> Option<V8Value> {
         unsafe {
             self.0
                 .get_value_bykey
@@ -32477,7 +32152,7 @@ impl ImplV8Value for V8Value {
     }
     fn set_value_bykey(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         value: Option<&mut impl ImplV8Value>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int {
@@ -32527,7 +32202,7 @@ impl ImplV8Value for V8Value {
     }
     fn set_value_byaccessor(
         &self,
-        key: Option<&CefStringUtf16>,
+        key: Option<&CefString>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -32688,18 +32363,14 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_function_name(&self) -> Option<CefStringUtf16> {
+    fn get_function_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_function_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -32854,7 +32525,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn reject_promise(&self, error_msg: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+    fn reject_promise(&self, error_msg: Option<&CefString>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .reject_promise
@@ -33011,9 +32682,9 @@ impl Default for V8StackTrace {
 pub struct V8StackFrame(RefGuard<_cef_v8_stack_frame_t>);
 pub trait ImplV8StackFrame: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int;
-    fn get_script_name(&self) -> Option<CefStringUtf16>;
-    fn get_script_name_or_source_url(&self) -> Option<CefStringUtf16>;
-    fn get_function_name(&self) -> Option<CefStringUtf16>;
+    fn get_script_name(&self) -> CefStringUserfree;
+    fn get_script_name_or_source_url(&self) -> CefStringUserfree;
+    fn get_function_name(&self) -> CefStringUserfree;
     fn get_line_number(&self) -> ::std::os::raw::c_int;
     fn get_column(&self) -> ::std::os::raw::c_int;
     fn is_eval(&self) -> ::std::os::raw::c_int;
@@ -33033,50 +32704,38 @@ impl ImplV8StackFrame for V8StackFrame {
                 .unwrap_or_default()
         }
     }
-    fn get_script_name(&self) -> Option<CefStringUtf16> {
+    fn get_script_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_script_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_script_name_or_source_url(&self) -> Option<CefStringUtf16> {
+    fn get_script_name_or_source_url(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_script_name_or_source_url
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn get_function_name(&self) -> Option<CefStringUtf16> {
+    fn get_function_name(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_function_name
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -33799,7 +33458,7 @@ pub trait ImplResourceBundleHandler: Clone + Sized + Rc {
     fn get_localized_string(
         &self,
         string_id: ::std::os::raw::c_int,
-        string: Option<&mut CefStringUtf16>,
+        string: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -33833,7 +33492,7 @@ mod impl_cef_resource_bundle_handler_t {
     extern "C" fn get_localized_string<I: ImplResourceBundleHandler>(
         self_: *mut _cef_resource_bundle_handler_t,
         string_id: ::std::os::raw::c_int,
-        string: *mut _cef_string_utf16_t,
+        string: *mut cef_string_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_string_id, arg_string) = (self_, string_id, string);
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
@@ -33923,7 +33582,7 @@ impl ImplResourceBundleHandler for ResourceBundleHandler {
     fn get_localized_string(
         &self,
         string_id: ::std::os::raw::c_int,
-        string: Option<&mut CefStringUtf16>,
+        string: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -34068,7 +33727,7 @@ pub struct SchemeRegistrar(*mut _cef_scheme_registrar_t);
 pub trait ImplSchemeRegistrar: Sized {
     fn add_custom_scheme(
         &self,
-        scheme_name: Option<&CefStringUtf16>,
+        scheme_name: Option<&CefString>,
         options: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
     fn init_methods(object: &mut _cef_scheme_registrar_t) {
@@ -34083,7 +33742,7 @@ mod impl_cef_scheme_registrar_t {
     }
     extern "C" fn add_custom_scheme<I: ImplSchemeRegistrar>(
         self_: *mut _cef_scheme_registrar_t,
-        scheme_name: *const _cef_string_utf16_t,
+        scheme_name: *const cef_string_t,
         options: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_scheme_name, arg_options) = (self_, scheme_name, options);
@@ -34106,7 +33765,7 @@ mod impl_cef_scheme_registrar_t {
 impl ImplSchemeRegistrar for SchemeRegistrar {
     fn add_custom_scheme(
         &self,
-        scheme_name: Option<&CefStringUtf16>,
+        scheme_name: Option<&CefString>,
         options: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -34181,7 +33840,7 @@ pub trait ImplSchemeHandlerFactory: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        scheme_name: Option<&CefStringUtf16>,
+        scheme_name: Option<&CefString>,
         request: Option<&mut impl ImplRequest>,
     ) -> Option<ResourceHandler> {
         Default::default()
@@ -34200,7 +33859,7 @@ mod impl_cef_scheme_handler_factory_t {
         self_: *mut _cef_scheme_handler_factory_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        scheme_name: *const _cef_string_utf16_t,
+        scheme_name: *const cef_string_t,
         request: *mut _cef_request_t,
     ) -> *mut _cef_resource_handler_t {
         let (arg_self_, arg_browser, arg_frame, arg_scheme_name, arg_request) =
@@ -34238,7 +33897,7 @@ impl ImplSchemeHandlerFactory for SchemeHandlerFactory {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        scheme_name: Option<&CefStringUtf16>,
+        scheme_name: Option<&CefString>,
         request: Option<&mut impl ImplRequest>,
     ) -> Option<ResourceHandler> {
         unsafe {
@@ -34350,7 +34009,7 @@ pub trait WrapApp: ImplApp {
 pub trait ImplApp: Clone + Sized + Rc {
     fn on_before_command_line_processing(
         &self,
-        process_type: Option<&CefStringUtf16>,
+        process_type: Option<&CefString>,
         command_line: Option<&mut impl ImplCommandLine>,
     ) {
     }
@@ -34380,7 +34039,7 @@ mod impl_cef_app_t {
     }
     extern "C" fn on_before_command_line_processing<I: ImplApp>(
         self_: *mut _cef_app_t,
-        process_type: *const _cef_string_utf16_t,
+        process_type: *const cef_string_t,
         command_line: *mut _cef_command_line_t,
     ) {
         let (arg_self_, arg_process_type, arg_command_line) = (self_, process_type, command_line);
@@ -34448,7 +34107,7 @@ mod impl_cef_app_t {
 impl ImplApp for App {
     fn on_before_command_line_processing(
         &self,
-        process_type: Option<&CefStringUtf16>,
+        process_type: Option<&CefString>,
         command_line: Option<&mut impl ImplCommandLine>,
     ) {
         unsafe {
@@ -34776,10 +34435,10 @@ pub trait ImplUrlrequestClient: Clone + Sized + Rc {
     fn get_auth_credentials(
         &self,
         is_proxy: ::std::os::raw::c_int,
-        host: Option<&CefStringUtf16>,
+        host: Option<&CefString>,
         port: ::std::os::raw::c_int,
-        realm: Option<&CefStringUtf16>,
-        scheme: Option<&CefStringUtf16>,
+        realm: Option<&CefString>,
+        scheme: Option<&CefString>,
         callback: Option<&mut impl ImplAuthCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -34873,10 +34532,10 @@ mod impl_cef_urlrequest_client_t {
     extern "C" fn get_auth_credentials<I: ImplUrlrequestClient>(
         self_: *mut _cef_urlrequest_client_t,
         is_proxy: ::std::os::raw::c_int,
-        host: *const _cef_string_utf16_t,
+        host: *const cef_string_t,
         port: ::std::os::raw::c_int,
-        realm: *const _cef_string_utf16_t,
-        scheme: *const _cef_string_utf16_t,
+        realm: *const cef_string_t,
+        scheme: *const cef_string_t,
         callback: *mut _cef_auth_callback_t,
     ) -> ::std::os::raw::c_int {
         let (arg_self_, arg_is_proxy, arg_host, arg_port, arg_realm, arg_scheme, arg_callback) =
@@ -35018,10 +34677,10 @@ impl ImplUrlrequestClient for UrlrequestClient {
     fn get_auth_credentials(
         &self,
         is_proxy: ::std::os::raw::c_int,
-        host: Option<&CefStringUtf16>,
+        host: Option<&CefString>,
         port: ::std::os::raw::c_int,
-        realm: Option<&CefStringUtf16>,
-        scheme: Option<&CefStringUtf16>,
+        realm: Option<&CefString>,
+        scheme: Option<&CefString>,
         callback: Option<&mut impl ImplAuthCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -35908,8 +35567,8 @@ pub trait ImplView: Clone + Sized + Rc {
     fn as_panel(&self) -> Option<Panel>;
     fn as_scroll_view(&self) -> Option<ScrollView>;
     fn as_textfield(&self) -> Option<Textfield>;
-    fn get_type_string(&self) -> Option<CefStringUtf16>;
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16>;
+    fn get_type_string(&self) -> CefStringUserfree;
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree;
     fn is_valid(&self) -> ::std::os::raw::c_int;
     fn is_attached(&self) -> ::std::os::raw::c_int;
     fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int;
@@ -36046,23 +35705,19 @@ impl ImplView for View {
                 .unwrap_or_default()
         }
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_type_string
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         unsafe {
             self.0
                 .to_string
@@ -36071,11 +35726,7 @@ impl ImplView for View {
                     let arg_self_ = self.as_raw();
                     let arg_include_children = arg_include_children;
                     let result = f(arg_self_, arg_include_children);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -36791,8 +36442,8 @@ pub trait ImplButton: ImplView {
     fn set_state(&self, state: ButtonState);
     fn get_state(&self) -> ButtonState;
     fn set_ink_drop_enabled(&self, enabled: ::std::os::raw::c_int);
-    fn set_tooltip_text(&self, tooltip_text: Option<&CefStringUtf16>);
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>);
+    fn set_tooltip_text(&self, tooltip_text: Option<&CefString>);
+    fn set_accessible_name(&self, name: Option<&CefString>);
     fn get_raw(&self) -> *mut _cef_button_t {
         <Self as ImplView>::get_raw(self) as *mut _
     }
@@ -36816,11 +36467,11 @@ impl ImplView for Button {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -37067,7 +36718,7 @@ impl ImplButton for Button {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_tooltip_text(&self, tooltip_text: Option<&CefStringUtf16>) {
+    fn set_tooltip_text(&self, tooltip_text: Option<&CefString>) {
         unsafe {
             self.0
                 .set_tooltip_text
@@ -37083,7 +36734,7 @@ impl ImplButton for Button {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>) {
+    fn set_accessible_name(&self, name: Option<&CefString>) {
         unsafe {
             self.0
                 .set_accessible_name
@@ -37348,13 +36999,13 @@ impl Default for ButtonDelegate {
 pub struct LabelButton(RefGuard<_cef_label_button_t>);
 pub trait ImplLabelButton: ImplButton {
     fn as_menu_button(&self) -> Option<MenuButton>;
-    fn set_text(&self, text: Option<&CefStringUtf16>);
-    fn get_text(&self) -> Option<CefStringUtf16>;
+    fn set_text(&self, text: Option<&CefString>);
+    fn get_text(&self) -> CefStringUserfree;
     fn set_image(&self, button_state: ButtonState, image: Option<&mut impl ImplImage>);
     fn get_image(&self, button_state: ButtonState) -> Option<Image>;
     fn set_text_color(&self, for_state: ButtonState, color: u32);
     fn set_enabled_text_colors(&self, color: u32);
-    fn set_font_list(&self, font_list: Option<&CefStringUtf16>);
+    fn set_font_list(&self, font_list: Option<&CefString>);
     fn set_horizontal_alignment(&self, alignment: HorizontalAlignment);
     fn set_minimum_size(&self, size: Option<&Size>);
     fn set_maximum_size(&self, size: Option<&Size>);
@@ -37381,11 +37032,11 @@ impl ImplView for LabelButton {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -37592,11 +37243,11 @@ impl ImplButton for LabelButton {
         Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_ink_drop_enabled(enabled)
     }
-    fn set_tooltip_text(&self, tooltip_text: Option<&CefStringUtf16>) {
+    fn set_tooltip_text(&self, tooltip_text: Option<&CefString>) {
         Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_tooltip_text(tooltip_text)
     }
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>) {
+    fn set_accessible_name(&self, name: Option<&CefString>) {
         Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_accessible_name(name)
     }
@@ -37621,7 +37272,7 @@ impl ImplLabelButton for LabelButton {
                 .unwrap_or_default()
         }
     }
-    fn set_text(&self, text: Option<&CefStringUtf16>) {
+    fn set_text(&self, text: Option<&CefString>) {
         unsafe {
             self.0
                 .set_text
@@ -37635,18 +37286,14 @@ impl ImplLabelButton for LabelButton {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_text(&self) -> Option<CefStringUtf16> {
+    fn get_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -37718,7 +37365,7 @@ impl ImplLabelButton for LabelButton {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_font_list(&self, font_list: Option<&CefStringUtf16>) {
+    fn set_font_list(&self, font_list: Option<&CefString>) {
         unsafe {
             self.0
                 .set_font_list
@@ -38140,11 +37787,11 @@ impl ImplView for MenuButton {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -38351,11 +37998,11 @@ impl ImplButton for MenuButton {
         Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_ink_drop_enabled(enabled)
     }
-    fn set_tooltip_text(&self, tooltip_text: Option<&CefStringUtf16>) {
+    fn set_tooltip_text(&self, tooltip_text: Option<&CefString>) {
         Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_tooltip_text(tooltip_text)
     }
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>) {
+    fn set_accessible_name(&self, name: Option<&CefString>) {
         Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_accessible_name(name)
     }
@@ -38368,11 +38015,11 @@ impl ImplLabelButton for MenuButton {
         LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_menu_button()
     }
-    fn set_text(&self, text: Option<&CefStringUtf16>) {
+    fn set_text(&self, text: Option<&CefString>) {
         LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_text(text)
     }
-    fn get_text(&self) -> Option<CefStringUtf16> {
+    fn get_text(&self) -> CefStringUserfree {
         LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_text()
     }
@@ -38392,7 +38039,7 @@ impl ImplLabelButton for MenuButton {
         LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_enabled_text_colors(color)
     }
-    fn set_font_list(&self, font_list: Option<&CefStringUtf16>) {
+    fn set_font_list(&self, font_list: Option<&CefString>) {
         LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_font_list(font_list)
     }
@@ -38740,12 +38387,12 @@ pub trait ImplTextfield: ImplView {
     fn is_password_input(&self) -> ::std::os::raw::c_int;
     fn set_read_only(&self, read_only: ::std::os::raw::c_int);
     fn is_read_only(&self) -> ::std::os::raw::c_int;
-    fn get_text(&self) -> Option<CefStringUtf16>;
-    fn set_text(&self, text: Option<&CefStringUtf16>);
-    fn append_text(&self, text: Option<&CefStringUtf16>);
-    fn insert_or_replace_text(&self, text: Option<&CefStringUtf16>);
+    fn get_text(&self) -> CefStringUserfree;
+    fn set_text(&self, text: Option<&CefString>);
+    fn append_text(&self, text: Option<&CefString>);
+    fn insert_or_replace_text(&self, text: Option<&CefString>);
     fn has_selection(&self) -> ::std::os::raw::c_int;
-    fn get_selected_text(&self) -> Option<CefStringUtf16>;
+    fn get_selected_text(&self) -> CefStringUserfree;
     fn select_all(&self, reversed: ::std::os::raw::c_int);
     fn clear_selection(&self);
     fn get_selected_range(&self) -> Range;
@@ -38757,16 +38404,16 @@ pub trait ImplTextfield: ImplView {
     fn get_selection_text_color(&self) -> cef_color_t;
     fn set_selection_background_color(&self, color: u32);
     fn get_selection_background_color(&self) -> cef_color_t;
-    fn set_font_list(&self, font_list: Option<&CefStringUtf16>);
+    fn set_font_list(&self, font_list: Option<&CefString>);
     fn apply_text_color(&self, color: u32, range: Option<&Range>);
     fn apply_text_style(&self, style: TextStyle, add: ::std::os::raw::c_int, range: Option<&Range>);
     fn is_command_enabled(&self, command_id: TextFieldCommands) -> ::std::os::raw::c_int;
     fn execute_command(&self, command_id: TextFieldCommands);
     fn clear_edit_history(&self);
-    fn set_placeholder_text(&self, text: Option<&CefStringUtf16>);
-    fn get_placeholder_text(&self) -> Option<CefStringUtf16>;
+    fn set_placeholder_text(&self, text: Option<&CefString>);
+    fn get_placeholder_text(&self) -> CefStringUserfree;
     fn set_placeholder_text_color(&self, color: u32);
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>);
+    fn set_accessible_name(&self, name: Option<&CefString>);
     fn get_raw(&self) -> *mut _cef_textfield_t {
         <Self as ImplView>::get_raw(self) as *mut _
     }
@@ -38790,11 +38437,11 @@ impl ImplView for Textfield {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -39037,23 +38684,19 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_default()
         }
     }
-    fn get_text(&self) -> Option<CefStringUtf16> {
+    fn get_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
     }
-    fn set_text(&self, text: Option<&CefStringUtf16>) {
+    fn set_text(&self, text: Option<&CefString>) {
         unsafe {
             self.0
                 .set_text
@@ -39067,7 +38710,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn append_text(&self, text: Option<&CefStringUtf16>) {
+    fn append_text(&self, text: Option<&CefString>) {
         unsafe {
             self.0
                 .append_text
@@ -39081,7 +38724,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn insert_or_replace_text(&self, text: Option<&CefStringUtf16>) {
+    fn insert_or_replace_text(&self, text: Option<&CefString>) {
         unsafe {
             self.0
                 .insert_or_replace_text
@@ -39107,18 +38750,14 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_default()
         }
     }
-    fn get_selected_text(&self) -> Option<CefStringUtf16> {
+    fn get_selected_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_selected_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -39269,7 +38908,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_default()
         }
     }
-    fn set_font_list(&self, font_list: Option<&CefStringUtf16>) {
+    fn set_font_list(&self, font_list: Option<&CefString>) {
         unsafe {
             self.0
                 .set_font_list
@@ -39369,7 +39008,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_placeholder_text(&self, text: Option<&CefStringUtf16>) {
+    fn set_placeholder_text(&self, text: Option<&CefString>) {
         unsafe {
             self.0
                 .set_placeholder_text
@@ -39383,18 +39022,14 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_placeholder_text(&self) -> Option<CefStringUtf16> {
+    fn get_placeholder_text(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_placeholder_text
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -39413,7 +39048,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn set_accessible_name(&self, name: Option<&CefStringUtf16>) {
+    fn set_accessible_name(&self, name: Option<&CefString>) {
         unsafe {
             self.0
                 .set_accessible_name
@@ -40076,11 +39711,11 @@ impl ImplView for BrowserView {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -40405,11 +40040,11 @@ impl ImplView for ScrollView {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -41404,11 +41039,11 @@ impl ImplView for Panel {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -42995,8 +42630,8 @@ pub trait ImplWindow: ImplPanel {
     fn is_minimized(&self) -> ::std::os::raw::c_int;
     fn is_fullscreen(&self) -> ::std::os::raw::c_int;
     fn get_focused_view(&self) -> Option<View>;
-    fn set_title(&self, title: Option<&CefStringUtf16>);
-    fn get_title(&self) -> Option<CefStringUtf16>;
+    fn set_title(&self, title: Option<&CefString>);
+    fn get_title(&self) -> CefStringUserfree;
     fn set_window_icon(&self, image: Option<&mut impl ImplImage>);
     fn get_window_icon(&self) -> Option<Image>;
     fn set_window_app_icon(&self, image: Option<&mut impl ImplImage>);
@@ -43063,11 +42698,11 @@ impl ImplView for Window {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> Option<CefStringUtf16> {
+    fn get_type_string(&self) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> Option<CefStringUtf16> {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -43571,7 +43206,7 @@ impl ImplWindow for Window {
                 .unwrap_or_default()
         }
     }
-    fn set_title(&self, title: Option<&CefStringUtf16>) {
+    fn set_title(&self, title: Option<&CefString>) {
         unsafe {
             self.0
                 .set_title
@@ -43587,18 +43222,14 @@ impl ImplWindow for Window {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_title(&self) -> Option<CefStringUtf16> {
+    fn get_title(&self) -> CefStringUserfree {
         unsafe {
             self.0
                 .get_title
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
+                    result.as_wrapper()
                 })
                 .unwrap_or_default()
         }
@@ -47267,72 +46898,54 @@ pub fn string_ascii_to_utf16(
 }
 
 /// See [cef_string_userfree_wide_alloc] for more documentation.
-pub fn string_userfree_wide_alloc() -> Option<CefStringWide> {
+pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
     unsafe {
         let result = cef_string_userfree_wide_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf8_alloc] for more documentation.
-pub fn string_userfree_utf8_alloc() -> Option<CefStringUtf8> {
+pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
     unsafe {
         let result = cef_string_userfree_utf8_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf16_alloc] for more documentation.
-pub fn string_userfree_utf16_alloc() -> Option<CefStringUtf16> {
+pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
     unsafe {
         let result = cef_string_userfree_utf16_alloc();
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
+        result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_wide_free] for more documentation.
-pub fn string_userfree_wide_free(str_: Option<&mut CefStringWide>) {
+pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_wide_free(arg_str_);
         result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf8_free] for more documentation.
-pub fn string_userfree_utf8_free(str_: Option<&mut CefStringUtf8>) {
+pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_utf8_free(arg_str_);
         result.as_wrapper()
     }
 }
 
 /// See [cef_string_userfree_utf16_free] for more documentation.
-pub fn string_userfree_utf16_free(str_: Option<&mut CefStringUtf16>) {
+pub fn string_userfree_utf16_free(str_: CefStringUserfreeUtf16) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
-            .unwrap_or(std::ptr::null_mut());
+        let arg_str_ = arg_str_.as_raw();
         let result = cef_string_userfree_utf16_free(arg_str_);
         result.as_wrapper()
     }
@@ -47416,7 +47029,7 @@ pub fn string_list_size(list: Option<&mut CefStringList>) -> usize {
 pub fn string_list_value(
     list: Option<&mut CefStringList>,
     index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_list, arg_index, arg_value) = (list, index, value);
@@ -47433,7 +47046,7 @@ pub fn string_list_value(
 }
 
 /// See [cef_string_list_append] for more documentation.
-pub fn string_list_append(list: Option<&mut CefStringList>, value: Option<&CefStringUtf16>) {
+pub fn string_list_append(list: Option<&mut CefStringList>, value: Option<&CefString>) {
     unsafe {
         let (arg_list, arg_value) = (list, value);
         let arg_list = arg_list
@@ -47514,8 +47127,8 @@ pub fn string_map_size(map: Option<&mut CefStringMap>) -> usize {
 /// See [cef_string_map_find] for more documentation.
 pub fn string_map_find(
     map: Option<&mut CefStringMap>,
-    key: Option<&CefStringUtf16>,
-    value: Option<&mut CefStringUtf16>,
+    key: Option<&CefString>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
@@ -47535,7 +47148,7 @@ pub fn string_map_find(
 pub fn string_map_key(
     map: Option<&mut CefStringMap>,
     index: usize,
-    key: Option<&mut CefStringUtf16>,
+    key: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_key) = (map, index, key);
@@ -47555,7 +47168,7 @@ pub fn string_map_key(
 pub fn string_map_value(
     map: Option<&mut CefStringMap>,
     index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_value) = (map, index, value);
@@ -47574,8 +47187,8 @@ pub fn string_map_value(
 /// See [cef_string_map_append] for more documentation.
 pub fn string_map_append(
     map: Option<&mut CefStringMap>,
-    key: Option<&CefStringUtf16>,
-    value: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
+    value: Option<&CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
@@ -47642,7 +47255,7 @@ pub fn string_multimap_size(map: Option<&mut CefStringMultimap>) -> usize {
 /// See [cef_string_multimap_find_count] for more documentation.
 pub fn string_multimap_find_count(
     map: Option<&mut CefStringMultimap>,
-    key: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
 ) -> usize {
     unsafe {
         let (arg_map, arg_key) = (map, key);
@@ -47658,9 +47271,9 @@ pub fn string_multimap_find_count(
 /// See [cef_string_multimap_enumerate] for more documentation.
 pub fn string_multimap_enumerate(
     map: Option<&mut CefStringMultimap>,
-    key: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
     value_index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value_index, arg_value) = (map, key, value_index, value);
@@ -47681,7 +47294,7 @@ pub fn string_multimap_enumerate(
 pub fn string_multimap_key(
     map: Option<&mut CefStringMultimap>,
     index: usize,
-    key: Option<&mut CefStringUtf16>,
+    key: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_key) = (map, index, key);
@@ -47701,7 +47314,7 @@ pub fn string_multimap_key(
 pub fn string_multimap_value(
     map: Option<&mut CefStringMultimap>,
     index: usize,
-    value: Option<&mut CefStringUtf16>,
+    value: Option<&mut CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_index, arg_value) = (map, index, value);
@@ -47720,8 +47333,8 @@ pub fn string_multimap_value(
 /// See [cef_string_multimap_append] for more documentation.
 pub fn string_multimap_append(
     map: Option<&mut CefStringMultimap>,
-    key: Option<&CefStringUtf16>,
-    value: Option<&CefStringUtf16>,
+    key: Option<&CefString>,
+    value: Option<&CefString>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
@@ -47978,7 +47591,7 @@ pub fn image_create() -> Option<Image> {
 }
 
 /// See [cef_stream_reader_create_for_file] for more documentation.
-pub fn stream_reader_create_for_file(file_name: Option<&CefStringUtf16>) -> Option<StreamReader> {
+pub fn stream_reader_create_for_file(file_name: Option<&CefString>) -> Option<StreamReader> {
     unsafe {
         let arg_file_name = file_name;
         let arg_file_name = arg_file_name
@@ -48030,7 +47643,7 @@ pub fn stream_reader_create_for_handler(
 }
 
 /// See [cef_stream_writer_create_for_file] for more documentation.
-pub fn stream_writer_create_for_file(file_name: Option<&CefStringUtf16>) -> Option<StreamWriter> {
+pub fn stream_writer_create_for_file(file_name: Option<&CefString>) -> Option<StreamWriter> {
     unsafe {
         let arg_file_name = file_name;
         let arg_file_name = arg_file_name
@@ -48079,7 +47692,7 @@ pub fn drag_data_create() -> Option<DragData> {
 }
 
 /// See [cef_process_message_create] for more documentation.
-pub fn process_message_create(name: Option<&CefStringUtf16>) -> Option<ProcessMessage> {
+pub fn process_message_create(name: Option<&CefString>) -> Option<ProcessMessage> {
     unsafe {
         let arg_name = name;
         let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
@@ -48277,7 +47890,7 @@ pub fn request_context_cef_create_context_shared(
 pub fn browser_host_create_browser(
     window_info: Option<&WindowInfo>,
     client: Option<&mut impl ImplClient>,
-    url: Option<&CefStringUtf16>,
+    url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut impl ImplDictionaryValue>,
     request_context: Option<&mut impl ImplRequestContext>,
@@ -48343,7 +47956,7 @@ pub fn browser_host_create_browser(
 pub fn browser_host_create_browser_sync(
     window_info: Option<&WindowInfo>,
     client: Option<&mut impl ImplClient>,
-    url: Option<&CefStringUtf16>,
+    url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut impl ImplDictionaryValue>,
     request_context: Option<&mut impl ImplRequestContext>,
@@ -48701,7 +48314,7 @@ pub fn v8_value_create_date(date: _cef_basetime_t) -> Option<V8Value> {
 }
 
 /// See [cef_v8_value_create_string] for more documentation.
-pub fn v8_value_create_string(value: Option<&CefStringUtf16>) -> Option<V8Value> {
+pub fn v8_value_create_string(value: Option<&CefString>) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value
@@ -48800,7 +48413,7 @@ pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) ->
 
 /// See [cef_v8_value_create_function] for more documentation.
 pub fn v8_value_create_function(
-    name: Option<&CefStringUtf16>,
+    name: Option<&CefString>,
     handler: Option<&mut impl ImplV8Handler>,
 ) -> Option<V8Value> {
     unsafe {
@@ -48849,8 +48462,8 @@ pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<
 
 /// See [cef_register_extension] for more documentation.
 pub fn register_extension(
-    extension_name: Option<&CefStringUtf16>,
-    javascript_code: Option<&CefStringUtf16>,
+    extension_name: Option<&CefString>,
+    javascript_code: Option<&CefString>,
     handler: Option<&mut impl ImplV8Handler>,
 ) -> ::std::os::raw::c_int {
     unsafe {
@@ -48875,8 +48488,8 @@ pub fn register_extension(
 
 /// See [cef_register_scheme_handler_factory] for more documentation.
 pub fn register_scheme_handler_factory(
-    scheme_name: Option<&CefStringUtf16>,
-    domain_name: Option<&CefStringUtf16>,
+    scheme_name: Option<&CefString>,
+    domain_name: Option<&CefString>,
     factory: Option<&mut impl ImplSchemeHandlerFactory>,
 ) -> ::std::os::raw::c_int {
     unsafe {
@@ -49048,7 +48661,7 @@ pub fn urlrequest_create(
 /// See [cef_label_button_create] for more documentation.
 pub fn label_button_create(
     delegate: Option<&mut impl ImplButtonDelegate>,
-    text: Option<&CefStringUtf16>,
+    text: Option<&CefString>,
 ) -> Option<LabelButton> {
     unsafe {
         let (arg_delegate, arg_text) = (delegate, text);
@@ -49071,7 +48684,7 @@ pub fn label_button_create(
 /// See [cef_menu_button_create] for more documentation.
 pub fn menu_button_create(
     delegate: Option<&mut impl ImplMenuButtonDelegate>,
-    text: Option<&CefStringUtf16>,
+    text: Option<&CefString>,
 ) -> Option<MenuButton> {
     unsafe {
         let (arg_delegate, arg_text) = (delegate, text);
@@ -49113,7 +48726,7 @@ pub fn textfield_create(delegate: Option<&mut impl ImplTextfieldDelegate>) -> Op
 /// See [cef_browser_view_create] for more documentation.
 pub fn browser_view_create(
     client: Option<&mut impl ImplClient>,
-    url: Option<&CefStringUtf16>,
+    url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut impl ImplDictionaryValue>,
     request_context: Option<&mut impl ImplRequestContext>,
