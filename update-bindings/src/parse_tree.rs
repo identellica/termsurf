@@ -1252,6 +1252,12 @@ const CUSTOM_STRING_TYPES: &[&str] = &[
     "_cef_string_multimap_t",
 ];
 
+const CUSTOM_STRING_USERFREE_ALIASES: &[&str] = &[
+    "cef_string_userfree_utf8_t",
+    "cef_string_userfree_utf16_t",
+    "cef_string_userfree_wide_t",
+];
+
 struct StructDeclarationRef<'a> {
     name: String,
     fields: Vec<FieldRef<'a>>,
@@ -1397,8 +1403,9 @@ impl ModifiedType {
 
     fn get_output_type(&self, tree: &ParseTree) -> Option<proc_macro2::TokenStream> {
         let elem = self.ty.to_token_stream();
+        let elem_name = elem.to_string();
         tree.cef_name_map
-            .get(&elem.to_string())
+            .get(&elem_name)
             .and_then(|entry| match entry {
                 NameMapEntry {
                     name,
@@ -1562,17 +1569,22 @@ impl<'a> ParseTree<'a> {
         match ty {
             syn::Type::Path(syn::TypePath { qself: None, path }) => {
                 let ty = path.to_token_stream().to_string();
-                match self.cef_name_map.get(&ty) {
-                    Some(NameMapEntry {
-                        ty: NameMapType::TypeAlias,
-                        ..
-                    }) => self
-                        .lookup_type_alias
-                        .get(&ty)
-                        .and_then(|&i| self.type_aliases.get(i))
-                        .map(|alias| self.resolve_type_aliases(&alias.ty))
-                        .unwrap_or_else(|| path.to_token_stream()),
-                    _ => path.to_token_stream(),
+                if CUSTOM_STRING_USERFREE_ALIASES.contains(&ty.as_str()) {
+                    println!("Resolved {ty} as self");
+                    path.to_token_stream()
+                } else {
+                    match self.cef_name_map.get(&ty) {
+                        Some(NameMapEntry {
+                            ty: NameMapType::TypeAlias,
+                            ..
+                        }) => self
+                            .lookup_type_alias
+                            .get(&ty)
+                            .and_then(|&i| self.type_aliases.get(i))
+                            .map(|alias| self.resolve_type_aliases(&alias.ty))
+                            .unwrap_or_else(|| path.to_token_stream()),
+                        _ => path.to_token_stream(),
+                    }
                 }
             }
             syn::Type::Tuple(syn::TypeTuple { elems, .. }) => {
@@ -1624,6 +1636,14 @@ impl<'a> ParseTree<'a> {
                 continue;
             };
             let ty = arg_ty.ty.to_token_stream().to_string();
+            let rust_name_ident = format_ident!("{rust_name}");
+
+            if CUSTOM_STRING_USERFREE_ALIASES.contains(&name.as_str()) {
+                writeln!(f, "\n/// {comment}")?;
+                self.write_custom_string_type(f, &rust_name_ident)?;
+                continue;
+            }
+
             if ty == quote! { ::std::os::raw::c_void }.to_string() {
                 continue;
             }
@@ -1631,7 +1651,6 @@ impl<'a> ParseTree<'a> {
             if rust_name == ty.as_str() {
                 continue;
             }
-            let name = format_ident!("{rust_name}");
             let ty = syn::parse_str::<syn::Type>(&ty).unwrap_or(arg_ty.ty);
             let modifiers = arg_ty
                 .modifiers
@@ -1651,7 +1670,7 @@ impl<'a> ParseTree<'a> {
             };
 
             let alias = quote! {
-                pub type #name = #(#modifiers)* #ty;
+                pub type #rust_name_ident = #(#modifiers)* #ty;
             }
             .to_string();
 

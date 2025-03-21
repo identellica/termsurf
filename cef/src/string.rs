@@ -100,7 +100,7 @@ impl Clone for UserFreeData<_cef_string_wide_t> {
 pub struct CefStringUserfreeUtf8(UserFreeData<_cef_string_utf8_t>);
 
 impl CefStringUserfreeUtf8 {
-    fn as_str(&self) -> Option<&str> {
+    pub fn as_str(&self) -> Option<&str> {
         unsafe {
             let value = self.0 .0.as_ref().map(|value| value.as_ref())?;
             let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
@@ -153,59 +153,69 @@ impl From<CefStringUserfreeUtf8> for *mut _cef_string_utf8_t {
     }
 }
 
-impl From<&CefStringUserfreeUtf16> for CefStringUserfreeUtf8 {
-    fn from(value: &CefStringUserfreeUtf16) -> Self {
+impl From<&CefStringUserfreeUtf8> for Option<&_cef_string_utf8_t> {
+    fn from(value: &CefStringUserfreeUtf8) -> Self {
+        value.0 .0.as_ref().map(|value| unsafe { value.as_ref() })
+    }
+}
+
+impl From<*const _cef_string_utf16_t> for CefStringUserfreeUtf8 {
+    fn from(value: *const _cef_string_utf16_t) -> Self {
         Self(UserFreeData(unsafe {
-            value
-                .0
-                 .0
-                .as_ref()
-                .map(|value| value.as_ref())
-                .and_then(|value| {
-                    let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
-                    NonNull::new(cef_dll_sys::cef_string_userfree_utf8_alloc()).and_then(|data| {
-                        if cef_dll_sys::cef_string_utf16_to_utf8(
-                            slice.as_ptr() as *const _,
-                            slice.len(),
-                            data.as_ptr(),
-                        ) == 0
-                        {
-                            cef_dll_sys::cef_string_userfree_utf8_free(data.as_ptr());
-                            None
-                        } else {
-                            Some(data)
-                        }
-                    })
+            value.as_ref().and_then(|value| {
+                let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
+                NonNull::new(cef_dll_sys::cef_string_userfree_utf8_alloc()).and_then(|data| {
+                    if cef_dll_sys::cef_string_utf16_to_utf8(
+                        slice.as_ptr() as *const _,
+                        slice.len(),
+                        data.as_ptr(),
+                    ) == 0
+                    {
+                        cef_dll_sys::cef_string_userfree_utf8_free(data.as_ptr());
+                        None
+                    } else {
+                        Some(data)
+                    }
                 })
+            })
         }))
     }
 }
 
-impl From<&CefStringUserfreeWide> for CefStringUserfreeUtf8 {
-    fn from(value: &CefStringUserfreeWide) -> Self {
+impl From<&CefStringUtf16> for CefStringUserfreeUtf8 {
+    fn from(value: &CefStringUtf16) -> Self {
+        let value: *const _cef_string_utf16_t = value.into();
+        Self::from(value)
+    }
+}
+
+impl From<*const _cef_string_wide_t> for CefStringUserfreeUtf8 {
+    fn from(value: *const _cef_string_wide_t) -> Self {
         Self(UserFreeData(unsafe {
-            value
-                .0
-                 .0
-                .as_ref()
-                .map(|value| value.as_ref())
-                .and_then(|value| {
-                    let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
-                    NonNull::new(cef_dll_sys::cef_string_userfree_utf8_alloc()).and_then(|data| {
-                        if cef_dll_sys::cef_string_wide_to_utf8(
-                            slice.as_ptr() as *const _,
-                            slice.len(),
-                            data.as_ptr(),
-                        ) == 0
-                        {
-                            cef_dll_sys::cef_string_userfree_utf8_free(data.as_ptr());
-                            None
-                        } else {
-                            Some(data)
-                        }
-                    })
+            value.as_ref().and_then(|value| {
+                let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
+                NonNull::new(cef_dll_sys::cef_string_userfree_utf8_alloc()).and_then(|data| {
+                    if cef_dll_sys::cef_string_wide_to_utf8(
+                        slice.as_ptr() as *const _,
+                        slice.len(),
+                        data.as_ptr(),
+                    ) == 0
+                    {
+                        cef_dll_sys::cef_string_userfree_utf8_free(data.as_ptr());
+                        None
+                    } else {
+                        Some(data)
+                    }
                 })
+            })
         }))
+    }
+}
+
+impl From<&CefStringWide> for CefStringUserfreeUtf8 {
+    fn from(value: &CefStringWide) -> Self {
+        let value: *const _cef_string_wide_t = value.into();
+        Self::from(value)
     }
 }
 
@@ -223,6 +233,14 @@ impl Drop for CefStringUserfreeUtf8 {
 #[derive(Clone, Default)]
 pub struct CefStringUserfreeUtf16(UserFreeData<_cef_string_utf16_t>);
 
+impl From<&str> for CefStringUserfreeUtf16 {
+    fn from(value: &str) -> Self {
+        let value = CefStringUserfreeUtf8::from(value);
+        let value = CefStringUtf8::from(&value);
+        Self::from(&value)
+    }
+}
+
 impl From<*mut _cef_string_utf16_t> for CefStringUserfreeUtf16 {
     fn from(value: *mut _cef_string_utf16_t) -> Self {
         Self(value.into())
@@ -233,6 +251,72 @@ impl From<CefStringUserfreeUtf16> for *mut _cef_string_utf16_t {
     fn from(value: CefStringUserfreeUtf16) -> Self {
         let mut value = value;
         mem::take(&mut value.0).into()
+    }
+}
+
+impl From<&CefStringUserfreeUtf16> for Option<&_cef_string_utf16_t> {
+    fn from(value: &CefStringUserfreeUtf16) -> Self {
+        value.0 .0.as_ref().map(|value| unsafe { value.as_ref() })
+    }
+}
+
+impl From<*const _cef_string_utf8_t> for CefStringUserfreeUtf16 {
+    fn from(value: *const _cef_string_utf8_t) -> Self {
+        Self(UserFreeData(unsafe {
+            value.as_ref().and_then(|value| {
+                let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
+                NonNull::new(cef_dll_sys::cef_string_userfree_utf16_alloc()).and_then(|data| {
+                    if cef_dll_sys::cef_string_utf8_to_utf16(
+                        slice.as_ptr() as *const _,
+                        slice.len(),
+                        data.as_ptr(),
+                    ) == 0
+                    {
+                        cef_dll_sys::cef_string_userfree_utf16_free(data.as_ptr());
+                        None
+                    } else {
+                        Some(data)
+                    }
+                })
+            })
+        }))
+    }
+}
+
+impl From<&CefStringUtf8> for CefStringUserfreeUtf16 {
+    fn from(value: &CefStringUtf8) -> Self {
+        let value: *const _cef_string_utf8_t = value.into();
+        Self::from(value)
+    }
+}
+
+impl From<*const _cef_string_wide_t> for CefStringUserfreeUtf16 {
+    fn from(value: *const _cef_string_wide_t) -> Self {
+        Self(UserFreeData(unsafe {
+            value.as_ref().and_then(|value| {
+                let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
+                NonNull::new(cef_dll_sys::cef_string_userfree_utf16_alloc()).and_then(|data| {
+                    if cef_dll_sys::cef_string_wide_to_utf16(
+                        slice.as_ptr() as *const _,
+                        slice.len(),
+                        data.as_ptr(),
+                    ) == 0
+                    {
+                        cef_dll_sys::cef_string_userfree_utf16_free(data.as_ptr());
+                        None
+                    } else {
+                        Some(data)
+                    }
+                })
+            })
+        }))
+    }
+}
+
+impl From<&CefStringWide> for CefStringUserfreeUtf16 {
+    fn from(value: &CefStringWide) -> Self {
+        let value: *const _cef_string_wide_t = value.into();
+        Self::from(value)
     }
 }
 
@@ -250,6 +334,14 @@ impl Drop for CefStringUserfreeUtf16 {
 #[derive(Clone, Default)]
 pub struct CefStringUserfreeWide(UserFreeData<_cef_string_wide_t>);
 
+impl From<&str> for CefStringUserfreeWide {
+    fn from(value: &str) -> Self {
+        let value = CefStringUserfreeUtf8::from(value);
+        let value = CefStringUtf8::from(&value);
+        Self::from(&value)
+    }
+}
+
 impl From<*mut _cef_string_wide_t> for CefStringUserfreeWide {
     fn from(value: *mut _cef_string_wide_t) -> Self {
         Self(value.into())
@@ -260,6 +352,72 @@ impl From<CefStringUserfreeWide> for *mut _cef_string_wide_t {
     fn from(value: CefStringUserfreeWide) -> Self {
         let mut value = value;
         mem::take(&mut value.0).into()
+    }
+}
+
+impl From<&CefStringUserfreeWide> for Option<&_cef_string_wide_t> {
+    fn from(value: &CefStringUserfreeWide) -> Self {
+        value.0 .0.as_ref().map(|value| unsafe { value.as_ref() })
+    }
+}
+
+impl From<*const _cef_string_utf8_t> for CefStringUserfreeWide {
+    fn from(value: *const _cef_string_utf8_t) -> Self {
+        Self(UserFreeData(unsafe {
+            value.as_ref().and_then(|value| {
+                let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
+                NonNull::new(cef_dll_sys::cef_string_userfree_wide_alloc()).and_then(|data| {
+                    if cef_dll_sys::cef_string_utf8_to_wide(
+                        slice.as_ptr() as *const _,
+                        slice.len(),
+                        data.as_ptr(),
+                    ) == 0
+                    {
+                        cef_dll_sys::cef_string_userfree_wide_free(data.as_ptr());
+                        None
+                    } else {
+                        Some(data)
+                    }
+                })
+            })
+        }))
+    }
+}
+
+impl From<&CefStringUtf8> for CefStringUserfreeWide {
+    fn from(value: &CefStringUtf8) -> Self {
+        let value: *const _cef_string_utf8_t = value.into();
+        Self::from(value)
+    }
+}
+
+impl From<*const _cef_string_utf16_t> for CefStringUserfreeWide {
+    fn from(value: *const _cef_string_utf16_t) -> Self {
+        Self(UserFreeData(unsafe {
+            value.as_ref().and_then(|value| {
+                let slice = slice::from_raw_parts(value.str_ as *const _, value.length);
+                NonNull::new(cef_dll_sys::cef_string_userfree_wide_alloc()).and_then(|data| {
+                    if cef_dll_sys::cef_string_utf16_to_wide(
+                        slice.as_ptr() as *const _,
+                        slice.len(),
+                        data.as_ptr(),
+                    ) == 0
+                    {
+                        cef_dll_sys::cef_string_userfree_wide_free(data.as_ptr());
+                        None
+                    } else {
+                        Some(data)
+                    }
+                })
+            })
+        }))
+    }
+}
+
+impl From<&CefStringUtf16> for CefStringUserfreeWide {
+    fn from(value: &CefStringUtf16) -> Self {
+        let value: *const _cef_string_utf16_t = value.into();
+        Self::from(value)
     }
 }
 
@@ -276,8 +434,7 @@ impl Drop for CefStringUserfreeWide {
 
 enum CefStringData<T> {
     Borrowed(Option<T>),
-    Clear(T),
-    UserFree(*mut T),
+    BorrowedMut(Option<NonNull<T>>),
 }
 
 impl<T> Clone for CefStringData<T>
@@ -297,12 +454,6 @@ impl<T> Default for CefStringData<T> {
     }
 }
 
-impl<T> From<*mut T> for CefStringData<T> {
-    fn from(value: *mut T) -> Self {
-        Self::UserFree(value)
-    }
-}
-
 impl<T> From<*const T> for CefStringData<T>
 where
     T: Copy,
@@ -312,12 +463,9 @@ where
     }
 }
 
-impl<T> From<T> for CefStringData<T>
-where
-    T: Copy,
-{
-    fn from(value: T) -> Self {
-        Self::Clear(value)
+impl<T> From<*mut T> for CefStringData<T> {
+    fn from(value: *mut T) -> Self {
+        Self::BorrowedMut(NonNull::new(value))
     }
 }
 
@@ -325,8 +473,9 @@ impl<'a, T> Into<Option<&'a T>> for &'a CefStringData<T> {
     fn into(self) -> Option<&'a T> {
         match self {
             CefStringData::Borrowed(value) => value.as_ref(),
-            CefStringData::Clear(value) => Some(value),
-            CefStringData::UserFree(value) => unsafe { value.as_ref() },
+            CefStringData::BorrowedMut(value) => {
+                value.as_ref().map(|value| unsafe { value.as_ref() })
+            }
         }
     }
 }
@@ -334,60 +483,17 @@ impl<'a, T> Into<Option<&'a T>> for &'a CefStringData<T> {
 impl<'a, T> Into<Option<&'a mut T>> for &'a mut CefStringData<T> {
     fn into(self) -> Option<&'a mut T> {
         match self {
-            CefStringData::Borrowed(value) => value.as_mut(),
-            CefStringData::Clear(value) => Some(value),
-            CefStringData::UserFree(value) => unsafe { value.as_mut() },
+            CefStringData::Borrowed(_) => None,
+            CefStringData::BorrowedMut(value) => {
+                value.as_mut().map(|value| unsafe { value.as_mut() })
+            }
         }
     }
 }
 
 /// See [_cef_string_utf8_t] for more documentation.
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct CefStringUtf8(CefStringData<_cef_string_utf8_t>);
-
-impl Drop for CefStringUtf8 {
-    fn drop(&mut self) {
-        unsafe {
-            match &mut self.0 {
-                CefStringData::UserFree(value) => {
-                    value
-                        .as_mut()
-                        .map(|value| cef_dll_sys::cef_string_userfree_utf8_free(value));
-                }
-                CefStringData::Clear(value) => {
-                    cef_dll_sys::cef_string_utf8_clear(value);
-                }
-                _ => {}
-            }
-        }
-    }
-}
-
-impl From<&str> for CefStringUtf8 {
-    fn from(value: &str) -> Self {
-        Self(
-            unsafe {
-                let cef_string = cef_dll_sys::cef_string_userfree_utf8_alloc();
-                if !cef_string.is_null() {
-                    cef_dll_sys::cef_string_utf8_set(
-                        value.as_bytes().as_ptr() as *const _,
-                        value.as_bytes().len(),
-                        cef_string,
-                        1,
-                    );
-                }
-                cef_string
-            }
-            .into(),
-        )
-    }
-}
-
-impl From<_cef_string_utf8_t> for CefStringUtf8 {
-    fn from(value: _cef_string_utf8_t) -> Self {
-        Self(value.into())
-    }
-}
 
 impl From<*const _cef_string_utf8_t> for CefStringUtf8 {
     fn from(value: *const _cef_string_utf8_t) -> Self {
@@ -401,75 +507,51 @@ impl From<*mut _cef_string_utf8_t> for CefStringUtf8 {
     }
 }
 
-impl Into<*const _cef_string_utf8_t> for &CefStringUtf8 {
-    fn into(self) -> *const _cef_string_utf8_t {
-        let data: Option<&_cef_string_utf8_t> = (&self.0).into();
-        data.map(ptr::from_ref).unwrap_or(ptr::null())
-    }
-}
-
-impl From<&CefStringUtf16> for CefStringUtf8 {
-    fn from(value: &CefStringUtf16) -> Self {
-        Self(
-            unsafe {
-                let mut cef_string = mem::zeroed();
-                let value: *const _cef_string_utf16_t = value.into();
-                if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
-                {
-                    cef_dll_sys::cef_string_utf16_to_utf8(str_, length, &mut cef_string);
-                }
-                cef_string
-            }
-            .into(),
-        )
-    }
-}
-
-impl From<&CefStringWide> for CefStringUtf8 {
-    fn from(value: &CefStringWide) -> Self {
-        Self(
-            unsafe {
-                let mut cef_string = mem::zeroed();
-                let value: *const _cef_string_wide_t = value.into();
-                if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
-                {
-                    cef_dll_sys::cef_string_wide_to_utf8(str_, length, &mut cef_string);
-                }
-                cef_string
-            }
-            .into(),
-        )
-    }
-}
-
-impl Into<_cef_string_utf8_t> for CefStringUtf8 {
-    fn into(self) -> _cef_string_utf8_t {
-        match self.0 {
-            CefStringData::Borrowed(Some(value)) => value,
-            _ => unsafe { mem::zeroed() },
+impl From<&CefStringUtf8> for *const _cef_string_utf8_t {
+    fn from(value: &CefStringUtf8) -> Self {
+        match &value.0 {
+            CefStringData::Borrowed(value) => value.as_ref().map(ptr::from_ref),
+            _ => None,
         }
+        .unwrap_or(ptr::null())
     }
 }
 
-impl Into<*mut _cef_string_utf8_t> for CefStringUtf8 {
-    fn into(self) -> *mut _cef_string_utf8_t {
-        let value = match self.0 {
-            CefStringData::UserFree(value) => value,
-            _ => ptr::null_mut(),
-        };
-        mem::forget(self);
-        value
+impl From<&mut CefStringUtf8> for *mut _cef_string_utf8_t {
+    fn from(value: &mut CefStringUtf8) -> Self {
+        match &mut value.0 {
+            CefStringData::BorrowedMut(value) => value.map(|value| value.as_ptr()),
+            _ => None,
+        }
+        .unwrap_or(ptr::null_mut())
     }
 }
 
-impl Into<*mut _cef_string_utf8_t> for &mut CefStringUtf8 {
-    fn into(self) -> *mut _cef_string_utf8_t {
-        mem::take(self).into()
+impl From<_cef_string_utf8_t> for CefStringUtf8 {
+    fn from(value: _cef_string_utf8_t) -> Self {
+        Self(CefStringData::Borrowed(Some(value)))
+    }
+}
+
+impl From<CefStringUtf8> for _cef_string_utf8_t {
+    fn from(value: CefStringUtf8) -> Self {
+        match value.0 {
+            CefStringData::Borrowed(value) => value,
+            _ => None,
+        }
+        .unwrap_or(unsafe { mem::zeroed() })
+    }
+}
+
+impl From<&CefStringUserfreeUtf8> for CefStringUtf8 {
+    fn from(value: &CefStringUserfreeUtf8) -> Self {
+        let value: Option<&_cef_string_utf8_t> = value.into();
+        Self::from(value.map(ptr::from_ref).unwrap_or(ptr::null()))
     }
 }
 
 impl CefStringUtf8 {
-    fn as_str(&self) -> Option<&str> {
+    pub fn as_str(&self) -> Option<&str> {
         let data: Option<&_cef_string_utf8_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
         Some(unsafe {
@@ -493,30 +575,6 @@ impl Display for CefStringUtf8 {
 #[derive(Clone, Default)]
 pub struct CefStringUtf16(CefStringData<_cef_string_utf16_t>);
 
-impl Drop for CefStringUtf16 {
-    fn drop(&mut self) {
-        unsafe {
-            match &mut self.0 {
-                CefStringData::UserFree(value) => {
-                    value
-                        .as_mut()
-                        .map(|value| cef_dll_sys::cef_string_userfree_utf16_free(value));
-                }
-                CefStringData::Clear(value) => {
-                    cef_dll_sys::cef_string_utf16_clear(value);
-                }
-                _ => {}
-            }
-        }
-    }
-}
-
-impl From<_cef_string_utf16_t> for CefStringUtf16 {
-    fn from(value: _cef_string_utf16_t) -> Self {
-        Self(value.into())
-    }
-}
-
 impl From<*const _cef_string_utf16_t> for CefStringUtf16 {
     fn from(value: *const _cef_string_utf16_t) -> Self {
         Self(value.into())
@@ -529,106 +587,71 @@ impl From<*mut _cef_string_utf16_t> for CefStringUtf16 {
     }
 }
 
-impl Into<*const _cef_string_utf16_t> for &CefStringUtf16 {
-    fn into(self) -> *const _cef_string_utf16_t {
-        let data: Option<&_cef_string_utf16_t> = (&self.0).into();
-        data.map(ptr::from_ref).unwrap_or(ptr::null())
-    }
-}
-
-impl From<&str> for CefStringUtf16 {
-    fn from(value: &str) -> Self {
-        Self::from(&CefStringUtf8::from(value))
-    }
-}
-
-impl From<&CefStringUtf8> for CefStringUtf16 {
-    fn from(value: &CefStringUtf8) -> Self {
-        Self(
-            unsafe {
-                let mut cef_string = mem::zeroed();
-                let value: *const _cef_string_utf8_t = value.into();
-                if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
-                {
-                    cef_dll_sys::cef_string_utf8_to_utf16(str_, length, &mut cef_string);
-                }
-                cef_string
-            }
-            .into(),
-        )
-    }
-}
-
-impl From<&CefStringWide> for CefStringUtf16 {
-    fn from(value: &CefStringWide) -> Self {
-        Self(
-            unsafe {
-                let mut cef_string = mem::zeroed();
-                let value: *const _cef_string_wide_t = value.into();
-                if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
-                {
-                    cef_dll_sys::cef_string_wide_to_utf16(str_, length, &mut cef_string);
-                }
-                cef_string
-            }
-            .into(),
-        )
-    }
-}
-
-impl Into<_cef_string_utf16_t> for CefStringUtf16 {
-    fn into(self) -> _cef_string_utf16_t {
-        match self.0 {
-            CefStringData::Borrowed(Some(value)) => value,
-            _ => unsafe { mem::zeroed() },
+impl From<&CefStringUtf16> for *const _cef_string_utf16_t {
+    fn from(value: &CefStringUtf16) -> Self {
+        match &value.0 {
+            CefStringData::Borrowed(value) => value.as_ref().map(ptr::from_ref),
+            _ => None,
         }
+        .unwrap_or(ptr::null())
     }
 }
 
-impl Into<*mut _cef_string_utf16_t> for CefStringUtf16 {
-    fn into(self) -> *mut _cef_string_utf16_t {
-        let value = match self.0 {
-            CefStringData::UserFree(value) => value,
-            _ => ptr::null_mut(),
-        };
-        mem::forget(self);
-        value
+impl From<&mut CefStringUtf16> for *mut _cef_string_utf16_t {
+    fn from(value: &mut CefStringUtf16) -> Self {
+        match &mut value.0 {
+            CefStringData::BorrowedMut(value) => value.map(|value| value.as_ptr()),
+            _ => None,
+        }
+        .unwrap_or(ptr::null_mut())
     }
 }
 
-impl Into<*mut _cef_string_utf16_t> for &mut CefStringUtf16 {
-    fn into(self) -> *mut _cef_string_utf16_t {
-        mem::take(self).into()
+impl From<_cef_string_utf16_t> for CefStringUtf16 {
+    fn from(value: _cef_string_utf16_t) -> Self {
+        Self(CefStringData::Borrowed(Some(value)))
+    }
+}
+
+impl From<CefStringUtf16> for _cef_string_utf16_t {
+    fn from(value: CefStringUtf16) -> Self {
+        match value.0 {
+            CefStringData::Borrowed(value) => value,
+            _ => None,
+        }
+        .unwrap_or(unsafe { mem::zeroed() })
+    }
+}
+
+impl From<&CefStringUserfreeUtf16> for CefStringUtf16 {
+    fn from(value: &CefStringUserfreeUtf16) -> Self {
+        let value: Option<&_cef_string_utf16_t> = value.into();
+        Self::from(value.map(ptr::from_ref).unwrap_or(ptr::null()))
+    }
+}
+
+impl CefStringUtf16 {
+    pub fn as_slice(&self) -> Option<&[u16]> {
+        let data: Option<&_cef_string_utf16_t> = (&self.0).into();
+        let (str_, length) = data.map(|value| (value.str_, value.length))?;
+        Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
+    }
+}
+
+impl Display for CefStringUtf16 {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let value = CefStringUserfreeUtf8::from(self);
+        if let Some(value) = value.as_str() {
+            write!(f, "{value}")
+        } else {
+            Ok(())
+        }
     }
 }
 
 /// See [_cef_string_wide_t] for more documentation.
 #[derive(Clone, Default)]
 pub struct CefStringWide(CefStringData<_cef_string_wide_t>);
-
-impl Drop for CefStringWide {
-    fn drop(&mut self) {
-        unsafe {
-            match &mut self.0 {
-                CefStringData::UserFree(value) => {
-                    value
-                        .as_mut()
-                        .map(|value| cef_dll_sys::cef_string_userfree_wide_free(value));
-                }
-                CefStringData::Clear(value) => {
-                    cef_dll_sys::cef_string_wide_clear(value);
-                }
-                _ => {}
-            }
-        }
-    }
-}
-
-impl From<_cef_string_wide_t> for CefStringWide {
-    fn from(value: _cef_string_wide_t) -> Self {
-        Self(value.into())
-    }
-}
 
 impl From<*const _cef_string_wide_t> for CefStringWide {
     fn from(value: *const _cef_string_wide_t) -> Self {
@@ -642,76 +665,62 @@ impl From<*mut _cef_string_wide_t> for CefStringWide {
     }
 }
 
-impl Into<*const _cef_string_wide_t> for &CefStringWide {
-    fn into(self) -> *const _cef_string_wide_t {
-        let data: Option<&_cef_string_wide_t> = (&self.0).into();
+impl From<&CefStringWide> for *const _cef_string_wide_t {
+    fn from(value: &CefStringWide) -> Self {
+        let data: Option<&_cef_string_wide_t> = (&value.0).into();
         data.map(ptr::from_ref).unwrap_or(ptr::null())
     }
 }
 
-impl From<&str> for CefStringWide {
-    fn from(value: &str) -> Self {
-        Self::from(&CefStringUtf8::from(value))
-    }
-}
-
-impl From<&CefStringUtf8> for CefStringWide {
-    fn from(value: &CefStringUtf8) -> Self {
-        Self(
-            unsafe {
-                let mut cef_string = mem::zeroed();
-                let value: *const _cef_string_utf8_t = value.into();
-                if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
-                {
-                    cef_dll_sys::cef_string_utf8_to_wide(str_, length, &mut cef_string);
-                }
-                cef_string
-            }
-            .into(),
-        )
-    }
-}
-
-impl From<&CefStringUtf16> for CefStringWide {
-    fn from(value: &CefStringUtf16) -> Self {
-        Self(
-            unsafe {
-                let mut cef_string = mem::zeroed();
-                let value: *const _cef_string_utf16_t = value.into();
-                if let Some((str_, length)) = value.as_ref().map(|value| (value.str_, value.length))
-                {
-                    cef_dll_sys::cef_string_utf16_to_wide(str_, length, &mut cef_string);
-                }
-                cef_string
-            }
-            .into(),
-        )
-    }
-}
-
-impl Into<_cef_string_wide_t> for CefStringWide {
-    fn into(self) -> _cef_string_wide_t {
-        match self.0 {
-            CefStringData::Borrowed(Some(value)) => value,
-            _ => unsafe { mem::zeroed() },
+impl From<&mut CefStringWide> for *mut _cef_string_wide_t {
+    fn from(value: &mut CefStringWide) -> Self {
+        match &mut value.0 {
+            CefStringData::BorrowedMut(value) => value.map(|value| value.as_ptr()),
+            _ => None,
         }
+        .unwrap_or(ptr::null_mut())
     }
 }
 
-impl Into<*mut _cef_string_wide_t> for CefStringWide {
-    fn into(self) -> *mut _cef_string_wide_t {
-        let value = match self.0 {
-            CefStringData::UserFree(value) => value,
-            _ => ptr::null_mut(),
-        };
-        mem::forget(self);
-        value
+impl From<_cef_string_wide_t> for CefStringWide {
+    fn from(value: _cef_string_wide_t) -> Self {
+        Self(CefStringData::Borrowed(Some(value)))
     }
 }
 
-impl Into<*mut _cef_string_wide_t> for &mut CefStringWide {
-    fn into(self) -> *mut _cef_string_wide_t {
-        mem::take(self).into()
+impl From<CefStringWide> for _cef_string_wide_t {
+    fn from(value: CefStringWide) -> Self {
+        match value.0 {
+            CefStringData::Borrowed(value) => value,
+            _ => None,
+        }
+        .unwrap_or(unsafe { mem::zeroed() })
+    }
+}
+
+impl From<&CefStringUserfreeWide> for CefStringWide {
+    fn from(value: &CefStringUserfreeWide) -> Self {
+        let value: Option<&_cef_string_wide_t> = value.into();
+        Self::from(value.map(ptr::from_ref).unwrap_or(ptr::null()))
+    }
+}
+
+impl CefStringWide {
+    pub fn as_slice(&self) -> Option<&[i32]> {
+        let data: Option<&_cef_string_wide_t> = (&self.0).into();
+        let (str_, length) = data.map(|value| (value.str_, value.length))?;
+        Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
+    }
+}
+
+impl Display for CefStringWide {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        let value = CefStringUserfreeUtf8::from(self);
+        if let Some(value) = value.as_str() {
+            write!(f, "{value}")
+        } else {
+            Ok(())
+        }
     }
 }
 
@@ -734,9 +743,9 @@ impl From<*mut _cef_string_list_t> for CefStringList {
     }
 }
 
-impl Into<*mut _cef_string_list_t> for &mut CefStringList {
-    fn into(self) -> *mut _cef_string_list_t {
-        self.0
+impl From<&mut CefStringList> for *mut _cef_string_list_t {
+    fn from(value: &mut CefStringList) -> Self {
+        value.0
     }
 }
 
@@ -754,7 +763,7 @@ impl IntoIterator for CefStringList {
                     (cef_dll_sys::cef_string_list_value(list, i, &mut value) > 0).then_some(value)
                 })
                 .map(|value| {
-                    CefStringUtf8::from(&CefString::from(ptr::from_ref(&value))).to_string()
+                    CefStringUserfreeUtf8::from(&CefString::from(ptr::from_ref(&value))).to_string()
                 })
                 .collect::<Vec<_>>()
         })
@@ -782,9 +791,9 @@ impl From<*mut _cef_string_map_t> for CefStringMap {
     }
 }
 
-impl Into<*mut _cef_string_map_t> for &mut CefStringMap {
-    fn into(self) -> *mut _cef_string_map_t {
-        self.0
+impl From<&mut CefStringMap> for *mut _cef_string_map_t {
+    fn from(value: &mut CefStringMap) -> Self {
+        value.0
     }
 }
 
@@ -806,8 +815,10 @@ impl IntoIterator for CefStringMap {
                 })
                 .map(|(key, value)| {
                     (
-                        CefStringUtf8::from(&CefString::from(ptr::from_ref(&key))).to_string(),
-                        CefStringUtf8::from(&CefString::from(ptr::from_ref(&value))).to_string(),
+                        CefStringUserfreeUtf8::from(&CefString::from(ptr::from_ref(&key)))
+                            .to_string(),
+                        CefStringUserfreeUtf8::from(&CefString::from(ptr::from_ref(&value)))
+                            .to_string(),
                     )
                 })
                 .collect::<Vec<_>>()
@@ -836,8 +847,8 @@ impl From<*mut _cef_string_multimap_t> for CefStringMultimap {
     }
 }
 
-impl Into<*mut _cef_string_multimap_t> for &mut CefStringMultimap {
-    fn into(self) -> *mut _cef_string_multimap_t {
-        self.0
+impl From<&mut CefStringMultimap> for *mut _cef_string_multimap_t {
+    fn from(value: &mut CefStringMultimap) -> Self {
+        value.0
     }
 }
