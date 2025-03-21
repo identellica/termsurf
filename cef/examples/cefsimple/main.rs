@@ -280,8 +280,8 @@ fn main() {
 
     let sandbox = SandboxInfo::new();
 
-    let switch = CefStringUserfreeUtf16::from("type");
-    let is_browser_process = cmd.has_switch(Some(&CefStringUtf16::from(&switch))) != 1;
+    let switch = CefStringUserfree::from("type");
+    let is_browser_process = cmd.has_switch(Some(&CefString::from(&switch))) != 1;
 
     let window = Arc::new(Mutex::new(None));
     let mut app = DemoApp::new(window.clone());
@@ -297,7 +297,7 @@ fn main() {
         assert!(ret == -1, "cannot execute browser process");
     } else {
         let process_type = CefStringUserfreeUtf8::from(&CefString::from(
-            &cmd.get_switch_value(Some(&CefStringUtf16::from(&switch))),
+            &cmd.get_switch_value(Some(&CefString::from(&switch))),
         ));
         println!("launch process {process_type}");
         assert!(ret >= 0, "cannot execute non-browser process");

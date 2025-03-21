@@ -485,7 +485,7 @@ impl SignatureRef<'_> {
                                     .get(&ty_string)
                                     .and_then(|i| tree.struct_declarations.get(*i))
                                     .map(|s| s.methods.is_empty()
-                                        &&!s.fields.is_empty()
+                                        && !s.fields.is_empty()
                                         && !s.fields.iter().map(|f| f.name.as_str()).eq(["_unused"]))
                                     .unwrap_or_default() =>
                             {
@@ -509,6 +509,24 @@ impl SignatureRef<'_> {
                                 ty: NameMapType::StructDeclaration,
                                 ..
                             }) => {
+                                let impl_default = match modifiers {
+                                    [TypeModifier::ConstPtr] => {
+                                        quote! { unwrap_or(std::ptr::null()) }
+                                    }
+                                    [TypeModifier::MutPtr] => {
+                                        quote! { unwrap_or(std::ptr::null_mut()) }
+                                    }
+                                    _ => quote! { unwrap_or_default() },
+                                };
+
+                                Some(quote! {
+                                    let #name = #name.map(|arg| arg.as_raw()).#impl_default;
+                                })
+                            }
+                            Some(NameMapEntry {
+                                ty: NameMapType::TypeAlias,
+                                ..
+                            }) if ty_string.as_str() == "cef_string_t" => {
                                 let impl_default = match modifiers {
                                     [TypeModifier::ConstPtr] => {
                                         quote! { unwrap_or(std::ptr::null()) }
@@ -839,7 +857,9 @@ impl SignatureRef<'_> {
                                 }),
                                 _ => None,
                             }
-                        } else if CUSTOM_STRING_TYPES.contains(&ty_string.as_str()) {
+                        } else if ty_string.as_str() == "cef_string_t" ||
+                            CUSTOM_STRING_TYPES.contains(&ty_string.as_str())
+                        {
                             match modifiers {
                                 [TypeModifier::MutPtr] => Some(quote! {
                                     let mut #arg_name = if #arg_name.is_null() { None } else { Some(#arg_name.into()) };
@@ -969,7 +989,9 @@ impl SignatureRef<'_> {
                     })
                     .flatten()
                     .or_else(|| {
-                        if CUSTOM_STRING_TYPES.contains(&ty_string.as_str()) {
+                        if ty_string.as_str() == "cef_string_t" ||
+                            CUSTOM_STRING_TYPES.contains(&ty_string.as_str())
+                        {
                             None
                         } else {
                             let ty =
@@ -1259,7 +1281,9 @@ const CUSTOM_STRING_USERFREE_ALIASES: &[&str] = &[
 ];
 
 fn is_custom_string_userfree_alias(name: &str) -> bool {
-    name == "cef_string_userfree_t" || CUSTOM_STRING_USERFREE_ALIASES.contains(&name)
+    name == "cef_string_t"
+        || name == "cef_string_userfree_t"
+        || CUSTOM_STRING_USERFREE_ALIASES.contains(&name)
 }
 
 struct StructDeclarationRef<'a> {
