@@ -46948,7 +46948,7 @@ pub fn string_ascii_to_utf16(
 }
 
 /// See [cef_string_userfree_wide_alloc] for more documentation.
-pub fn string_userfree_wide_alloc() -> cef_string_userfree_wide_t {
+pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
     unsafe {
         let result = cef_string_userfree_wide_alloc();
         result.as_wrapper()
@@ -46956,7 +46956,7 @@ pub fn string_userfree_wide_alloc() -> cef_string_userfree_wide_t {
 }
 
 /// See [cef_string_userfree_utf8_alloc] for more documentation.
-pub fn string_userfree_utf8_alloc() -> cef_string_userfree_utf8_t {
+pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
     unsafe {
         let result = cef_string_userfree_utf8_alloc();
         result.as_wrapper()
@@ -46964,7 +46964,7 @@ pub fn string_userfree_utf8_alloc() -> cef_string_userfree_utf8_t {
 }
 
 /// See [cef_string_userfree_utf16_alloc] for more documentation.
-pub fn string_userfree_utf16_alloc() -> cef_string_userfree_utf16_t {
+pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
     unsafe {
         let result = cef_string_userfree_utf16_alloc();
         result.as_wrapper()
@@ -46972,7 +46972,7 @@ pub fn string_userfree_utf16_alloc() -> cef_string_userfree_utf16_t {
 }
 
 /// See [cef_string_userfree_wide_free] for more documentation.
-pub fn string_userfree_wide_free(str_: cef_string_userfree_wide_t) {
+pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
     unsafe {
         let arg_str_ = str_;
         let arg_str_ = arg_str_.as_raw();
@@ -46982,7 +46982,7 @@ pub fn string_userfree_wide_free(str_: cef_string_userfree_wide_t) {
 }
 
 /// See [cef_string_userfree_utf8_free] for more documentation.
-pub fn string_userfree_utf8_free(str_: cef_string_userfree_utf8_t) {
+pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
     unsafe {
         let arg_str_ = str_;
         let arg_str_ = arg_str_.as_raw();
@@ -46992,7 +46992,7 @@ pub fn string_userfree_utf8_free(str_: cef_string_userfree_utf8_t) {
 }
 
 /// See [cef_string_userfree_utf16_free] for more documentation.
-pub fn string_userfree_utf16_free(str_: cef_string_userfree_utf16_t) {
+pub fn string_userfree_utf16_free(str_: CefStringUserfreeUtf16) {
     unsafe {
         let arg_str_ = str_;
         let arg_str_ = arg_str_.as_raw();
