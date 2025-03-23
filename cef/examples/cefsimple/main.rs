@@ -105,8 +105,7 @@ impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
     fn on_context_initialized(&self) {
         println!("cef context intiialized");
         let mut client = DemoClient::new();
-        let url = CefStringUserfree::from("https://www.google.com");
-        let url = CefString::from(&url);
+        let url = CefString::from("https://www.google.com");
 
         let browser_view = browser_view_create(
             Some(&mut client),
@@ -280,8 +279,8 @@ fn main() {
 
     let sandbox = SandboxInfo::new();
 
-    let switch = CefStringUserfree::from("type");
-    let is_browser_process = cmd.has_switch(Some(&CefString::from(&switch))) != 1;
+    let switch = CefString::from("type");
+    let is_browser_process = cmd.has_switch(Some(&switch)) != 1;
 
     let window = Arc::new(Mutex::new(None));
     let mut app = DemoApp::new(window.clone());
@@ -296,9 +295,7 @@ fn main() {
         println!("launch browser process");
         assert!(ret == -1, "cannot execute browser process");
     } else {
-        let process_type = CefStringUserfreeUtf8::from(&CefString::from(
-            &cmd.get_switch_value(Some(&CefString::from(&switch))),
-        ));
+        let process_type = CefString::from(&cmd.get_switch_value(Some(&switch)));
         println!("launch process {process_type}");
         assert!(ret >= 0, "cannot execute non-browser process");
         // non-browser process does not initialize cef
