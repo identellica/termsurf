@@ -33,21 +33,21 @@ cargo run -p export-cef-dir -- --force $env:USERPROFILE/.local/share/cef
 
 ```sh
 export CEF_PATH=$HOME/.local/share/cef
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/share/cef
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CEF_PATH
 ```
 
 #### macOS
 
 ```sh
 export CEF_PATH=$HOME/.local/share/cef
-export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$HOME/.local/share/cef
+export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$CEF_PATH
 ```
 
 #### Windows (using PowerShell)
 
 ```pwsh
-$env:CEF_PATH=$env:USERPROFILE/.local/share/cef
-$env:PATH=$env:PATH;$env:USERPROFILE/.local/share/cef
+$env:CEF_PATH="$env:USERPROFILE/.local/share/cef"
+$env:PATH="$env:PATH;$env:CEF_PATH"
 ```
 
 ### Run the `cefsimple` Example
