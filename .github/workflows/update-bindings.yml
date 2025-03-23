@@ -7,6 +7,7 @@ on:
     paths:
       - Cargo.toml
       - update-bindings/**
+      - .github/workflows/update-bindings.yml
 
 jobs:
   update-linux:
@@ -19,9 +20,10 @@ jobs:
           - arm-unknown-linux-gnueabi
     outputs:
       changed:
-        ${{ steps.pack-changes.outputs.changed-x86_64-unknown-linux-gnu == 'true'
+        ${{ (steps.pack-changes.outputs.changed-x86_64-unknown-linux-gnu == 'true'
         || steps.pack-changes.outputs.changed-aarch64-unknown-linux-gnu == 'true'
-        || steps.pack-changes.outputs.changed-arm-unknown-linux-gnueabi == 'true' }}
+        || steps.pack-changes.outputs.changed-arm-unknown-linux-gnueabi == 'true')
+        &&'true' || 'false' }}
 
     steps:
       - uses: actions/checkout@v4.1.3
@@ -64,8 +66,9 @@ jobs:
           - x86_64-apple-darwin
     outputs:
       changed:
-        ${{ steps.pack-changes.outputs.changed-aarch64-apple-darwin == 'true'
-        || steps.pack-changes.outputs.changed-x86_64-apple-darwin == 'true' }}
+        ${{ (steps.pack-changes.outputs.changed-aarch64-apple-darwin == 'true'
+        || steps.pack-changes.outputs.changed-x86_64-apple-darwin == 'true')
+        && 'true' || 'false' }}
 
     steps:
       - uses: actions/checkout@v4.1.3
@@ -104,9 +107,10 @@ jobs:
           - i686-pc-windows-msvc
     outputs:
       changed:
-        ${{ steps.pack-changes.outputs.changed-x86_64-pc-windows-msvc == 'true'
+        ${{ (steps.pack-changes.outputs.changed-x86_64-pc-windows-msvc == 'true'
         || steps.pack-changes.outputs.changed-aarch64-pc-windows-msvc == 'true'
-        || steps.pack-changes.outputs.changed-i686-pc-windows-msvc == 'true' }}
+        || steps.pack-changes.outputs.changed-i686-pc-windows-msvc == 'true')
+        && 'true' || 'false' }}
 
     steps:
       - uses: actions/checkout@v4.1.3
@@ -141,15 +145,15 @@ jobs:
       - update-linux
       - update-macos
       - update-windows
-    if: needs.update-linux.outputs.changed
-      || needs.update-macos.outputs.changed
-      || needs.update-windows.outputs.changed
+    if: needs.update-linux.outputs.changed == 'true'
+      || needs.update-macos.outputs.changed == 'true'
+      || needs.update-windows.outputs.changed == 'true'
     outputs:
       merged: ${{ steps.merge-artifacts.outputs.merged == 'true' }}
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4.2.1
         with:
           pattern: update-*
           merge-multiple: true
@@ -178,7 +182,7 @@ jobs:
 
       - name: Upload Merged Artifacts
         if: steps.merge-artifacts.outputs.merged == 'true'
-        uses: actions/upload-artifact@v4.1.8
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: merge-changes
           path: merge-changes.tar.gz
@@ -186,13 +190,13 @@ jobs:
   publish-pr:
     runs-on: ubuntu-latest
     needs: merge-changes
-    if: needs.merge-changes.outputs.merged
+    if: needs.merge-changes.outputs.merged == 'true'
 
     steps:
       - uses: actions/checkout@v4.1.3
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4.2.1
         with:
           name: merge-changes
 
