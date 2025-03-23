@@ -11,8 +11,12 @@ on:
 jobs:
   update-linux:
     runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.pack-changes.outputs.changed }}
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - aarch64-unknown-linux-gnu
+          - arm-unknown-linux-gnueabi
 
     steps:
       - uses: actions/checkout@v4.1.3
@@ -24,9 +28,7 @@ jobs:
 
       - name: Update Bindings
         run: |
-          cargo run -p update-bindings -- -b -d x86_64-unknown-linux-gnu
-          cargo run -p update-bindings -- -b -d aarch64-unknown-linux-gnu
-          cargo run -p update-bindings -- -b -d arm-unknown-linux-gnueabi
+          cargo run -p update-bindings -- -b -d ${{ matrix.target }}
 
       - name: Pack Changes
         id: pack-changes
@@ -34,32 +36,34 @@ jobs:
           git add .
 
           CHANGED=($(git diff --name-only --staged | xargs))
-          if [ ${#CHANGED} -gt 0 ]; then
-            tar -czf update-linux.tar.gz ${CHANGED[@]}
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          if [ ${#CHANGED[@]} -gt 0 ]; then
+            tar -czf update-linux-${{ matrix.target }}.tar.gz ${CHANGED[@]}
+            echo "changed-${{ matrix.target }}=true" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "changed-${{ matrix.target }}=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload Artifact
-        if: steps.pack-changes.outputs.changed == 'true'
+        if: steps.pack-changes.outputs.changed-${{ matrix.target }} == 'true'
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: update-linux
-          path: update-linux.tar.gz
+          name: update-${{ matrix.target }}
+          path: update-${{ matrix.target }}.tar.gz
 
   update-macos:
     runs-on: macos-latest
-    outputs:
-      changed: ${{ steps.pack-changes.outputs.changed }}
+    strategy:
+      matrix:
+        target:
+          - aarch64-apple-darwin
+          - x86_64-apple-darwin
 
     steps:
       - uses: actions/checkout@v4.1.3
 
       - name: Update Bindings
         run: |
-          cargo run -p update-bindings -- -b -d aarch64-apple-darwin
-          cargo run -p update-bindings -- -b -d x86_64-apple-darwin
+          cargo run -p update-bindings -- -b -d ${{ matrix.target }}
 
       - name: Pack Changes
         id: pack-changes
@@ -67,33 +71,35 @@ jobs:
           git add .
 
           CHANGED=($(git diff --name-only --staged | xargs))
-          if [ ${#CHANGED} -gt 0 ]; then
-            tar -czf update-macos.tar.gz ${CHANGED[@]}
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          if [ ${#CHANGED[@]} -gt 0 ]; then
+            tar -czf update-macos-${{ matrix.target }}.tar.gz ${CHANGED[@]}
+            echo "changed-${{ matrix.target }}=true" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "changed-${{ matrix.target }}=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload Artifact
-        if: steps.pack-changes.outputs.changed == 'true'
+        if: steps.pack-changes.outputs.changed-${{ matrix.target }} == 'true'
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: update-macos
-          path: update-macos.tar.gz
+          name: update-${{ matrix.target }}
+          path: update-${{ matrix.target }}.tar.gz
 
   update-windows:
     runs-on: windows-latest
-    outputs:
-      changed: ${{ steps.pack-changes.outputs.changed }}
+    strategy:
+      matrix:
+        target:
+          - x86_64-pc-windows-msvc
+          - aarch64-pc-windows-msvc
+          - i686-pc-windows-msvc
 
     steps:
       - uses: actions/checkout@v4.1.3
 
       - name: Update Bindings
         run: |
-          cargo run -p update-bindings -- -b -d x86_64-pc-windows-msvc
-          cargo run -p update-bindings -- -b -d aarch64-pc-windows-msvc
-          cargo run -p update-bindings -- -b -d i686-pc-windows-msvc
+          cargo run -p update-bindings -- -b -d ${{ matrix.target }}
 
       - name: Pack Changes
         id: pack-changes
@@ -102,18 +108,18 @@ jobs:
 
           $changed = @(git diff --name-only --staged)
           if ($changed.Length -gt 0) {
-            tar -czf update-windows.tar.gz $changed
-            echo "changed=true" >> "$env:GITHUB_OUTPUT"
+            tar -czf update-windows-${{ matrix.target }}.tar.gz $changed
+            echo "changed-${{ matrix.target }}=true" >> "$env:GITHUB_OUTPUT"
           } else {
-            echo "changed=false" >> "$env:GITHUB_OUTPUT"
+            echo "changed-${{ matrix.target }}=false" >> "$env:GITHUB_OUTPUT"
           }
 
       - name: Upload Artifact
-        if: steps.pack-changes.outputs.changed == 'true'
+        if: steps.pack-changes.outputs.changed-${{ matrix.target }} == 'true'
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: update-windows
-          path: update-windows.tar.gz
+          name: update-${{ matrix.target }}
+          path: update-${{ matrix.target }}.tar.gz
 
   merge-changes:
     runs-on: ubuntu-latest
@@ -121,28 +127,57 @@ jobs:
       - update-linux
       - update-macos
       - update-windows
-    if: needs.update-linux.outputs.changed == 'true' || needs.update-macos.outputs.changed == 'true' || needs.update-windows.outputs.changed == 'true'
+    outputs:
+      merged: ${{ steps.merge-artifacts.outputs.merged }}
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          pattern: update-*
+          merge-multiple: true
+
+      - name: Merge Artifacts
+        id: merge-artifacts
+        run: |
+          FILES=(update-*.tar.gz)
+          if [ ${#FILES[@]} -gt 0 ]; then
+            mkdir merged
+            cd merged
+
+            for FILE in ${FILES[@]}; do
+              echo "Extracting $FILE"
+              tar -xzf ../$FILE
+              rm ../$FILE
+            done
+
+            echo "Archiving merged changes"
+            tar -czvf ../merge-changes.tar.gz .
+            echo "merged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes to merge"
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload Merged Artifacts
+        if: steps.merge-artifacts.outputs.merged == 'true'
+        uses: actions/upload-artifact@v4.1.8
+        with:
+          name: merge-changes
+          path: merge-changes.tar.gz
+
+  publish-pr:
+    runs-on: ubuntu-latest
+    needs: merge-changes
+    if: needs.merge-changes.outputs.merged == 'true'
 
     steps:
       - uses: actions/checkout@v4.1.3
 
-      - name: Download Linux Artifact
-        if: needs.update-linux.outputs.changed == 'true'
+      - name: Download Artifacts
         uses: actions/download-artifact@v4.1.8
         with:
-          name: update-linux
-
-      - name: Download macOS Artifact
-        if: needs.update-macos.outputs.changed == 'true'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: update-macos
-
-      - name: Download Windows Artifact
-        if: needs.update-windows.outputs.changed == 'true'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: update-windows
+          name: merge-changes
 
       - name: Merge PR
         env:
@@ -151,27 +186,15 @@ jobs:
           git switch -c update-bindings
           RESET_REV=$(git rev-parse HEAD)
 
-          ${{ needs.update-linux.outputs.changed == 'true'
-            && 'echo "Extracting update-linux.tar.gz"
-              tar -xzf update-linux.tar.gz
-              rm update-linux.tar.gz'
-            || 'echo "No changes in update-linux"' }}
-          ${{ needs.update-macos.outputs.changed == 'true'
-            && 'echo "Extracting update-macos.tar.gz"
-              tar -xzf update-macos.tar.gz
-              rm update-macos.tar.gz'
-            || 'echo "No changes in update-macos"' }}
-          ${{ needs.update-windows.outputs.changed == 'true'
-            && 'echo "Extracting update-windows.tar.gz"
-              tar -xzf update-windows.tar.gz
-              rm update-windows.tar.gz'
-            || 'echo "No changes in update-windows"' }}
+          echo "Extracting merge-changes.tar.gz"
+          tar -xzf merge-changes.tar.gz
+          rm merge-changes.tar.gz'
 
           git reset ${RESET_REV}
           git add .
 
           CHANGED=($(git diff --name-only --staged | xargs))
-          if [ ${#CHANGED} -gt 0 ]; then
+          if [ ${#CHANGED[@]} -gt 0 ]; then
             git push --force -u origin update-bindings
 
             FILES=()
