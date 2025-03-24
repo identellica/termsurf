@@ -51,11 +51,11 @@ jobs:
           fi
 
       - name: Upload Artifact
-        if: steps.pack-changes.outputs.changed-${{ matrix.target }} == 'true'
         uses: actions/upload-artifact@v4.6.0
         with:
           name: update-${{ matrix.target }}
           path: update-${{ matrix.target }}.tar.gz
+          if-no-files-found: ignore
 
   update-macos:
     runs-on: macos-latest
@@ -91,11 +91,11 @@ jobs:
           fi
 
       - name: Upload Artifact
-        if: steps.pack-changes.outputs.changed-${{ matrix.target }} == 'true'
         uses: actions/upload-artifact@v4.6.0
         with:
           name: update-${{ matrix.target }}
           path: update-${{ matrix.target }}.tar.gz
+          if-no-files-found: ignore
 
   update-windows:
     runs-on: windows-latest
@@ -133,11 +133,11 @@ jobs:
           }
 
       - name: Upload Artifact
-        if: steps.pack-changes.outputs.changed-${{ matrix.target }} == 'true'
         uses: actions/upload-artifact@v4.6.0
         with:
           name: update-${{ matrix.target }}
           path: update-${{ matrix.target }}.tar.gz
+          if-no-files-found: ignore
 
   merge-changes:
     runs-on: ubuntu-latest
