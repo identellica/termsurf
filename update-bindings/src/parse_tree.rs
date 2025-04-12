@@ -893,7 +893,7 @@ impl SignatureRef<'_> {
                                         let mut #arg_name = if #arg_name.is_null() {
                                             None
                                         } else {
-                                            Some(WrapParamRef::<#ty>::from(#arg_name))
+                                            Some(WrapParamRef::<#ty, _>::from(#arg_name))
                                         };
                                         let #arg_name = #arg_name.as_mut().map(|arg| arg.as_mut());
                                     }),
@@ -901,7 +901,7 @@ impl SignatureRef<'_> {
                                         let #arg_name = if #arg_name.is_null() {
                                             None
                                         } else {
-                                            Some(WrapParamRef::<#ty>::from(#arg_name))
+                                            Some(WrapParamRef::<#ty, _>::from(#arg_name))
                                         };
                                         let #arg_name = #arg_name.as_ref().map(|arg| arg.as_ref());
                                     }),
@@ -1000,11 +1000,11 @@ impl SignatureRef<'_> {
 
                             match modifiers {
                                 [TypeModifier::MutPtr, ..] => Some(quote! {
-                                    let mut #arg_name = WrapParamRef::<#ty>::from(#arg_name);
+                                    let mut #arg_name = WrapParamRef::<#ty, _>::from(#arg_name);
                                     let #arg_name = #arg_name.as_mut();
                                 }),
                                 [TypeModifier::ConstPtr, ..] => Some(quote! {
-                                    let #arg_name = WrapParamRef::<#ty>::from(#arg_name);
+                                    let #arg_name = WrapParamRef::<#ty, _>::from(#arg_name);
                                     let #arg_name = #arg_name.as_ref();
                                 }),
                                 _ => None,
