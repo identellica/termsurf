@@ -23,7 +23,7 @@ jobs:
         ${{ (steps.pack-changes.outputs.changed-x86_64-unknown-linux-gnu == 'true'
         || steps.pack-changes.outputs.changed-aarch64-unknown-linux-gnu == 'true'
         || steps.pack-changes.outputs.changed-arm-unknown-linux-gnueabi == 'true')
-        &&'true' || 'false' }}
+        && 'true' || 'false' }}
 
     steps:
       - uses: actions/checkout@v4.1.3
@@ -44,7 +44,7 @@ jobs:
 
           CHANGED=($(git diff --name-only --staged | xargs))
           if [ ${#CHANGED[@]} -gt 0 ]; then
-            tar -czf update-linux-${{ matrix.target }}.tar.gz ${CHANGED[@]}
+            tar -czf update-${{ matrix.target }}.tar.gz ${CHANGED[@]}
             echo "changed-${{ matrix.target }}=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed-${{ matrix.target }}=false" >> "$GITHUB_OUTPUT"
@@ -84,7 +84,7 @@ jobs:
 
           CHANGED=($(git diff --name-only --staged | xargs))
           if [ ${#CHANGED[@]} -gt 0 ]; then
-            tar -czf update-macos-${{ matrix.target }}.tar.gz ${CHANGED[@]}
+            tar -czf update-${{ matrix.target }}.tar.gz ${CHANGED[@]}
             echo "changed-${{ matrix.target }}=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed-${{ matrix.target }}=false" >> "$GITHUB_OUTPUT"
@@ -126,7 +126,7 @@ jobs:
 
           $changed = @(git diff --name-only --staged)
           if ($changed.Length -gt 0) {
-            tar -czf update-windows-${{ matrix.target }}.tar.gz $changed
+            tar -czf update-${{ matrix.target }}.tar.gz $changed
             echo "changed-${{ matrix.target }}=true" >> "$env:GITHUB_OUTPUT"
           } else {
             echo "changed-${{ matrix.target }}=false" >> "$env:GITHUB_OUTPUT"
