@@ -209,7 +209,7 @@ jobs:
 
           echo "Extracting merge-changes.tar.gz"
           tar -xzf merge-changes.tar.gz
-          rm merge-changes.tar.gz'
+          rm merge-changes.tar.gz
 
           git reset ${RESET_REV}
           git add .
