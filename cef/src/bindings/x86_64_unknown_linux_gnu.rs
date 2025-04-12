@@ -8960,7 +8960,7 @@ mod impl_cef_cookie_visitor_t {
         let arg_cookie = if arg_cookie.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Cookie>::from(arg_cookie))
+            Some(WrapParamRef::<Cookie, _>::from(arg_cookie))
         };
         let arg_cookie = arg_cookie.as_ref().map(|arg| arg.as_ref());
         let arg_count = arg_count.as_raw();
@@ -8968,7 +8968,7 @@ mod impl_cef_cookie_visitor_t {
         let mut arg_delete_cookie = if arg_delete_cookie.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_delete_cookie,
             ))
         };
@@ -10199,7 +10199,9 @@ mod impl_cef_media_sink_device_info_callback_t {
         let arg_device_info = if arg_device_info.is_null() {
             None
         } else {
-            Some(WrapParamRef::<MediaSinkDeviceInfo>::from(arg_device_info))
+            Some(WrapParamRef::<MediaSinkDeviceInfo, _>::from(
+                arg_device_info,
+            ))
         };
         let arg_device_info = arg_device_info.as_ref().map(|arg| arg.as_ref());
         let result = ImplMediaSinkDeviceInfoCallback::on_media_sink_device_info(
@@ -14055,7 +14057,7 @@ mod impl_cef_audio_handler_t {
         let mut arg_params = if arg_params.is_null() {
             None
         } else {
-            Some(WrapParamRef::<AudioParameters>::from(arg_params))
+            Some(WrapParamRef::<AudioParameters, _>::from(arg_params))
         };
         let arg_params = arg_params.as_mut().map(|arg| arg.as_mut());
         let result =
@@ -14076,7 +14078,7 @@ mod impl_cef_audio_handler_t {
         let arg_params = if arg_params.is_null() {
             None
         } else {
-            Some(WrapParamRef::<AudioParameters>::from(arg_params))
+            Some(WrapParamRef::<AudioParameters, _>::from(arg_params))
         };
         let arg_params = arg_params.as_ref().map(|arg| arg.as_ref());
         let arg_channels = arg_channels.as_raw();
@@ -14727,7 +14729,7 @@ mod impl_cef_menu_model_delegate_t {
         let arg_screen_point = if arg_screen_point.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Point>::from(arg_screen_point))
+            Some(WrapParamRef::<Point, _>::from(arg_screen_point))
         };
         let arg_screen_point = arg_screen_point.as_ref().map(|arg| arg.as_ref());
         let result = ImplMenuModelDelegate::mouse_outside_menu(
@@ -16753,13 +16755,13 @@ mod impl_cef_context_menu_handler_t {
         let arg_location = if arg_location.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Point>::from(arg_location))
+            Some(WrapParamRef::<Point, _>::from(arg_location))
         };
         let arg_location = arg_location.as_ref().map(|arg| arg.as_ref());
         let arg_size = if arg_size.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Size>::from(arg_size))
+            Some(WrapParamRef::<Size, _>::from(arg_size))
         };
         let arg_size = arg_size.as_ref().map(|arg| arg.as_ref());
         let arg_edit_state_flags = arg_edit_state_flags.as_raw();
@@ -18106,7 +18108,7 @@ mod impl_cef_display_handler_t {
         let arg_new_size = if arg_new_size.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Size>::from(arg_new_size))
+            Some(WrapParamRef::<Size, _>::from(arg_new_size))
         };
         let arg_new_size = arg_new_size.as_ref().map(|arg| arg.as_ref());
         let result =
@@ -18148,7 +18150,7 @@ mod impl_cef_display_handler_t {
         let arg_custom_cursor_info = if arg_custom_cursor_info.is_null() {
             None
         } else {
-            Some(WrapParamRef::<CursorInfo>::from(arg_custom_cursor_info))
+            Some(WrapParamRef::<CursorInfo, _>::from(arg_custom_cursor_info))
         };
         let arg_custom_cursor_info = arg_custom_cursor_info.as_ref().map(|arg| arg.as_ref());
         let result = ImplDisplayHandler::on_cursor_change(
@@ -19384,7 +19386,7 @@ mod impl_cef_drag_handler_t {
         let arg_regions = if arg_regions.is_null() {
             None
         } else {
-            Some(WrapParamRef::<DraggableRegion>::from(arg_regions))
+            Some(WrapParamRef::<DraggableRegion, _>::from(arg_regions))
         };
         let arg_regions = arg_regions.as_ref().map(|arg| arg.as_ref());
         let result = ImplDragHandler::on_draggable_regions_changed(
@@ -19590,7 +19592,7 @@ mod impl_cef_find_handler_t {
         let arg_selection_rect = if arg_selection_rect.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_selection_rect))
+            Some(WrapParamRef::<Rect, _>::from(arg_selection_rect))
         };
         let arg_selection_rect = arg_selection_rect.as_ref().map(|arg| arg.as_ref());
         let arg_active_match_ordinal = arg_active_match_ordinal.as_raw();
@@ -20438,7 +20440,7 @@ mod impl_cef_jsdialog_handler_t {
         let mut arg_suppress_message = if arg_suppress_message.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_suppress_message,
             ))
         };
@@ -20770,19 +20772,19 @@ mod impl_cef_keyboard_handler_t {
         let arg_event = if arg_event.is_null() {
             None
         } else {
-            Some(WrapParamRef::<KeyEvent>::from(arg_event))
+            Some(WrapParamRef::<KeyEvent, _>::from(arg_event))
         };
         let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
         let mut arg_os_event = if arg_os_event.is_null() {
             None
         } else {
-            Some(WrapParamRef::<XEvent>::from(arg_os_event))
+            Some(WrapParamRef::<XEvent, _>::from(arg_os_event))
         };
         let arg_os_event = arg_os_event.as_mut().map(|arg| arg.as_mut());
         let mut arg_is_keyboard_shortcut = if arg_is_keyboard_shortcut.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_is_keyboard_shortcut,
             ))
         };
@@ -20810,13 +20812,13 @@ mod impl_cef_keyboard_handler_t {
         let arg_event = if arg_event.is_null() {
             None
         } else {
-            Some(WrapParamRef::<KeyEvent>::from(arg_event))
+            Some(WrapParamRef::<KeyEvent, _>::from(arg_event))
         };
         let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
         let mut arg_os_event = if arg_os_event.is_null() {
             None
         } else {
-            Some(WrapParamRef::<XEvent>::from(arg_os_event))
+            Some(WrapParamRef::<XEvent, _>::from(arg_os_event))
         };
         let arg_os_event = arg_os_event.as_mut().map(|arg| arg.as_mut());
         let result = ImplKeyboardHandler::on_key_event(
@@ -21093,13 +21095,13 @@ mod impl_cef_life_span_handler_t {
         let arg_popup_features = if arg_popup_features.is_null() {
             None
         } else {
-            Some(WrapParamRef::<PopupFeatures>::from(arg_popup_features))
+            Some(WrapParamRef::<PopupFeatures, _>::from(arg_popup_features))
         };
         let arg_popup_features = arg_popup_features.as_ref().map(|arg| arg.as_ref());
         let mut arg_window_info = if arg_window_info.is_null() {
             None
         } else {
-            Some(WrapParamRef::<WindowInfo>::from(arg_window_info))
+            Some(WrapParamRef::<WindowInfo, _>::from(arg_window_info))
         };
         let arg_window_info = arg_window_info.as_mut().map(|arg| arg.as_mut());
         let mut arg_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
@@ -21113,7 +21115,7 @@ mod impl_cef_life_span_handler_t {
         let mut arg_settings = if arg_settings.is_null() {
             None
         } else {
-            Some(WrapParamRef::<BrowserSettings>::from(arg_settings))
+            Some(WrapParamRef::<BrowserSettings, _>::from(arg_settings))
         };
         let arg_settings = arg_settings.as_mut().map(|arg| arg.as_mut());
         let mut arg_extra_info = unsafe { arg_extra_info.as_mut() }.and_then(|ptr| {
@@ -21127,7 +21129,7 @@ mod impl_cef_life_span_handler_t {
         let mut arg_no_javascript_access = if arg_no_javascript_access.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_no_javascript_access,
             ))
         };
@@ -21200,7 +21202,7 @@ mod impl_cef_life_span_handler_t {
         let mut arg_window_info = if arg_window_info.is_null() {
             None
         } else {
-            Some(WrapParamRef::<WindowInfo>::from(arg_window_info))
+            Some(WrapParamRef::<WindowInfo, _>::from(arg_window_info))
         };
         let arg_window_info = arg_window_info.as_mut().map(|arg| arg.as_mut());
         let mut arg_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
@@ -21214,7 +21216,7 @@ mod impl_cef_life_span_handler_t {
         let mut arg_settings = if arg_settings.is_null() {
             None
         } else {
-            Some(WrapParamRef::<BrowserSettings>::from(arg_settings))
+            Some(WrapParamRef::<BrowserSettings, _>::from(arg_settings))
         };
         let arg_settings = arg_settings.as_mut().map(|arg| arg.as_mut());
         let mut arg_extra_info = unsafe { arg_extra_info.as_mut() }.and_then(|ptr| {
@@ -21228,7 +21230,7 @@ mod impl_cef_life_span_handler_t {
         let mut arg_use_default_window = if arg_use_default_window.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_use_default_window,
             ))
         };
@@ -23748,7 +23750,7 @@ mod impl_cef_render_handler_t {
         let mut arg_rect = if arg_rect.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_rect))
+            Some(WrapParamRef::<Rect, _>::from(arg_rect))
         };
         let arg_rect = arg_rect.as_mut().map(|arg| arg.as_mut());
         let result =
@@ -23768,7 +23770,7 @@ mod impl_cef_render_handler_t {
         let mut arg_rect = if arg_rect.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_rect))
+            Some(WrapParamRef::<Rect, _>::from(arg_rect))
         };
         let arg_rect = arg_rect.as_mut().map(|arg| arg.as_mut());
         let result = ImplRenderHandler::get_view_rect(&arg_self_.interface, arg_browser, arg_rect);
@@ -23792,13 +23794,13 @@ mod impl_cef_render_handler_t {
         let mut arg_screen_x = if arg_screen_x.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_screen_x))
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(arg_screen_x))
         };
         let arg_screen_x = arg_screen_x.as_mut().map(|arg| arg.as_mut());
         let mut arg_screen_y = if arg_screen_y.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_screen_y))
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(arg_screen_y))
         };
         let arg_screen_y = arg_screen_y.as_mut().map(|arg| arg.as_mut());
         let result = ImplRenderHandler::get_screen_point(
@@ -23824,7 +23826,7 @@ mod impl_cef_render_handler_t {
         let mut arg_screen_info = if arg_screen_info.is_null() {
             None
         } else {
-            Some(WrapParamRef::<ScreenInfo>::from(arg_screen_info))
+            Some(WrapParamRef::<ScreenInfo, _>::from(arg_screen_info))
         };
         let arg_screen_info = arg_screen_info.as_mut().map(|arg| arg.as_mut());
         let result =
@@ -23857,7 +23859,7 @@ mod impl_cef_render_handler_t {
         let arg_rect = if arg_rect.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_rect))
+            Some(WrapParamRef::<Rect, _>::from(arg_rect))
         };
         let arg_rect = arg_rect.as_ref().map(|arg| arg.as_ref());
         let result = ImplRenderHandler::on_popup_size(&arg_self_.interface, arg_browser, arg_rect);
@@ -23900,7 +23902,7 @@ mod impl_cef_render_handler_t {
         let arg_dirty_rects = if arg_dirty_rects.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_dirty_rects))
+            Some(WrapParamRef::<Rect, _>::from(arg_dirty_rects))
         };
         let arg_dirty_rects = arg_dirty_rects.as_ref().map(|arg| arg.as_ref());
         let arg_buffer = arg_buffer as *const _;
@@ -23936,13 +23938,13 @@ mod impl_cef_render_handler_t {
         let arg_dirty_rects = if arg_dirty_rects.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_dirty_rects))
+            Some(WrapParamRef::<Rect, _>::from(arg_dirty_rects))
         };
         let arg_dirty_rects = arg_dirty_rects.as_ref().map(|arg| arg.as_ref());
         let arg_info = if arg_info.is_null() {
             None
         } else {
-            Some(WrapParamRef::<AcceleratedPaintInfo>::from(arg_info))
+            Some(WrapParamRef::<AcceleratedPaintInfo, _>::from(arg_info))
         };
         let arg_info = arg_info.as_ref().map(|arg| arg.as_ref());
         let result = ImplRenderHandler::on_accelerated_paint(
@@ -23970,7 +23972,7 @@ mod impl_cef_render_handler_t {
         let mut arg_size = if arg_size.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Size>::from(arg_size))
+            Some(WrapParamRef::<Size, _>::from(arg_size))
         };
         let arg_size = arg_size.as_mut().map(|arg| arg.as_mut());
         let result = ImplRenderHandler::get_touch_handle_size(
@@ -23993,7 +23995,7 @@ mod impl_cef_render_handler_t {
         let arg_state = if arg_state.is_null() {
             None
         } else {
-            Some(WrapParamRef::<TouchHandleState>::from(arg_state))
+            Some(WrapParamRef::<TouchHandleState, _>::from(arg_state))
         };
         let arg_state = arg_state.as_ref().map(|arg| arg.as_ref());
         let result = ImplRenderHandler::on_touch_handle_state_changed(
@@ -24093,14 +24095,14 @@ mod impl_cef_render_handler_t {
         let arg_selected_range = if arg_selected_range.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Range>::from(arg_selected_range))
+            Some(WrapParamRef::<Range, _>::from(arg_selected_range))
         };
         let arg_selected_range = arg_selected_range.as_ref().map(|arg| arg.as_ref());
         let arg_character_bounds_count = arg_character_bounds_count.as_raw();
         let arg_character_bounds = if arg_character_bounds.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_character_bounds))
+            Some(WrapParamRef::<Rect, _>::from(arg_character_bounds))
         };
         let arg_character_bounds = arg_character_bounds.as_ref().map(|arg| arg.as_ref());
         let result = ImplRenderHandler::on_ime_composition_range_changed(
@@ -24132,7 +24134,7 @@ mod impl_cef_render_handler_t {
         let arg_selected_range = if arg_selected_range.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Range>::from(arg_selected_range))
+            Some(WrapParamRef::<Range, _>::from(arg_selected_range))
         };
         let arg_selected_range = arg_selected_range.as_ref().map(|arg| arg.as_ref());
         let result = ImplRenderHandler::on_text_selection_changed(
@@ -25379,7 +25381,7 @@ mod impl_cef_resource_handler_t {
         let mut arg_handle_request = if arg_handle_request.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_handle_request,
             ))
         };
@@ -25427,7 +25429,7 @@ mod impl_cef_resource_handler_t {
         let mut arg_response_length = if arg_response_length.is_null() {
             None
         } else {
-            Some(WrapParamRef::<i64>::from(arg_response_length))
+            Some(WrapParamRef::<i64, _>::from(arg_response_length))
         };
         let arg_response_length = arg_response_length.as_mut().map(|arg| arg.as_mut());
         let mut arg_redirect_url = if arg_redirect_url.is_null() {
@@ -25456,7 +25458,7 @@ mod impl_cef_resource_handler_t {
         let mut arg_bytes_skipped = if arg_bytes_skipped.is_null() {
             None
         } else {
-            Some(WrapParamRef::<i64>::from(arg_bytes_skipped))
+            Some(WrapParamRef::<i64, _>::from(arg_bytes_skipped))
         };
         let arg_bytes_skipped = arg_bytes_skipped.as_mut().map(|arg| arg.as_mut());
         let mut arg_callback = unsafe { arg_callback.as_mut() }
@@ -25485,7 +25487,9 @@ mod impl_cef_resource_handler_t {
         let mut arg_bytes_read = if arg_bytes_read.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_bytes_read))
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
+                arg_bytes_read,
+            ))
         };
         let arg_bytes_read = arg_bytes_read.as_mut().map(|arg| arg.as_mut());
         let mut arg_callback = unsafe { arg_callback.as_mut() }
@@ -25515,7 +25519,9 @@ mod impl_cef_resource_handler_t {
         let mut arg_bytes_read = if arg_bytes_read.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_bytes_read))
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
+                arg_bytes_read,
+            ))
         };
         let arg_bytes_read = arg_bytes_read.as_mut().map(|arg| arg.as_mut());
         let mut arg_callback = unsafe { arg_callback.as_mut() }
@@ -25885,7 +25891,7 @@ mod impl_cef_response_filter_t {
         let mut arg_data_in_read = if arg_data_in_read.is_null() {
             None
         } else {
-            Some(WrapParamRef::<usize>::from(arg_data_in_read))
+            Some(WrapParamRef::<usize, _>::from(arg_data_in_read))
         };
         let arg_data_in_read = arg_data_in_read.as_mut().map(|arg| arg.as_mut());
         let out_data_out = (!arg_data_out.is_null() && arg_data_out_size > 0).then(|| unsafe {
@@ -25896,7 +25902,7 @@ mod impl_cef_response_filter_t {
         let mut arg_data_out_written = if arg_data_out_written.is_null() {
             None
         } else {
-            Some(WrapParamRef::<usize>::from(arg_data_out_written))
+            Some(WrapParamRef::<usize, _>::from(arg_data_out_written))
         };
         let arg_data_out_written = arg_data_out_written.as_mut().map(|arg| arg.as_mut());
         let result = ImplResponseFilter::filter(
@@ -26406,7 +26412,7 @@ mod impl_cef_resource_request_handler_t {
         let mut arg_allow_os_execution = if arg_allow_os_execution.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_allow_os_execution,
             ))
         };
@@ -26923,7 +26929,7 @@ mod impl_cef_cookie_access_filter_t {
         let arg_cookie = if arg_cookie.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Cookie>::from(arg_cookie))
+            Some(WrapParamRef::<Cookie, _>::from(arg_cookie))
         };
         let arg_cookie = arg_cookie.as_ref().map(|arg| arg.as_ref());
         let result = ImplCookieAccessFilter::can_send_cookie(
@@ -26961,7 +26967,7 @@ mod impl_cef_cookie_access_filter_t {
         let arg_cookie = if arg_cookie.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Cookie>::from(arg_cookie))
+            Some(WrapParamRef::<Cookie, _>::from(arg_cookie))
         };
         let arg_cookie = arg_cookie.as_ref().map(|arg| arg.as_ref());
         let result = ImplCookieAccessFilter::can_save_cookie(
@@ -27602,7 +27608,7 @@ mod impl_cef_request_handler_t {
         let mut arg_disable_default_handling = if arg_disable_default_handling.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_disable_default_handling,
             ))
         };
@@ -29596,7 +29602,7 @@ mod impl_cef_request_context_handler_t {
         let mut arg_disable_default_handling = if arg_disable_default_handling.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_disable_default_handling,
             ))
         };
@@ -35298,7 +35304,7 @@ mod impl_cef_view_delegate_t {
         let arg_new_bounds = if arg_new_bounds.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_new_bounds))
+            Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
         };
         let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
         let result =
@@ -37646,7 +37652,7 @@ mod impl_cef_menu_button_delegate_t {
         let arg_screen_point = if arg_screen_point.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Point>::from(arg_screen_point))
+            Some(WrapParamRef::<Point, _>::from(arg_screen_point))
         };
         let arg_screen_point = arg_screen_point.as_ref().map(|arg| arg.as_ref());
         let mut arg_button_pressed_lock = unsafe { arg_button_pressed_lock.as_mut() }
@@ -38273,7 +38279,7 @@ mod impl_cef_textfield_delegate_t {
         let arg_event = if arg_event.is_null() {
             None
         } else {
-            Some(WrapParamRef::<KeyEvent>::from(arg_event))
+            Some(WrapParamRef::<KeyEvent, _>::from(arg_event))
         };
         let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
         let result =
@@ -39318,7 +39324,7 @@ mod impl_cef_browser_view_delegate_t {
         let arg_settings = if arg_settings.is_null() {
             None
         } else {
-            Some(WrapParamRef::<BrowserSettings>::from(arg_settings))
+            Some(WrapParamRef::<BrowserSettings, _>::from(arg_settings))
         };
         let arg_settings = arg_settings.as_ref().map(|arg| arg.as_ref());
         let mut arg_client =
@@ -41767,7 +41773,7 @@ mod impl_cef_window_delegate_t {
         let arg_new_bounds = if arg_new_bounds.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect>::from(arg_new_bounds))
+            Some(WrapParamRef::<Rect, _>::from(arg_new_bounds))
         };
         let arg_new_bounds = arg_new_bounds.as_ref().map(|arg| arg.as_ref());
         let result = ImplWindowDelegate::on_window_bounds_changed(
@@ -41808,13 +41814,13 @@ mod impl_cef_window_delegate_t {
         let mut arg_is_menu = if arg_is_menu.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(arg_is_menu))
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(arg_is_menu))
         };
         let arg_is_menu = arg_is_menu.as_mut().map(|arg| arg.as_mut());
         let mut arg_can_activate_menu = if arg_can_activate_menu.is_null() {
             None
         } else {
-            Some(WrapParamRef::<::std::os::raw::c_int>::from(
+            Some(WrapParamRef::<::std::os::raw::c_int, _>::from(
                 arg_can_activate_menu,
             ))
         };
@@ -41903,7 +41909,7 @@ mod impl_cef_window_delegate_t {
         let mut arg_titlebar_height = if arg_titlebar_height.is_null() {
             None
         } else {
-            Some(WrapParamRef::<f32>::from(arg_titlebar_height))
+            Some(WrapParamRef::<f32, _>::from(arg_titlebar_height))
         };
         let arg_titlebar_height = arg_titlebar_height.as_mut().map(|arg| arg.as_mut());
         let result = ImplWindowDelegate::get_titlebar_height(
@@ -42001,7 +42007,7 @@ mod impl_cef_window_delegate_t {
         let arg_event = if arg_event.is_null() {
             None
         } else {
-            Some(WrapParamRef::<KeyEvent>::from(arg_event))
+            Some(WrapParamRef::<KeyEvent, _>::from(arg_event))
         };
         let arg_event = arg_event.as_ref().map(|arg| arg.as_ref());
         let result = ImplWindowDelegate::on_key_event(&arg_self_.interface, arg_window, arg_event);
@@ -42045,7 +42051,9 @@ mod impl_cef_window_delegate_t {
         let mut arg_properties = if arg_properties.is_null() {
             None
         } else {
-            Some(WrapParamRef::<LinuxWindowProperties>::from(arg_properties))
+            Some(WrapParamRef::<LinuxWindowProperties, _>::from(
+                arg_properties,
+            ))
         };
         let arg_properties = arg_properties.as_mut().map(|arg| arg.as_mut());
         let result = ImplWindowDelegate::get_linux_window_properties(
