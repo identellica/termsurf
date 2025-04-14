@@ -6,7 +6,7 @@
 //!
 //! In order to create a new Rust type for a raw cef type, simply create a module for it first. And
 //! then work on the implementations based on following conditions:
-//!  
+//!
 //! ## If raw cef type is a simple struct with basic fields
 //! For example like [`cef_settings_t`], just create a struct like [`Settings`] and define a method
 //! `as_raw` that can create the raw cef type.
@@ -42,8 +42,9 @@
 
 use std::{
     fmt::Debug,
-    mem,
+    mem::{self, ManuallyDrop},
     ops::Deref,
+    ptr::NonNull,
     sync::atomic::{fence, AtomicUsize, Ordering},
 };
 
@@ -150,45 +151,84 @@ where
     }
 }
 
-pub struct WrapParamRef<T>(mem::ManuallyDrop<T>);
-
-impl<T, U> From<*mut T> for WrapParamRef<U>
+pub struct WrapParamRef<T, P>
 where
-    T: Sized + Copy + Into<U>,
-    U: Sized,
+    T: Sized + Into<P>,
+    P: Sized + Copy + Into<T>,
 {
-    fn from(value: *mut T) -> Self {
+    value: T,
+    output: Option<NonNull<P>>,
+}
+
+impl<T, P> Drop for WrapParamRef<T, P>
+where
+    T: Sized + Into<P>,
+    P: Sized + Copy + Into<T>,
+{
+    fn drop(&mut self) {
+        if let Some(output) = &mut self.output {
+            let output = unsafe { output.as_mut() };
+            let mut value = unsafe { mem::zeroed() };
+            mem::swap(&mut self.value, &mut value);
+            *output = value.into();
+        }
+    }
+}
+
+impl<T, P> From<*mut P> for WrapParamRef<T, P>
+where
+    T: Sized + Into<P>,
+    P: Sized + Copy + Into<T>,
+{
+    fn from(value: *mut P) -> Self {
+        let mut output = NonNull::new(value);
+        let value = output
+            .as_mut()
+            .map(|p| {
+                let mut value = unsafe { mem::zeroed() };
+                mem::swap(unsafe { p.as_mut() }, &mut value);
+                value.into()
+            })
+            .unwrap_or_else(|| unsafe { mem::zeroed() });
+
+        Self { value, output }
+    }
+}
+
+impl<T, P> From<*const P> for WrapParamRef<T, P>
+where
+    T: Sized + Into<P>,
+    P: Sized + Copy + Into<T>,
+{
+    fn from(value: *const P) -> Self {
         let value = unsafe { value.as_ref() }
             .map(|value| (*value).into())
             .unwrap_or_else(|| unsafe { mem::zeroed() });
 
-        WrapParamRef(mem::ManuallyDrop::new(value))
+        Self {
+            value,
+            output: None,
+        }
     }
 }
 
-impl<T, U> From<*const T> for WrapParamRef<U>
+impl<T, P> AsMut<T> for WrapParamRef<T, P>
 where
-    T: Sized + Copy + Into<U>,
-    U: Sized,
+    T: Sized + Into<P>,
+    P: Sized + Copy + Into<T>,
 {
-    fn from(value: *const T) -> Self {
-        let value = unsafe { value.as_ref() }
-            .map(|value| (*value).into())
-            .unwrap_or_else(|| unsafe { mem::zeroed() });
-
-        WrapParamRef(mem::ManuallyDrop::new(value))
-    }
-}
-
-impl<T> AsMut<T> for WrapParamRef<T> {
     fn as_mut(&mut self) -> &mut T {
-        &mut *self.0
+        &mut self.value
     }
 }
 
-impl<T> AsRef<T> for WrapParamRef<T> {
+impl<T, P> AsRef<T> for WrapParamRef<T, P>
+where
+    T: Sized + Into<P>,
+    P: Sized + Copy + Into<T>,
+{
     fn as_ref(&self) -> &T {
-        &*self.0
+        &self.value
     }
 }
 
@@ -268,7 +308,7 @@ impl<T: Rc> RefGuard<T> {
     /// value to the function call. Using this method elsewhere may cause incorrect reference count
     /// and memory safety issues.
     pub unsafe fn into_raw(self) -> *mut T {
-        mem::ManuallyDrop::new(self).object
+        ManuallyDrop::new(self).object
     }
 
     /// Convert the value to another value that is also reference counted.
