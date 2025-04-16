@@ -11,7 +11,11 @@ use std::{
 #[cfg(target_os = "windows")]
 const DEFAULT_TARGET: &str = "x86_64-pc-windows-msvc";
 #[cfg(target_os = "macos")]
+#[cfg(target_arch = "aarch64")]
 const DEFAULT_TARGET: &str = "aarch64-apple-darwin";
+#[cfg(target_os = "macos")]
+#[cfg(target_arch = "x86_64")]
+const DEFAULT_TARGET: &str = "x86_64-apple-darwin";
 #[cfg(target_os = "linux")]
 const DEFAULT_TARGET: &str = "x86_64-unknown-linux-gnu";
 
