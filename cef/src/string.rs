@@ -401,10 +401,7 @@ impl CefStringUtf8 {
         };
 
         unsafe {
-            if value.as_ptr() == data.as_ref().str_ as *const _ {
-                return true;
-            }
-
+            assert_ne!(value.as_ptr(), data.as_ref().str_ as *const _);
             cef_dll_sys::cef_string_utf8_clear(data.as_ptr());
             cef_dll_sys::cef_string_utf8_set(
                 value.as_ptr() as *const _,
