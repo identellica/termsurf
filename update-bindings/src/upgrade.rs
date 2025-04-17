@@ -29,11 +29,9 @@ pub fn download(target: &str) -> PathBuf {
         true,
     )
     .expect("download failed");
-    let archive_dir =
-        download_cef::extract_target_archive(target, &archive, dirs::get_out_dir(), true)
-            .expect("extraction failed");
 
-    archive_dir
+    download_cef::extract_target_archive(target, &archive, dirs::get_out_dir(), true)
+        .expect("extraction failed")
 }
 
 pub fn sys_bindgen(target: &str) -> crate::Result<()> {

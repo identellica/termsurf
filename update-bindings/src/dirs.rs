@@ -9,7 +9,7 @@ pub fn get_out_dir() -> PathBuf {
 }
 
 pub fn get_cef_root(os: &str, arch: &str) -> PathBuf {
-    env::var(&format!("CEF_PATH_{os}_{arch}"))
+    env::var(format!("CEF_PATH_{os}_{arch}"))
         .map(PathBuf::from)
         .unwrap_or_else(|_| {
             let mut out_dir = get_out_dir();
