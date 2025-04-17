@@ -807,9 +807,9 @@ pub struct CefStringList(*mut _cef_string_list_t);
 impl Drop for CefStringList {
     fn drop(&mut self) {
         unsafe {
-            self.0
-                .as_mut()
-                .map(|value| cef_dll_sys::cef_string_list_free(value));
+            if let Some(value) = self.0.as_mut() {
+                cef_dll_sys::cef_string_list_free(value);
+            }
         }
     }
 }
@@ -855,9 +855,9 @@ pub struct CefStringMap(*mut _cef_string_map_t);
 impl Drop for CefStringMap {
     fn drop(&mut self) {
         unsafe {
-            self.0
-                .as_mut()
-                .map(|value| cef_dll_sys::cef_string_map_free(value));
+            if let Some(value) = self.0.as_mut() {
+                cef_dll_sys::cef_string_map_free(value);
+            }
         }
     }
 }
@@ -909,9 +909,9 @@ pub struct CefStringMultimap(*mut _cef_string_multimap_t);
 impl Drop for CefStringMultimap {
     fn drop(&mut self) {
         unsafe {
-            self.0
-                .as_mut()
-                .map(|value| cef_dll_sys::cef_string_multimap_free(value));
+            if let Some(value) = self.0.as_mut() {
+                cef_dll_sys::cef_string_multimap_free(value);
+            }
         }
     }
 }
