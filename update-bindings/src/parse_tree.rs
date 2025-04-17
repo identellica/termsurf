@@ -436,13 +436,15 @@ impl SignatureRef<'_> {
                         match modifiers {
                             [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
                                 Some(quote! {
-                                    let mut #name = #name.map(|arg|  {
-                                        arg.add_ref();
-                                        arg.get_raw()
-                                    });
+                                    let mut ptr = std::ptr::null_mut();
                                     let #name = #name
-                                        .as_mut()
-                                        .map(|arg| arg as *mut _)
+                                        .map(|arg| {
+                                            if let Some(arg) = arg.as_mut() {
+                                                arg.add_ref();
+                                                ptr = arg.get_raw();
+                                            }
+                                            &mut ptr as *mut _
+                                        })
                                         .unwrap_or(std::ptr::null_mut());
                                 })
                             }
@@ -831,7 +833,7 @@ impl SignatureRef<'_> {
                                                 Some(#name(unsafe { RefGuard::from_raw(*ptr) }))
                                             }
                                         });
-                                        let #arg_name = #arg_name.as_mut();
+                                        let #arg_name = Some(&mut #arg_name);
                                     }),
                                     _ => None,
                                 }
@@ -872,9 +874,9 @@ impl SignatureRef<'_> {
                                 _ => None,
                             }
                         } else {
-                            let ty =
-                            entry.and_then(|entry| syn::parse_str::<syn::Type>(&entry.name).ok());
+                            let ty = entry.and_then(|entry| syn::parse_str::<syn::Type>(&entry.name).ok());
                             let ty = ty.as_ref().unwrap_or(arg_ty).to_token_stream();
+
                             if ty.to_string() == quote!{ ::std::os::raw::c_void }.to_string() {
                                 match modifiers {
                                     [TypeModifier::MutPtr] => Some(quote! {
@@ -1340,7 +1342,7 @@ impl ModifiedType {
                         [TypeModifier::ConstPtr] => Some(quote! { Option<&impl #impl_trait> }),
                         [TypeModifier::MutPtr] => Some(quote! { Option<&mut impl #impl_trait> }),
                         [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
-                            Some(quote! { Option<&mut impl #impl_trait> })
+                            Some(quote! { Option<&mut Option<impl #impl_trait>> })
                         }
                         [TypeModifier::Slice] => {
                             Some(quote! { Option<&[Option<impl #impl_trait>]> })
@@ -1357,7 +1359,7 @@ impl ModifiedType {
                         [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
                         [TypeModifier::MutPtr] => Some(quote! { Option<&mut #name> }),
                         [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
-                            Some(quote! { Option<&mut #name> })
+                            Some(quote! { Option<&mut Option<#name>> })
                         }
                         [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
                         [TypeModifier::MutSlice] => {
@@ -1378,7 +1380,7 @@ impl ModifiedType {
                     [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
                     [TypeModifier::MutPtr] => Some(quote! { Option<&mut #name> }),
                     [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
-                        Some(quote! { Option<&mut #name> })
+                        Some(quote! { Option<&mut Option<#name>> })
                     }
                     [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
                     [TypeModifier::MutSlice] => Some(quote! { Option<&mut Vec<Option<#name>>> }),
