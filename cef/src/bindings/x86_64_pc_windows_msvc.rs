@@ -20942,9 +20942,9 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         user_gesture: ::std::os::raw::c_int,
         popup_features: Option<&PopupFeatures>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut impl ImplDictionaryValue>,
+        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
         no_javascript_access: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -20959,9 +20959,9 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut impl ImplDictionaryValue>,
+        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
         use_default_window: Option<&mut ::std::os::raw::c_int>,
     ) {
     }
@@ -21073,7 +21073,7 @@ mod impl_cef_life_span_handler_t {
                 Some(Client(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_client = arg_client.as_mut();
+        let arg_client = Some(&mut arg_client);
         let mut arg_settings = if arg_settings.is_null() {
             None
         } else {
@@ -21087,7 +21087,7 @@ mod impl_cef_life_span_handler_t {
                 Some(DictionaryValue(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_extra_info = arg_extra_info.as_mut();
+        let arg_extra_info = Some(&mut arg_extra_info);
         let mut arg_no_javascript_access = if arg_no_javascript_access.is_null() {
             None
         } else {
@@ -21174,7 +21174,7 @@ mod impl_cef_life_span_handler_t {
                 Some(Client(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_client = arg_client.as_mut();
+        let arg_client = Some(&mut arg_client);
         let mut arg_settings = if arg_settings.is_null() {
             None
         } else {
@@ -21188,7 +21188,7 @@ mod impl_cef_life_span_handler_t {
                 Some(DictionaryValue(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_extra_info = arg_extra_info.as_mut();
+        let arg_extra_info = Some(&mut arg_extra_info);
         let mut arg_use_default_window = if arg_use_default_window.is_null() {
             None
         } else {
@@ -21254,9 +21254,9 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
         user_gesture: ::std::os::raw::c_int,
         popup_features: Option<&PopupFeatures>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut impl ImplDictionaryValue>,
+        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
         no_javascript_access: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -21324,26 +21324,30 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                         .as_mut()
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_client = arg_client.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_client = arg_client
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let mut arg_settings = arg_settings.cloned().map(|arg| arg.into());
                     let arg_settings = arg_settings
                         .as_mut()
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_extra_info = arg_extra_info.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_extra_info = arg_extra_info
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_no_javascript_access = arg_no_javascript_access
                         .map(std::ptr::from_mut)
@@ -21397,9 +21401,9 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut impl ImplDictionaryValue>,
+        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
         use_default_window: Option<&mut ::std::os::raw::c_int>,
     ) {
         unsafe {
@@ -21433,26 +21437,30 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                         .as_mut()
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_client = arg_client.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_client = arg_client
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let mut arg_settings = arg_settings.cloned().map(|arg| arg.into());
                     let arg_settings = arg_settings
                         .as_mut()
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_extra_info = arg_extra_info.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_extra_info = arg_extra_info
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_use_default_window = arg_use_default_window
                         .map(std::ptr::from_mut)
@@ -30310,8 +30318,8 @@ pub trait ImplV8Context: Clone + Sized + Rc {
         code: Option<&CefString>,
         script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
-        retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut impl ImplV8Exception>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
+        exception: Option<&mut Option<impl ImplV8Exception>>,
     ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_context_t;
 }
@@ -30440,8 +30448,8 @@ impl ImplV8Context for V8Context {
         code: Option<&CefString>,
         script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
-        retval: Option<&mut impl ImplV8Value>,
-        exception: Option<&mut impl ImplV8Exception>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
+        exception: Option<&mut Option<impl ImplV8Exception>>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -30455,21 +30463,25 @@ impl ImplV8Context for V8Context {
                         .map(|arg| arg.as_raw())
                         .unwrap_or(std::ptr::null());
                     let arg_start_line = arg_start_line;
-                    let mut arg_retval = arg_retval.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_retval = arg_retval
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_exception = arg_exception.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_exception = arg_exception
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(
                         arg_self_,
@@ -30552,7 +30564,7 @@ pub trait ImplV8Handler: Clone + Sized + Rc {
         name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         arguments: Option<&[Option<impl ImplV8Value>]>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30624,7 +30636,7 @@ mod impl_cef_v8_handler_t {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = arg_retval.as_mut();
+        let arg_retval = Some(&mut arg_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
@@ -30648,7 +30660,7 @@ impl ImplV8Handler for V8Handler {
         name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
         arguments: Option<&[Option<impl ImplV8Value>]>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30689,13 +30701,15 @@ impl ImplV8Handler for V8Handler {
                     } else {
                         vec_arguments.as_ptr()
                     };
-                    let mut arg_retval = arg_retval.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_retval = arg_retval
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
                         .map(|arg| arg.as_raw())
@@ -30781,7 +30795,7 @@ pub trait ImplV8Accessor: Clone + Sized + Rc {
         &self,
         name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30832,7 +30846,7 @@ mod impl_cef_v8_accessor_t {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = arg_retval.as_mut();
+        let arg_retval = Some(&mut arg_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
@@ -30891,7 +30905,7 @@ impl ImplV8Accessor for V8Accessor {
         &self,
         name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30908,13 +30922,15 @@ impl ImplV8Accessor for V8Accessor {
                             ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_retval = arg_retval.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_retval = arg_retval
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
                         .map(|arg| arg.as_raw())
@@ -31028,7 +31044,7 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
         &self,
         name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -31037,7 +31053,7 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
         &self,
         index: ::std::os::raw::c_int,
         object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -31099,7 +31115,7 @@ mod impl_cef_v8_interceptor_t {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = arg_retval.as_mut();
+        let arg_retval = Some(&mut arg_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
@@ -31136,7 +31152,7 @@ mod impl_cef_v8_interceptor_t {
                 Some(V8Value(unsafe { RefGuard::from_raw(*ptr) }))
             }
         });
-        let arg_retval = arg_retval.as_mut();
+        let arg_retval = Some(&mut arg_retval);
         let mut arg_exception = if arg_exception.is_null() {
             None
         } else {
@@ -31227,7 +31243,7 @@ impl ImplV8Interceptor for V8Interceptor {
         &self,
         name: Option<&CefString>,
         object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -31244,13 +31260,15 @@ impl ImplV8Interceptor for V8Interceptor {
                             ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_retval = arg_retval.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_retval = arg_retval
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
                         .map(|arg| arg.as_raw())
@@ -31265,7 +31283,7 @@ impl ImplV8Interceptor for V8Interceptor {
         &self,
         index: ::std::os::raw::c_int,
         object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut impl ImplV8Value>,
+        retval: Option<&mut Option<impl ImplV8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -31282,13 +31300,15 @@ impl ImplV8Interceptor for V8Interceptor {
                             ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
-                    let mut arg_retval = arg_retval.map(|arg| {
-                        arg.add_ref();
-                        arg.get_raw()
-                    });
+                    let mut ptr = std::ptr::null_mut();
                     let arg_retval = arg_retval
-                        .as_mut()
-                        .map(|arg| arg as *mut _)
+                        .map(|arg| {
+                            if let Some(arg) = arg.as_mut() {
+                                arg.add_ref();
+                                ptr = arg.get_raw();
+                            }
+                            &mut ptr as *mut _
+                        })
                         .unwrap_or(std::ptr::null_mut());
                     let arg_exception = arg_exception
                         .map(|arg| arg.as_raw())
