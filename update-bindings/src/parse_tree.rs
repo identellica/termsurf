@@ -141,7 +141,7 @@ impl SignatureRef<'_> {
                     .map(|arg| {
                         Some(MergedParam::Single {
                             name: make_snake_case_value_name(&arg.name),
-                            ty: tree.resolve_modified_type(&arg.ty),
+                            ty: tree.resolve_modified_type(arg.ty),
                         })
                     })
                     .collect::<Vec<_>>();
@@ -436,13 +436,15 @@ impl SignatureRef<'_> {
                         match modifiers {
                             [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
                                 Some(quote! {
-                                    let mut #name = #name.map(|arg|  {
-                                        arg.add_ref();
-                                        arg.get_raw()
-                                    });
+                                    let mut ptr = std::ptr::null_mut();
                                     let #name = #name
-                                        .as_mut()
-                                        .map(|arg| arg as *mut _)
+                                        .map(|arg| {
+                                            if let Some(arg) = arg.as_mut() {
+                                                arg.add_ref();
+                                                ptr = arg.get_raw();
+                                            }
+                                            &mut ptr as *mut _
+                                        })
                                         .unwrap_or(std::ptr::null_mut());
                                 })
                             }
@@ -831,7 +833,7 @@ impl SignatureRef<'_> {
                                                 Some(#name(unsafe { RefGuard::from_raw(*ptr) }))
                                             }
                                         });
-                                        let #arg_name = #arg_name.as_mut();
+                                        let #arg_name = Some(&mut #arg_name);
                                     }),
                                     _ => None,
                                 }
@@ -872,9 +874,9 @@ impl SignatureRef<'_> {
                                 _ => None,
                             }
                         } else {
-                            let ty =
-                            entry.and_then(|entry| syn::parse_str::<syn::Type>(&entry.name).ok());
+                            let ty = entry.and_then(|entry| syn::parse_str::<syn::Type>(&entry.name).ok());
                             let ty = ty.as_ref().unwrap_or(arg_ty).to_token_stream();
+
                             if ty.to_string() == quote!{ ::std::os::raw::c_void }.to_string() {
                                 match modifiers {
                                     [TypeModifier::MutPtr] => Some(quote! {
@@ -1208,9 +1210,9 @@ impl<'a> TryFrom<&'a syn::Field> for SignatureRef<'a> {
         else {
             return Err(Unrecognized::FieldType);
         };
-        if ident_std.to_string() != "std"
-            || ident_option.to_string() != "option"
-            || ident_type.to_string() != "Option"
+        if *ident_std != "std"
+            || *ident_option != "option"
+            || *ident_type != "Option"
             || args.len() != 1
         {
             return Err(Unrecognized::FieldType);
@@ -1340,7 +1342,7 @@ impl ModifiedType {
                         [TypeModifier::ConstPtr] => Some(quote! { Option<&impl #impl_trait> }),
                         [TypeModifier::MutPtr] => Some(quote! { Option<&mut impl #impl_trait> }),
                         [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
-                            Some(quote! { Option<&mut impl #impl_trait> })
+                            Some(quote! { Option<&mut Option<impl #impl_trait>> })
                         }
                         [TypeModifier::Slice] => {
                             Some(quote! { Option<&[Option<impl #impl_trait>]> })
@@ -1357,7 +1359,7 @@ impl ModifiedType {
                         [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
                         [TypeModifier::MutPtr] => Some(quote! { Option<&mut #name> }),
                         [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
-                            Some(quote! { Option<&mut #name> })
+                            Some(quote! { Option<&mut Option<#name>> })
                         }
                         [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
                         [TypeModifier::MutSlice] => {
@@ -1378,7 +1380,7 @@ impl ModifiedType {
                     [TypeModifier::ConstPtr] => Some(quote! { Option<&#name> }),
                     [TypeModifier::MutPtr] => Some(quote! { Option<&mut #name> }),
                     [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
-                        Some(quote! { Option<&mut #name> })
+                        Some(quote! { Option<&mut Option<#name>> })
                     }
                     [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
                     [TypeModifier::MutSlice] => Some(quote! { Option<&mut Vec<Option<#name>>> }),
@@ -1592,7 +1594,7 @@ struct ParseTree<'a> {
     base_types: BTreeMap<String, String>,
 }
 
-impl<'a> ParseTree<'a> {
+impl ParseTree<'_> {
     pub fn write_prelude(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let header = quote! {
             #![allow(
@@ -1645,7 +1647,7 @@ impl<'a> ParseTree<'a> {
                             .lookup_type_alias
                             .get(&ty)
                             .and_then(|&i| self.type_aliases.get(i))
-                            .map(|alias| self.resolve_type_aliases(&alias.ty))
+                            .map(|alias| self.resolve_type_aliases(alias.ty))
                             .unwrap_or_else(|| path.to_token_stream()),
                         _ => path.to_token_stream(),
                     }
@@ -3032,13 +3034,13 @@ impl<'a> ParseTree<'a> {
     }
 
     pub fn write_globals(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let pattern = Regex::new(r"^cef_(\w+)$").unwrap();
+
         for global_fn in self.global_function_declarations.iter() {
             let original_name = global_fn.name.as_str();
             writeln!(f, "\n/// See [{original_name}] for more documentation.")?;
-            static PATTERN: OnceLock<Regex> = OnceLock::new();
-            let pattern = PATTERN.get_or_init(|| Regex::new(r"^cef_(\w+)$").unwrap());
             let name = pattern
-                .captures(&original_name)
+                .captures(original_name)
                 .and_then(|captures| captures.get(1))
                 .map(|name| name.as_str())
                 .unwrap_or(original_name);
@@ -3107,7 +3109,7 @@ impl<'a> ParseTree<'a> {
     }
 }
 
-impl<'a> Display for ParseTree<'a> {
+impl Display for ParseTree<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.write_prelude(f)?;
         self.write_aliases(f)?;
