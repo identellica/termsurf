@@ -5,7 +5,8 @@ use cef_dll_sys::{
     _cef_string_utf8_t, _cef_string_wide_t,
 };
 use std::{
-    fmt::{self, Display, Formatter},
+    collections::BTreeSet,
+    fmt::{self, Debug, Display, Formatter},
     mem,
     ptr::{self, NonNull},
     slice,
@@ -804,12 +805,33 @@ impl Display for CefStringWide {
 /// See [_cef_string_list_t] for more documentation.
 pub struct CefStringList(*mut _cef_string_list_t);
 
+impl CefStringList {
+    pub fn new() -> Option<Self> {
+        let value = unsafe { cef_dll_sys::cef_string_list_alloc() };
+        if value.is_null() {
+            None
+        } else {
+            Some(Self::from(value))
+        }
+    }
+
+    pub fn append(&mut self, value: &str) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
+
+        let value = CefString::from(value);
+        unsafe { cef_dll_sys::cef_string_list_append(self.0, (&value).into()) };
+        true
+    }
+}
+
 impl Drop for CefStringList {
     fn drop(&mut self) {
         unsafe {
-            self.0
-                .as_mut()
-                .map(|value| cef_dll_sys::cef_string_list_free(value));
+            if let Some(value) = self.0.as_mut() {
+                cef_dll_sys::cef_string_list_free(value);
+            }
         }
     }
 }
@@ -839,9 +861,7 @@ impl IntoIterator for CefStringList {
                     let mut value = mem::zeroed();
                     (cef_dll_sys::cef_string_list_value(list, i, &mut value) > 0).then_some(value)
                 })
-                .map(|value| {
-                    CefStringUtf8::from(&CefString::from(ptr::from_ref(&value))).to_string()
-                })
+                .map(|value| CefString::from(ptr::from_ref(&value)).to_string())
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default()
@@ -849,15 +869,62 @@ impl IntoIterator for CefStringList {
     }
 }
 
+impl Debug for CefStringList {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        unsafe {
+            let Some(list) = self.0.as_mut() else {
+                return write!(f, "null");
+            };
+
+            write!(f, "CefStringList [")?;
+
+            let count = cef_dll_sys::cef_string_list_size(list);
+            for i in 0..count {
+                let separator = if i > 0 { ", " } else { "" };
+                let mut value = mem::zeroed();
+                if cef_dll_sys::cef_string_list_value(list, i, &mut value) != 0 {
+                    let value = CefString::from(ptr::from_ref(&value)).to_string();
+                    write!(f, "{separator}{value:?}")?;
+                } else {
+                    write!(f, "{separator}null")?;
+                }
+            }
+
+            write!(f, "]")
+        }
+    }
+}
+
 /// See [_cef_string_map_t] for more documentation.
 pub struct CefStringMap(*mut _cef_string_map_t);
+
+impl CefStringMap {
+    pub fn new() -> Option<Self> {
+        let value = unsafe { cef_dll_sys::cef_string_map_alloc() };
+        if value.is_null() {
+            None
+        } else {
+            Some(Self::from(value))
+        }
+    }
+
+    pub fn append(&mut self, key: &str, value: &str) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
+
+        let key = CefString::from(key);
+        let value = CefString::from(value);
+        unsafe { cef_dll_sys::cef_string_map_append(self.0, (&key).into(), (&value).into()) != 0 }
+    }
+}
 
 impl Drop for CefStringMap {
     fn drop(&mut self) {
         unsafe {
-            self.0
-                .as_mut()
-                .map(|value| cef_dll_sys::cef_string_map_free(value));
+            if let Some(value) = self.0.as_mut() {
+                cef_dll_sys::cef_string_map_free(value);
+            }
         }
     }
 }
@@ -892,8 +959,8 @@ impl IntoIterator for CefStringMap {
                 })
                 .map(|(key, value)| {
                     (
-                        CefStringUtf8::from(&CefString::from(ptr::from_ref(&key))).to_string(),
-                        CefStringUtf8::from(&CefString::from(ptr::from_ref(&value))).to_string(),
+                        CefString::from(ptr::from_ref(&key)).to_string(),
+                        CefString::from(ptr::from_ref(&value)).to_string(),
                     )
                 })
                 .collect::<Vec<_>>()
@@ -903,15 +970,70 @@ impl IntoIterator for CefStringMap {
     }
 }
 
+impl Debug for CefStringMap {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        unsafe {
+            let Some(map) = self.0.as_mut() else {
+                return write!(f, "null");
+            };
+
+            write!(f, "CefStringMap {{")?;
+
+            let count = cef_dll_sys::cef_string_map_size(map);
+            for i in 0..count {
+                let mut key = mem::zeroed();
+                if cef_dll_sys::cef_string_map_key(map, i, &mut key) != 0 {
+                    let separator = if i > 0 { ", " } else { "" };
+                    let key = CefString::from(ptr::from_ref(&key));
+                    write!(f, "{separator}{key}: ")?;
+
+                    let mut value = mem::zeroed();
+                    if cef_dll_sys::cef_string_map_value(map, i, &mut value) != 0 {
+                        let value = CefString::from(ptr::from_ref(&value)).to_string();
+                        write!(f, "{value:?}")?;
+                    } else {
+                        write!(f, "null")?;
+                    }
+                }
+            }
+
+            write!(f, "}}")
+        }
+    }
+}
+
 /// See [_cef_string_multimap_t] for more documentation.
 pub struct CefStringMultimap(*mut _cef_string_multimap_t);
+
+impl CefStringMultimap {
+    pub fn new() -> Option<Self> {
+        let value = unsafe { cef_dll_sys::cef_string_multimap_alloc() };
+        if value.is_null() {
+            None
+        } else {
+            Some(Self::from(value))
+        }
+    }
+
+    pub fn append(&mut self, key: &str, value: &str) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
+
+        let key = CefString::from(key);
+        let value = CefString::from(value);
+        unsafe {
+            cef_dll_sys::cef_string_multimap_append(self.0, (&key).into(), (&value).into()) != 0
+        }
+    }
+}
 
 impl Drop for CefStringMultimap {
     fn drop(&mut self) {
         unsafe {
-            self.0
-                .as_mut()
-                .map(|value| cef_dll_sys::cef_string_multimap_free(value));
+            if let Some(value) = self.0.as_mut() {
+                cef_dll_sys::cef_string_multimap_free(value);
+            }
         }
     }
 }
@@ -925,5 +1047,58 @@ impl From<*mut _cef_string_multimap_t> for CefStringMultimap {
 impl From<&mut CefStringMultimap> for *mut _cef_string_multimap_t {
     fn from(value: &mut CefStringMultimap) -> Self {
         value.0
+    }
+}
+
+impl Debug for CefStringMultimap {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        unsafe {
+            let Some(multimap) = self.0.as_mut() else {
+                return write!(f, "null");
+            };
+
+            write!(f, "CefStringMultimap {{")?;
+
+            let count = cef_dll_sys::cef_string_multimap_size(multimap);
+            let mut visited: BTreeSet<String> = Default::default();
+            for i in 0..count {
+                let mut key = mem::zeroed();
+                if cef_dll_sys::cef_string_multimap_key(multimap, i, &mut key) != 0 {
+                    let key = CefString::from(ptr::from_ref(&key));
+                    let key_string = key.to_string();
+                    if visited.contains(&key_string) {
+                        continue;
+                    }
+
+                    let separator = if i > 0 { ", " } else { "" };
+                    write!(f, "{separator}{key_string}: [")?;
+
+                    let count =
+                        cef_dll_sys::cef_string_multimap_find_count(multimap, (&key).into());
+                    for i in 0..count {
+                        let separator = if i > 0 { ", " } else { "" };
+                        let mut value = mem::zeroed();
+                        if cef_dll_sys::cef_string_multimap_enumerate(
+                            multimap,
+                            (&key).into(),
+                            i,
+                            &mut value,
+                        ) != 0
+                        {
+                            let value = CefString::from(ptr::from_ref(&value)).to_string();
+                            write!(f, "{separator}{value:?}")?;
+                        } else {
+                            write!(f, "{separator}null")?;
+                        }
+                    }
+
+                    write!(f, "]")?;
+
+                    visited.insert(key_string);
+                }
+            }
+
+            write!(f, "}}")
+        }
     }
 }
