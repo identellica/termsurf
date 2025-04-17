@@ -388,6 +388,29 @@ impl CefStringUtf8 {
             std::str::from_utf8_unchecked(slice)
         })
     }
+
+    pub fn as_slice(&self) -> Option<&[u8]> {
+        let data: Option<&_cef_string_utf8_t> = (&self.0).into();
+        let (str_, length) = data.map(|value| (value.str_, value.length))?;
+        Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
+    }
+
+    pub fn try_set(&mut self, value: &str) -> bool {
+        let CefStringData::BorrowedMut(Some(data)) = &mut self.0 else {
+            return false;
+        };
+
+        unsafe {
+            assert_ne!(value.as_ptr(), data.as_ref().str_ as *const _);
+            cef_dll_sys::cef_string_utf8_clear(data.as_ptr());
+            cef_dll_sys::cef_string_utf8_set(
+                value.as_ptr() as *const _,
+                value.len(),
+                data.as_ptr(),
+                1,
+            ) != 0
+        }
+    }
 }
 
 impl From<&CefStringUtf16> for CefStringUtf8 {
@@ -542,6 +565,21 @@ impl CefStringUtf16 {
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
         Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
     }
+
+    pub fn try_set(&mut self, value: &str) -> bool {
+        let CefStringData::BorrowedMut(Some(data)) = &mut self.0 else {
+            return false;
+        };
+
+        unsafe {
+            cef_dll_sys::cef_string_utf16_clear(data.as_ptr());
+            cef_dll_sys::cef_string_utf8_to_utf16(
+                value.as_ptr() as *const _,
+                value.len(),
+                data.as_ptr(),
+            ) != 0
+        }
+    }
 }
 
 impl From<&CefStringUtf8> for CefStringUtf16 {
@@ -694,6 +732,21 @@ impl CefStringWide {
         let data: Option<&_cef_string_wide_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
         Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
+    }
+
+    pub fn try_set(&mut self, value: &str) -> bool {
+        let CefStringData::BorrowedMut(Some(data)) = &mut self.0 else {
+            return false;
+        };
+
+        unsafe {
+            cef_dll_sys::cef_string_wide_clear(data.as_ptr());
+            cef_dll_sys::cef_string_utf8_to_wide(
+                value.as_ptr() as *const _,
+                value.len(),
+                data.as_ptr(),
+            ) != 0
+        }
     }
 }
 
