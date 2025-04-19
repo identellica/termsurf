@@ -4,6 +4,7 @@
 extern crate thiserror;
 
 use clap::Parser;
+use download_cef::DEFAULT_TARGET;
 use std::{fs, io::Read, path::Path};
 
 #[derive(Debug, Error)]
@@ -39,25 +40,6 @@ struct Args {
     bindgen: bool,
     target: Option<String>,
 }
-
-#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
-const DEFAULT_TARGET: &str = "x86_64-unknown-linux-gnu";
-#[cfg(all(target_os = "linux", target_arch = "aarch64"))]
-const DEFAULT_TARGET: &str = "aarch64-unknown-linux-gnu";
-#[cfg(all(target_os = "linux", target_arch = "arm"))]
-const DEFAULT_TARGET: &str = "arm-unknown-linux-gnueabi";
-
-#[cfg(all(target_os = "windows", target_arch = "x86_64"))]
-const DEFAULT_TARGET: &str = "x86_64-pc-windows-msvc";
-#[cfg(all(target_os = "windows", target_arch = "x86"))]
-const DEFAULT_TARGET: &str = "i686-pc-windows-msvc";
-#[cfg(all(target_os = "windows", target_arch = "aarch64"))]
-const DEFAULT_TARGET: &str = "aarch64-pc-windows-msvc";
-
-#[cfg(all(target_os = "macos", target_arch = "x86_64"))]
-const DEFAULT_TARGET: &str = "x86_64-apple-darwin";
-#[cfg(all(target_os = "macos", target_arch = "aarch64"))]
-const DEFAULT_TARGET: &str = "aarch64-apple-darwin";
 
 fn main() -> Result<()> {
     let args = Args::parse();

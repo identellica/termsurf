@@ -1,23 +1,12 @@
 #![doc = include_str!("../README.md")]
 
 use clap::Parser;
-use download_cef::{CefIndex, OsAndArch};
+use download_cef::{CefIndex, OsAndArch, DEFAULT_TARGET};
 use std::{
     fs::{self, File},
     io::Write,
     path::PathBuf,
 };
-
-#[cfg(target_os = "windows")]
-const DEFAULT_TARGET: &str = "x86_64-pc-windows-msvc";
-#[cfg(target_os = "macos")]
-#[cfg(target_arch = "aarch64")]
-const DEFAULT_TARGET: &str = "aarch64-apple-darwin";
-#[cfg(target_os = "macos")]
-#[cfg(target_arch = "x86_64")]
-const DEFAULT_TARGET: &str = "x86_64-apple-darwin";
-#[cfg(target_os = "linux")]
-const DEFAULT_TARGET: &str = "x86_64-unknown-linux-gnu";
 
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
