@@ -2,7 +2,9 @@
     dead_code,
     improper_ctypes_definitions,
     non_camel_case_types,
-    unused_variables
+    unused_variables,
+    clippy::not_unsafe_ptr_arg_deref,
+    clippy::too_many_arguments
 )]
 use crate::rc::{ConvertParam, ConvertReturnValue, Rc, RcImpl, RefGuard, WrapParamRef};
 use cef_dll_sys::*;
@@ -78,16 +80,12 @@ pub struct Basetime {
 }
 impl From<_cef_basetime_t> for Basetime {
     fn from(value: _cef_basetime_t) -> Self {
-        Self {
-            val: value.val.into(),
-        }
+        Self { val: value.val }
     }
 }
-impl Into<_cef_basetime_t> for Basetime {
-    fn into(self) -> _cef_basetime_t {
-        _cef_basetime_t {
-            val: self.val.into(),
-        }
+impl From<Basetime> for _cef_basetime_t {
+    fn from(value: Basetime) -> Self {
+        Self { val: value.val }
     }
 }
 impl Default for Basetime {
@@ -111,28 +109,28 @@ pub struct Time {
 impl From<_cef_time_t> for Time {
     fn from(value: _cef_time_t) -> Self {
         Self {
-            year: value.year.into(),
-            month: value.month.into(),
-            day_of_week: value.day_of_week.into(),
-            day_of_month: value.day_of_month.into(),
-            hour: value.hour.into(),
-            minute: value.minute.into(),
-            second: value.second.into(),
-            millisecond: value.millisecond.into(),
+            year: value.year,
+            month: value.month,
+            day_of_week: value.day_of_week,
+            day_of_month: value.day_of_month,
+            hour: value.hour,
+            minute: value.minute,
+            second: value.second,
+            millisecond: value.millisecond,
         }
     }
 }
-impl Into<_cef_time_t> for Time {
-    fn into(self) -> _cef_time_t {
-        _cef_time_t {
-            year: self.year.into(),
-            month: self.month.into(),
-            day_of_week: self.day_of_week.into(),
-            day_of_month: self.day_of_month.into(),
-            hour: self.hour.into(),
-            minute: self.minute.into(),
-            second: self.second.into(),
-            millisecond: self.millisecond.into(),
+impl From<Time> for _cef_time_t {
+    fn from(value: Time) -> Self {
+        Self {
+            year: value.year,
+            month: value.month,
+            day_of_week: value.day_of_week,
+            day_of_month: value.day_of_month,
+            hour: value.hour,
+            minute: value.minute,
+            second: value.second,
+            millisecond: value.millisecond,
         }
     }
 }
@@ -151,16 +149,16 @@ pub struct Point {
 impl From<_cef_point_t> for Point {
     fn from(value: _cef_point_t) -> Self {
         Self {
-            x: value.x.into(),
-            y: value.y.into(),
+            x: value.x,
+            y: value.y,
         }
     }
 }
-impl Into<_cef_point_t> for Point {
-    fn into(self) -> _cef_point_t {
-        _cef_point_t {
-            x: self.x.into(),
-            y: self.y.into(),
+impl From<Point> for _cef_point_t {
+    fn from(value: Point) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
         }
     }
 }
@@ -181,20 +179,20 @@ pub struct Rect {
 impl From<_cef_rect_t> for Rect {
     fn from(value: _cef_rect_t) -> Self {
         Self {
-            x: value.x.into(),
-            y: value.y.into(),
-            width: value.width.into(),
-            height: value.height.into(),
+            x: value.x,
+            y: value.y,
+            width: value.width,
+            height: value.height,
         }
     }
 }
-impl Into<_cef_rect_t> for Rect {
-    fn into(self) -> _cef_rect_t {
-        _cef_rect_t {
-            x: self.x.into(),
-            y: self.y.into(),
-            width: self.width.into(),
-            height: self.height.into(),
+impl From<Rect> for _cef_rect_t {
+    fn from(value: Rect) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            width: value.width,
+            height: value.height,
         }
     }
 }
@@ -213,16 +211,16 @@ pub struct Size {
 impl From<_cef_size_t> for Size {
     fn from(value: _cef_size_t) -> Self {
         Self {
-            width: value.width.into(),
-            height: value.height.into(),
+            width: value.width,
+            height: value.height,
         }
     }
 }
-impl Into<_cef_size_t> for Size {
-    fn into(self) -> _cef_size_t {
-        _cef_size_t {
-            width: self.width.into(),
-            height: self.height.into(),
+impl From<Size> for _cef_size_t {
+    fn from(value: Size) -> Self {
+        Self {
+            width: value.width,
+            height: value.height,
         }
     }
 }
@@ -243,20 +241,20 @@ pub struct Insets {
 impl From<_cef_insets_t> for Insets {
     fn from(value: _cef_insets_t) -> Self {
         Self {
-            top: value.top.into(),
-            left: value.left.into(),
-            bottom: value.bottom.into(),
-            right: value.right.into(),
+            top: value.top,
+            left: value.left,
+            bottom: value.bottom,
+            right: value.right,
         }
     }
 }
-impl Into<_cef_insets_t> for Insets {
-    fn into(self) -> _cef_insets_t {
-        _cef_insets_t {
-            top: self.top.into(),
-            left: self.left.into(),
-            bottom: self.bottom.into(),
-            right: self.right.into(),
+impl From<Insets> for _cef_insets_t {
+    fn from(value: Insets) -> Self {
+        Self {
+            top: value.top,
+            left: value.left,
+            bottom: value.bottom,
+            right: value.right,
         }
     }
 }
@@ -286,38 +284,38 @@ pub struct AcceleratedPaintInfoCommon {
 impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
     fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
         Self {
-            size: value.size.into(),
-            timestamp: value.timestamp.into(),
+            size: value.size,
+            timestamp: value.timestamp,
             coded_size: value.coded_size.into(),
             visible_rect: value.visible_rect.into(),
             content_rect: value.content_rect.into(),
             source_size: value.source_size.into(),
             capture_update_rect: value.capture_update_rect.into(),
             region_capture_rect: value.region_capture_rect.into(),
-            capture_counter: value.capture_counter.into(),
-            has_capture_update_rect: value.has_capture_update_rect.into(),
-            has_region_capture_rect: value.has_region_capture_rect.into(),
-            has_source_size: value.has_source_size.into(),
-            has_capture_counter: value.has_capture_counter.into(),
+            capture_counter: value.capture_counter,
+            has_capture_update_rect: value.has_capture_update_rect,
+            has_region_capture_rect: value.has_region_capture_rect,
+            has_source_size: value.has_source_size,
+            has_capture_counter: value.has_capture_counter,
         }
     }
 }
-impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
-    fn into(self) -> _cef_accelerated_paint_info_common_t {
-        _cef_accelerated_paint_info_common_t {
-            size: self.size.into(),
-            timestamp: self.timestamp.into(),
-            coded_size: self.coded_size.into(),
-            visible_rect: self.visible_rect.into(),
-            content_rect: self.content_rect.into(),
-            source_size: self.source_size.into(),
-            capture_update_rect: self.capture_update_rect.into(),
-            region_capture_rect: self.region_capture_rect.into(),
-            capture_counter: self.capture_counter.into(),
-            has_capture_update_rect: self.has_capture_update_rect.into(),
-            has_region_capture_rect: self.has_region_capture_rect.into(),
-            has_source_size: self.has_source_size.into(),
-            has_capture_counter: self.has_capture_counter.into(),
+impl From<AcceleratedPaintInfoCommon> for _cef_accelerated_paint_info_common_t {
+    fn from(value: AcceleratedPaintInfoCommon) -> Self {
+        Self {
+            size: value.size,
+            timestamp: value.timestamp,
+            coded_size: value.coded_size.into(),
+            visible_rect: value.visible_rect.into(),
+            content_rect: value.content_rect.into(),
+            source_size: value.source_size.into(),
+            capture_update_rect: value.capture_update_rect.into(),
+            region_capture_rect: value.region_capture_rect.into(),
+            capture_counter: value.capture_counter,
+            has_capture_update_rect: value.has_capture_update_rect,
+            has_region_capture_rect: value.has_region_capture_rect,
+            has_source_size: value.has_source_size,
+            has_capture_counter: value.has_capture_counter,
         }
     }
 }
@@ -338,14 +336,14 @@ pub struct MainArgs {
 impl From<_cef_main_args_t> for MainArgs {
     fn from(value: _cef_main_args_t) -> Self {
         Self {
-            instance: value.instance.into(),
+            instance: value.instance,
         }
     }
 }
-impl Into<_cef_main_args_t> for MainArgs {
-    fn into(self) -> _cef_main_args_t {
-        _cef_main_args_t {
-            instance: self.instance.into(),
+impl From<MainArgs> for _cef_main_args_t {
+    fn from(value: MainArgs) -> Self {
+        Self {
+            instance: value.instance,
         }
     }
 }
@@ -374,36 +372,36 @@ pub struct WindowInfo {
 impl From<_cef_window_info_t> for WindowInfo {
     fn from(value: _cef_window_info_t) -> Self {
         Self {
-            size: value.size.into(),
-            ex_style: value.ex_style.into(),
+            size: value.size,
+            ex_style: value.ex_style,
             window_name: value.window_name.into(),
-            style: value.style.into(),
+            style: value.style,
             bounds: value.bounds.into(),
-            parent_window: value.parent_window.into(),
-            menu: value.menu.into(),
-            windowless_rendering_enabled: value.windowless_rendering_enabled.into(),
-            shared_texture_enabled: value.shared_texture_enabled.into(),
-            external_begin_frame_enabled: value.external_begin_frame_enabled.into(),
-            window: value.window.into(),
+            parent_window: value.parent_window,
+            menu: value.menu,
+            windowless_rendering_enabled: value.windowless_rendering_enabled,
+            shared_texture_enabled: value.shared_texture_enabled,
+            external_begin_frame_enabled: value.external_begin_frame_enabled,
+            window: value.window,
             runtime_style: value.runtime_style.into(),
         }
     }
 }
-impl Into<_cef_window_info_t> for WindowInfo {
-    fn into(self) -> _cef_window_info_t {
-        _cef_window_info_t {
-            size: self.size.into(),
-            ex_style: self.ex_style.into(),
-            window_name: self.window_name.into(),
-            style: self.style.into(),
-            bounds: self.bounds.into(),
-            parent_window: self.parent_window.into(),
-            menu: self.menu.into(),
-            windowless_rendering_enabled: self.windowless_rendering_enabled.into(),
-            shared_texture_enabled: self.shared_texture_enabled.into(),
-            external_begin_frame_enabled: self.external_begin_frame_enabled.into(),
-            window: self.window.into(),
-            runtime_style: self.runtime_style.into(),
+impl From<WindowInfo> for _cef_window_info_t {
+    fn from(value: WindowInfo) -> Self {
+        Self {
+            size: value.size,
+            ex_style: value.ex_style,
+            window_name: value.window_name.into(),
+            style: value.style,
+            bounds: value.bounds.into(),
+            parent_window: value.parent_window,
+            menu: value.menu,
+            windowless_rendering_enabled: value.windowless_rendering_enabled,
+            shared_texture_enabled: value.shared_texture_enabled,
+            external_begin_frame_enabled: value.external_begin_frame_enabled,
+            window: value.window,
+            runtime_style: value.runtime_style.into(),
         }
     }
 }
@@ -427,20 +425,20 @@ pub struct AcceleratedPaintInfo {
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
         Self {
-            size: value.size.into(),
-            shared_texture_handle: value.shared_texture_handle.into(),
+            size: value.size,
+            shared_texture_handle: value.shared_texture_handle,
             format: value.format.into(),
             extra: value.extra.into(),
         }
     }
 }
-impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
-    fn into(self) -> _cef_accelerated_paint_info_t {
-        _cef_accelerated_paint_info_t {
-            size: self.size.into(),
-            shared_texture_handle: self.shared_texture_handle.into(),
-            format: self.format.into(),
-            extra: self.extra.into(),
+impl From<AcceleratedPaintInfo> for _cef_accelerated_paint_info_t {
+    fn from(value: AcceleratedPaintInfo) -> Self {
+        Self {
+            size: value.size,
+            shared_texture_handle: value.shared_texture_handle,
+            format: value.format.into(),
+            extra: value.extra.into(),
         }
     }
 }
@@ -490,18 +488,18 @@ pub struct Settings {
 impl From<_cef_settings_t> for Settings {
     fn from(value: _cef_settings_t) -> Self {
         Self {
-            size: value.size.into(),
-            no_sandbox: value.no_sandbox.into(),
+            size: value.size,
+            no_sandbox: value.no_sandbox,
             browser_subprocess_path: value.browser_subprocess_path.into(),
             framework_dir_path: value.framework_dir_path.into(),
             main_bundle_path: value.main_bundle_path.into(),
-            multi_threaded_message_loop: value.multi_threaded_message_loop.into(),
-            external_message_pump: value.external_message_pump.into(),
-            windowless_rendering_enabled: value.windowless_rendering_enabled.into(),
-            command_line_args_disabled: value.command_line_args_disabled.into(),
+            multi_threaded_message_loop: value.multi_threaded_message_loop,
+            external_message_pump: value.external_message_pump,
+            windowless_rendering_enabled: value.windowless_rendering_enabled,
+            command_line_args_disabled: value.command_line_args_disabled,
             cache_path: value.cache_path.into(),
             root_cache_path: value.root_cache_path.into(),
-            persist_session_cookies: value.persist_session_cookies.into(),
+            persist_session_cookies: value.persist_session_cookies,
             user_agent: value.user_agent.into(),
             user_agent_product: value.user_agent_product.into(),
             locale: value.locale.into(),
@@ -511,51 +509,51 @@ impl From<_cef_settings_t> for Settings {
             javascript_flags: value.javascript_flags.into(),
             resources_dir_path: value.resources_dir_path.into(),
             locales_dir_path: value.locales_dir_path.into(),
-            remote_debugging_port: value.remote_debugging_port.into(),
-            uncaught_exception_stack_size: value.uncaught_exception_stack_size.into(),
-            background_color: value.background_color.into(),
+            remote_debugging_port: value.remote_debugging_port,
+            uncaught_exception_stack_size: value.uncaught_exception_stack_size,
+            background_color: value.background_color,
             accept_language_list: value.accept_language_list.into(),
             cookieable_schemes_list: value.cookieable_schemes_list.into(),
-            cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults.into(),
+            cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults,
             chrome_policy_id: value.chrome_policy_id.into(),
-            chrome_app_icon_id: value.chrome_app_icon_id.into(),
-            disable_signal_handlers: value.disable_signal_handlers.into(),
+            chrome_app_icon_id: value.chrome_app_icon_id,
+            disable_signal_handlers: value.disable_signal_handlers,
         }
     }
 }
-impl Into<_cef_settings_t> for Settings {
-    fn into(self) -> _cef_settings_t {
-        _cef_settings_t {
-            size: self.size.into(),
-            no_sandbox: self.no_sandbox.into(),
-            browser_subprocess_path: self.browser_subprocess_path.into(),
-            framework_dir_path: self.framework_dir_path.into(),
-            main_bundle_path: self.main_bundle_path.into(),
-            multi_threaded_message_loop: self.multi_threaded_message_loop.into(),
-            external_message_pump: self.external_message_pump.into(),
-            windowless_rendering_enabled: self.windowless_rendering_enabled.into(),
-            command_line_args_disabled: self.command_line_args_disabled.into(),
-            cache_path: self.cache_path.into(),
-            root_cache_path: self.root_cache_path.into(),
-            persist_session_cookies: self.persist_session_cookies.into(),
-            user_agent: self.user_agent.into(),
-            user_agent_product: self.user_agent_product.into(),
-            locale: self.locale.into(),
-            log_file: self.log_file.into(),
-            log_severity: self.log_severity.into(),
-            log_items: self.log_items.into(),
-            javascript_flags: self.javascript_flags.into(),
-            resources_dir_path: self.resources_dir_path.into(),
-            locales_dir_path: self.locales_dir_path.into(),
-            remote_debugging_port: self.remote_debugging_port.into(),
-            uncaught_exception_stack_size: self.uncaught_exception_stack_size.into(),
-            background_color: self.background_color.into(),
-            accept_language_list: self.accept_language_list.into(),
-            cookieable_schemes_list: self.cookieable_schemes_list.into(),
-            cookieable_schemes_exclude_defaults: self.cookieable_schemes_exclude_defaults.into(),
-            chrome_policy_id: self.chrome_policy_id.into(),
-            chrome_app_icon_id: self.chrome_app_icon_id.into(),
-            disable_signal_handlers: self.disable_signal_handlers.into(),
+impl From<Settings> for _cef_settings_t {
+    fn from(value: Settings) -> Self {
+        Self {
+            size: value.size,
+            no_sandbox: value.no_sandbox,
+            browser_subprocess_path: value.browser_subprocess_path.into(),
+            framework_dir_path: value.framework_dir_path.into(),
+            main_bundle_path: value.main_bundle_path.into(),
+            multi_threaded_message_loop: value.multi_threaded_message_loop,
+            external_message_pump: value.external_message_pump,
+            windowless_rendering_enabled: value.windowless_rendering_enabled,
+            command_line_args_disabled: value.command_line_args_disabled,
+            cache_path: value.cache_path.into(),
+            root_cache_path: value.root_cache_path.into(),
+            persist_session_cookies: value.persist_session_cookies,
+            user_agent: value.user_agent.into(),
+            user_agent_product: value.user_agent_product.into(),
+            locale: value.locale.into(),
+            log_file: value.log_file.into(),
+            log_severity: value.log_severity.into(),
+            log_items: value.log_items.into(),
+            javascript_flags: value.javascript_flags.into(),
+            resources_dir_path: value.resources_dir_path.into(),
+            locales_dir_path: value.locales_dir_path.into(),
+            remote_debugging_port: value.remote_debugging_port,
+            uncaught_exception_stack_size: value.uncaught_exception_stack_size,
+            background_color: value.background_color,
+            accept_language_list: value.accept_language_list.into(),
+            cookieable_schemes_list: value.cookieable_schemes_list.into(),
+            cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults,
+            chrome_policy_id: value.chrome_policy_id.into(),
+            chrome_app_icon_id: value.chrome_app_icon_id,
+            disable_signal_handlers: value.disable_signal_handlers,
         }
     }
 }
@@ -581,24 +579,24 @@ pub struct RequestContextSettings {
 impl From<_cef_request_context_settings_t> for RequestContextSettings {
     fn from(value: _cef_request_context_settings_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             cache_path: value.cache_path.into(),
-            persist_session_cookies: value.persist_session_cookies.into(),
+            persist_session_cookies: value.persist_session_cookies,
             accept_language_list: value.accept_language_list.into(),
             cookieable_schemes_list: value.cookieable_schemes_list.into(),
-            cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults.into(),
+            cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults,
         }
     }
 }
-impl Into<_cef_request_context_settings_t> for RequestContextSettings {
-    fn into(self) -> _cef_request_context_settings_t {
-        _cef_request_context_settings_t {
-            size: self.size.into(),
-            cache_path: self.cache_path.into(),
-            persist_session_cookies: self.persist_session_cookies.into(),
-            accept_language_list: self.accept_language_list.into(),
-            cookieable_schemes_list: self.cookieable_schemes_list.into(),
-            cookieable_schemes_exclude_defaults: self.cookieable_schemes_exclude_defaults.into(),
+impl From<RequestContextSettings> for _cef_request_context_settings_t {
+    fn from(value: RequestContextSettings) -> Self {
+        Self {
+            size: value.size,
+            cache_path: value.cache_path.into(),
+            persist_session_cookies: value.persist_session_cookies,
+            accept_language_list: value.accept_language_list.into(),
+            cookieable_schemes_list: value.cookieable_schemes_list.into(),
+            cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults,
         }
     }
 }
@@ -646,18 +644,18 @@ pub struct BrowserSettings {
 impl From<_cef_browser_settings_t> for BrowserSettings {
     fn from(value: _cef_browser_settings_t) -> Self {
         Self {
-            size: value.size.into(),
-            windowless_frame_rate: value.windowless_frame_rate.into(),
+            size: value.size,
+            windowless_frame_rate: value.windowless_frame_rate,
             standard_font_family: value.standard_font_family.into(),
             fixed_font_family: value.fixed_font_family.into(),
             serif_font_family: value.serif_font_family.into(),
             sans_serif_font_family: value.sans_serif_font_family.into(),
             cursive_font_family: value.cursive_font_family.into(),
             fantasy_font_family: value.fantasy_font_family.into(),
-            default_font_size: value.default_font_size.into(),
-            default_fixed_font_size: value.default_fixed_font_size.into(),
-            minimum_font_size: value.minimum_font_size.into(),
-            minimum_logical_font_size: value.minimum_logical_font_size.into(),
+            default_font_size: value.default_font_size,
+            default_fixed_font_size: value.default_fixed_font_size,
+            minimum_font_size: value.minimum_font_size,
+            minimum_logical_font_size: value.minimum_logical_font_size,
             default_encoding: value.default_encoding.into(),
             remote_fonts: value.remote_fonts.into(),
             javascript: value.javascript.into(),
@@ -671,43 +669,43 @@ impl From<_cef_browser_settings_t> for BrowserSettings {
             local_storage: value.local_storage.into(),
             databases: value.databases.into(),
             webgl: value.webgl.into(),
-            background_color: value.background_color.into(),
+            background_color: value.background_color,
             chrome_status_bubble: value.chrome_status_bubble.into(),
             chrome_zoom_bubble: value.chrome_zoom_bubble.into(),
         }
     }
 }
-impl Into<_cef_browser_settings_t> for BrowserSettings {
-    fn into(self) -> _cef_browser_settings_t {
-        _cef_browser_settings_t {
-            size: self.size.into(),
-            windowless_frame_rate: self.windowless_frame_rate.into(),
-            standard_font_family: self.standard_font_family.into(),
-            fixed_font_family: self.fixed_font_family.into(),
-            serif_font_family: self.serif_font_family.into(),
-            sans_serif_font_family: self.sans_serif_font_family.into(),
-            cursive_font_family: self.cursive_font_family.into(),
-            fantasy_font_family: self.fantasy_font_family.into(),
-            default_font_size: self.default_font_size.into(),
-            default_fixed_font_size: self.default_fixed_font_size.into(),
-            minimum_font_size: self.minimum_font_size.into(),
-            minimum_logical_font_size: self.minimum_logical_font_size.into(),
-            default_encoding: self.default_encoding.into(),
-            remote_fonts: self.remote_fonts.into(),
-            javascript: self.javascript.into(),
-            javascript_close_windows: self.javascript_close_windows.into(),
-            javascript_access_clipboard: self.javascript_access_clipboard.into(),
-            javascript_dom_paste: self.javascript_dom_paste.into(),
-            image_loading: self.image_loading.into(),
-            image_shrink_standalone_to_fit: self.image_shrink_standalone_to_fit.into(),
-            text_area_resize: self.text_area_resize.into(),
-            tab_to_links: self.tab_to_links.into(),
-            local_storage: self.local_storage.into(),
-            databases: self.databases.into(),
-            webgl: self.webgl.into(),
-            background_color: self.background_color.into(),
-            chrome_status_bubble: self.chrome_status_bubble.into(),
-            chrome_zoom_bubble: self.chrome_zoom_bubble.into(),
+impl From<BrowserSettings> for _cef_browser_settings_t {
+    fn from(value: BrowserSettings) -> Self {
+        Self {
+            size: value.size,
+            windowless_frame_rate: value.windowless_frame_rate,
+            standard_font_family: value.standard_font_family.into(),
+            fixed_font_family: value.fixed_font_family.into(),
+            serif_font_family: value.serif_font_family.into(),
+            sans_serif_font_family: value.sans_serif_font_family.into(),
+            cursive_font_family: value.cursive_font_family.into(),
+            fantasy_font_family: value.fantasy_font_family.into(),
+            default_font_size: value.default_font_size,
+            default_fixed_font_size: value.default_fixed_font_size,
+            minimum_font_size: value.minimum_font_size,
+            minimum_logical_font_size: value.minimum_logical_font_size,
+            default_encoding: value.default_encoding.into(),
+            remote_fonts: value.remote_fonts.into(),
+            javascript: value.javascript.into(),
+            javascript_close_windows: value.javascript_close_windows.into(),
+            javascript_access_clipboard: value.javascript_access_clipboard.into(),
+            javascript_dom_paste: value.javascript_dom_paste.into(),
+            image_loading: value.image_loading.into(),
+            image_shrink_standalone_to_fit: value.image_shrink_standalone_to_fit.into(),
+            text_area_resize: value.text_area_resize.into(),
+            tab_to_links: value.tab_to_links.into(),
+            local_storage: value.local_storage.into(),
+            databases: value.databases.into(),
+            webgl: value.webgl.into(),
+            background_color: value.background_color,
+            chrome_status_bubble: value.chrome_status_bubble.into(),
+            chrome_zoom_bubble: value.chrome_zoom_bubble.into(),
         }
     }
 }
@@ -738,7 +736,7 @@ pub struct Urlparts {
 impl From<_cef_urlparts_t> for Urlparts {
     fn from(value: _cef_urlparts_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             spec: value.spec.into(),
             scheme: value.scheme.into(),
             username: value.username.into(),
@@ -752,20 +750,20 @@ impl From<_cef_urlparts_t> for Urlparts {
         }
     }
 }
-impl Into<_cef_urlparts_t> for Urlparts {
-    fn into(self) -> _cef_urlparts_t {
-        _cef_urlparts_t {
-            size: self.size.into(),
-            spec: self.spec.into(),
-            scheme: self.scheme.into(),
-            username: self.username.into(),
-            password: self.password.into(),
-            host: self.host.into(),
-            port: self.port.into(),
-            origin: self.origin.into(),
-            path: self.path.into(),
-            query: self.query.into(),
-            fragment: self.fragment.into(),
+impl From<Urlparts> for _cef_urlparts_t {
+    fn from(value: Urlparts) -> Self {
+        Self {
+            size: value.size,
+            spec: value.spec.into(),
+            scheme: value.scheme.into(),
+            username: value.username.into(),
+            password: value.password.into(),
+            host: value.host.into(),
+            port: value.port.into(),
+            origin: value.origin.into(),
+            path: value.path.into(),
+            query: value.query.into(),
+            fragment: value.fragment.into(),
         }
     }
 }
@@ -798,38 +796,38 @@ pub struct Cookie {
 impl From<_cef_cookie_t> for Cookie {
     fn from(value: _cef_cookie_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             name: value.name.into(),
             value: value.value.into(),
             domain: value.domain.into(),
             path: value.path.into(),
-            secure: value.secure.into(),
-            httponly: value.httponly.into(),
+            secure: value.secure,
+            httponly: value.httponly,
             creation: value.creation.into(),
             last_access: value.last_access.into(),
-            has_expires: value.has_expires.into(),
+            has_expires: value.has_expires,
             expires: value.expires.into(),
             same_site: value.same_site.into(),
             priority: value.priority.into(),
         }
     }
 }
-impl Into<_cef_cookie_t> for Cookie {
-    fn into(self) -> _cef_cookie_t {
-        _cef_cookie_t {
-            size: self.size.into(),
-            name: self.name.into(),
-            value: self.value.into(),
-            domain: self.domain.into(),
-            path: self.path.into(),
-            secure: self.secure.into(),
-            httponly: self.httponly.into(),
-            creation: self.creation.into(),
-            last_access: self.last_access.into(),
-            has_expires: self.has_expires.into(),
-            expires: self.expires.into(),
-            same_site: self.same_site.into(),
-            priority: self.priority.into(),
+impl From<Cookie> for _cef_cookie_t {
+    fn from(value: Cookie) -> Self {
+        Self {
+            size: value.size,
+            name: value.name.into(),
+            value: value.value.into(),
+            domain: value.domain.into(),
+            path: value.path.into(),
+            secure: value.secure,
+            httponly: value.httponly,
+            creation: value.creation.into(),
+            last_access: value.last_access.into(),
+            has_expires: value.has_expires,
+            expires: value.expires.into(),
+            same_site: value.same_site.into(),
+            priority: value.priority.into(),
         }
     }
 }
@@ -852,15 +850,15 @@ impl From<_cef_draggable_region_t> for DraggableRegion {
     fn from(value: _cef_draggable_region_t) -> Self {
         Self {
             bounds: value.bounds.into(),
-            draggable: value.draggable.into(),
+            draggable: value.draggable,
         }
     }
 }
-impl Into<_cef_draggable_region_t> for DraggableRegion {
-    fn into(self) -> _cef_draggable_region_t {
-        _cef_draggable_region_t {
-            bounds: self.bounds.into(),
-            draggable: self.draggable.into(),
+impl From<DraggableRegion> for _cef_draggable_region_t {
+    fn from(value: DraggableRegion) -> Self {
+        Self {
+            bounds: value.bounds.into(),
+            draggable: value.draggable,
         }
     }
 }
@@ -884,26 +882,26 @@ pub struct ScreenInfo {
 impl From<_cef_screen_info_t> for ScreenInfo {
     fn from(value: _cef_screen_info_t) -> Self {
         Self {
-            size: value.size.into(),
-            device_scale_factor: value.device_scale_factor.into(),
-            depth: value.depth.into(),
-            depth_per_component: value.depth_per_component.into(),
-            is_monochrome: value.is_monochrome.into(),
+            size: value.size,
+            device_scale_factor: value.device_scale_factor,
+            depth: value.depth,
+            depth_per_component: value.depth_per_component,
+            is_monochrome: value.is_monochrome,
             rect: value.rect.into(),
             available_rect: value.available_rect.into(),
         }
     }
 }
-impl Into<_cef_screen_info_t> for ScreenInfo {
-    fn into(self) -> _cef_screen_info_t {
-        _cef_screen_info_t {
-            size: self.size.into(),
-            device_scale_factor: self.device_scale_factor.into(),
-            depth: self.depth.into(),
-            depth_per_component: self.depth_per_component.into(),
-            is_monochrome: self.is_monochrome.into(),
-            rect: self.rect.into(),
-            available_rect: self.available_rect.into(),
+impl From<ScreenInfo> for _cef_screen_info_t {
+    fn from(value: ScreenInfo) -> Self {
+        Self {
+            size: value.size,
+            device_scale_factor: value.device_scale_factor,
+            depth: value.depth,
+            depth_per_component: value.depth_per_component,
+            is_monochrome: value.is_monochrome,
+            rect: value.rect.into(),
+            available_rect: value.available_rect.into(),
         }
     }
 }
@@ -928,7 +926,7 @@ pub struct LinuxWindowProperties {
 impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn from(value: _cef_linux_window_properties_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             wayland_app_id: value.wayland_app_id.into(),
             wm_class_class: value.wm_class_class.into(),
             wm_class_name: value.wm_class_name.into(),
@@ -936,14 +934,14 @@ impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
         }
     }
 }
-impl Into<_cef_linux_window_properties_t> for LinuxWindowProperties {
-    fn into(self) -> _cef_linux_window_properties_t {
-        _cef_linux_window_properties_t {
-            size: self.size.into(),
-            wayland_app_id: self.wayland_app_id.into(),
-            wm_class_class: self.wm_class_class.into(),
-            wm_class_name: self.wm_class_name.into(),
-            wm_role_name: self.wm_role_name.into(),
+impl From<LinuxWindowProperties> for _cef_linux_window_properties_t {
+    fn from(value: LinuxWindowProperties) -> Self {
+        Self {
+            size: value.size,
+            wayland_app_id: value.wayland_app_id.into(),
+            wm_class_class: value.wm_class_class.into(),
+            wm_class_name: value.wm_class_name.into(),
+            wm_role_name: value.wm_role_name.into(),
         }
     }
 }
@@ -966,18 +964,18 @@ pub struct MouseEvent {
 impl From<_cef_mouse_event_t> for MouseEvent {
     fn from(value: _cef_mouse_event_t) -> Self {
         Self {
-            x: value.x.into(),
-            y: value.y.into(),
-            modifiers: value.modifiers.into(),
+            x: value.x,
+            y: value.y,
+            modifiers: value.modifiers,
         }
     }
 }
-impl Into<_cef_mouse_event_t> for MouseEvent {
-    fn into(self) -> _cef_mouse_event_t {
-        _cef_mouse_event_t {
-            x: self.x.into(),
-            y: self.y.into(),
-            modifiers: self.modifiers.into(),
+impl From<MouseEvent> for _cef_mouse_event_t {
+    fn from(value: MouseEvent) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+            modifiers: value.modifiers,
         }
     }
 }
@@ -1004,32 +1002,32 @@ pub struct TouchEvent {
 impl From<_cef_touch_event_t> for TouchEvent {
     fn from(value: _cef_touch_event_t) -> Self {
         Self {
-            id: value.id.into(),
-            x: value.x.into(),
-            y: value.y.into(),
-            radius_x: value.radius_x.into(),
-            radius_y: value.radius_y.into(),
-            rotation_angle: value.rotation_angle.into(),
-            pressure: value.pressure.into(),
+            id: value.id,
+            x: value.x,
+            y: value.y,
+            radius_x: value.radius_x,
+            radius_y: value.radius_y,
+            rotation_angle: value.rotation_angle,
+            pressure: value.pressure,
             type_: value.type_.into(),
-            modifiers: value.modifiers.into(),
+            modifiers: value.modifiers,
             pointer_type: value.pointer_type.into(),
         }
     }
 }
-impl Into<_cef_touch_event_t> for TouchEvent {
-    fn into(self) -> _cef_touch_event_t {
-        _cef_touch_event_t {
-            id: self.id.into(),
-            x: self.x.into(),
-            y: self.y.into(),
-            radius_x: self.radius_x.into(),
-            radius_y: self.radius_y.into(),
-            rotation_angle: self.rotation_angle.into(),
-            pressure: self.pressure.into(),
-            type_: self.type_.into(),
-            modifiers: self.modifiers.into(),
-            pointer_type: self.pointer_type.into(),
+impl From<TouchEvent> for _cef_touch_event_t {
+    fn from(value: TouchEvent) -> Self {
+        Self {
+            id: value.id,
+            x: value.x,
+            y: value.y,
+            radius_x: value.radius_x,
+            radius_y: value.radius_y,
+            rotation_angle: value.rotation_angle,
+            pressure: value.pressure,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            pointer_type: value.pointer_type.into(),
         }
     }
 }
@@ -1055,30 +1053,30 @@ pub struct KeyEvent {
 impl From<_cef_key_event_t> for KeyEvent {
     fn from(value: _cef_key_event_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             type_: value.type_.into(),
-            modifiers: value.modifiers.into(),
-            windows_key_code: value.windows_key_code.into(),
-            native_key_code: value.native_key_code.into(),
-            is_system_key: value.is_system_key.into(),
-            character: value.character.into(),
-            unmodified_character: value.unmodified_character.into(),
-            focus_on_editable_field: value.focus_on_editable_field.into(),
+            modifiers: value.modifiers,
+            windows_key_code: value.windows_key_code,
+            native_key_code: value.native_key_code,
+            is_system_key: value.is_system_key,
+            character: value.character,
+            unmodified_character: value.unmodified_character,
+            focus_on_editable_field: value.focus_on_editable_field,
         }
     }
 }
-impl Into<_cef_key_event_t> for KeyEvent {
-    fn into(self) -> _cef_key_event_t {
-        _cef_key_event_t {
-            size: self.size.into(),
-            type_: self.type_.into(),
-            modifiers: self.modifiers.into(),
-            windows_key_code: self.windows_key_code.into(),
-            native_key_code: self.native_key_code.into(),
-            is_system_key: self.is_system_key.into(),
-            character: self.character.into(),
-            unmodified_character: self.unmodified_character.into(),
-            focus_on_editable_field: self.focus_on_editable_field.into(),
+impl From<KeyEvent> for _cef_key_event_t {
+    fn from(value: KeyEvent) -> Self {
+        Self {
+            size: value.size,
+            type_: value.type_.into(),
+            modifiers: value.modifiers,
+            windows_key_code: value.windows_key_code,
+            native_key_code: value.native_key_code,
+            is_system_key: value.is_system_key,
+            character: value.character,
+            unmodified_character: value.unmodified_character,
+            focus_on_editable_field: value.focus_on_editable_field,
         }
     }
 }
@@ -1108,32 +1106,32 @@ pub struct PopupFeatures {
 impl From<_cef_popup_features_t> for PopupFeatures {
     fn from(value: _cef_popup_features_t) -> Self {
         Self {
-            size: value.size.into(),
-            x: value.x.into(),
-            x_set: value.xSet.into(),
-            y: value.y.into(),
-            y_set: value.ySet.into(),
-            width: value.width.into(),
-            width_set: value.widthSet.into(),
-            height: value.height.into(),
-            height_set: value.heightSet.into(),
-            is_popup: value.isPopup.into(),
+            size: value.size,
+            x: value.x,
+            x_set: value.xSet,
+            y: value.y,
+            y_set: value.ySet,
+            width: value.width,
+            width_set: value.widthSet,
+            height: value.height,
+            height_set: value.heightSet,
+            is_popup: value.isPopup,
         }
     }
 }
-impl Into<_cef_popup_features_t> for PopupFeatures {
-    fn into(self) -> _cef_popup_features_t {
-        _cef_popup_features_t {
-            size: self.size.into(),
-            x: self.x.into(),
-            xSet: self.x_set.into(),
-            y: self.y.into(),
-            ySet: self.y_set.into(),
-            width: self.width.into(),
-            widthSet: self.width_set.into(),
-            height: self.height.into(),
-            heightSet: self.height_set.into(),
-            isPopup: self.is_popup.into(),
+impl From<PopupFeatures> for _cef_popup_features_t {
+    fn from(value: PopupFeatures) -> Self {
+        Self {
+            size: value.size,
+            x: value.x,
+            xSet: value.x_set,
+            y: value.y,
+            ySet: value.y_set,
+            width: value.width,
+            widthSet: value.width_set,
+            height: value.height,
+            heightSet: value.height_set,
+            isPopup: value.is_popup,
         }
     }
 }
@@ -1158,19 +1156,19 @@ impl From<_cef_cursor_info_t> for CursorInfo {
     fn from(value: _cef_cursor_info_t) -> Self {
         Self {
             hotspot: value.hotspot.into(),
-            image_scale_factor: value.image_scale_factor.into(),
-            buffer: value.buffer.into(),
+            image_scale_factor: value.image_scale_factor,
+            buffer: value.buffer,
             size: value.size.into(),
         }
     }
 }
-impl Into<_cef_cursor_info_t> for CursorInfo {
-    fn into(self) -> _cef_cursor_info_t {
-        _cef_cursor_info_t {
-            hotspot: self.hotspot.into(),
-            image_scale_factor: self.image_scale_factor.into(),
-            buffer: self.buffer.into(),
-            size: self.size.into(),
+impl From<CursorInfo> for _cef_cursor_info_t {
+    fn from(value: CursorInfo) -> Self {
+        Self {
+            hotspot: value.hotspot.into(),
+            image_scale_factor: value.image_scale_factor,
+            buffer: value.buffer,
+            size: value.size.into(),
         }
     }
 }
@@ -1205,48 +1203,48 @@ pub struct PdfPrintSettings {
 impl From<_cef_pdf_print_settings_t> for PdfPrintSettings {
     fn from(value: _cef_pdf_print_settings_t) -> Self {
         Self {
-            size: value.size.into(),
-            landscape: value.landscape.into(),
-            print_background: value.print_background.into(),
-            scale: value.scale.into(),
-            paper_width: value.paper_width.into(),
-            paper_height: value.paper_height.into(),
-            prefer_css_page_size: value.prefer_css_page_size.into(),
+            size: value.size,
+            landscape: value.landscape,
+            print_background: value.print_background,
+            scale: value.scale,
+            paper_width: value.paper_width,
+            paper_height: value.paper_height,
+            prefer_css_page_size: value.prefer_css_page_size,
             margin_type: value.margin_type.into(),
-            margin_top: value.margin_top.into(),
-            margin_right: value.margin_right.into(),
-            margin_bottom: value.margin_bottom.into(),
-            margin_left: value.margin_left.into(),
+            margin_top: value.margin_top,
+            margin_right: value.margin_right,
+            margin_bottom: value.margin_bottom,
+            margin_left: value.margin_left,
             page_ranges: value.page_ranges.into(),
-            display_header_footer: value.display_header_footer.into(),
+            display_header_footer: value.display_header_footer,
             header_template: value.header_template.into(),
             footer_template: value.footer_template.into(),
-            generate_tagged_pdf: value.generate_tagged_pdf.into(),
-            generate_document_outline: value.generate_document_outline.into(),
+            generate_tagged_pdf: value.generate_tagged_pdf,
+            generate_document_outline: value.generate_document_outline,
         }
     }
 }
-impl Into<_cef_pdf_print_settings_t> for PdfPrintSettings {
-    fn into(self) -> _cef_pdf_print_settings_t {
-        _cef_pdf_print_settings_t {
-            size: self.size.into(),
-            landscape: self.landscape.into(),
-            print_background: self.print_background.into(),
-            scale: self.scale.into(),
-            paper_width: self.paper_width.into(),
-            paper_height: self.paper_height.into(),
-            prefer_css_page_size: self.prefer_css_page_size.into(),
-            margin_type: self.margin_type.into(),
-            margin_top: self.margin_top.into(),
-            margin_right: self.margin_right.into(),
-            margin_bottom: self.margin_bottom.into(),
-            margin_left: self.margin_left.into(),
-            page_ranges: self.page_ranges.into(),
-            display_header_footer: self.display_header_footer.into(),
-            header_template: self.header_template.into(),
-            footer_template: self.footer_template.into(),
-            generate_tagged_pdf: self.generate_tagged_pdf.into(),
-            generate_document_outline: self.generate_document_outline.into(),
+impl From<PdfPrintSettings> for _cef_pdf_print_settings_t {
+    fn from(value: PdfPrintSettings) -> Self {
+        Self {
+            size: value.size,
+            landscape: value.landscape,
+            print_background: value.print_background,
+            scale: value.scale,
+            paper_width: value.paper_width,
+            paper_height: value.paper_height,
+            prefer_css_page_size: value.prefer_css_page_size,
+            margin_type: value.margin_type.into(),
+            margin_top: value.margin_top,
+            margin_right: value.margin_right,
+            margin_bottom: value.margin_bottom,
+            margin_left: value.margin_left,
+            page_ranges: value.page_ranges.into(),
+            display_header_footer: value.display_header_footer,
+            header_template: value.header_template.into(),
+            footer_template: value.footer_template.into(),
+            generate_tagged_pdf: value.generate_tagged_pdf,
+            generate_document_outline: value.generate_document_outline,
         }
     }
 }
@@ -1276,32 +1274,32 @@ pub struct BoxLayoutSettings {
 impl From<_cef_box_layout_settings_t> for BoxLayoutSettings {
     fn from(value: _cef_box_layout_settings_t) -> Self {
         Self {
-            size: value.size.into(),
-            horizontal: value.horizontal.into(),
-            inside_border_horizontal_spacing: value.inside_border_horizontal_spacing.into(),
-            inside_border_vertical_spacing: value.inside_border_vertical_spacing.into(),
+            size: value.size,
+            horizontal: value.horizontal,
+            inside_border_horizontal_spacing: value.inside_border_horizontal_spacing,
+            inside_border_vertical_spacing: value.inside_border_vertical_spacing,
             inside_border_insets: value.inside_border_insets.into(),
-            between_child_spacing: value.between_child_spacing.into(),
+            between_child_spacing: value.between_child_spacing,
             main_axis_alignment: value.main_axis_alignment.into(),
             cross_axis_alignment: value.cross_axis_alignment.into(),
-            minimum_cross_axis_size: value.minimum_cross_axis_size.into(),
-            default_flex: value.default_flex.into(),
+            minimum_cross_axis_size: value.minimum_cross_axis_size,
+            default_flex: value.default_flex,
         }
     }
 }
-impl Into<_cef_box_layout_settings_t> for BoxLayoutSettings {
-    fn into(self) -> _cef_box_layout_settings_t {
-        _cef_box_layout_settings_t {
-            size: self.size.into(),
-            horizontal: self.horizontal.into(),
-            inside_border_horizontal_spacing: self.inside_border_horizontal_spacing.into(),
-            inside_border_vertical_spacing: self.inside_border_vertical_spacing.into(),
-            inside_border_insets: self.inside_border_insets.into(),
-            between_child_spacing: self.between_child_spacing.into(),
-            main_axis_alignment: self.main_axis_alignment.into(),
-            cross_axis_alignment: self.cross_axis_alignment.into(),
-            minimum_cross_axis_size: self.minimum_cross_axis_size.into(),
-            default_flex: self.default_flex.into(),
+impl From<BoxLayoutSettings> for _cef_box_layout_settings_t {
+    fn from(value: BoxLayoutSettings) -> Self {
+        Self {
+            size: value.size,
+            horizontal: value.horizontal,
+            inside_border_horizontal_spacing: value.inside_border_horizontal_spacing,
+            inside_border_vertical_spacing: value.inside_border_vertical_spacing,
+            inside_border_insets: value.inside_border_insets.into(),
+            between_child_spacing: value.between_child_spacing,
+            main_axis_alignment: value.main_axis_alignment.into(),
+            cross_axis_alignment: value.cross_axis_alignment.into(),
+            minimum_cross_axis_size: value.minimum_cross_axis_size,
+            default_flex: value.default_flex,
         }
     }
 }
@@ -1323,16 +1321,16 @@ pub struct Range {
 impl From<_cef_range_t> for Range {
     fn from(value: _cef_range_t) -> Self {
         Self {
-            from: value.from.into(),
-            to: value.to.into(),
+            from: value.from,
+            to: value.to,
         }
     }
 }
-impl Into<_cef_range_t> for Range {
-    fn into(self) -> _cef_range_t {
-        _cef_range_t {
-            from: self.from.into(),
-            to: self.to.into(),
+impl From<Range> for _cef_range_t {
+    fn from(value: Range) -> Self {
+        Self {
+            from: value.from,
+            to: value.to,
         }
     }
 }
@@ -1355,24 +1353,24 @@ pub struct CompositionUnderline {
 impl From<_cef_composition_underline_t> for CompositionUnderline {
     fn from(value: _cef_composition_underline_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             range: value.range.into(),
-            color: value.color.into(),
-            background_color: value.background_color.into(),
-            thick: value.thick.into(),
+            color: value.color,
+            background_color: value.background_color,
+            thick: value.thick,
             style: value.style.into(),
         }
     }
 }
-impl Into<_cef_composition_underline_t> for CompositionUnderline {
-    fn into(self) -> _cef_composition_underline_t {
-        _cef_composition_underline_t {
-            size: self.size.into(),
-            range: self.range.into(),
-            color: self.color.into(),
-            background_color: self.background_color.into(),
-            thick: self.thick.into(),
-            style: self.style.into(),
+impl From<CompositionUnderline> for _cef_composition_underline_t {
+    fn from(value: CompositionUnderline) -> Self {
+        Self {
+            size: value.size,
+            range: value.range.into(),
+            color: value.color,
+            background_color: value.background_color,
+            thick: value.thick,
+            style: value.style.into(),
         }
     }
 }
@@ -1396,20 +1394,20 @@ pub struct AudioParameters {
 impl From<_cef_audio_parameters_t> for AudioParameters {
     fn from(value: _cef_audio_parameters_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             channel_layout: value.channel_layout.into(),
-            sample_rate: value.sample_rate.into(),
-            frames_per_buffer: value.frames_per_buffer.into(),
+            sample_rate: value.sample_rate,
+            frames_per_buffer: value.frames_per_buffer,
         }
     }
 }
-impl Into<_cef_audio_parameters_t> for AudioParameters {
-    fn into(self) -> _cef_audio_parameters_t {
-        _cef_audio_parameters_t {
-            size: self.size.into(),
-            channel_layout: self.channel_layout.into(),
-            sample_rate: self.sample_rate.into(),
-            frames_per_buffer: self.frames_per_buffer.into(),
+impl From<AudioParameters> for _cef_audio_parameters_t {
+    fn from(value: AudioParameters) -> Self {
+        Self {
+            size: value.size,
+            channel_layout: value.channel_layout.into(),
+            sample_rate: value.sample_rate,
+            frames_per_buffer: value.frames_per_buffer,
         }
     }
 }
@@ -1433,20 +1431,20 @@ pub struct MediaSinkDeviceInfo {
 impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn from(value: _cef_media_sink_device_info_t) -> Self {
         Self {
-            size: value.size.into(),
+            size: value.size,
             ip_address: value.ip_address.into(),
-            port: value.port.into(),
+            port: value.port,
             model_name: value.model_name.into(),
         }
     }
 }
-impl Into<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
-    fn into(self) -> _cef_media_sink_device_info_t {
-        _cef_media_sink_device_info_t {
-            size: self.size.into(),
-            ip_address: self.ip_address.into(),
-            port: self.port.into(),
-            model_name: self.model_name.into(),
+impl From<MediaSinkDeviceInfo> for _cef_media_sink_device_info_t {
+    fn from(value: MediaSinkDeviceInfo) -> Self {
+        Self {
+            size: value.size,
+            ip_address: value.ip_address.into(),
+            port: value.port,
+            model_name: value.model_name.into(),
         }
     }
 }
@@ -1475,30 +1473,30 @@ pub struct TouchHandleState {
 impl From<_cef_touch_handle_state_t> for TouchHandleState {
     fn from(value: _cef_touch_handle_state_t) -> Self {
         Self {
-            size: value.size.into(),
-            touch_handle_id: value.touch_handle_id.into(),
-            flags: value.flags.into(),
-            enabled: value.enabled.into(),
+            size: value.size,
+            touch_handle_id: value.touch_handle_id,
+            flags: value.flags,
+            enabled: value.enabled,
             orientation: value.orientation.into(),
-            mirror_vertical: value.mirror_vertical.into(),
-            mirror_horizontal: value.mirror_horizontal.into(),
+            mirror_vertical: value.mirror_vertical,
+            mirror_horizontal: value.mirror_horizontal,
             origin: value.origin.into(),
-            alpha: value.alpha.into(),
+            alpha: value.alpha,
         }
     }
 }
-impl Into<_cef_touch_handle_state_t> for TouchHandleState {
-    fn into(self) -> _cef_touch_handle_state_t {
-        _cef_touch_handle_state_t {
-            size: self.size.into(),
-            touch_handle_id: self.touch_handle_id.into(),
-            flags: self.flags.into(),
-            enabled: self.enabled.into(),
-            orientation: self.orientation.into(),
-            mirror_vertical: self.mirror_vertical.into(),
-            mirror_horizontal: self.mirror_horizontal.into(),
-            origin: self.origin.into(),
-            alpha: self.alpha.into(),
+impl From<TouchHandleState> for _cef_touch_handle_state_t {
+    fn from(value: TouchHandleState) -> Self {
+        Self {
+            size: value.size,
+            touch_handle_id: value.touch_handle_id,
+            flags: value.flags,
+            enabled: value.enabled,
+            orientation: value.orientation.into(),
+            mirror_vertical: value.mirror_vertical,
+            mirror_horizontal: value.mirror_horizontal,
+            origin: value.origin.into(),
+            alpha: value.alpha,
         }
     }
 }
@@ -1528,32 +1526,32 @@ pub struct TaskInfo {
 impl From<_cef_task_info_t> for TaskInfo {
     fn from(value: _cef_task_info_t) -> Self {
         Self {
-            size: value.size.into(),
-            id: value.id.into(),
+            size: value.size,
+            id: value.id,
             type_: value.type_.into(),
-            is_killable: value.is_killable.into(),
+            is_killable: value.is_killable,
             title: value.title.into(),
-            cpu_usage: value.cpu_usage.into(),
-            number_of_processors: value.number_of_processors.into(),
-            memory: value.memory.into(),
-            gpu_memory: value.gpu_memory.into(),
-            is_gpu_memory_inflated: value.is_gpu_memory_inflated.into(),
+            cpu_usage: value.cpu_usage,
+            number_of_processors: value.number_of_processors,
+            memory: value.memory,
+            gpu_memory: value.gpu_memory,
+            is_gpu_memory_inflated: value.is_gpu_memory_inflated,
         }
     }
 }
-impl Into<_cef_task_info_t> for TaskInfo {
-    fn into(self) -> _cef_task_info_t {
-        _cef_task_info_t {
-            size: self.size.into(),
-            id: self.id.into(),
-            type_: self.type_.into(),
-            is_killable: self.is_killable.into(),
-            title: self.title.into(),
-            cpu_usage: self.cpu_usage.into(),
-            number_of_processors: self.number_of_processors.into(),
-            memory: self.memory.into(),
-            gpu_memory: self.gpu_memory.into(),
-            is_gpu_memory_inflated: self.is_gpu_memory_inflated.into(),
+impl From<TaskInfo> for _cef_task_info_t {
+    fn from(value: TaskInfo) -> Self {
+        Self {
+            size: value.size,
+            id: value.id,
+            type_: value.type_.into(),
+            is_killable: value.is_killable,
+            title: value.title.into(),
+            cpu_usage: value.cpu_usage,
+            number_of_processors: value.number_of_processors,
+            memory: value.memory,
+            gpu_memory: value.gpu_memory,
+            is_gpu_memory_inflated: value.is_gpu_memory_inflated,
         }
     }
 }
@@ -1571,7 +1569,7 @@ impl Default for TaskInfo {
 pub struct BaseRefCounted(RefGuard<_cef_base_ref_counted_t>);
 impl BaseRefCounted {
     fn get_raw(&self) -> *mut _cef_base_ref_counted_t {
-        unsafe { RefGuard::as_raw(&self.0) }
+        unsafe { RefGuard::into_raw(&self.0) }
     }
 }
 impl Rc for BaseRefCounted {
@@ -1580,24 +1578,24 @@ impl Rc for BaseRefCounted {
     }
 }
 impl ConvertParam<*mut _cef_base_ref_counted_t> for &BaseRefCounted {
-    fn as_raw(self) -> *mut _cef_base_ref_counted_t {
+    fn into_raw(self) -> *mut _cef_base_ref_counted_t {
         self.get_raw()
     }
 }
 impl ConvertParam<*mut _cef_base_ref_counted_t> for &mut BaseRefCounted {
-    fn as_raw(self) -> *mut _cef_base_ref_counted_t {
+    fn into_raw(self) -> *mut _cef_base_ref_counted_t {
         self.get_raw()
     }
 }
 impl ConvertReturnValue<BaseRefCounted> for *mut _cef_base_ref_counted_t {
-    fn as_wrapper(self) -> BaseRefCounted {
+    fn wrap_result(self) -> BaseRefCounted {
         BaseRefCounted(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_base_ref_counted_t> for BaseRefCounted {
-    fn into(self) -> *mut _cef_base_ref_counted_t {
-        let object = self.get_raw();
-        std::mem::forget(self);
+impl From<BaseRefCounted> for *mut _cef_base_ref_counted_t {
+    fn from(value: BaseRefCounted) -> Self {
+        let object = value.get_raw();
+        std::mem::forget(value);
         object
     }
 }
@@ -1616,23 +1614,23 @@ impl BaseScoped {
     }
 }
 impl ConvertParam<*mut _cef_base_scoped_t> for &BaseScoped {
-    fn as_raw(self) -> *mut _cef_base_scoped_t {
+    fn into_raw(self) -> *mut _cef_base_scoped_t {
         self.get_raw()
     }
 }
 impl ConvertParam<*mut _cef_base_scoped_t> for &mut BaseScoped {
-    fn as_raw(self) -> *mut _cef_base_scoped_t {
+    fn into_raw(self) -> *mut _cef_base_scoped_t {
         self.get_raw()
     }
 }
 impl ConvertReturnValue<BaseScoped> for *mut _cef_base_scoped_t {
-    fn as_wrapper(self) -> BaseScoped {
+    fn wrap_result(self) -> BaseScoped {
         BaseScoped(self)
     }
 }
-impl Into<*mut _cef_base_scoped_t> for BaseScoped {
-    fn into(self) -> *mut _cef_base_scoped_t {
-        self.get_raw()
+impl From<BaseScoped> for *mut _cef_base_scoped_t {
+    fn from(value: BaseScoped) -> Self {
+        value.get_raw()
     }
 }
 impl Default for BaseScoped {
@@ -1689,23 +1687,23 @@ impl From<_cef_dev_tools_message_observer_t> for DevToolsMessageObserver {
     fn from(value: _cef_dev_tools_message_observer_t) -> Self {
         Self {
             base: value.base.into(),
-            on_dev_tools_message: value.on_dev_tools_message.into(),
-            on_dev_tools_method_result: value.on_dev_tools_method_result.into(),
-            on_dev_tools_event: value.on_dev_tools_event.into(),
-            on_dev_tools_agent_attached: value.on_dev_tools_agent_attached.into(),
-            on_dev_tools_agent_detached: value.on_dev_tools_agent_detached.into(),
+            on_dev_tools_message: value.on_dev_tools_message,
+            on_dev_tools_method_result: value.on_dev_tools_method_result,
+            on_dev_tools_event: value.on_dev_tools_event,
+            on_dev_tools_agent_attached: value.on_dev_tools_agent_attached,
+            on_dev_tools_agent_detached: value.on_dev_tools_agent_detached,
         }
     }
 }
-impl Into<_cef_dev_tools_message_observer_t> for DevToolsMessageObserver {
-    fn into(self) -> _cef_dev_tools_message_observer_t {
-        _cef_dev_tools_message_observer_t {
-            base: self.base.into(),
-            on_dev_tools_message: self.on_dev_tools_message.into(),
-            on_dev_tools_method_result: self.on_dev_tools_method_result.into(),
-            on_dev_tools_event: self.on_dev_tools_event.into(),
-            on_dev_tools_agent_attached: self.on_dev_tools_agent_attached.into(),
-            on_dev_tools_agent_detached: self.on_dev_tools_agent_detached.into(),
+impl From<DevToolsMessageObserver> for _cef_dev_tools_message_observer_t {
+    fn from(value: DevToolsMessageObserver) -> Self {
+        Self {
+            base: value.base.into(),
+            on_dev_tools_message: value.on_dev_tools_message,
+            on_dev_tools_method_result: value.on_dev_tools_method_result,
+            on_dev_tools_event: value.on_dev_tools_event,
+            on_dev_tools_agent_attached: value.on_dev_tools_agent_attached,
+            on_dev_tools_agent_detached: value.on_dev_tools_agent_detached,
         }
     }
 }
@@ -1813,57 +1811,57 @@ impl From<_cef_value_t> for Value {
     fn from(value: _cef_value_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_owned: value.is_owned.into(),
-            is_read_only: value.is_read_only.into(),
-            is_same: value.is_same.into(),
-            is_equal: value.is_equal.into(),
-            copy: value.copy.into(),
-            get_type: value.get_type.into(),
-            get_bool: value.get_bool.into(),
-            get_int: value.get_int.into(),
-            get_double: value.get_double.into(),
-            get_string: value.get_string.into(),
-            get_binary: value.get_binary.into(),
-            get_dictionary: value.get_dictionary.into(),
-            get_list: value.get_list.into(),
-            set_null: value.set_null.into(),
-            set_bool: value.set_bool.into(),
-            set_int: value.set_int.into(),
-            set_double: value.set_double.into(),
-            set_string: value.set_string.into(),
-            set_binary: value.set_binary.into(),
-            set_dictionary: value.set_dictionary.into(),
-            set_list: value.set_list.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_read_only: value.is_read_only,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            get_type: value.get_type,
+            get_bool: value.get_bool,
+            get_int: value.get_int,
+            get_double: value.get_double,
+            get_string: value.get_string,
+            get_binary: value.get_binary,
+            get_dictionary: value.get_dictionary,
+            get_list: value.get_list,
+            set_null: value.set_null,
+            set_bool: value.set_bool,
+            set_int: value.set_int,
+            set_double: value.set_double,
+            set_string: value.set_string,
+            set_binary: value.set_binary,
+            set_dictionary: value.set_dictionary,
+            set_list: value.set_list,
         }
     }
 }
-impl Into<_cef_value_t> for Value {
-    fn into(self) -> _cef_value_t {
-        _cef_value_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_owned: self.is_owned.into(),
-            is_read_only: self.is_read_only.into(),
-            is_same: self.is_same.into(),
-            is_equal: self.is_equal.into(),
-            copy: self.copy.into(),
-            get_type: self.get_type.into(),
-            get_bool: self.get_bool.into(),
-            get_int: self.get_int.into(),
-            get_double: self.get_double.into(),
-            get_string: self.get_string.into(),
-            get_binary: self.get_binary.into(),
-            get_dictionary: self.get_dictionary.into(),
-            get_list: self.get_list.into(),
-            set_null: self.set_null.into(),
-            set_bool: self.set_bool.into(),
-            set_int: self.set_int.into(),
-            set_double: self.set_double.into(),
-            set_string: self.set_string.into(),
-            set_binary: self.set_binary.into(),
-            set_dictionary: self.set_dictionary.into(),
-            set_list: self.set_list.into(),
+impl From<Value> for _cef_value_t {
+    fn from(value: Value) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_read_only: value.is_read_only,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            get_type: value.get_type,
+            get_bool: value.get_bool,
+            get_int: value.get_int,
+            get_double: value.get_double,
+            get_string: value.get_string,
+            get_binary: value.get_binary,
+            get_dictionary: value.get_dictionary,
+            get_list: value.get_list,
+            set_null: value.set_null,
+            set_bool: value.set_bool,
+            set_int: value.set_int,
+            set_double: value.set_double,
+            set_string: value.set_string,
+            set_binary: value.set_binary,
+            set_dictionary: value.set_dictionary,
+            set_list: value.set_list,
         }
     }
 }
@@ -1918,29 +1916,29 @@ impl From<_cef_binary_value_t> for BinaryValue {
     fn from(value: _cef_binary_value_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_owned: value.is_owned.into(),
-            is_same: value.is_same.into(),
-            is_equal: value.is_equal.into(),
-            copy: value.copy.into(),
-            get_raw_data: value.get_raw_data.into(),
-            get_size: value.get_size.into(),
-            get_data: value.get_data.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            get_raw_data: value.get_raw_data,
+            get_size: value.get_size,
+            get_data: value.get_data,
         }
     }
 }
-impl Into<_cef_binary_value_t> for BinaryValue {
-    fn into(self) -> _cef_binary_value_t {
-        _cef_binary_value_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_owned: self.is_owned.into(),
-            is_same: self.is_same.into(),
-            is_equal: self.is_equal.into(),
-            copy: self.copy.into(),
-            get_raw_data: self.get_raw_data.into(),
-            get_size: self.get_size.into(),
-            get_data: self.get_data.into(),
+impl From<BinaryValue> for _cef_binary_value_t {
+    fn from(value: BinaryValue) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            get_raw_data: value.get_raw_data,
+            get_size: value.get_size,
+            get_data: value.get_data,
         }
     }
 }
@@ -2126,71 +2124,71 @@ impl From<_cef_dictionary_value_t> for DictionaryValue {
     fn from(value: _cef_dictionary_value_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_owned: value.is_owned.into(),
-            is_read_only: value.is_read_only.into(),
-            is_same: value.is_same.into(),
-            is_equal: value.is_equal.into(),
-            copy: value.copy.into(),
-            get_size: value.get_size.into(),
-            clear: value.clear.into(),
-            has_key: value.has_key.into(),
-            get_keys: value.get_keys.into(),
-            remove: value.remove.into(),
-            get_type: value.get_type.into(),
-            get_value: value.get_value.into(),
-            get_bool: value.get_bool.into(),
-            get_int: value.get_int.into(),
-            get_double: value.get_double.into(),
-            get_string: value.get_string.into(),
-            get_binary: value.get_binary.into(),
-            get_dictionary: value.get_dictionary.into(),
-            get_list: value.get_list.into(),
-            set_value: value.set_value.into(),
-            set_null: value.set_null.into(),
-            set_bool: value.set_bool.into(),
-            set_int: value.set_int.into(),
-            set_double: value.set_double.into(),
-            set_string: value.set_string.into(),
-            set_binary: value.set_binary.into(),
-            set_dictionary: value.set_dictionary.into(),
-            set_list: value.set_list.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_read_only: value.is_read_only,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            get_size: value.get_size,
+            clear: value.clear,
+            has_key: value.has_key,
+            get_keys: value.get_keys,
+            remove: value.remove,
+            get_type: value.get_type,
+            get_value: value.get_value,
+            get_bool: value.get_bool,
+            get_int: value.get_int,
+            get_double: value.get_double,
+            get_string: value.get_string,
+            get_binary: value.get_binary,
+            get_dictionary: value.get_dictionary,
+            get_list: value.get_list,
+            set_value: value.set_value,
+            set_null: value.set_null,
+            set_bool: value.set_bool,
+            set_int: value.set_int,
+            set_double: value.set_double,
+            set_string: value.set_string,
+            set_binary: value.set_binary,
+            set_dictionary: value.set_dictionary,
+            set_list: value.set_list,
         }
     }
 }
-impl Into<_cef_dictionary_value_t> for DictionaryValue {
-    fn into(self) -> _cef_dictionary_value_t {
-        _cef_dictionary_value_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_owned: self.is_owned.into(),
-            is_read_only: self.is_read_only.into(),
-            is_same: self.is_same.into(),
-            is_equal: self.is_equal.into(),
-            copy: self.copy.into(),
-            get_size: self.get_size.into(),
-            clear: self.clear.into(),
-            has_key: self.has_key.into(),
-            get_keys: self.get_keys.into(),
-            remove: self.remove.into(),
-            get_type: self.get_type.into(),
-            get_value: self.get_value.into(),
-            get_bool: self.get_bool.into(),
-            get_int: self.get_int.into(),
-            get_double: self.get_double.into(),
-            get_string: self.get_string.into(),
-            get_binary: self.get_binary.into(),
-            get_dictionary: self.get_dictionary.into(),
-            get_list: self.get_list.into(),
-            set_value: self.set_value.into(),
-            set_null: self.set_null.into(),
-            set_bool: self.set_bool.into(),
-            set_int: self.set_int.into(),
-            set_double: self.set_double.into(),
-            set_string: self.set_string.into(),
-            set_binary: self.set_binary.into(),
-            set_dictionary: self.set_dictionary.into(),
-            set_list: self.set_list.into(),
+impl From<DictionaryValue> for _cef_dictionary_value_t {
+    fn from(value: DictionaryValue) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_read_only: value.is_read_only,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            get_size: value.get_size,
+            clear: value.clear,
+            has_key: value.has_key,
+            get_keys: value.get_keys,
+            remove: value.remove,
+            get_type: value.get_type,
+            get_value: value.get_value,
+            get_bool: value.get_bool,
+            get_int: value.get_int,
+            get_double: value.get_double,
+            get_string: value.get_string,
+            get_binary: value.get_binary,
+            get_dictionary: value.get_dictionary,
+            get_list: value.get_list,
+            set_value: value.set_value,
+            set_null: value.set_null,
+            set_bool: value.set_bool,
+            set_int: value.set_int,
+            set_double: value.set_double,
+            set_string: value.set_string,
+            set_binary: value.set_binary,
+            set_dictionary: value.set_dictionary,
+            set_list: value.set_list,
         }
     }
 }
@@ -2360,69 +2358,69 @@ impl From<_cef_list_value_t> for ListValue {
     fn from(value: _cef_list_value_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_owned: value.is_owned.into(),
-            is_read_only: value.is_read_only.into(),
-            is_same: value.is_same.into(),
-            is_equal: value.is_equal.into(),
-            copy: value.copy.into(),
-            set_size: value.set_size.into(),
-            get_size: value.get_size.into(),
-            clear: value.clear.into(),
-            remove: value.remove.into(),
-            get_type: value.get_type.into(),
-            get_value: value.get_value.into(),
-            get_bool: value.get_bool.into(),
-            get_int: value.get_int.into(),
-            get_double: value.get_double.into(),
-            get_string: value.get_string.into(),
-            get_binary: value.get_binary.into(),
-            get_dictionary: value.get_dictionary.into(),
-            get_list: value.get_list.into(),
-            set_value: value.set_value.into(),
-            set_null: value.set_null.into(),
-            set_bool: value.set_bool.into(),
-            set_int: value.set_int.into(),
-            set_double: value.set_double.into(),
-            set_string: value.set_string.into(),
-            set_binary: value.set_binary.into(),
-            set_dictionary: value.set_dictionary.into(),
-            set_list: value.set_list.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_read_only: value.is_read_only,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            set_size: value.set_size,
+            get_size: value.get_size,
+            clear: value.clear,
+            remove: value.remove,
+            get_type: value.get_type,
+            get_value: value.get_value,
+            get_bool: value.get_bool,
+            get_int: value.get_int,
+            get_double: value.get_double,
+            get_string: value.get_string,
+            get_binary: value.get_binary,
+            get_dictionary: value.get_dictionary,
+            get_list: value.get_list,
+            set_value: value.set_value,
+            set_null: value.set_null,
+            set_bool: value.set_bool,
+            set_int: value.set_int,
+            set_double: value.set_double,
+            set_string: value.set_string,
+            set_binary: value.set_binary,
+            set_dictionary: value.set_dictionary,
+            set_list: value.set_list,
         }
     }
 }
-impl Into<_cef_list_value_t> for ListValue {
-    fn into(self) -> _cef_list_value_t {
-        _cef_list_value_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_owned: self.is_owned.into(),
-            is_read_only: self.is_read_only.into(),
-            is_same: self.is_same.into(),
-            is_equal: self.is_equal.into(),
-            copy: self.copy.into(),
-            set_size: self.set_size.into(),
-            get_size: self.get_size.into(),
-            clear: self.clear.into(),
-            remove: self.remove.into(),
-            get_type: self.get_type.into(),
-            get_value: self.get_value.into(),
-            get_bool: self.get_bool.into(),
-            get_int: self.get_int.into(),
-            get_double: self.get_double.into(),
-            get_string: self.get_string.into(),
-            get_binary: self.get_binary.into(),
-            get_dictionary: self.get_dictionary.into(),
-            get_list: self.get_list.into(),
-            set_value: self.set_value.into(),
-            set_null: self.set_null.into(),
-            set_bool: self.set_bool.into(),
-            set_int: self.set_int.into(),
-            set_double: self.set_double.into(),
-            set_string: self.set_string.into(),
-            set_binary: self.set_binary.into(),
-            set_dictionary: self.set_dictionary.into(),
-            set_list: self.set_list.into(),
+impl From<ListValue> for _cef_list_value_t {
+    fn from(value: ListValue) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_owned: value.is_owned,
+            is_read_only: value.is_read_only,
+            is_same: value.is_same,
+            is_equal: value.is_equal,
+            copy: value.copy,
+            set_size: value.set_size,
+            get_size: value.get_size,
+            clear: value.clear,
+            remove: value.remove,
+            get_type: value.get_type,
+            get_value: value.get_value,
+            get_bool: value.get_bool,
+            get_int: value.get_int,
+            get_double: value.get_double,
+            get_string: value.get_string,
+            get_binary: value.get_binary,
+            get_dictionary: value.get_dictionary,
+            get_list: value.get_list,
+            set_value: value.set_value,
+            set_null: value.set_null,
+            set_bool: value.set_bool,
+            set_int: value.set_int,
+            set_double: value.set_double,
+            set_string: value.set_string,
+            set_binary: value.set_binary,
+            set_dictionary: value.set_dictionary,
+            set_list: value.set_list,
         }
     }
 }
@@ -2531,39 +2529,39 @@ impl From<_cef_image_t> for Image {
     fn from(value: _cef_image_t) -> Self {
         Self {
             base: value.base.into(),
-            is_empty: value.is_empty.into(),
-            is_same: value.is_same.into(),
-            add_bitmap: value.add_bitmap.into(),
-            add_png: value.add_png.into(),
-            add_jpeg: value.add_jpeg.into(),
-            get_width: value.get_width.into(),
-            get_height: value.get_height.into(),
-            has_representation: value.has_representation.into(),
-            remove_representation: value.remove_representation.into(),
-            get_representation_info: value.get_representation_info.into(),
-            get_as_bitmap: value.get_as_bitmap.into(),
-            get_as_png: value.get_as_png.into(),
-            get_as_jpeg: value.get_as_jpeg.into(),
+            is_empty: value.is_empty,
+            is_same: value.is_same,
+            add_bitmap: value.add_bitmap,
+            add_png: value.add_png,
+            add_jpeg: value.add_jpeg,
+            get_width: value.get_width,
+            get_height: value.get_height,
+            has_representation: value.has_representation,
+            remove_representation: value.remove_representation,
+            get_representation_info: value.get_representation_info,
+            get_as_bitmap: value.get_as_bitmap,
+            get_as_png: value.get_as_png,
+            get_as_jpeg: value.get_as_jpeg,
         }
     }
 }
-impl Into<_cef_image_t> for Image {
-    fn into(self) -> _cef_image_t {
-        _cef_image_t {
-            base: self.base.into(),
-            is_empty: self.is_empty.into(),
-            is_same: self.is_same.into(),
-            add_bitmap: self.add_bitmap.into(),
-            add_png: self.add_png.into(),
-            add_jpeg: self.add_jpeg.into(),
-            get_width: self.get_width.into(),
-            get_height: self.get_height.into(),
-            has_representation: self.has_representation.into(),
-            remove_representation: self.remove_representation.into(),
-            get_representation_info: self.get_representation_info.into(),
-            get_as_bitmap: self.get_as_bitmap.into(),
-            get_as_png: self.get_as_png.into(),
-            get_as_jpeg: self.get_as_jpeg.into(),
+impl From<Image> for _cef_image_t {
+    fn from(value: Image) -> Self {
+        Self {
+            base: value.base.into(),
+            is_empty: value.is_empty,
+            is_same: value.is_same,
+            add_bitmap: value.add_bitmap,
+            add_png: value.add_png,
+            add_jpeg: value.add_jpeg,
+            get_width: value.get_width,
+            get_height: value.get_height,
+            has_representation: value.has_representation,
+            remove_representation: value.remove_representation,
+            get_representation_info: value.get_representation_info,
+            get_as_bitmap: value.get_as_bitmap,
+            get_as_png: value.get_as_png,
+            get_as_jpeg: value.get_as_jpeg,
         }
     }
 }
@@ -2605,23 +2603,23 @@ impl From<_cef_read_handler_t> for ReadHandler {
     fn from(value: _cef_read_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            read: value.read.into(),
-            seek: value.seek.into(),
-            tell: value.tell.into(),
-            eof: value.eof.into(),
-            may_block: value.may_block.into(),
+            read: value.read,
+            seek: value.seek,
+            tell: value.tell,
+            eof: value.eof,
+            may_block: value.may_block,
         }
     }
 }
-impl Into<_cef_read_handler_t> for ReadHandler {
-    fn into(self) -> _cef_read_handler_t {
-        _cef_read_handler_t {
-            base: self.base.into(),
-            read: self.read.into(),
-            seek: self.seek.into(),
-            tell: self.tell.into(),
-            eof: self.eof.into(),
-            may_block: self.may_block.into(),
+impl From<ReadHandler> for _cef_read_handler_t {
+    fn from(value: ReadHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            read: value.read,
+            seek: value.seek,
+            tell: value.tell,
+            eof: value.eof,
+            may_block: value.may_block,
         }
     }
 }
@@ -2663,23 +2661,23 @@ impl From<_cef_stream_reader_t> for StreamReader {
     fn from(value: _cef_stream_reader_t) -> Self {
         Self {
             base: value.base.into(),
-            read: value.read.into(),
-            seek: value.seek.into(),
-            tell: value.tell.into(),
-            eof: value.eof.into(),
-            may_block: value.may_block.into(),
+            read: value.read,
+            seek: value.seek,
+            tell: value.tell,
+            eof: value.eof,
+            may_block: value.may_block,
         }
     }
 }
-impl Into<_cef_stream_reader_t> for StreamReader {
-    fn into(self) -> _cef_stream_reader_t {
-        _cef_stream_reader_t {
-            base: self.base.into(),
-            read: self.read.into(),
-            seek: self.seek.into(),
-            tell: self.tell.into(),
-            eof: self.eof.into(),
-            may_block: self.may_block.into(),
+impl From<StreamReader> for _cef_stream_reader_t {
+    fn from(value: StreamReader) -> Self {
+        Self {
+            base: value.base.into(),
+            read: value.read,
+            seek: value.seek,
+            tell: value.tell,
+            eof: value.eof,
+            may_block: value.may_block,
         }
     }
 }
@@ -2721,23 +2719,23 @@ impl From<_cef_write_handler_t> for WriteHandler {
     fn from(value: _cef_write_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            write: value.write.into(),
-            seek: value.seek.into(),
-            tell: value.tell.into(),
-            flush: value.flush.into(),
-            may_block: value.may_block.into(),
+            write: value.write,
+            seek: value.seek,
+            tell: value.tell,
+            flush: value.flush,
+            may_block: value.may_block,
         }
     }
 }
-impl Into<_cef_write_handler_t> for WriteHandler {
-    fn into(self) -> _cef_write_handler_t {
-        _cef_write_handler_t {
-            base: self.base.into(),
-            write: self.write.into(),
-            seek: self.seek.into(),
-            tell: self.tell.into(),
-            flush: self.flush.into(),
-            may_block: self.may_block.into(),
+impl From<WriteHandler> for _cef_write_handler_t {
+    fn from(value: WriteHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            write: value.write,
+            seek: value.seek,
+            tell: value.tell,
+            flush: value.flush,
+            may_block: value.may_block,
         }
     }
 }
@@ -2779,23 +2777,23 @@ impl From<_cef_stream_writer_t> for StreamWriter {
     fn from(value: _cef_stream_writer_t) -> Self {
         Self {
             base: value.base.into(),
-            write: value.write.into(),
-            seek: value.seek.into(),
-            tell: value.tell.into(),
-            flush: value.flush.into(),
-            may_block: value.may_block.into(),
+            write: value.write,
+            seek: value.seek,
+            tell: value.tell,
+            flush: value.flush,
+            may_block: value.may_block,
         }
     }
 }
-impl Into<_cef_stream_writer_t> for StreamWriter {
-    fn into(self) -> _cef_stream_writer_t {
-        _cef_stream_writer_t {
-            base: self.base.into(),
-            write: self.write.into(),
-            seek: self.seek.into(),
-            tell: self.tell.into(),
-            flush: self.flush.into(),
-            may_block: self.may_block.into(),
+impl From<StreamWriter> for _cef_stream_writer_t {
+    fn from(value: StreamWriter) -> Self {
+        Self {
+            base: value.base.into(),
+            write: value.write,
+            seek: value.seek,
+            tell: value.tell,
+            flush: value.flush,
+            may_block: value.may_block,
         }
     }
 }
@@ -2906,67 +2904,67 @@ impl From<_cef_drag_data_t> for DragData {
     fn from(value: _cef_drag_data_t) -> Self {
         Self {
             base: value.base.into(),
-            clone: value.clone.into(),
-            is_read_only: value.is_read_only.into(),
-            is_link: value.is_link.into(),
-            is_fragment: value.is_fragment.into(),
-            is_file: value.is_file.into(),
-            get_link_url: value.get_link_url.into(),
-            get_link_title: value.get_link_title.into(),
-            get_link_metadata: value.get_link_metadata.into(),
-            get_fragment_text: value.get_fragment_text.into(),
-            get_fragment_html: value.get_fragment_html.into(),
-            get_fragment_base_url: value.get_fragment_base_url.into(),
-            get_file_name: value.get_file_name.into(),
-            get_file_contents: value.get_file_contents.into(),
-            get_file_names: value.get_file_names.into(),
-            get_file_paths: value.get_file_paths.into(),
-            set_link_url: value.set_link_url.into(),
-            set_link_title: value.set_link_title.into(),
-            set_link_metadata: value.set_link_metadata.into(),
-            set_fragment_text: value.set_fragment_text.into(),
-            set_fragment_html: value.set_fragment_html.into(),
-            set_fragment_base_url: value.set_fragment_base_url.into(),
-            reset_file_contents: value.reset_file_contents.into(),
-            add_file: value.add_file.into(),
-            clear_filenames: value.clear_filenames.into(),
-            get_image: value.get_image.into(),
-            get_image_hotspot: value.get_image_hotspot.into(),
-            has_image: value.has_image.into(),
+            clone: value.clone,
+            is_read_only: value.is_read_only,
+            is_link: value.is_link,
+            is_fragment: value.is_fragment,
+            is_file: value.is_file,
+            get_link_url: value.get_link_url,
+            get_link_title: value.get_link_title,
+            get_link_metadata: value.get_link_metadata,
+            get_fragment_text: value.get_fragment_text,
+            get_fragment_html: value.get_fragment_html,
+            get_fragment_base_url: value.get_fragment_base_url,
+            get_file_name: value.get_file_name,
+            get_file_contents: value.get_file_contents,
+            get_file_names: value.get_file_names,
+            get_file_paths: value.get_file_paths,
+            set_link_url: value.set_link_url,
+            set_link_title: value.set_link_title,
+            set_link_metadata: value.set_link_metadata,
+            set_fragment_text: value.set_fragment_text,
+            set_fragment_html: value.set_fragment_html,
+            set_fragment_base_url: value.set_fragment_base_url,
+            reset_file_contents: value.reset_file_contents,
+            add_file: value.add_file,
+            clear_filenames: value.clear_filenames,
+            get_image: value.get_image,
+            get_image_hotspot: value.get_image_hotspot,
+            has_image: value.has_image,
         }
     }
 }
-impl Into<_cef_drag_data_t> for DragData {
-    fn into(self) -> _cef_drag_data_t {
-        _cef_drag_data_t {
-            base: self.base.into(),
-            clone: self.clone.into(),
-            is_read_only: self.is_read_only.into(),
-            is_link: self.is_link.into(),
-            is_fragment: self.is_fragment.into(),
-            is_file: self.is_file.into(),
-            get_link_url: self.get_link_url.into(),
-            get_link_title: self.get_link_title.into(),
-            get_link_metadata: self.get_link_metadata.into(),
-            get_fragment_text: self.get_fragment_text.into(),
-            get_fragment_html: self.get_fragment_html.into(),
-            get_fragment_base_url: self.get_fragment_base_url.into(),
-            get_file_name: self.get_file_name.into(),
-            get_file_contents: self.get_file_contents.into(),
-            get_file_names: self.get_file_names.into(),
-            get_file_paths: self.get_file_paths.into(),
-            set_link_url: self.set_link_url.into(),
-            set_link_title: self.set_link_title.into(),
-            set_link_metadata: self.set_link_metadata.into(),
-            set_fragment_text: self.set_fragment_text.into(),
-            set_fragment_html: self.set_fragment_html.into(),
-            set_fragment_base_url: self.set_fragment_base_url.into(),
-            reset_file_contents: self.reset_file_contents.into(),
-            add_file: self.add_file.into(),
-            clear_filenames: self.clear_filenames.into(),
-            get_image: self.get_image.into(),
-            get_image_hotspot: self.get_image_hotspot.into(),
-            has_image: self.has_image.into(),
+impl From<DragData> for _cef_drag_data_t {
+    fn from(value: DragData) -> Self {
+        Self {
+            base: value.base.into(),
+            clone: value.clone,
+            is_read_only: value.is_read_only,
+            is_link: value.is_link,
+            is_fragment: value.is_fragment,
+            is_file: value.is_file,
+            get_link_url: value.get_link_url,
+            get_link_title: value.get_link_title,
+            get_link_metadata: value.get_link_metadata,
+            get_fragment_text: value.get_fragment_text,
+            get_fragment_html: value.get_fragment_html,
+            get_fragment_base_url: value.get_fragment_base_url,
+            get_file_name: value.get_file_name,
+            get_file_contents: value.get_file_contents,
+            get_file_names: value.get_file_names,
+            get_file_paths: value.get_file_paths,
+            set_link_url: value.set_link_url,
+            set_link_title: value.set_link_title,
+            set_link_metadata: value.set_link_metadata,
+            set_fragment_text: value.set_fragment_text,
+            set_fragment_html: value.set_fragment_html,
+            set_fragment_base_url: value.set_fragment_base_url,
+            reset_file_contents: value.reset_file_contents,
+            add_file: value.add_file,
+            clear_filenames: value.clear_filenames,
+            get_image: value.get_image,
+            get_image_hotspot: value.get_image_hotspot,
+            has_image: value.has_image,
         }
     }
 }
@@ -2991,15 +2989,15 @@ impl From<_cef_domvisitor_t> for Domvisitor {
     fn from(value: _cef_domvisitor_t) -> Self {
         Self {
             base: value.base.into(),
-            visit: value.visit.into(),
+            visit: value.visit,
         }
     }
 }
-impl Into<_cef_domvisitor_t> for Domvisitor {
-    fn into(self) -> _cef_domvisitor_t {
-        _cef_domvisitor_t {
-            base: self.base.into(),
-            visit: self.visit.into(),
+impl From<Domvisitor> for _cef_domvisitor_t {
+    fn from(value: Domvisitor) -> Self {
+        Self {
+            base: value.base.into(),
+            visit: value.visit,
         }
     }
 }
@@ -3066,41 +3064,41 @@ impl From<_cef_domdocument_t> for Domdocument {
     fn from(value: _cef_domdocument_t) -> Self {
         Self {
             base: value.base.into(),
-            get_type: value.get_type.into(),
-            get_document: value.get_document.into(),
-            get_body: value.get_body.into(),
-            get_head: value.get_head.into(),
-            get_title: value.get_title.into(),
-            get_element_by_id: value.get_element_by_id.into(),
-            get_focused_node: value.get_focused_node.into(),
-            has_selection: value.has_selection.into(),
-            get_selection_start_offset: value.get_selection_start_offset.into(),
-            get_selection_end_offset: value.get_selection_end_offset.into(),
-            get_selection_as_markup: value.get_selection_as_markup.into(),
-            get_selection_as_text: value.get_selection_as_text.into(),
-            get_base_url: value.get_base_url.into(),
-            get_complete_url: value.get_complete_url.into(),
+            get_type: value.get_type,
+            get_document: value.get_document,
+            get_body: value.get_body,
+            get_head: value.get_head,
+            get_title: value.get_title,
+            get_element_by_id: value.get_element_by_id,
+            get_focused_node: value.get_focused_node,
+            has_selection: value.has_selection,
+            get_selection_start_offset: value.get_selection_start_offset,
+            get_selection_end_offset: value.get_selection_end_offset,
+            get_selection_as_markup: value.get_selection_as_markup,
+            get_selection_as_text: value.get_selection_as_text,
+            get_base_url: value.get_base_url,
+            get_complete_url: value.get_complete_url,
         }
     }
 }
-impl Into<_cef_domdocument_t> for Domdocument {
-    fn into(self) -> _cef_domdocument_t {
-        _cef_domdocument_t {
-            base: self.base.into(),
-            get_type: self.get_type.into(),
-            get_document: self.get_document.into(),
-            get_body: self.get_body.into(),
-            get_head: self.get_head.into(),
-            get_title: self.get_title.into(),
-            get_element_by_id: self.get_element_by_id.into(),
-            get_focused_node: self.get_focused_node.into(),
-            has_selection: self.has_selection.into(),
-            get_selection_start_offset: self.get_selection_start_offset.into(),
-            get_selection_end_offset: self.get_selection_end_offset.into(),
-            get_selection_as_markup: self.get_selection_as_markup.into(),
-            get_selection_as_text: self.get_selection_as_text.into(),
-            get_base_url: self.get_base_url.into(),
-            get_complete_url: self.get_complete_url.into(),
+impl From<Domdocument> for _cef_domdocument_t {
+    fn from(value: Domdocument) -> Self {
+        Self {
+            base: value.base.into(),
+            get_type: value.get_type,
+            get_document: value.get_document,
+            get_body: value.get_body,
+            get_head: value.get_head,
+            get_title: value.get_title,
+            get_element_by_id: value.get_element_by_id,
+            get_focused_node: value.get_focused_node,
+            has_selection: value.has_selection,
+            get_selection_start_offset: value.get_selection_start_offset,
+            get_selection_end_offset: value.get_selection_end_offset,
+            get_selection_as_markup: value.get_selection_as_markup,
+            get_selection_as_text: value.get_selection_as_text,
+            get_base_url: value.get_base_url,
+            get_complete_url: value.get_complete_url,
         }
     }
 }
@@ -3212,65 +3210,65 @@ impl From<_cef_domnode_t> for Domnode {
     fn from(value: _cef_domnode_t) -> Self {
         Self {
             base: value.base.into(),
-            get_type: value.get_type.into(),
-            is_text: value.is_text.into(),
-            is_element: value.is_element.into(),
-            is_editable: value.is_editable.into(),
-            is_form_control_element: value.is_form_control_element.into(),
-            get_form_control_element_type: value.get_form_control_element_type.into(),
-            is_same: value.is_same.into(),
-            get_name: value.get_name.into(),
-            get_value: value.get_value.into(),
-            set_value: value.set_value.into(),
-            get_as_markup: value.get_as_markup.into(),
-            get_document: value.get_document.into(),
-            get_parent: value.get_parent.into(),
-            get_previous_sibling: value.get_previous_sibling.into(),
-            get_next_sibling: value.get_next_sibling.into(),
-            has_children: value.has_children.into(),
-            get_first_child: value.get_first_child.into(),
-            get_last_child: value.get_last_child.into(),
-            get_element_tag_name: value.get_element_tag_name.into(),
-            has_element_attributes: value.has_element_attributes.into(),
-            has_element_attribute: value.has_element_attribute.into(),
-            get_element_attribute: value.get_element_attribute.into(),
-            get_element_attributes: value.get_element_attributes.into(),
-            set_element_attribute: value.set_element_attribute.into(),
-            get_element_inner_text: value.get_element_inner_text.into(),
-            get_element_bounds: value.get_element_bounds.into(),
+            get_type: value.get_type,
+            is_text: value.is_text,
+            is_element: value.is_element,
+            is_editable: value.is_editable,
+            is_form_control_element: value.is_form_control_element,
+            get_form_control_element_type: value.get_form_control_element_type,
+            is_same: value.is_same,
+            get_name: value.get_name,
+            get_value: value.get_value,
+            set_value: value.set_value,
+            get_as_markup: value.get_as_markup,
+            get_document: value.get_document,
+            get_parent: value.get_parent,
+            get_previous_sibling: value.get_previous_sibling,
+            get_next_sibling: value.get_next_sibling,
+            has_children: value.has_children,
+            get_first_child: value.get_first_child,
+            get_last_child: value.get_last_child,
+            get_element_tag_name: value.get_element_tag_name,
+            has_element_attributes: value.has_element_attributes,
+            has_element_attribute: value.has_element_attribute,
+            get_element_attribute: value.get_element_attribute,
+            get_element_attributes: value.get_element_attributes,
+            set_element_attribute: value.set_element_attribute,
+            get_element_inner_text: value.get_element_inner_text,
+            get_element_bounds: value.get_element_bounds,
         }
     }
 }
-impl Into<_cef_domnode_t> for Domnode {
-    fn into(self) -> _cef_domnode_t {
-        _cef_domnode_t {
-            base: self.base.into(),
-            get_type: self.get_type.into(),
-            is_text: self.is_text.into(),
-            is_element: self.is_element.into(),
-            is_editable: self.is_editable.into(),
-            is_form_control_element: self.is_form_control_element.into(),
-            get_form_control_element_type: self.get_form_control_element_type.into(),
-            is_same: self.is_same.into(),
-            get_name: self.get_name.into(),
-            get_value: self.get_value.into(),
-            set_value: self.set_value.into(),
-            get_as_markup: self.get_as_markup.into(),
-            get_document: self.get_document.into(),
-            get_parent: self.get_parent.into(),
-            get_previous_sibling: self.get_previous_sibling.into(),
-            get_next_sibling: self.get_next_sibling.into(),
-            has_children: self.has_children.into(),
-            get_first_child: self.get_first_child.into(),
-            get_last_child: self.get_last_child.into(),
-            get_element_tag_name: self.get_element_tag_name.into(),
-            has_element_attributes: self.has_element_attributes.into(),
-            has_element_attribute: self.has_element_attribute.into(),
-            get_element_attribute: self.get_element_attribute.into(),
-            get_element_attributes: self.get_element_attributes.into(),
-            set_element_attribute: self.set_element_attribute.into(),
-            get_element_inner_text: self.get_element_inner_text.into(),
-            get_element_bounds: self.get_element_bounds.into(),
+impl From<Domnode> for _cef_domnode_t {
+    fn from(value: Domnode) -> Self {
+        Self {
+            base: value.base.into(),
+            get_type: value.get_type,
+            is_text: value.is_text,
+            is_element: value.is_element,
+            is_editable: value.is_editable,
+            is_form_control_element: value.is_form_control_element,
+            get_form_control_element_type: value.get_form_control_element_type,
+            is_same: value.is_same,
+            get_name: value.get_name,
+            get_value: value.get_value,
+            set_value: value.set_value,
+            get_as_markup: value.get_as_markup,
+            get_document: value.get_document,
+            get_parent: value.get_parent,
+            get_previous_sibling: value.get_previous_sibling,
+            get_next_sibling: value.get_next_sibling,
+            has_children: value.has_children,
+            get_first_child: value.get_first_child,
+            get_last_child: value.get_last_child,
+            get_element_tag_name: value.get_element_tag_name,
+            has_element_attributes: value.has_element_attributes,
+            has_element_attribute: value.has_element_attribute,
+            get_element_attribute: value.get_element_attribute,
+            get_element_attributes: value.get_element_attributes,
+            set_element_attribute: value.set_element_attribute,
+            get_element_inner_text: value.get_element_inner_text,
+            get_element_bounds: value.get_element_bounds,
         }
     }
 }
@@ -3302,19 +3300,19 @@ impl From<_cef_shared_memory_region_t> for SharedMemoryRegion {
     fn from(value: _cef_shared_memory_region_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            size: value.size.into(),
-            memory: value.memory.into(),
+            is_valid: value.is_valid,
+            size: value.size,
+            memory: value.memory,
         }
     }
 }
-impl Into<_cef_shared_memory_region_t> for SharedMemoryRegion {
-    fn into(self) -> _cef_shared_memory_region_t {
-        _cef_shared_memory_region_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            size: self.size.into(),
-            memory: self.memory.into(),
+impl From<SharedMemoryRegion> for _cef_shared_memory_region_t {
+    fn from(value: SharedMemoryRegion) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            size: value.size,
+            memory: value.memory,
         }
     }
 }
@@ -3355,25 +3353,25 @@ impl From<_cef_process_message_t> for ProcessMessage {
     fn from(value: _cef_process_message_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_read_only: value.is_read_only.into(),
-            copy: value.copy.into(),
-            get_name: value.get_name.into(),
-            get_argument_list: value.get_argument_list.into(),
-            get_shared_memory_region: value.get_shared_memory_region.into(),
+            is_valid: value.is_valid,
+            is_read_only: value.is_read_only,
+            copy: value.copy,
+            get_name: value.get_name,
+            get_argument_list: value.get_argument_list,
+            get_shared_memory_region: value.get_shared_memory_region,
         }
     }
 }
-impl Into<_cef_process_message_t> for ProcessMessage {
-    fn into(self) -> _cef_process_message_t {
-        _cef_process_message_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_read_only: self.is_read_only.into(),
-            copy: self.copy.into(),
-            get_name: self.get_name.into(),
-            get_argument_list: self.get_argument_list.into(),
-            get_shared_memory_region: self.get_shared_memory_region.into(),
+impl From<ProcessMessage> for _cef_process_message_t {
+    fn from(value: ProcessMessage) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_read_only: value.is_read_only,
+            copy: value.copy,
+            get_name: value.get_name,
+            get_argument_list: value.get_argument_list,
+            get_shared_memory_region: value.get_shared_memory_region,
         }
     }
 }
@@ -3475,57 +3473,57 @@ impl From<_cef_request_t> for Request {
     fn from(value: _cef_request_t) -> Self {
         Self {
             base: value.base.into(),
-            is_read_only: value.is_read_only.into(),
-            get_url: value.get_url.into(),
-            set_url: value.set_url.into(),
-            get_method: value.get_method.into(),
-            set_method: value.set_method.into(),
-            set_referrer: value.set_referrer.into(),
-            get_referrer_url: value.get_referrer_url.into(),
-            get_referrer_policy: value.get_referrer_policy.into(),
-            get_post_data: value.get_post_data.into(),
-            set_post_data: value.set_post_data.into(),
-            get_header_map: value.get_header_map.into(),
-            set_header_map: value.set_header_map.into(),
-            get_header_by_name: value.get_header_by_name.into(),
-            set_header_by_name: value.set_header_by_name.into(),
-            set: value.set.into(),
-            get_flags: value.get_flags.into(),
-            set_flags: value.set_flags.into(),
-            get_first_party_for_cookies: value.get_first_party_for_cookies.into(),
-            set_first_party_for_cookies: value.set_first_party_for_cookies.into(),
-            get_resource_type: value.get_resource_type.into(),
-            get_transition_type: value.get_transition_type.into(),
-            get_identifier: value.get_identifier.into(),
+            is_read_only: value.is_read_only,
+            get_url: value.get_url,
+            set_url: value.set_url,
+            get_method: value.get_method,
+            set_method: value.set_method,
+            set_referrer: value.set_referrer,
+            get_referrer_url: value.get_referrer_url,
+            get_referrer_policy: value.get_referrer_policy,
+            get_post_data: value.get_post_data,
+            set_post_data: value.set_post_data,
+            get_header_map: value.get_header_map,
+            set_header_map: value.set_header_map,
+            get_header_by_name: value.get_header_by_name,
+            set_header_by_name: value.set_header_by_name,
+            set: value.set,
+            get_flags: value.get_flags,
+            set_flags: value.set_flags,
+            get_first_party_for_cookies: value.get_first_party_for_cookies,
+            set_first_party_for_cookies: value.set_first_party_for_cookies,
+            get_resource_type: value.get_resource_type,
+            get_transition_type: value.get_transition_type,
+            get_identifier: value.get_identifier,
         }
     }
 }
-impl Into<_cef_request_t> for Request {
-    fn into(self) -> _cef_request_t {
-        _cef_request_t {
-            base: self.base.into(),
-            is_read_only: self.is_read_only.into(),
-            get_url: self.get_url.into(),
-            set_url: self.set_url.into(),
-            get_method: self.get_method.into(),
-            set_method: self.set_method.into(),
-            set_referrer: self.set_referrer.into(),
-            get_referrer_url: self.get_referrer_url.into(),
-            get_referrer_policy: self.get_referrer_policy.into(),
-            get_post_data: self.get_post_data.into(),
-            set_post_data: self.set_post_data.into(),
-            get_header_map: self.get_header_map.into(),
-            set_header_map: self.set_header_map.into(),
-            get_header_by_name: self.get_header_by_name.into(),
-            set_header_by_name: self.set_header_by_name.into(),
-            set: self.set.into(),
-            get_flags: self.get_flags.into(),
-            set_flags: self.set_flags.into(),
-            get_first_party_for_cookies: self.get_first_party_for_cookies.into(),
-            set_first_party_for_cookies: self.set_first_party_for_cookies.into(),
-            get_resource_type: self.get_resource_type.into(),
-            get_transition_type: self.get_transition_type.into(),
-            get_identifier: self.get_identifier.into(),
+impl From<Request> for _cef_request_t {
+    fn from(value: Request) -> Self {
+        Self {
+            base: value.base.into(),
+            is_read_only: value.is_read_only,
+            get_url: value.get_url,
+            set_url: value.set_url,
+            get_method: value.get_method,
+            set_method: value.set_method,
+            set_referrer: value.set_referrer,
+            get_referrer_url: value.get_referrer_url,
+            get_referrer_policy: value.get_referrer_policy,
+            get_post_data: value.get_post_data,
+            set_post_data: value.set_post_data,
+            get_header_map: value.get_header_map,
+            set_header_map: value.set_header_map,
+            get_header_by_name: value.get_header_by_name,
+            set_header_by_name: value.set_header_by_name,
+            set: value.set,
+            get_flags: value.get_flags,
+            set_flags: value.set_flags,
+            get_first_party_for_cookies: value.get_first_party_for_cookies,
+            set_first_party_for_cookies: value.set_first_party_for_cookies,
+            get_resource_type: value.get_resource_type,
+            get_transition_type: value.get_transition_type,
+            get_identifier: value.get_identifier,
         }
     }
 }
@@ -3573,27 +3571,27 @@ impl From<_cef_post_data_t> for PostData {
     fn from(value: _cef_post_data_t) -> Self {
         Self {
             base: value.base.into(),
-            is_read_only: value.is_read_only.into(),
-            has_excluded_elements: value.has_excluded_elements.into(),
-            get_element_count: value.get_element_count.into(),
-            get_elements: value.get_elements.into(),
-            remove_element: value.remove_element.into(),
-            add_element: value.add_element.into(),
-            remove_elements: value.remove_elements.into(),
+            is_read_only: value.is_read_only,
+            has_excluded_elements: value.has_excluded_elements,
+            get_element_count: value.get_element_count,
+            get_elements: value.get_elements,
+            remove_element: value.remove_element,
+            add_element: value.add_element,
+            remove_elements: value.remove_elements,
         }
     }
 }
-impl Into<_cef_post_data_t> for PostData {
-    fn into(self) -> _cef_post_data_t {
-        _cef_post_data_t {
-            base: self.base.into(),
-            is_read_only: self.is_read_only.into(),
-            has_excluded_elements: self.has_excluded_elements.into(),
-            get_element_count: self.get_element_count.into(),
-            get_elements: self.get_elements.into(),
-            remove_element: self.remove_element.into(),
-            add_element: self.add_element.into(),
-            remove_elements: self.remove_elements.into(),
+impl From<PostData> for _cef_post_data_t {
+    fn from(value: PostData) -> Self {
+        Self {
+            base: value.base.into(),
+            is_read_only: value.is_read_only,
+            has_excluded_elements: value.has_excluded_elements,
+            get_element_count: value.get_element_count,
+            get_elements: value.get_elements,
+            remove_element: value.remove_element,
+            add_element: value.add_element,
+            remove_elements: value.remove_elements,
         }
     }
 }
@@ -3648,29 +3646,29 @@ impl From<_cef_post_data_element_t> for PostDataElement {
     fn from(value: _cef_post_data_element_t) -> Self {
         Self {
             base: value.base.into(),
-            is_read_only: value.is_read_only.into(),
-            set_to_empty: value.set_to_empty.into(),
-            set_to_file: value.set_to_file.into(),
-            set_to_bytes: value.set_to_bytes.into(),
-            get_type: value.get_type.into(),
-            get_file: value.get_file.into(),
-            get_bytes_count: value.get_bytes_count.into(),
-            get_bytes: value.get_bytes.into(),
+            is_read_only: value.is_read_only,
+            set_to_empty: value.set_to_empty,
+            set_to_file: value.set_to_file,
+            set_to_bytes: value.set_to_bytes,
+            get_type: value.get_type,
+            get_file: value.get_file,
+            get_bytes_count: value.get_bytes_count,
+            get_bytes: value.get_bytes,
         }
     }
 }
-impl Into<_cef_post_data_element_t> for PostDataElement {
-    fn into(self) -> _cef_post_data_element_t {
-        _cef_post_data_element_t {
-            base: self.base.into(),
-            is_read_only: self.is_read_only.into(),
-            set_to_empty: self.set_to_empty.into(),
-            set_to_file: self.set_to_file.into(),
-            set_to_bytes: self.set_to_bytes.into(),
-            get_type: self.get_type.into(),
-            get_file: self.get_file.into(),
-            get_bytes_count: self.get_bytes_count.into(),
-            get_bytes: self.get_bytes.into(),
+impl From<PostDataElement> for _cef_post_data_element_t {
+    fn from(value: PostDataElement) -> Self {
+        Self {
+            base: value.base.into(),
+            is_read_only: value.is_read_only,
+            set_to_empty: value.set_to_empty,
+            set_to_file: value.set_to_file,
+            set_to_bytes: value.set_to_bytes,
+            get_type: value.get_type,
+            get_file: value.get_file,
+            get_bytes_count: value.get_bytes_count,
+            get_bytes: value.get_bytes,
         }
     }
 }
@@ -3692,15 +3690,15 @@ impl From<_cef_string_visitor_t> for CefStringVisitor {
     fn from(value: _cef_string_visitor_t) -> Self {
         Self {
             base: value.base.into(),
-            visit: value.visit.into(),
+            visit: value.visit,
         }
     }
 }
-impl Into<_cef_string_visitor_t> for CefStringVisitor {
-    fn into(self) -> _cef_string_visitor_t {
-        _cef_string_visitor_t {
-            base: self.base.into(),
-            visit: self.visit.into(),
+impl From<CefStringVisitor> for _cef_string_visitor_t {
+    fn from(value: CefStringVisitor) -> Self {
+        Self {
+            base: value.base.into(),
+            visit: value.visit,
         }
     }
 }
@@ -3793,65 +3791,65 @@ impl From<_cef_frame_t> for Frame {
     fn from(value: _cef_frame_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            undo: value.undo.into(),
-            redo: value.redo.into(),
-            cut: value.cut.into(),
-            copy: value.copy.into(),
-            paste: value.paste.into(),
-            paste_and_match_style: value.paste_and_match_style.into(),
-            del: value.del.into(),
-            select_all: value.select_all.into(),
-            view_source: value.view_source.into(),
-            get_source: value.get_source.into(),
-            get_text: value.get_text.into(),
-            load_request: value.load_request.into(),
-            load_url: value.load_url.into(),
-            execute_java_script: value.execute_java_script.into(),
-            is_main: value.is_main.into(),
-            is_focused: value.is_focused.into(),
-            get_name: value.get_name.into(),
-            get_identifier: value.get_identifier.into(),
-            get_parent: value.get_parent.into(),
-            get_url: value.get_url.into(),
-            get_browser: value.get_browser.into(),
-            get_v_8_context: value.get_v8_context.into(),
-            visit_dom: value.visit_dom.into(),
-            create_urlrequest: value.create_urlrequest.into(),
-            send_process_message: value.send_process_message.into(),
+            is_valid: value.is_valid,
+            undo: value.undo,
+            redo: value.redo,
+            cut: value.cut,
+            copy: value.copy,
+            paste: value.paste,
+            paste_and_match_style: value.paste_and_match_style,
+            del: value.del,
+            select_all: value.select_all,
+            view_source: value.view_source,
+            get_source: value.get_source,
+            get_text: value.get_text,
+            load_request: value.load_request,
+            load_url: value.load_url,
+            execute_java_script: value.execute_java_script,
+            is_main: value.is_main,
+            is_focused: value.is_focused,
+            get_name: value.get_name,
+            get_identifier: value.get_identifier,
+            get_parent: value.get_parent,
+            get_url: value.get_url,
+            get_browser: value.get_browser,
+            get_v_8_context: value.get_v8_context,
+            visit_dom: value.visit_dom,
+            create_urlrequest: value.create_urlrequest,
+            send_process_message: value.send_process_message,
         }
     }
 }
-impl Into<_cef_frame_t> for Frame {
-    fn into(self) -> _cef_frame_t {
-        _cef_frame_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            undo: self.undo.into(),
-            redo: self.redo.into(),
-            cut: self.cut.into(),
-            copy: self.copy.into(),
-            paste: self.paste.into(),
-            paste_and_match_style: self.paste_and_match_style.into(),
-            del: self.del.into(),
-            select_all: self.select_all.into(),
-            view_source: self.view_source.into(),
-            get_source: self.get_source.into(),
-            get_text: self.get_text.into(),
-            load_request: self.load_request.into(),
-            load_url: self.load_url.into(),
-            execute_java_script: self.execute_java_script.into(),
-            is_main: self.is_main.into(),
-            is_focused: self.is_focused.into(),
-            get_name: self.get_name.into(),
-            get_identifier: self.get_identifier.into(),
-            get_parent: self.get_parent.into(),
-            get_url: self.get_url.into(),
-            get_browser: self.get_browser.into(),
-            get_v8_context: self.get_v_8_context.into(),
-            visit_dom: self.visit_dom.into(),
-            create_urlrequest: self.create_urlrequest.into(),
-            send_process_message: self.send_process_message.into(),
+impl From<Frame> for _cef_frame_t {
+    fn from(value: Frame) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            undo: value.undo,
+            redo: value.redo,
+            cut: value.cut,
+            copy: value.copy,
+            paste: value.paste,
+            paste_and_match_style: value.paste_and_match_style,
+            del: value.del,
+            select_all: value.select_all,
+            view_source: value.view_source,
+            get_source: value.get_source,
+            get_text: value.get_text,
+            load_request: value.load_request,
+            load_url: value.load_url,
+            execute_java_script: value.execute_java_script,
+            is_main: value.is_main,
+            is_focused: value.is_focused,
+            get_name: value.get_name,
+            get_identifier: value.get_identifier,
+            get_parent: value.get_parent,
+            get_url: value.get_url,
+            get_browser: value.get_browser,
+            get_v8_context: value.get_v_8_context,
+            visit_dom: value.visit_dom,
+            create_urlrequest: value.create_urlrequest,
+            send_process_message: value.send_process_message,
         }
     }
 }
@@ -3897,27 +3895,27 @@ impl From<_cef_x509_cert_principal_t> for X509CertPrincipal {
     fn from(value: _cef_x509_cert_principal_t) -> Self {
         Self {
             base: value.base.into(),
-            get_display_name: value.get_display_name.into(),
-            get_common_name: value.get_common_name.into(),
-            get_locality_name: value.get_locality_name.into(),
-            get_state_or_province_name: value.get_state_or_province_name.into(),
-            get_country_name: value.get_country_name.into(),
-            get_organization_names: value.get_organization_names.into(),
-            get_organization_unit_names: value.get_organization_unit_names.into(),
+            get_display_name: value.get_display_name,
+            get_common_name: value.get_common_name,
+            get_locality_name: value.get_locality_name,
+            get_state_or_province_name: value.get_state_or_province_name,
+            get_country_name: value.get_country_name,
+            get_organization_names: value.get_organization_names,
+            get_organization_unit_names: value.get_organization_unit_names,
         }
     }
 }
-impl Into<_cef_x509_cert_principal_t> for X509CertPrincipal {
-    fn into(self) -> _cef_x509_cert_principal_t {
-        _cef_x509_cert_principal_t {
-            base: self.base.into(),
-            get_display_name: self.get_display_name.into(),
-            get_common_name: self.get_common_name.into(),
-            get_locality_name: self.get_locality_name.into(),
-            get_state_or_province_name: self.get_state_or_province_name.into(),
-            get_country_name: self.get_country_name.into(),
-            get_organization_names: self.get_organization_names.into(),
-            get_organization_unit_names: self.get_organization_unit_names.into(),
+impl From<X509CertPrincipal> for _cef_x509_cert_principal_t {
+    fn from(value: X509CertPrincipal) -> Self {
+        Self {
+            base: value.base.into(),
+            get_display_name: value.get_display_name,
+            get_common_name: value.get_common_name,
+            get_locality_name: value.get_locality_name,
+            get_state_or_province_name: value.get_state_or_province_name,
+            get_country_name: value.get_country_name,
+            get_organization_names: value.get_organization_names,
+            get_organization_unit_names: value.get_organization_unit_names,
         }
     }
 }
@@ -3978,33 +3976,33 @@ impl From<_cef_x509_certificate_t> for X509Certificate {
     fn from(value: _cef_x509_certificate_t) -> Self {
         Self {
             base: value.base.into(),
-            get_subject: value.get_subject.into(),
-            get_issuer: value.get_issuer.into(),
-            get_serial_number: value.get_serial_number.into(),
-            get_valid_start: value.get_valid_start.into(),
-            get_valid_expiry: value.get_valid_expiry.into(),
-            get_derencoded: value.get_derencoded.into(),
-            get_pemencoded: value.get_pemencoded.into(),
-            get_issuer_chain_size: value.get_issuer_chain_size.into(),
-            get_derencoded_issuer_chain: value.get_derencoded_issuer_chain.into(),
-            get_pemencoded_issuer_chain: value.get_pemencoded_issuer_chain.into(),
+            get_subject: value.get_subject,
+            get_issuer: value.get_issuer,
+            get_serial_number: value.get_serial_number,
+            get_valid_start: value.get_valid_start,
+            get_valid_expiry: value.get_valid_expiry,
+            get_derencoded: value.get_derencoded,
+            get_pemencoded: value.get_pemencoded,
+            get_issuer_chain_size: value.get_issuer_chain_size,
+            get_derencoded_issuer_chain: value.get_derencoded_issuer_chain,
+            get_pemencoded_issuer_chain: value.get_pemencoded_issuer_chain,
         }
     }
 }
-impl Into<_cef_x509_certificate_t> for X509Certificate {
-    fn into(self) -> _cef_x509_certificate_t {
-        _cef_x509_certificate_t {
-            base: self.base.into(),
-            get_subject: self.get_subject.into(),
-            get_issuer: self.get_issuer.into(),
-            get_serial_number: self.get_serial_number.into(),
-            get_valid_start: self.get_valid_start.into(),
-            get_valid_expiry: self.get_valid_expiry.into(),
-            get_derencoded: self.get_derencoded.into(),
-            get_pemencoded: self.get_pemencoded.into(),
-            get_issuer_chain_size: self.get_issuer_chain_size.into(),
-            get_derencoded_issuer_chain: self.get_derencoded_issuer_chain.into(),
-            get_pemencoded_issuer_chain: self.get_pemencoded_issuer_chain.into(),
+impl From<X509Certificate> for _cef_x509_certificate_t {
+    fn from(value: X509Certificate) -> Self {
+        Self {
+            base: value.base.into(),
+            get_subject: value.get_subject,
+            get_issuer: value.get_issuer,
+            get_serial_number: value.get_serial_number,
+            get_valid_start: value.get_valid_start,
+            get_valid_expiry: value.get_valid_expiry,
+            get_derencoded: value.get_derencoded,
+            get_pemencoded: value.get_pemencoded,
+            get_issuer_chain_size: value.get_issuer_chain_size,
+            get_derencoded_issuer_chain: value.get_derencoded_issuer_chain,
+            get_pemencoded_issuer_chain: value.get_pemencoded_issuer_chain,
         }
     }
 }
@@ -4038,23 +4036,23 @@ impl From<_cef_sslstatus_t> for Sslstatus {
     fn from(value: _cef_sslstatus_t) -> Self {
         Self {
             base: value.base.into(),
-            is_secure_connection: value.is_secure_connection.into(),
-            get_cert_status: value.get_cert_status.into(),
-            get_sslversion: value.get_sslversion.into(),
-            get_content_status: value.get_content_status.into(),
-            get_x_509_certificate: value.get_x509_certificate.into(),
+            is_secure_connection: value.is_secure_connection,
+            get_cert_status: value.get_cert_status,
+            get_sslversion: value.get_sslversion,
+            get_content_status: value.get_content_status,
+            get_x_509_certificate: value.get_x509_certificate,
         }
     }
 }
-impl Into<_cef_sslstatus_t> for Sslstatus {
-    fn into(self) -> _cef_sslstatus_t {
-        _cef_sslstatus_t {
-            base: self.base.into(),
-            is_secure_connection: self.is_secure_connection.into(),
-            get_cert_status: self.get_cert_status.into(),
-            get_sslversion: self.get_sslversion.into(),
-            get_content_status: self.get_content_status.into(),
-            get_x509_certificate: self.get_x_509_certificate.into(),
+impl From<Sslstatus> for _cef_sslstatus_t {
+    fn from(value: Sslstatus) -> Self {
+        Self {
+            base: value.base.into(),
+            is_secure_connection: value.is_secure_connection,
+            get_cert_status: value.get_cert_status,
+            get_sslversion: value.get_sslversion,
+            get_content_status: value.get_content_status,
+            get_x509_certificate: value.get_x_509_certificate,
         }
     }
 }
@@ -4103,33 +4101,33 @@ impl From<_cef_navigation_entry_t> for NavigationEntry {
     fn from(value: _cef_navigation_entry_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            get_url: value.get_url.into(),
-            get_display_url: value.get_display_url.into(),
-            get_original_url: value.get_original_url.into(),
-            get_title: value.get_title.into(),
-            get_transition_type: value.get_transition_type.into(),
-            has_post_data: value.has_post_data.into(),
-            get_completion_time: value.get_completion_time.into(),
-            get_http_status_code: value.get_http_status_code.into(),
-            get_sslstatus: value.get_sslstatus.into(),
+            is_valid: value.is_valid,
+            get_url: value.get_url,
+            get_display_url: value.get_display_url,
+            get_original_url: value.get_original_url,
+            get_title: value.get_title,
+            get_transition_type: value.get_transition_type,
+            has_post_data: value.has_post_data,
+            get_completion_time: value.get_completion_time,
+            get_http_status_code: value.get_http_status_code,
+            get_sslstatus: value.get_sslstatus,
         }
     }
 }
-impl Into<_cef_navigation_entry_t> for NavigationEntry {
-    fn into(self) -> _cef_navigation_entry_t {
-        _cef_navigation_entry_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            get_url: self.get_url.into(),
-            get_display_url: self.get_display_url.into(),
-            get_original_url: self.get_original_url.into(),
-            get_title: self.get_title.into(),
-            get_transition_type: self.get_transition_type.into(),
-            has_post_data: self.has_post_data.into(),
-            get_completion_time: self.get_completion_time.into(),
-            get_http_status_code: self.get_http_status_code.into(),
-            get_sslstatus: self.get_sslstatus.into(),
+impl From<NavigationEntry> for _cef_navigation_entry_t {
+    fn from(value: NavigationEntry) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            get_url: value.get_url,
+            get_display_url: value.get_display_url,
+            get_original_url: value.get_original_url,
+            get_title: value.get_title,
+            get_transition_type: value.get_transition_type,
+            has_post_data: value.has_post_data,
+            get_completion_time: value.get_completion_time,
+            get_http_status_code: value.get_http_status_code,
+            get_sslstatus: value.get_sslstatus,
         }
     }
 }
@@ -4147,7 +4145,7 @@ pub trait ImplRegistration: Clone + Sized + Rc {
 }
 impl ImplRegistration for Registration {
     fn get_raw(&self) -> *mut _cef_registration_t {
-        unsafe { RefGuard::as_raw(&self.0) }
+        unsafe { RefGuard::into_raw(&self.0) }
     }
 }
 impl Rc for _cef_registration_t {
@@ -4161,24 +4159,24 @@ impl Rc for Registration {
     }
 }
 impl ConvertParam<*mut _cef_registration_t> for &Registration {
-    fn as_raw(self) -> *mut _cef_registration_t {
+    fn into_raw(self) -> *mut _cef_registration_t {
         ImplRegistration::get_raw(self)
     }
 }
 impl ConvertParam<*mut _cef_registration_t> for &mut Registration {
-    fn as_raw(self) -> *mut _cef_registration_t {
+    fn into_raw(self) -> *mut _cef_registration_t {
         ImplRegistration::get_raw(self)
     }
 }
 impl ConvertReturnValue<Registration> for *mut _cef_registration_t {
-    fn as_wrapper(self) -> Registration {
+    fn wrap_result(self) -> Registration {
         Registration(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_registration_t> for Registration {
-    fn into(self) -> *mut _cef_registration_t {
-        let object = ImplRegistration::get_raw(&self);
-        std::mem::forget(self);
+impl From<Registration> for *mut _cef_registration_t {
+    fn from(value: Registration) -> Self {
+        let object = ImplRegistration::get_raw(&value);
+        std::mem::forget(value);
         object
     }
 }
@@ -4199,17 +4197,17 @@ impl From<_cef_callback_t> for Callback {
     fn from(value: _cef_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
-            cancel: value.cancel.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_callback_t> for Callback {
-    fn into(self) -> _cef_callback_t {
-        _cef_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
-            cancel: self.cancel.into(),
+impl From<Callback> for _cef_callback_t {
+    fn from(value: Callback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
@@ -4230,15 +4228,15 @@ impl From<_cef_completion_callback_t> for CompletionCallback {
     fn from(value: _cef_completion_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_complete: value.on_complete.into(),
+            on_complete: value.on_complete,
         }
     }
 }
-impl Into<_cef_completion_callback_t> for CompletionCallback {
-    fn into(self) -> _cef_completion_callback_t {
-        _cef_completion_callback_t {
-            base: self.base.into(),
-            on_complete: self.on_complete.into(),
+impl From<CompletionCallback> for _cef_completion_callback_t {
+    fn from(value: CompletionCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_complete: value.on_complete,
         }
     }
 }
@@ -4293,23 +4291,23 @@ impl From<_cef_cookie_manager_t> for CookieManager {
     fn from(value: _cef_cookie_manager_t) -> Self {
         Self {
             base: value.base.into(),
-            visit_all_cookies: value.visit_all_cookies.into(),
-            visit_url_cookies: value.visit_url_cookies.into(),
-            set_cookie: value.set_cookie.into(),
-            delete_cookies: value.delete_cookies.into(),
-            flush_store: value.flush_store.into(),
+            visit_all_cookies: value.visit_all_cookies,
+            visit_url_cookies: value.visit_url_cookies,
+            set_cookie: value.set_cookie,
+            delete_cookies: value.delete_cookies,
+            flush_store: value.flush_store,
         }
     }
 }
-impl Into<_cef_cookie_manager_t> for CookieManager {
-    fn into(self) -> _cef_cookie_manager_t {
-        _cef_cookie_manager_t {
-            base: self.base.into(),
-            visit_all_cookies: self.visit_all_cookies.into(),
-            visit_url_cookies: self.visit_url_cookies.into(),
-            set_cookie: self.set_cookie.into(),
-            delete_cookies: self.delete_cookies.into(),
-            flush_store: self.flush_store.into(),
+impl From<CookieManager> for _cef_cookie_manager_t {
+    fn from(value: CookieManager) -> Self {
+        Self {
+            base: value.base.into(),
+            visit_all_cookies: value.visit_all_cookies,
+            visit_url_cookies: value.visit_url_cookies,
+            set_cookie: value.set_cookie,
+            delete_cookies: value.delete_cookies,
+            flush_store: value.flush_store,
         }
     }
 }
@@ -4337,15 +4335,15 @@ impl From<_cef_cookie_visitor_t> for CookieVisitor {
     fn from(value: _cef_cookie_visitor_t) -> Self {
         Self {
             base: value.base.into(),
-            visit: value.visit.into(),
+            visit: value.visit,
         }
     }
 }
-impl Into<_cef_cookie_visitor_t> for CookieVisitor {
-    fn into(self) -> _cef_cookie_visitor_t {
-        _cef_cookie_visitor_t {
-            base: self.base.into(),
-            visit: self.visit.into(),
+impl From<CookieVisitor> for _cef_cookie_visitor_t {
+    fn from(value: CookieVisitor) -> Self {
+        Self {
+            base: value.base.into(),
+            visit: value.visit,
         }
     }
 }
@@ -4370,15 +4368,15 @@ impl From<_cef_set_cookie_callback_t> for SetCookieCallback {
     fn from(value: _cef_set_cookie_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_complete: value.on_complete.into(),
+            on_complete: value.on_complete,
         }
     }
 }
-impl Into<_cef_set_cookie_callback_t> for SetCookieCallback {
-    fn into(self) -> _cef_set_cookie_callback_t {
-        _cef_set_cookie_callback_t {
-            base: self.base.into(),
-            on_complete: self.on_complete.into(),
+impl From<SetCookieCallback> for _cef_set_cookie_callback_t {
+    fn from(value: SetCookieCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_complete: value.on_complete,
         }
     }
 }
@@ -4403,15 +4401,15 @@ impl From<_cef_delete_cookies_callback_t> for DeleteCookiesCallback {
     fn from(value: _cef_delete_cookies_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_complete: value.on_complete.into(),
+            on_complete: value.on_complete,
         }
     }
 }
-impl Into<_cef_delete_cookies_callback_t> for DeleteCookiesCallback {
-    fn into(self) -> _cef_delete_cookies_callback_t {
-        _cef_delete_cookies_callback_t {
-            base: self.base.into(),
-            on_complete: self.on_complete.into(),
+impl From<DeleteCookiesCallback> for _cef_delete_cookies_callback_t {
+    fn from(value: DeleteCookiesCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_complete: value.on_complete,
         }
     }
 }
@@ -4454,23 +4452,23 @@ impl From<_cef_media_router_t> for MediaRouter {
     fn from(value: _cef_media_router_t) -> Self {
         Self {
             base: value.base.into(),
-            add_observer: value.add_observer.into(),
-            get_source: value.get_source.into(),
-            notify_current_sinks: value.notify_current_sinks.into(),
-            create_route: value.create_route.into(),
-            notify_current_routes: value.notify_current_routes.into(),
+            add_observer: value.add_observer,
+            get_source: value.get_source,
+            notify_current_sinks: value.notify_current_sinks,
+            create_route: value.create_route,
+            notify_current_routes: value.notify_current_routes,
         }
     }
 }
-impl Into<_cef_media_router_t> for MediaRouter {
-    fn into(self) -> _cef_media_router_t {
-        _cef_media_router_t {
-            base: self.base.into(),
-            add_observer: self.add_observer.into(),
-            get_source: self.get_source.into(),
-            notify_current_sinks: self.notify_current_sinks.into(),
-            create_route: self.create_route.into(),
-            notify_current_routes: self.notify_current_routes.into(),
+impl From<MediaRouter> for _cef_media_router_t {
+    fn from(value: MediaRouter) -> Self {
+        Self {
+            base: value.base.into(),
+            add_observer: value.add_observer,
+            get_source: value.get_source,
+            notify_current_sinks: value.notify_current_sinks,
+            create_route: value.create_route,
+            notify_current_routes: value.notify_current_routes,
         }
     }
 }
@@ -4518,21 +4516,21 @@ impl From<_cef_media_observer_t> for MediaObserver {
     fn from(value: _cef_media_observer_t) -> Self {
         Self {
             base: value.base.into(),
-            on_sinks: value.on_sinks.into(),
-            on_routes: value.on_routes.into(),
-            on_route_state_changed: value.on_route_state_changed.into(),
-            on_route_message_received: value.on_route_message_received.into(),
+            on_sinks: value.on_sinks,
+            on_routes: value.on_routes,
+            on_route_state_changed: value.on_route_state_changed,
+            on_route_message_received: value.on_route_message_received,
         }
     }
 }
-impl Into<_cef_media_observer_t> for MediaObserver {
-    fn into(self) -> _cef_media_observer_t {
-        _cef_media_observer_t {
-            base: self.base.into(),
-            on_sinks: self.on_sinks.into(),
-            on_routes: self.on_routes.into(),
-            on_route_state_changed: self.on_route_state_changed.into(),
-            on_route_message_received: self.on_route_message_received.into(),
+impl From<MediaObserver> for _cef_media_observer_t {
+    fn from(value: MediaObserver) -> Self {
+        Self {
+            base: value.base.into(),
+            on_sinks: value.on_sinks,
+            on_routes: value.on_routes,
+            on_route_state_changed: value.on_route_state_changed,
+            on_route_message_received: value.on_route_message_received,
         }
     }
 }
@@ -4569,23 +4567,23 @@ impl From<_cef_media_route_t> for MediaRoute {
     fn from(value: _cef_media_route_t) -> Self {
         Self {
             base: value.base.into(),
-            get_id: value.get_id.into(),
-            get_source: value.get_source.into(),
-            get_sink: value.get_sink.into(),
-            send_route_message: value.send_route_message.into(),
-            terminate: value.terminate.into(),
+            get_id: value.get_id,
+            get_source: value.get_source,
+            get_sink: value.get_sink,
+            send_route_message: value.send_route_message,
+            terminate: value.terminate,
         }
     }
 }
-impl Into<_cef_media_route_t> for MediaRoute {
-    fn into(self) -> _cef_media_route_t {
-        _cef_media_route_t {
-            base: self.base.into(),
-            get_id: self.get_id.into(),
-            get_source: self.get_source.into(),
-            get_sink: self.get_sink.into(),
-            send_route_message: self.send_route_message.into(),
-            terminate: self.terminate.into(),
+impl From<MediaRoute> for _cef_media_route_t {
+    fn from(value: MediaRoute) -> Self {
+        Self {
+            base: value.base.into(),
+            get_id: value.get_id,
+            get_source: value.get_source,
+            get_sink: value.get_sink,
+            send_route_message: value.send_route_message,
+            terminate: value.terminate,
         }
     }
 }
@@ -4612,15 +4610,15 @@ impl From<_cef_media_route_create_callback_t> for MediaRouteCreateCallback {
     fn from(value: _cef_media_route_create_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_media_route_create_finished: value.on_media_route_create_finished.into(),
+            on_media_route_create_finished: value.on_media_route_create_finished,
         }
     }
 }
-impl Into<_cef_media_route_create_callback_t> for MediaRouteCreateCallback {
-    fn into(self) -> _cef_media_route_create_callback_t {
-        _cef_media_route_create_callback_t {
-            base: self.base.into(),
-            on_media_route_create_finished: self.on_media_route_create_finished.into(),
+impl From<MediaRouteCreateCallback> for _cef_media_route_create_callback_t {
+    fn from(value: MediaRouteCreateCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_media_route_create_finished: value.on_media_route_create_finished,
         }
     }
 }
@@ -4666,27 +4664,27 @@ impl From<_cef_media_sink_t> for MediaSink {
     fn from(value: _cef_media_sink_t) -> Self {
         Self {
             base: value.base.into(),
-            get_id: value.get_id.into(),
-            get_name: value.get_name.into(),
-            get_icon_type: value.get_icon_type.into(),
-            get_device_info: value.get_device_info.into(),
-            is_cast_sink: value.is_cast_sink.into(),
-            is_dial_sink: value.is_dial_sink.into(),
-            is_compatible_with: value.is_compatible_with.into(),
+            get_id: value.get_id,
+            get_name: value.get_name,
+            get_icon_type: value.get_icon_type,
+            get_device_info: value.get_device_info,
+            is_cast_sink: value.is_cast_sink,
+            is_dial_sink: value.is_dial_sink,
+            is_compatible_with: value.is_compatible_with,
         }
     }
 }
-impl Into<_cef_media_sink_t> for MediaSink {
-    fn into(self) -> _cef_media_sink_t {
-        _cef_media_sink_t {
-            base: self.base.into(),
-            get_id: self.get_id.into(),
-            get_name: self.get_name.into(),
-            get_icon_type: self.get_icon_type.into(),
-            get_device_info: self.get_device_info.into(),
-            is_cast_sink: self.is_cast_sink.into(),
-            is_dial_sink: self.is_dial_sink.into(),
-            is_compatible_with: self.is_compatible_with.into(),
+impl From<MediaSink> for _cef_media_sink_t {
+    fn from(value: MediaSink) -> Self {
+        Self {
+            base: value.base.into(),
+            get_id: value.get_id,
+            get_name: value.get_name,
+            get_icon_type: value.get_icon_type,
+            get_device_info: value.get_device_info,
+            is_cast_sink: value.is_cast_sink,
+            is_dial_sink: value.is_dial_sink,
+            is_compatible_with: value.is_compatible_with,
         }
     }
 }
@@ -4711,15 +4709,15 @@ impl From<_cef_media_sink_device_info_callback_t> for MediaSinkDeviceInfoCallbac
     fn from(value: _cef_media_sink_device_info_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_media_sink_device_info: value.on_media_sink_device_info.into(),
+            on_media_sink_device_info: value.on_media_sink_device_info,
         }
     }
 }
-impl Into<_cef_media_sink_device_info_callback_t> for MediaSinkDeviceInfoCallback {
-    fn into(self) -> _cef_media_sink_device_info_callback_t {
-        _cef_media_sink_device_info_callback_t {
-            base: self.base.into(),
-            on_media_sink_device_info: self.on_media_sink_device_info.into(),
+impl From<MediaSinkDeviceInfoCallback> for _cef_media_sink_device_info_callback_t {
+    fn from(value: MediaSinkDeviceInfoCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_media_sink_device_info: value.on_media_sink_device_info,
         }
     }
 }
@@ -4747,19 +4745,19 @@ impl From<_cef_media_source_t> for MediaSource {
     fn from(value: _cef_media_source_t) -> Self {
         Self {
             base: value.base.into(),
-            get_id: value.get_id.into(),
-            is_cast_source: value.is_cast_source.into(),
-            is_dial_source: value.is_dial_source.into(),
+            get_id: value.get_id,
+            is_cast_source: value.is_cast_source,
+            is_dial_source: value.is_dial_source,
         }
     }
 }
-impl Into<_cef_media_source_t> for MediaSource {
-    fn into(self) -> _cef_media_source_t {
-        _cef_media_source_t {
-            base: self.base.into(),
-            get_id: self.get_id.into(),
-            is_cast_source: self.is_cast_source.into(),
-            is_dial_source: self.is_dial_source.into(),
+impl From<MediaSource> for _cef_media_source_t {
+    fn from(value: MediaSource) -> Self {
+        Self {
+            base: value.base.into(),
+            get_id: value.get_id,
+            is_cast_source: value.is_cast_source,
+            is_dial_source: value.is_dial_source,
         }
     }
 }
@@ -4785,15 +4783,15 @@ impl From<_cef_preference_registrar_t> for PreferenceRegistrar {
     fn from(value: _cef_preference_registrar_t) -> Self {
         Self {
             base: value.base.into(),
-            add_preference: value.add_preference.into(),
+            add_preference: value.add_preference,
         }
     }
 }
-impl Into<_cef_preference_registrar_t> for PreferenceRegistrar {
-    fn into(self) -> _cef_preference_registrar_t {
-        _cef_preference_registrar_t {
-            base: self.base.into(),
-            add_preference: self.add_preference.into(),
+impl From<PreferenceRegistrar> for _cef_preference_registrar_t {
+    fn from(value: PreferenceRegistrar) -> Self {
+        Self {
+            base: value.base.into(),
+            add_preference: value.add_preference,
         }
     }
 }
@@ -4818,15 +4816,15 @@ impl From<_cef_preference_observer_t> for PreferenceObserver {
     fn from(value: _cef_preference_observer_t) -> Self {
         Self {
             base: value.base.into(),
-            on_preference_changed: value.on_preference_changed.into(),
+            on_preference_changed: value.on_preference_changed,
         }
     }
 }
-impl Into<_cef_preference_observer_t> for PreferenceObserver {
-    fn into(self) -> _cef_preference_observer_t {
-        _cef_preference_observer_t {
-            base: self.base.into(),
-            on_preference_changed: self.on_preference_changed.into(),
+impl From<PreferenceObserver> for _cef_preference_observer_t {
+    fn from(value: PreferenceObserver) -> Self {
+        Self {
+            base: value.base.into(),
+            on_preference_changed: value.on_preference_changed,
         }
     }
 }
@@ -4884,25 +4882,25 @@ impl From<_cef_preference_manager_t> for PreferenceManager {
     fn from(value: _cef_preference_manager_t) -> Self {
         Self {
             base: value.base.into(),
-            has_preference: value.has_preference.into(),
-            get_preference: value.get_preference.into(),
-            get_all_preferences: value.get_all_preferences.into(),
-            can_set_preference: value.can_set_preference.into(),
-            set_preference: value.set_preference.into(),
-            add_preference_observer: value.add_preference_observer.into(),
+            has_preference: value.has_preference,
+            get_preference: value.get_preference,
+            get_all_preferences: value.get_all_preferences,
+            can_set_preference: value.can_set_preference,
+            set_preference: value.set_preference,
+            add_preference_observer: value.add_preference_observer,
         }
     }
 }
-impl Into<_cef_preference_manager_t> for PreferenceManager {
-    fn into(self) -> _cef_preference_manager_t {
-        _cef_preference_manager_t {
-            base: self.base.into(),
-            has_preference: self.has_preference.into(),
-            get_preference: self.get_preference.into(),
-            get_all_preferences: self.get_all_preferences.into(),
-            can_set_preference: self.can_set_preference.into(),
-            set_preference: self.set_preference.into(),
-            add_preference_observer: self.add_preference_observer.into(),
+impl From<PreferenceManager> for _cef_preference_manager_t {
+    fn from(value: PreferenceManager) -> Self {
+        Self {
+            base: value.base.into(),
+            has_preference: value.has_preference,
+            get_preference: value.get_preference,
+            get_all_preferences: value.get_all_preferences,
+            can_set_preference: value.can_set_preference,
+            set_preference: value.set_preference,
+            add_preference_observer: value.add_preference_observer,
         }
     }
 }
@@ -4928,15 +4926,15 @@ impl From<_cef_resolve_callback_t> for ResolveCallback {
     fn from(value: _cef_resolve_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_resolve_completed: value.on_resolve_completed.into(),
+            on_resolve_completed: value.on_resolve_completed,
         }
     }
 }
-impl Into<_cef_resolve_callback_t> for ResolveCallback {
-    fn into(self) -> _cef_resolve_callback_t {
-        _cef_resolve_callback_t {
-            base: self.base.into(),
-            on_resolve_completed: self.on_resolve_completed.into(),
+impl From<ResolveCallback> for _cef_resolve_callback_t {
+    fn from(value: ResolveCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_resolve_completed: value.on_resolve_completed,
         }
     }
 }
@@ -4963,15 +4961,15 @@ impl From<_cef_setting_observer_t> for SettingObserver {
     fn from(value: _cef_setting_observer_t) -> Self {
         Self {
             base: value.base.into(),
-            on_setting_changed: value.on_setting_changed.into(),
+            on_setting_changed: value.on_setting_changed,
         }
     }
 }
-impl Into<_cef_setting_observer_t> for SettingObserver {
-    fn into(self) -> _cef_setting_observer_t {
-        _cef_setting_observer_t {
-            base: self.base.into(),
-            on_setting_changed: self.on_setting_changed.into(),
+impl From<SettingObserver> for _cef_setting_observer_t {
+    fn from(value: SettingObserver) -> Self {
+        Self {
+            base: value.base.into(),
+            on_setting_changed: value.on_setting_changed,
         }
     }
 }
@@ -5117,57 +5115,57 @@ impl From<_cef_request_context_t> for RequestContext {
     fn from(value: _cef_request_context_t) -> Self {
         Self {
             base: value.base.into(),
-            is_same: value.is_same.into(),
-            is_sharing_with: value.is_sharing_with.into(),
-            is_global: value.is_global.into(),
-            get_handler: value.get_handler.into(),
-            get_cache_path: value.get_cache_path.into(),
-            get_cookie_manager: value.get_cookie_manager.into(),
-            register_scheme_handler_factory: value.register_scheme_handler_factory.into(),
-            clear_scheme_handler_factories: value.clear_scheme_handler_factories.into(),
-            clear_certificate_exceptions: value.clear_certificate_exceptions.into(),
-            clear_http_auth_credentials: value.clear_http_auth_credentials.into(),
-            close_all_connections: value.close_all_connections.into(),
-            resolve_host: value.resolve_host.into(),
-            get_media_router: value.get_media_router.into(),
-            get_website_setting: value.get_website_setting.into(),
-            set_website_setting: value.set_website_setting.into(),
-            get_content_setting: value.get_content_setting.into(),
-            set_content_setting: value.set_content_setting.into(),
-            set_chrome_color_scheme: value.set_chrome_color_scheme.into(),
-            get_chrome_color_scheme_mode: value.get_chrome_color_scheme_mode.into(),
-            get_chrome_color_scheme_color: value.get_chrome_color_scheme_color.into(),
-            get_chrome_color_scheme_variant: value.get_chrome_color_scheme_variant.into(),
-            add_setting_observer: value.add_setting_observer.into(),
+            is_same: value.is_same,
+            is_sharing_with: value.is_sharing_with,
+            is_global: value.is_global,
+            get_handler: value.get_handler,
+            get_cache_path: value.get_cache_path,
+            get_cookie_manager: value.get_cookie_manager,
+            register_scheme_handler_factory: value.register_scheme_handler_factory,
+            clear_scheme_handler_factories: value.clear_scheme_handler_factories,
+            clear_certificate_exceptions: value.clear_certificate_exceptions,
+            clear_http_auth_credentials: value.clear_http_auth_credentials,
+            close_all_connections: value.close_all_connections,
+            resolve_host: value.resolve_host,
+            get_media_router: value.get_media_router,
+            get_website_setting: value.get_website_setting,
+            set_website_setting: value.set_website_setting,
+            get_content_setting: value.get_content_setting,
+            set_content_setting: value.set_content_setting,
+            set_chrome_color_scheme: value.set_chrome_color_scheme,
+            get_chrome_color_scheme_mode: value.get_chrome_color_scheme_mode,
+            get_chrome_color_scheme_color: value.get_chrome_color_scheme_color,
+            get_chrome_color_scheme_variant: value.get_chrome_color_scheme_variant,
+            add_setting_observer: value.add_setting_observer,
         }
     }
 }
-impl Into<_cef_request_context_t> for RequestContext {
-    fn into(self) -> _cef_request_context_t {
-        _cef_request_context_t {
-            base: self.base.into(),
-            is_same: self.is_same.into(),
-            is_sharing_with: self.is_sharing_with.into(),
-            is_global: self.is_global.into(),
-            get_handler: self.get_handler.into(),
-            get_cache_path: self.get_cache_path.into(),
-            get_cookie_manager: self.get_cookie_manager.into(),
-            register_scheme_handler_factory: self.register_scheme_handler_factory.into(),
-            clear_scheme_handler_factories: self.clear_scheme_handler_factories.into(),
-            clear_certificate_exceptions: self.clear_certificate_exceptions.into(),
-            clear_http_auth_credentials: self.clear_http_auth_credentials.into(),
-            close_all_connections: self.close_all_connections.into(),
-            resolve_host: self.resolve_host.into(),
-            get_media_router: self.get_media_router.into(),
-            get_website_setting: self.get_website_setting.into(),
-            set_website_setting: self.set_website_setting.into(),
-            get_content_setting: self.get_content_setting.into(),
-            set_content_setting: self.set_content_setting.into(),
-            set_chrome_color_scheme: self.set_chrome_color_scheme.into(),
-            get_chrome_color_scheme_mode: self.get_chrome_color_scheme_mode.into(),
-            get_chrome_color_scheme_color: self.get_chrome_color_scheme_color.into(),
-            get_chrome_color_scheme_variant: self.get_chrome_color_scheme_variant.into(),
-            add_setting_observer: self.add_setting_observer.into(),
+impl From<RequestContext> for _cef_request_context_t {
+    fn from(value: RequestContext) -> Self {
+        Self {
+            base: value.base.into(),
+            is_same: value.is_same,
+            is_sharing_with: value.is_sharing_with,
+            is_global: value.is_global,
+            get_handler: value.get_handler,
+            get_cache_path: value.get_cache_path,
+            get_cookie_manager: value.get_cookie_manager,
+            register_scheme_handler_factory: value.register_scheme_handler_factory,
+            clear_scheme_handler_factories: value.clear_scheme_handler_factories,
+            clear_certificate_exceptions: value.clear_certificate_exceptions,
+            clear_http_auth_credentials: value.clear_http_auth_credentials,
+            close_all_connections: value.close_all_connections,
+            resolve_host: value.resolve_host,
+            get_media_router: value.get_media_router,
+            get_website_setting: value.get_website_setting,
+            set_website_setting: value.set_website_setting,
+            get_content_setting: value.get_content_setting,
+            set_content_setting: value.set_content_setting,
+            set_chrome_color_scheme: value.set_chrome_color_scheme,
+            get_chrome_color_scheme_mode: value.get_chrome_color_scheme_mode,
+            get_chrome_color_scheme_color: value.get_chrome_color_scheme_color,
+            get_chrome_color_scheme_variant: value.get_chrome_color_scheme_variant,
+            add_setting_observer: value.add_setting_observer,
         }
     }
 }
@@ -5248,55 +5246,55 @@ impl From<_cef_browser_t> for Browser {
     fn from(value: _cef_browser_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            get_host: value.get_host.into(),
-            can_go_back: value.can_go_back.into(),
-            go_back: value.go_back.into(),
-            can_go_forward: value.can_go_forward.into(),
-            go_forward: value.go_forward.into(),
-            is_loading: value.is_loading.into(),
-            reload: value.reload.into(),
-            reload_ignore_cache: value.reload_ignore_cache.into(),
-            stop_load: value.stop_load.into(),
-            get_identifier: value.get_identifier.into(),
-            is_same: value.is_same.into(),
-            is_popup: value.is_popup.into(),
-            has_document: value.has_document.into(),
-            get_main_frame: value.get_main_frame.into(),
-            get_focused_frame: value.get_focused_frame.into(),
-            get_frame_by_identifier: value.get_frame_by_identifier.into(),
-            get_frame_by_name: value.get_frame_by_name.into(),
-            get_frame_count: value.get_frame_count.into(),
-            get_frame_identifiers: value.get_frame_identifiers.into(),
-            get_frame_names: value.get_frame_names.into(),
+            is_valid: value.is_valid,
+            get_host: value.get_host,
+            can_go_back: value.can_go_back,
+            go_back: value.go_back,
+            can_go_forward: value.can_go_forward,
+            go_forward: value.go_forward,
+            is_loading: value.is_loading,
+            reload: value.reload,
+            reload_ignore_cache: value.reload_ignore_cache,
+            stop_load: value.stop_load,
+            get_identifier: value.get_identifier,
+            is_same: value.is_same,
+            is_popup: value.is_popup,
+            has_document: value.has_document,
+            get_main_frame: value.get_main_frame,
+            get_focused_frame: value.get_focused_frame,
+            get_frame_by_identifier: value.get_frame_by_identifier,
+            get_frame_by_name: value.get_frame_by_name,
+            get_frame_count: value.get_frame_count,
+            get_frame_identifiers: value.get_frame_identifiers,
+            get_frame_names: value.get_frame_names,
         }
     }
 }
-impl Into<_cef_browser_t> for Browser {
-    fn into(self) -> _cef_browser_t {
-        _cef_browser_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            get_host: self.get_host.into(),
-            can_go_back: self.can_go_back.into(),
-            go_back: self.go_back.into(),
-            can_go_forward: self.can_go_forward.into(),
-            go_forward: self.go_forward.into(),
-            is_loading: self.is_loading.into(),
-            reload: self.reload.into(),
-            reload_ignore_cache: self.reload_ignore_cache.into(),
-            stop_load: self.stop_load.into(),
-            get_identifier: self.get_identifier.into(),
-            is_same: self.is_same.into(),
-            is_popup: self.is_popup.into(),
-            has_document: self.has_document.into(),
-            get_main_frame: self.get_main_frame.into(),
-            get_focused_frame: self.get_focused_frame.into(),
-            get_frame_by_identifier: self.get_frame_by_identifier.into(),
-            get_frame_by_name: self.get_frame_by_name.into(),
-            get_frame_count: self.get_frame_count.into(),
-            get_frame_identifiers: self.get_frame_identifiers.into(),
-            get_frame_names: self.get_frame_names.into(),
+impl From<Browser> for _cef_browser_t {
+    fn from(value: Browser) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            get_host: value.get_host,
+            can_go_back: value.can_go_back,
+            go_back: value.go_back,
+            can_go_forward: value.can_go_forward,
+            go_forward: value.go_forward,
+            is_loading: value.is_loading,
+            reload: value.reload,
+            reload_ignore_cache: value.reload_ignore_cache,
+            stop_load: value.stop_load,
+            get_identifier: value.get_identifier,
+            is_same: value.is_same,
+            is_popup: value.is_popup,
+            has_document: value.has_document,
+            get_main_frame: value.get_main_frame,
+            get_focused_frame: value.get_focused_frame,
+            get_frame_by_identifier: value.get_frame_by_identifier,
+            get_frame_by_name: value.get_frame_by_name,
+            get_frame_count: value.get_frame_count,
+            get_frame_identifiers: value.get_frame_identifiers,
+            get_frame_names: value.get_frame_names,
         }
     }
 }
@@ -5321,15 +5319,15 @@ impl From<_cef_run_file_dialog_callback_t> for RunFileDialogCallback {
     fn from(value: _cef_run_file_dialog_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_file_dialog_dismissed: value.on_file_dialog_dismissed.into(),
+            on_file_dialog_dismissed: value.on_file_dialog_dismissed,
         }
     }
 }
-impl Into<_cef_run_file_dialog_callback_t> for RunFileDialogCallback {
-    fn into(self) -> _cef_run_file_dialog_callback_t {
-        _cef_run_file_dialog_callback_t {
-            base: self.base.into(),
-            on_file_dialog_dismissed: self.on_file_dialog_dismissed.into(),
+impl From<RunFileDialogCallback> for _cef_run_file_dialog_callback_t {
+    fn from(value: RunFileDialogCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_file_dialog_dismissed: value.on_file_dialog_dismissed,
         }
     }
 }
@@ -5357,15 +5355,15 @@ impl From<_cef_navigation_entry_visitor_t> for NavigationEntryVisitor {
     fn from(value: _cef_navigation_entry_visitor_t) -> Self {
         Self {
             base: value.base.into(),
-            visit: value.visit.into(),
+            visit: value.visit,
         }
     }
 }
-impl Into<_cef_navigation_entry_visitor_t> for NavigationEntryVisitor {
-    fn into(self) -> _cef_navigation_entry_visitor_t {
-        _cef_navigation_entry_visitor_t {
-            base: self.base.into(),
-            visit: self.visit.into(),
+impl From<NavigationEntryVisitor> for _cef_navigation_entry_visitor_t {
+    fn from(value: NavigationEntryVisitor) -> Self {
+        Self {
+            base: value.base.into(),
+            visit: value.visit,
         }
     }
 }
@@ -5391,15 +5389,15 @@ impl From<_cef_pdf_print_callback_t> for PdfPrintCallback {
     fn from(value: _cef_pdf_print_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_pdf_print_finished: value.on_pdf_print_finished.into(),
+            on_pdf_print_finished: value.on_pdf_print_finished,
         }
     }
 }
-impl Into<_cef_pdf_print_callback_t> for PdfPrintCallback {
-    fn into(self) -> _cef_pdf_print_callback_t {
-        _cef_pdf_print_callback_t {
-            base: self.base.into(),
-            on_pdf_print_finished: self.on_pdf_print_finished.into(),
+impl From<PdfPrintCallback> for _cef_pdf_print_callback_t {
+    fn from(value: PdfPrintCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_pdf_print_finished: value.on_pdf_print_finished,
         }
     }
 }
@@ -5426,15 +5424,15 @@ impl From<_cef_download_image_callback_t> for DownloadImageCallback {
     fn from(value: _cef_download_image_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            on_download_image_finished: value.on_download_image_finished.into(),
+            on_download_image_finished: value.on_download_image_finished,
         }
     }
 }
-impl Into<_cef_download_image_callback_t> for DownloadImageCallback {
-    fn into(self) -> _cef_download_image_callback_t {
-        _cef_download_image_callback_t {
-            base: self.base.into(),
-            on_download_image_finished: self.on_download_image_finished.into(),
+impl From<DownloadImageCallback> for _cef_download_image_callback_t {
+    fn from(value: DownloadImageCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_download_image_finished: value.on_download_image_finished,
         }
     }
 }
@@ -5774,149 +5772,149 @@ impl From<_cef_browser_host_t> for BrowserHost {
     fn from(value: _cef_browser_host_t) -> Self {
         Self {
             base: value.base.into(),
-            get_browser: value.get_browser.into(),
-            close_browser: value.close_browser.into(),
-            try_close_browser: value.try_close_browser.into(),
-            is_ready_to_be_closed: value.is_ready_to_be_closed.into(),
-            set_focus: value.set_focus.into(),
-            get_window_handle: value.get_window_handle.into(),
-            get_opener_window_handle: value.get_opener_window_handle.into(),
-            get_opener_identifier: value.get_opener_identifier.into(),
-            has_view: value.has_view.into(),
-            get_client: value.get_client.into(),
-            get_request_context: value.get_request_context.into(),
-            can_zoom: value.can_zoom.into(),
-            zoom: value.zoom.into(),
-            get_default_zoom_level: value.get_default_zoom_level.into(),
-            get_zoom_level: value.get_zoom_level.into(),
-            set_zoom_level: value.set_zoom_level.into(),
-            run_file_dialog: value.run_file_dialog.into(),
-            start_download: value.start_download.into(),
-            download_image: value.download_image.into(),
-            print: value.print.into(),
-            print_to_pdf: value.print_to_pdf.into(),
-            find: value.find.into(),
-            stop_finding: value.stop_finding.into(),
-            show_dev_tools: value.show_dev_tools.into(),
-            close_dev_tools: value.close_dev_tools.into(),
-            has_dev_tools: value.has_dev_tools.into(),
-            send_dev_tools_message: value.send_dev_tools_message.into(),
-            execute_dev_tools_method: value.execute_dev_tools_method.into(),
-            add_dev_tools_message_observer: value.add_dev_tools_message_observer.into(),
-            get_navigation_entries: value.get_navigation_entries.into(),
-            replace_misspelling: value.replace_misspelling.into(),
-            add_word_to_dictionary: value.add_word_to_dictionary.into(),
-            is_window_rendering_disabled: value.is_window_rendering_disabled.into(),
-            was_resized: value.was_resized.into(),
-            was_hidden: value.was_hidden.into(),
-            notify_screen_info_changed: value.notify_screen_info_changed.into(),
-            invalidate: value.invalidate.into(),
-            send_external_begin_frame: value.send_external_begin_frame.into(),
-            send_key_event: value.send_key_event.into(),
-            send_mouse_click_event: value.send_mouse_click_event.into(),
-            send_mouse_move_event: value.send_mouse_move_event.into(),
-            send_mouse_wheel_event: value.send_mouse_wheel_event.into(),
-            send_touch_event: value.send_touch_event.into(),
-            send_capture_lost_event: value.send_capture_lost_event.into(),
-            notify_move_or_resize_started: value.notify_move_or_resize_started.into(),
-            get_windowless_frame_rate: value.get_windowless_frame_rate.into(),
-            set_windowless_frame_rate: value.set_windowless_frame_rate.into(),
-            ime_set_composition: value.ime_set_composition.into(),
-            ime_commit_text: value.ime_commit_text.into(),
-            ime_finish_composing_text: value.ime_finish_composing_text.into(),
-            ime_cancel_composition: value.ime_cancel_composition.into(),
-            drag_target_drag_enter: value.drag_target_drag_enter.into(),
-            drag_target_drag_over: value.drag_target_drag_over.into(),
-            drag_target_drag_leave: value.drag_target_drag_leave.into(),
-            drag_target_drop: value.drag_target_drop.into(),
-            drag_source_ended_at: value.drag_source_ended_at.into(),
-            drag_source_system_drag_ended: value.drag_source_system_drag_ended.into(),
-            get_visible_navigation_entry: value.get_visible_navigation_entry.into(),
-            set_accessibility_state: value.set_accessibility_state.into(),
-            set_auto_resize_enabled: value.set_auto_resize_enabled.into(),
-            set_audio_muted: value.set_audio_muted.into(),
-            is_audio_muted: value.is_audio_muted.into(),
-            is_fullscreen: value.is_fullscreen.into(),
-            exit_fullscreen: value.exit_fullscreen.into(),
-            can_execute_chrome_command: value.can_execute_chrome_command.into(),
-            execute_chrome_command: value.execute_chrome_command.into(),
-            is_render_process_unresponsive: value.is_render_process_unresponsive.into(),
-            get_runtime_style: value.get_runtime_style.into(),
+            get_browser: value.get_browser,
+            close_browser: value.close_browser,
+            try_close_browser: value.try_close_browser,
+            is_ready_to_be_closed: value.is_ready_to_be_closed,
+            set_focus: value.set_focus,
+            get_window_handle: value.get_window_handle,
+            get_opener_window_handle: value.get_opener_window_handle,
+            get_opener_identifier: value.get_opener_identifier,
+            has_view: value.has_view,
+            get_client: value.get_client,
+            get_request_context: value.get_request_context,
+            can_zoom: value.can_zoom,
+            zoom: value.zoom,
+            get_default_zoom_level: value.get_default_zoom_level,
+            get_zoom_level: value.get_zoom_level,
+            set_zoom_level: value.set_zoom_level,
+            run_file_dialog: value.run_file_dialog,
+            start_download: value.start_download,
+            download_image: value.download_image,
+            print: value.print,
+            print_to_pdf: value.print_to_pdf,
+            find: value.find,
+            stop_finding: value.stop_finding,
+            show_dev_tools: value.show_dev_tools,
+            close_dev_tools: value.close_dev_tools,
+            has_dev_tools: value.has_dev_tools,
+            send_dev_tools_message: value.send_dev_tools_message,
+            execute_dev_tools_method: value.execute_dev_tools_method,
+            add_dev_tools_message_observer: value.add_dev_tools_message_observer,
+            get_navigation_entries: value.get_navigation_entries,
+            replace_misspelling: value.replace_misspelling,
+            add_word_to_dictionary: value.add_word_to_dictionary,
+            is_window_rendering_disabled: value.is_window_rendering_disabled,
+            was_resized: value.was_resized,
+            was_hidden: value.was_hidden,
+            notify_screen_info_changed: value.notify_screen_info_changed,
+            invalidate: value.invalidate,
+            send_external_begin_frame: value.send_external_begin_frame,
+            send_key_event: value.send_key_event,
+            send_mouse_click_event: value.send_mouse_click_event,
+            send_mouse_move_event: value.send_mouse_move_event,
+            send_mouse_wheel_event: value.send_mouse_wheel_event,
+            send_touch_event: value.send_touch_event,
+            send_capture_lost_event: value.send_capture_lost_event,
+            notify_move_or_resize_started: value.notify_move_or_resize_started,
+            get_windowless_frame_rate: value.get_windowless_frame_rate,
+            set_windowless_frame_rate: value.set_windowless_frame_rate,
+            ime_set_composition: value.ime_set_composition,
+            ime_commit_text: value.ime_commit_text,
+            ime_finish_composing_text: value.ime_finish_composing_text,
+            ime_cancel_composition: value.ime_cancel_composition,
+            drag_target_drag_enter: value.drag_target_drag_enter,
+            drag_target_drag_over: value.drag_target_drag_over,
+            drag_target_drag_leave: value.drag_target_drag_leave,
+            drag_target_drop: value.drag_target_drop,
+            drag_source_ended_at: value.drag_source_ended_at,
+            drag_source_system_drag_ended: value.drag_source_system_drag_ended,
+            get_visible_navigation_entry: value.get_visible_navigation_entry,
+            set_accessibility_state: value.set_accessibility_state,
+            set_auto_resize_enabled: value.set_auto_resize_enabled,
+            set_audio_muted: value.set_audio_muted,
+            is_audio_muted: value.is_audio_muted,
+            is_fullscreen: value.is_fullscreen,
+            exit_fullscreen: value.exit_fullscreen,
+            can_execute_chrome_command: value.can_execute_chrome_command,
+            execute_chrome_command: value.execute_chrome_command,
+            is_render_process_unresponsive: value.is_render_process_unresponsive,
+            get_runtime_style: value.get_runtime_style,
         }
     }
 }
-impl Into<_cef_browser_host_t> for BrowserHost {
-    fn into(self) -> _cef_browser_host_t {
-        _cef_browser_host_t {
-            base: self.base.into(),
-            get_browser: self.get_browser.into(),
-            close_browser: self.close_browser.into(),
-            try_close_browser: self.try_close_browser.into(),
-            is_ready_to_be_closed: self.is_ready_to_be_closed.into(),
-            set_focus: self.set_focus.into(),
-            get_window_handle: self.get_window_handle.into(),
-            get_opener_window_handle: self.get_opener_window_handle.into(),
-            get_opener_identifier: self.get_opener_identifier.into(),
-            has_view: self.has_view.into(),
-            get_client: self.get_client.into(),
-            get_request_context: self.get_request_context.into(),
-            can_zoom: self.can_zoom.into(),
-            zoom: self.zoom.into(),
-            get_default_zoom_level: self.get_default_zoom_level.into(),
-            get_zoom_level: self.get_zoom_level.into(),
-            set_zoom_level: self.set_zoom_level.into(),
-            run_file_dialog: self.run_file_dialog.into(),
-            start_download: self.start_download.into(),
-            download_image: self.download_image.into(),
-            print: self.print.into(),
-            print_to_pdf: self.print_to_pdf.into(),
-            find: self.find.into(),
-            stop_finding: self.stop_finding.into(),
-            show_dev_tools: self.show_dev_tools.into(),
-            close_dev_tools: self.close_dev_tools.into(),
-            has_dev_tools: self.has_dev_tools.into(),
-            send_dev_tools_message: self.send_dev_tools_message.into(),
-            execute_dev_tools_method: self.execute_dev_tools_method.into(),
-            add_dev_tools_message_observer: self.add_dev_tools_message_observer.into(),
-            get_navigation_entries: self.get_navigation_entries.into(),
-            replace_misspelling: self.replace_misspelling.into(),
-            add_word_to_dictionary: self.add_word_to_dictionary.into(),
-            is_window_rendering_disabled: self.is_window_rendering_disabled.into(),
-            was_resized: self.was_resized.into(),
-            was_hidden: self.was_hidden.into(),
-            notify_screen_info_changed: self.notify_screen_info_changed.into(),
-            invalidate: self.invalidate.into(),
-            send_external_begin_frame: self.send_external_begin_frame.into(),
-            send_key_event: self.send_key_event.into(),
-            send_mouse_click_event: self.send_mouse_click_event.into(),
-            send_mouse_move_event: self.send_mouse_move_event.into(),
-            send_mouse_wheel_event: self.send_mouse_wheel_event.into(),
-            send_touch_event: self.send_touch_event.into(),
-            send_capture_lost_event: self.send_capture_lost_event.into(),
-            notify_move_or_resize_started: self.notify_move_or_resize_started.into(),
-            get_windowless_frame_rate: self.get_windowless_frame_rate.into(),
-            set_windowless_frame_rate: self.set_windowless_frame_rate.into(),
-            ime_set_composition: self.ime_set_composition.into(),
-            ime_commit_text: self.ime_commit_text.into(),
-            ime_finish_composing_text: self.ime_finish_composing_text.into(),
-            ime_cancel_composition: self.ime_cancel_composition.into(),
-            drag_target_drag_enter: self.drag_target_drag_enter.into(),
-            drag_target_drag_over: self.drag_target_drag_over.into(),
-            drag_target_drag_leave: self.drag_target_drag_leave.into(),
-            drag_target_drop: self.drag_target_drop.into(),
-            drag_source_ended_at: self.drag_source_ended_at.into(),
-            drag_source_system_drag_ended: self.drag_source_system_drag_ended.into(),
-            get_visible_navigation_entry: self.get_visible_navigation_entry.into(),
-            set_accessibility_state: self.set_accessibility_state.into(),
-            set_auto_resize_enabled: self.set_auto_resize_enabled.into(),
-            set_audio_muted: self.set_audio_muted.into(),
-            is_audio_muted: self.is_audio_muted.into(),
-            is_fullscreen: self.is_fullscreen.into(),
-            exit_fullscreen: self.exit_fullscreen.into(),
-            can_execute_chrome_command: self.can_execute_chrome_command.into(),
-            execute_chrome_command: self.execute_chrome_command.into(),
-            is_render_process_unresponsive: self.is_render_process_unresponsive.into(),
-            get_runtime_style: self.get_runtime_style.into(),
+impl From<BrowserHost> for _cef_browser_host_t {
+    fn from(value: BrowserHost) -> Self {
+        Self {
+            base: value.base.into(),
+            get_browser: value.get_browser,
+            close_browser: value.close_browser,
+            try_close_browser: value.try_close_browser,
+            is_ready_to_be_closed: value.is_ready_to_be_closed,
+            set_focus: value.set_focus,
+            get_window_handle: value.get_window_handle,
+            get_opener_window_handle: value.get_opener_window_handle,
+            get_opener_identifier: value.get_opener_identifier,
+            has_view: value.has_view,
+            get_client: value.get_client,
+            get_request_context: value.get_request_context,
+            can_zoom: value.can_zoom,
+            zoom: value.zoom,
+            get_default_zoom_level: value.get_default_zoom_level,
+            get_zoom_level: value.get_zoom_level,
+            set_zoom_level: value.set_zoom_level,
+            run_file_dialog: value.run_file_dialog,
+            start_download: value.start_download,
+            download_image: value.download_image,
+            print: value.print,
+            print_to_pdf: value.print_to_pdf,
+            find: value.find,
+            stop_finding: value.stop_finding,
+            show_dev_tools: value.show_dev_tools,
+            close_dev_tools: value.close_dev_tools,
+            has_dev_tools: value.has_dev_tools,
+            send_dev_tools_message: value.send_dev_tools_message,
+            execute_dev_tools_method: value.execute_dev_tools_method,
+            add_dev_tools_message_observer: value.add_dev_tools_message_observer,
+            get_navigation_entries: value.get_navigation_entries,
+            replace_misspelling: value.replace_misspelling,
+            add_word_to_dictionary: value.add_word_to_dictionary,
+            is_window_rendering_disabled: value.is_window_rendering_disabled,
+            was_resized: value.was_resized,
+            was_hidden: value.was_hidden,
+            notify_screen_info_changed: value.notify_screen_info_changed,
+            invalidate: value.invalidate,
+            send_external_begin_frame: value.send_external_begin_frame,
+            send_key_event: value.send_key_event,
+            send_mouse_click_event: value.send_mouse_click_event,
+            send_mouse_move_event: value.send_mouse_move_event,
+            send_mouse_wheel_event: value.send_mouse_wheel_event,
+            send_touch_event: value.send_touch_event,
+            send_capture_lost_event: value.send_capture_lost_event,
+            notify_move_or_resize_started: value.notify_move_or_resize_started,
+            get_windowless_frame_rate: value.get_windowless_frame_rate,
+            set_windowless_frame_rate: value.set_windowless_frame_rate,
+            ime_set_composition: value.ime_set_composition,
+            ime_commit_text: value.ime_commit_text,
+            ime_finish_composing_text: value.ime_finish_composing_text,
+            ime_cancel_composition: value.ime_cancel_composition,
+            drag_target_drag_enter: value.drag_target_drag_enter,
+            drag_target_drag_over: value.drag_target_drag_over,
+            drag_target_drag_leave: value.drag_target_drag_leave,
+            drag_target_drop: value.drag_target_drop,
+            drag_source_ended_at: value.drag_source_ended_at,
+            drag_source_system_drag_ended: value.drag_source_system_drag_ended,
+            get_visible_navigation_entry: value.get_visible_navigation_entry,
+            set_accessibility_state: value.set_accessibility_state,
+            set_auto_resize_enabled: value.set_auto_resize_enabled,
+            set_audio_muted: value.set_audio_muted,
+            is_audio_muted: value.is_audio_muted,
+            is_fullscreen: value.is_fullscreen,
+            exit_fullscreen: value.exit_fullscreen,
+            can_execute_chrome_command: value.can_execute_chrome_command,
+            execute_chrome_command: value.execute_chrome_command,
+            is_render_process_unresponsive: value.is_render_process_unresponsive,
+            get_runtime_style: value.get_runtime_style,
         }
     }
 }
@@ -5969,23 +5967,23 @@ impl From<_cef_audio_handler_t> for AudioHandler {
     fn from(value: _cef_audio_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            get_audio_parameters: value.get_audio_parameters.into(),
-            on_audio_stream_started: value.on_audio_stream_started.into(),
-            on_audio_stream_packet: value.on_audio_stream_packet.into(),
-            on_audio_stream_stopped: value.on_audio_stream_stopped.into(),
-            on_audio_stream_error: value.on_audio_stream_error.into(),
+            get_audio_parameters: value.get_audio_parameters,
+            on_audio_stream_started: value.on_audio_stream_started,
+            on_audio_stream_packet: value.on_audio_stream_packet,
+            on_audio_stream_stopped: value.on_audio_stream_stopped,
+            on_audio_stream_error: value.on_audio_stream_error,
         }
     }
 }
-impl Into<_cef_audio_handler_t> for AudioHandler {
-    fn into(self) -> _cef_audio_handler_t {
-        _cef_audio_handler_t {
-            base: self.base.into(),
-            get_audio_parameters: self.get_audio_parameters.into(),
-            on_audio_stream_started: self.on_audio_stream_started.into(),
-            on_audio_stream_packet: self.on_audio_stream_packet.into(),
-            on_audio_stream_stopped: self.on_audio_stream_stopped.into(),
-            on_audio_stream_error: self.on_audio_stream_error.into(),
+impl From<AudioHandler> for _cef_audio_handler_t {
+    fn from(value: AudioHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            get_audio_parameters: value.get_audio_parameters,
+            on_audio_stream_started: value.on_audio_stream_started,
+            on_audio_stream_packet: value.on_audio_stream_packet,
+            on_audio_stream_stopped: value.on_audio_stream_stopped,
+            on_audio_stream_error: value.on_audio_stream_error,
         }
     }
 }
@@ -6038,23 +6036,23 @@ impl From<_cef_command_handler_t> for CommandHandler {
     fn from(value: _cef_command_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_chrome_command: value.on_chrome_command.into(),
-            is_chrome_app_menu_item_visible: value.is_chrome_app_menu_item_visible.into(),
-            is_chrome_app_menu_item_enabled: value.is_chrome_app_menu_item_enabled.into(),
-            is_chrome_page_action_icon_visible: value.is_chrome_page_action_icon_visible.into(),
-            is_chrome_toolbar_button_visible: value.is_chrome_toolbar_button_visible.into(),
+            on_chrome_command: value.on_chrome_command,
+            is_chrome_app_menu_item_visible: value.is_chrome_app_menu_item_visible,
+            is_chrome_app_menu_item_enabled: value.is_chrome_app_menu_item_enabled,
+            is_chrome_page_action_icon_visible: value.is_chrome_page_action_icon_visible,
+            is_chrome_toolbar_button_visible: value.is_chrome_toolbar_button_visible,
         }
     }
 }
-impl Into<_cef_command_handler_t> for CommandHandler {
-    fn into(self) -> _cef_command_handler_t {
-        _cef_command_handler_t {
-            base: self.base.into(),
-            on_chrome_command: self.on_chrome_command.into(),
-            is_chrome_app_menu_item_visible: self.is_chrome_app_menu_item_visible.into(),
-            is_chrome_app_menu_item_enabled: self.is_chrome_app_menu_item_enabled.into(),
-            is_chrome_page_action_icon_visible: self.is_chrome_page_action_icon_visible.into(),
-            is_chrome_toolbar_button_visible: self.is_chrome_toolbar_button_visible.into(),
+impl From<CommandHandler> for _cef_command_handler_t {
+    fn from(value: CommandHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_chrome_command: value.on_chrome_command,
+            is_chrome_app_menu_item_visible: value.is_chrome_app_menu_item_visible,
+            is_chrome_app_menu_item_enabled: value.is_chrome_app_menu_item_enabled,
+            is_chrome_page_action_icon_visible: value.is_chrome_page_action_icon_visible,
+            is_chrome_toolbar_button_visible: value.is_chrome_toolbar_button_visible,
         }
     }
 }
@@ -6121,27 +6119,27 @@ impl From<_cef_menu_model_delegate_t> for MenuModelDelegate {
     fn from(value: _cef_menu_model_delegate_t) -> Self {
         Self {
             base: value.base.into(),
-            execute_command: value.execute_command.into(),
-            mouse_outside_menu: value.mouse_outside_menu.into(),
-            unhandled_open_submenu: value.unhandled_open_submenu.into(),
-            unhandled_close_submenu: value.unhandled_close_submenu.into(),
-            menu_will_show: value.menu_will_show.into(),
-            menu_closed: value.menu_closed.into(),
-            format_label: value.format_label.into(),
+            execute_command: value.execute_command,
+            mouse_outside_menu: value.mouse_outside_menu,
+            unhandled_open_submenu: value.unhandled_open_submenu,
+            unhandled_close_submenu: value.unhandled_close_submenu,
+            menu_will_show: value.menu_will_show,
+            menu_closed: value.menu_closed,
+            format_label: value.format_label,
         }
     }
 }
-impl Into<_cef_menu_model_delegate_t> for MenuModelDelegate {
-    fn into(self) -> _cef_menu_model_delegate_t {
-        _cef_menu_model_delegate_t {
-            base: self.base.into(),
-            execute_command: self.execute_command.into(),
-            mouse_outside_menu: self.mouse_outside_menu.into(),
-            unhandled_open_submenu: self.unhandled_open_submenu.into(),
-            unhandled_close_submenu: self.unhandled_close_submenu.into(),
-            menu_will_show: self.menu_will_show.into(),
-            menu_closed: self.menu_closed.into(),
-            format_label: self.format_label.into(),
+impl From<MenuModelDelegate> for _cef_menu_model_delegate_t {
+    fn from(value: MenuModelDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            execute_command: value.execute_command,
+            mouse_outside_menu: value.mouse_outside_menu,
+            unhandled_open_submenu: value.unhandled_open_submenu,
+            unhandled_close_submenu: value.unhandled_close_submenu,
+            menu_will_show: value.menu_will_show,
+            menu_closed: value.menu_closed,
+            format_label: value.format_label,
         }
     }
 }
@@ -6534,125 +6532,125 @@ impl From<_cef_menu_model_t> for MenuModel {
     fn from(value: _cef_menu_model_t) -> Self {
         Self {
             base: value.base.into(),
-            is_sub_menu: value.is_sub_menu.into(),
-            clear: value.clear.into(),
-            get_count: value.get_count.into(),
-            add_separator: value.add_separator.into(),
-            add_item: value.add_item.into(),
-            add_check_item: value.add_check_item.into(),
-            add_radio_item: value.add_radio_item.into(),
-            add_sub_menu: value.add_sub_menu.into(),
-            insert_separator_at: value.insert_separator_at.into(),
-            insert_item_at: value.insert_item_at.into(),
-            insert_check_item_at: value.insert_check_item_at.into(),
-            insert_radio_item_at: value.insert_radio_item_at.into(),
-            insert_sub_menu_at: value.insert_sub_menu_at.into(),
-            remove: value.remove.into(),
-            remove_at: value.remove_at.into(),
-            get_index_of: value.get_index_of.into(),
-            get_command_id_at: value.get_command_id_at.into(),
-            set_command_id_at: value.set_command_id_at.into(),
-            get_label: value.get_label.into(),
-            get_label_at: value.get_label_at.into(),
-            set_label: value.set_label.into(),
-            set_label_at: value.set_label_at.into(),
-            get_type: value.get_type.into(),
-            get_type_at: value.get_type_at.into(),
-            get_group_id: value.get_group_id.into(),
-            get_group_id_at: value.get_group_id_at.into(),
-            set_group_id: value.set_group_id.into(),
-            set_group_id_at: value.set_group_id_at.into(),
-            get_sub_menu: value.get_sub_menu.into(),
-            get_sub_menu_at: value.get_sub_menu_at.into(),
-            is_visible: value.is_visible.into(),
-            is_visible_at: value.is_visible_at.into(),
-            set_visible: value.set_visible.into(),
-            set_visible_at: value.set_visible_at.into(),
-            is_enabled: value.is_enabled.into(),
-            is_enabled_at: value.is_enabled_at.into(),
-            set_enabled: value.set_enabled.into(),
-            set_enabled_at: value.set_enabled_at.into(),
-            is_checked: value.is_checked.into(),
-            is_checked_at: value.is_checked_at.into(),
-            set_checked: value.set_checked.into(),
-            set_checked_at: value.set_checked_at.into(),
-            has_accelerator: value.has_accelerator.into(),
-            has_accelerator_at: value.has_accelerator_at.into(),
-            set_accelerator: value.set_accelerator.into(),
-            set_accelerator_at: value.set_accelerator_at.into(),
-            remove_accelerator: value.remove_accelerator.into(),
-            remove_accelerator_at: value.remove_accelerator_at.into(),
-            get_accelerator: value.get_accelerator.into(),
-            get_accelerator_at: value.get_accelerator_at.into(),
-            set_color: value.set_color.into(),
-            set_color_at: value.set_color_at.into(),
-            get_color: value.get_color.into(),
-            get_color_at: value.get_color_at.into(),
-            set_font_list: value.set_font_list.into(),
-            set_font_list_at: value.set_font_list_at.into(),
+            is_sub_menu: value.is_sub_menu,
+            clear: value.clear,
+            get_count: value.get_count,
+            add_separator: value.add_separator,
+            add_item: value.add_item,
+            add_check_item: value.add_check_item,
+            add_radio_item: value.add_radio_item,
+            add_sub_menu: value.add_sub_menu,
+            insert_separator_at: value.insert_separator_at,
+            insert_item_at: value.insert_item_at,
+            insert_check_item_at: value.insert_check_item_at,
+            insert_radio_item_at: value.insert_radio_item_at,
+            insert_sub_menu_at: value.insert_sub_menu_at,
+            remove: value.remove,
+            remove_at: value.remove_at,
+            get_index_of: value.get_index_of,
+            get_command_id_at: value.get_command_id_at,
+            set_command_id_at: value.set_command_id_at,
+            get_label: value.get_label,
+            get_label_at: value.get_label_at,
+            set_label: value.set_label,
+            set_label_at: value.set_label_at,
+            get_type: value.get_type,
+            get_type_at: value.get_type_at,
+            get_group_id: value.get_group_id,
+            get_group_id_at: value.get_group_id_at,
+            set_group_id: value.set_group_id,
+            set_group_id_at: value.set_group_id_at,
+            get_sub_menu: value.get_sub_menu,
+            get_sub_menu_at: value.get_sub_menu_at,
+            is_visible: value.is_visible,
+            is_visible_at: value.is_visible_at,
+            set_visible: value.set_visible,
+            set_visible_at: value.set_visible_at,
+            is_enabled: value.is_enabled,
+            is_enabled_at: value.is_enabled_at,
+            set_enabled: value.set_enabled,
+            set_enabled_at: value.set_enabled_at,
+            is_checked: value.is_checked,
+            is_checked_at: value.is_checked_at,
+            set_checked: value.set_checked,
+            set_checked_at: value.set_checked_at,
+            has_accelerator: value.has_accelerator,
+            has_accelerator_at: value.has_accelerator_at,
+            set_accelerator: value.set_accelerator,
+            set_accelerator_at: value.set_accelerator_at,
+            remove_accelerator: value.remove_accelerator,
+            remove_accelerator_at: value.remove_accelerator_at,
+            get_accelerator: value.get_accelerator,
+            get_accelerator_at: value.get_accelerator_at,
+            set_color: value.set_color,
+            set_color_at: value.set_color_at,
+            get_color: value.get_color,
+            get_color_at: value.get_color_at,
+            set_font_list: value.set_font_list,
+            set_font_list_at: value.set_font_list_at,
         }
     }
 }
-impl Into<_cef_menu_model_t> for MenuModel {
-    fn into(self) -> _cef_menu_model_t {
-        _cef_menu_model_t {
-            base: self.base.into(),
-            is_sub_menu: self.is_sub_menu.into(),
-            clear: self.clear.into(),
-            get_count: self.get_count.into(),
-            add_separator: self.add_separator.into(),
-            add_item: self.add_item.into(),
-            add_check_item: self.add_check_item.into(),
-            add_radio_item: self.add_radio_item.into(),
-            add_sub_menu: self.add_sub_menu.into(),
-            insert_separator_at: self.insert_separator_at.into(),
-            insert_item_at: self.insert_item_at.into(),
-            insert_check_item_at: self.insert_check_item_at.into(),
-            insert_radio_item_at: self.insert_radio_item_at.into(),
-            insert_sub_menu_at: self.insert_sub_menu_at.into(),
-            remove: self.remove.into(),
-            remove_at: self.remove_at.into(),
-            get_index_of: self.get_index_of.into(),
-            get_command_id_at: self.get_command_id_at.into(),
-            set_command_id_at: self.set_command_id_at.into(),
-            get_label: self.get_label.into(),
-            get_label_at: self.get_label_at.into(),
-            set_label: self.set_label.into(),
-            set_label_at: self.set_label_at.into(),
-            get_type: self.get_type.into(),
-            get_type_at: self.get_type_at.into(),
-            get_group_id: self.get_group_id.into(),
-            get_group_id_at: self.get_group_id_at.into(),
-            set_group_id: self.set_group_id.into(),
-            set_group_id_at: self.set_group_id_at.into(),
-            get_sub_menu: self.get_sub_menu.into(),
-            get_sub_menu_at: self.get_sub_menu_at.into(),
-            is_visible: self.is_visible.into(),
-            is_visible_at: self.is_visible_at.into(),
-            set_visible: self.set_visible.into(),
-            set_visible_at: self.set_visible_at.into(),
-            is_enabled: self.is_enabled.into(),
-            is_enabled_at: self.is_enabled_at.into(),
-            set_enabled: self.set_enabled.into(),
-            set_enabled_at: self.set_enabled_at.into(),
-            is_checked: self.is_checked.into(),
-            is_checked_at: self.is_checked_at.into(),
-            set_checked: self.set_checked.into(),
-            set_checked_at: self.set_checked_at.into(),
-            has_accelerator: self.has_accelerator.into(),
-            has_accelerator_at: self.has_accelerator_at.into(),
-            set_accelerator: self.set_accelerator.into(),
-            set_accelerator_at: self.set_accelerator_at.into(),
-            remove_accelerator: self.remove_accelerator.into(),
-            remove_accelerator_at: self.remove_accelerator_at.into(),
-            get_accelerator: self.get_accelerator.into(),
-            get_accelerator_at: self.get_accelerator_at.into(),
-            set_color: self.set_color.into(),
-            set_color_at: self.set_color_at.into(),
-            get_color: self.get_color.into(),
-            get_color_at: self.get_color_at.into(),
-            set_font_list: self.set_font_list.into(),
-            set_font_list_at: self.set_font_list_at.into(),
+impl From<MenuModel> for _cef_menu_model_t {
+    fn from(value: MenuModel) -> Self {
+        Self {
+            base: value.base.into(),
+            is_sub_menu: value.is_sub_menu,
+            clear: value.clear,
+            get_count: value.get_count,
+            add_separator: value.add_separator,
+            add_item: value.add_item,
+            add_check_item: value.add_check_item,
+            add_radio_item: value.add_radio_item,
+            add_sub_menu: value.add_sub_menu,
+            insert_separator_at: value.insert_separator_at,
+            insert_item_at: value.insert_item_at,
+            insert_check_item_at: value.insert_check_item_at,
+            insert_radio_item_at: value.insert_radio_item_at,
+            insert_sub_menu_at: value.insert_sub_menu_at,
+            remove: value.remove,
+            remove_at: value.remove_at,
+            get_index_of: value.get_index_of,
+            get_command_id_at: value.get_command_id_at,
+            set_command_id_at: value.set_command_id_at,
+            get_label: value.get_label,
+            get_label_at: value.get_label_at,
+            set_label: value.set_label,
+            set_label_at: value.set_label_at,
+            get_type: value.get_type,
+            get_type_at: value.get_type_at,
+            get_group_id: value.get_group_id,
+            get_group_id_at: value.get_group_id_at,
+            set_group_id: value.set_group_id,
+            set_group_id_at: value.set_group_id_at,
+            get_sub_menu: value.get_sub_menu,
+            get_sub_menu_at: value.get_sub_menu_at,
+            is_visible: value.is_visible,
+            is_visible_at: value.is_visible_at,
+            set_visible: value.set_visible,
+            set_visible_at: value.set_visible_at,
+            is_enabled: value.is_enabled,
+            is_enabled_at: value.is_enabled_at,
+            set_enabled: value.set_enabled,
+            set_enabled_at: value.set_enabled_at,
+            is_checked: value.is_checked,
+            is_checked_at: value.is_checked_at,
+            set_checked: value.set_checked,
+            set_checked_at: value.set_checked_at,
+            has_accelerator: value.has_accelerator,
+            has_accelerator_at: value.has_accelerator_at,
+            set_accelerator: value.set_accelerator,
+            set_accelerator_at: value.set_accelerator_at,
+            remove_accelerator: value.remove_accelerator,
+            remove_accelerator_at: value.remove_accelerator_at,
+            get_accelerator: value.get_accelerator,
+            get_accelerator_at: value.get_accelerator_at,
+            set_color: value.set_color,
+            set_color_at: value.set_color_at,
+            get_color: value.get_color,
+            get_color_at: value.get_color_at,
+            set_font_list: value.set_font_list,
+            set_font_list_at: value.set_font_list_at,
         }
     }
 }
@@ -6681,17 +6679,17 @@ impl From<_cef_run_context_menu_callback_t> for RunContextMenuCallback {
     fn from(value: _cef_run_context_menu_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
-            cancel: value.cancel.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_run_context_menu_callback_t> for RunContextMenuCallback {
-    fn into(self) -> _cef_run_context_menu_callback_t {
-        _cef_run_context_menu_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
-            cancel: self.cancel.into(),
+impl From<RunContextMenuCallback> for _cef_run_context_menu_callback_t {
+    fn from(value: RunContextMenuCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
@@ -6720,17 +6718,17 @@ impl From<_cef_run_quick_menu_callback_t> for RunQuickMenuCallback {
     fn from(value: _cef_run_quick_menu_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
-            cancel: value.cancel.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_run_quick_menu_callback_t> for RunQuickMenuCallback {
-    fn into(self) -> _cef_run_quick_menu_callback_t {
-        _cef_run_quick_menu_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
-            cancel: self.cancel.into(),
+impl From<RunQuickMenuCallback> for _cef_run_quick_menu_callback_t {
+    fn from(value: RunQuickMenuCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
@@ -6812,27 +6810,27 @@ impl From<_cef_context_menu_handler_t> for ContextMenuHandler {
     fn from(value: _cef_context_menu_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_before_context_menu: value.on_before_context_menu.into(),
-            run_context_menu: value.run_context_menu.into(),
-            on_context_menu_command: value.on_context_menu_command.into(),
-            on_context_menu_dismissed: value.on_context_menu_dismissed.into(),
-            run_quick_menu: value.run_quick_menu.into(),
-            on_quick_menu_command: value.on_quick_menu_command.into(),
-            on_quick_menu_dismissed: value.on_quick_menu_dismissed.into(),
+            on_before_context_menu: value.on_before_context_menu,
+            run_context_menu: value.run_context_menu,
+            on_context_menu_command: value.on_context_menu_command,
+            on_context_menu_dismissed: value.on_context_menu_dismissed,
+            run_quick_menu: value.run_quick_menu,
+            on_quick_menu_command: value.on_quick_menu_command,
+            on_quick_menu_dismissed: value.on_quick_menu_dismissed,
         }
     }
 }
-impl Into<_cef_context_menu_handler_t> for ContextMenuHandler {
-    fn into(self) -> _cef_context_menu_handler_t {
-        _cef_context_menu_handler_t {
-            base: self.base.into(),
-            on_before_context_menu: self.on_before_context_menu.into(),
-            run_context_menu: self.run_context_menu.into(),
-            on_context_menu_command: self.on_context_menu_command.into(),
-            on_context_menu_dismissed: self.on_context_menu_dismissed.into(),
-            run_quick_menu: self.run_quick_menu.into(),
-            on_quick_menu_command: self.on_quick_menu_command.into(),
-            on_quick_menu_dismissed: self.on_quick_menu_dismissed.into(),
+impl From<ContextMenuHandler> for _cef_context_menu_handler_t {
+    fn from(value: ContextMenuHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_before_context_menu: value.on_before_context_menu,
+            run_context_menu: value.run_context_menu,
+            on_context_menu_command: value.on_context_menu_command,
+            on_context_menu_dismissed: value.on_context_menu_dismissed,
+            run_quick_menu: value.run_quick_menu,
+            on_quick_menu_command: value.on_quick_menu_command,
+            on_quick_menu_dismissed: value.on_quick_menu_dismissed,
         }
     }
 }
@@ -6922,53 +6920,53 @@ impl From<_cef_context_menu_params_t> for ContextMenuParams {
     fn from(value: _cef_context_menu_params_t) -> Self {
         Self {
             base: value.base.into(),
-            get_xcoord: value.get_xcoord.into(),
-            get_ycoord: value.get_ycoord.into(),
-            get_type_flags: value.get_type_flags.into(),
-            get_link_url: value.get_link_url.into(),
-            get_unfiltered_link_url: value.get_unfiltered_link_url.into(),
-            get_source_url: value.get_source_url.into(),
-            has_image_contents: value.has_image_contents.into(),
-            get_title_text: value.get_title_text.into(),
-            get_page_url: value.get_page_url.into(),
-            get_frame_url: value.get_frame_url.into(),
-            get_frame_charset: value.get_frame_charset.into(),
-            get_media_type: value.get_media_type.into(),
-            get_media_state_flags: value.get_media_state_flags.into(),
-            get_selection_text: value.get_selection_text.into(),
-            get_misspelled_word: value.get_misspelled_word.into(),
-            get_dictionary_suggestions: value.get_dictionary_suggestions.into(),
-            is_editable: value.is_editable.into(),
-            is_spell_check_enabled: value.is_spell_check_enabled.into(),
-            get_edit_state_flags: value.get_edit_state_flags.into(),
-            is_custom_menu: value.is_custom_menu.into(),
+            get_xcoord: value.get_xcoord,
+            get_ycoord: value.get_ycoord,
+            get_type_flags: value.get_type_flags,
+            get_link_url: value.get_link_url,
+            get_unfiltered_link_url: value.get_unfiltered_link_url,
+            get_source_url: value.get_source_url,
+            has_image_contents: value.has_image_contents,
+            get_title_text: value.get_title_text,
+            get_page_url: value.get_page_url,
+            get_frame_url: value.get_frame_url,
+            get_frame_charset: value.get_frame_charset,
+            get_media_type: value.get_media_type,
+            get_media_state_flags: value.get_media_state_flags,
+            get_selection_text: value.get_selection_text,
+            get_misspelled_word: value.get_misspelled_word,
+            get_dictionary_suggestions: value.get_dictionary_suggestions,
+            is_editable: value.is_editable,
+            is_spell_check_enabled: value.is_spell_check_enabled,
+            get_edit_state_flags: value.get_edit_state_flags,
+            is_custom_menu: value.is_custom_menu,
         }
     }
 }
-impl Into<_cef_context_menu_params_t> for ContextMenuParams {
-    fn into(self) -> _cef_context_menu_params_t {
-        _cef_context_menu_params_t {
-            base: self.base.into(),
-            get_xcoord: self.get_xcoord.into(),
-            get_ycoord: self.get_ycoord.into(),
-            get_type_flags: self.get_type_flags.into(),
-            get_link_url: self.get_link_url.into(),
-            get_unfiltered_link_url: self.get_unfiltered_link_url.into(),
-            get_source_url: self.get_source_url.into(),
-            has_image_contents: self.has_image_contents.into(),
-            get_title_text: self.get_title_text.into(),
-            get_page_url: self.get_page_url.into(),
-            get_frame_url: self.get_frame_url.into(),
-            get_frame_charset: self.get_frame_charset.into(),
-            get_media_type: self.get_media_type.into(),
-            get_media_state_flags: self.get_media_state_flags.into(),
-            get_selection_text: self.get_selection_text.into(),
-            get_misspelled_word: self.get_misspelled_word.into(),
-            get_dictionary_suggestions: self.get_dictionary_suggestions.into(),
-            is_editable: self.is_editable.into(),
-            is_spell_check_enabled: self.is_spell_check_enabled.into(),
-            get_edit_state_flags: self.get_edit_state_flags.into(),
-            is_custom_menu: self.is_custom_menu.into(),
+impl From<ContextMenuParams> for _cef_context_menu_params_t {
+    fn from(value: ContextMenuParams) -> Self {
+        Self {
+            base: value.base.into(),
+            get_xcoord: value.get_xcoord,
+            get_ycoord: value.get_ycoord,
+            get_type_flags: value.get_type_flags,
+            get_link_url: value.get_link_url,
+            get_unfiltered_link_url: value.get_unfiltered_link_url,
+            get_source_url: value.get_source_url,
+            has_image_contents: value.has_image_contents,
+            get_title_text: value.get_title_text,
+            get_page_url: value.get_page_url,
+            get_frame_url: value.get_frame_url,
+            get_frame_charset: value.get_frame_charset,
+            get_media_type: value.get_media_type,
+            get_media_state_flags: value.get_media_state_flags,
+            get_selection_text: value.get_selection_text,
+            get_misspelled_word: value.get_misspelled_word,
+            get_dictionary_suggestions: value.get_dictionary_suggestions,
+            is_editable: value.is_editable,
+            is_spell_check_enabled: value.is_spell_check_enabled,
+            get_edit_state_flags: value.get_edit_state_flags,
+            is_custom_menu: value.is_custom_menu,
         }
     }
 }
@@ -6995,17 +6993,17 @@ impl From<_cef_file_dialog_callback_t> for FileDialogCallback {
     fn from(value: _cef_file_dialog_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
-            cancel: value.cancel.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_file_dialog_callback_t> for FileDialogCallback {
-    fn into(self) -> _cef_file_dialog_callback_t {
-        _cef_file_dialog_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
-            cancel: self.cancel.into(),
+impl From<FileDialogCallback> for _cef_file_dialog_callback_t {
+    fn from(value: FileDialogCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
@@ -7037,15 +7035,15 @@ impl From<_cef_dialog_handler_t> for DialogHandler {
     fn from(value: _cef_dialog_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_file_dialog: value.on_file_dialog.into(),
+            on_file_dialog: value.on_file_dialog,
         }
     }
 }
-impl Into<_cef_dialog_handler_t> for DialogHandler {
-    fn into(self) -> _cef_dialog_handler_t {
-        _cef_dialog_handler_t {
-            base: self.base.into(),
-            on_file_dialog: self.on_file_dialog.into(),
+impl From<DialogHandler> for _cef_dialog_handler_t {
+    fn from(value: DialogHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_file_dialog: value.on_file_dialog,
         }
     }
 }
@@ -7148,35 +7146,35 @@ impl From<_cef_display_handler_t> for DisplayHandler {
     fn from(value: _cef_display_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_address_change: value.on_address_change.into(),
-            on_title_change: value.on_title_change.into(),
-            on_favicon_urlchange: value.on_favicon_urlchange.into(),
-            on_fullscreen_mode_change: value.on_fullscreen_mode_change.into(),
-            on_tooltip: value.on_tooltip.into(),
-            on_status_message: value.on_status_message.into(),
-            on_console_message: value.on_console_message.into(),
-            on_auto_resize: value.on_auto_resize.into(),
-            on_loading_progress_change: value.on_loading_progress_change.into(),
-            on_cursor_change: value.on_cursor_change.into(),
-            on_media_access_change: value.on_media_access_change.into(),
+            on_address_change: value.on_address_change,
+            on_title_change: value.on_title_change,
+            on_favicon_urlchange: value.on_favicon_urlchange,
+            on_fullscreen_mode_change: value.on_fullscreen_mode_change,
+            on_tooltip: value.on_tooltip,
+            on_status_message: value.on_status_message,
+            on_console_message: value.on_console_message,
+            on_auto_resize: value.on_auto_resize,
+            on_loading_progress_change: value.on_loading_progress_change,
+            on_cursor_change: value.on_cursor_change,
+            on_media_access_change: value.on_media_access_change,
         }
     }
 }
-impl Into<_cef_display_handler_t> for DisplayHandler {
-    fn into(self) -> _cef_display_handler_t {
-        _cef_display_handler_t {
-            base: self.base.into(),
-            on_address_change: self.on_address_change.into(),
-            on_title_change: self.on_title_change.into(),
-            on_favicon_urlchange: self.on_favicon_urlchange.into(),
-            on_fullscreen_mode_change: self.on_fullscreen_mode_change.into(),
-            on_tooltip: self.on_tooltip.into(),
-            on_status_message: self.on_status_message.into(),
-            on_console_message: self.on_console_message.into(),
-            on_auto_resize: self.on_auto_resize.into(),
-            on_loading_progress_change: self.on_loading_progress_change.into(),
-            on_cursor_change: self.on_cursor_change.into(),
-            on_media_access_change: self.on_media_access_change.into(),
+impl From<DisplayHandler> for _cef_display_handler_t {
+    fn from(value: DisplayHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_address_change: value.on_address_change,
+            on_title_change: value.on_title_change,
+            on_favicon_urlchange: value.on_favicon_urlchange,
+            on_fullscreen_mode_change: value.on_fullscreen_mode_change,
+            on_tooltip: value.on_tooltip,
+            on_status_message: value.on_status_message,
+            on_console_message: value.on_console_message,
+            on_auto_resize: value.on_auto_resize,
+            on_loading_progress_change: value.on_loading_progress_change,
+            on_cursor_change: value.on_cursor_change,
+            on_media_access_change: value.on_media_access_change,
         }
     }
 }
@@ -7250,51 +7248,51 @@ impl From<_cef_download_item_t> for DownloadItem {
     fn from(value: _cef_download_item_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_in_progress: value.is_in_progress.into(),
-            is_complete: value.is_complete.into(),
-            is_canceled: value.is_canceled.into(),
-            is_interrupted: value.is_interrupted.into(),
-            get_interrupt_reason: value.get_interrupt_reason.into(),
-            get_current_speed: value.get_current_speed.into(),
-            get_percent_complete: value.get_percent_complete.into(),
-            get_total_bytes: value.get_total_bytes.into(),
-            get_received_bytes: value.get_received_bytes.into(),
-            get_start_time: value.get_start_time.into(),
-            get_end_time: value.get_end_time.into(),
-            get_full_path: value.get_full_path.into(),
-            get_id: value.get_id.into(),
-            get_url: value.get_url.into(),
-            get_original_url: value.get_original_url.into(),
-            get_suggested_file_name: value.get_suggested_file_name.into(),
-            get_content_disposition: value.get_content_disposition.into(),
-            get_mime_type: value.get_mime_type.into(),
+            is_valid: value.is_valid,
+            is_in_progress: value.is_in_progress,
+            is_complete: value.is_complete,
+            is_canceled: value.is_canceled,
+            is_interrupted: value.is_interrupted,
+            get_interrupt_reason: value.get_interrupt_reason,
+            get_current_speed: value.get_current_speed,
+            get_percent_complete: value.get_percent_complete,
+            get_total_bytes: value.get_total_bytes,
+            get_received_bytes: value.get_received_bytes,
+            get_start_time: value.get_start_time,
+            get_end_time: value.get_end_time,
+            get_full_path: value.get_full_path,
+            get_id: value.get_id,
+            get_url: value.get_url,
+            get_original_url: value.get_original_url,
+            get_suggested_file_name: value.get_suggested_file_name,
+            get_content_disposition: value.get_content_disposition,
+            get_mime_type: value.get_mime_type,
         }
     }
 }
-impl Into<_cef_download_item_t> for DownloadItem {
-    fn into(self) -> _cef_download_item_t {
-        _cef_download_item_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_in_progress: self.is_in_progress.into(),
-            is_complete: self.is_complete.into(),
-            is_canceled: self.is_canceled.into(),
-            is_interrupted: self.is_interrupted.into(),
-            get_interrupt_reason: self.get_interrupt_reason.into(),
-            get_current_speed: self.get_current_speed.into(),
-            get_percent_complete: self.get_percent_complete.into(),
-            get_total_bytes: self.get_total_bytes.into(),
-            get_received_bytes: self.get_received_bytes.into(),
-            get_start_time: self.get_start_time.into(),
-            get_end_time: self.get_end_time.into(),
-            get_full_path: self.get_full_path.into(),
-            get_id: self.get_id.into(),
-            get_url: self.get_url.into(),
-            get_original_url: self.get_original_url.into(),
-            get_suggested_file_name: self.get_suggested_file_name.into(),
-            get_content_disposition: self.get_content_disposition.into(),
-            get_mime_type: self.get_mime_type.into(),
+impl From<DownloadItem> for _cef_download_item_t {
+    fn from(value: DownloadItem) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_in_progress: value.is_in_progress,
+            is_complete: value.is_complete,
+            is_canceled: value.is_canceled,
+            is_interrupted: value.is_interrupted,
+            get_interrupt_reason: value.get_interrupt_reason,
+            get_current_speed: value.get_current_speed,
+            get_percent_complete: value.get_percent_complete,
+            get_total_bytes: value.get_total_bytes,
+            get_received_bytes: value.get_received_bytes,
+            get_start_time: value.get_start_time,
+            get_end_time: value.get_end_time,
+            get_full_path: value.get_full_path,
+            get_id: value.get_id,
+            get_url: value.get_url,
+            get_original_url: value.get_original_url,
+            get_suggested_file_name: value.get_suggested_file_name,
+            get_content_disposition: value.get_content_disposition,
+            get_mime_type: value.get_mime_type,
         }
     }
 }
@@ -7320,15 +7318,15 @@ impl From<_cef_before_download_callback_t> for BeforeDownloadCallback {
     fn from(value: _cef_before_download_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
+            cont: value.cont,
         }
     }
 }
-impl Into<_cef_before_download_callback_t> for BeforeDownloadCallback {
-    fn into(self) -> _cef_before_download_callback_t {
-        _cef_before_download_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
+impl From<BeforeDownloadCallback> for _cef_before_download_callback_t {
+    fn from(value: BeforeDownloadCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
         }
     }
 }
@@ -7356,19 +7354,19 @@ impl From<_cef_download_item_callback_t> for DownloadItemCallback {
     fn from(value: _cef_download_item_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cancel: value.cancel.into(),
-            pause: value.pause.into(),
-            resume: value.resume.into(),
+            cancel: value.cancel,
+            pause: value.pause,
+            resume: value.resume,
         }
     }
 }
-impl Into<_cef_download_item_callback_t> for DownloadItemCallback {
-    fn into(self) -> _cef_download_item_callback_t {
-        _cef_download_item_callback_t {
-            base: self.base.into(),
-            cancel: self.cancel.into(),
-            pause: self.pause.into(),
-            resume: self.resume.into(),
+impl From<DownloadItemCallback> for _cef_download_item_callback_t {
+    fn from(value: DownloadItemCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cancel: value.cancel,
+            pause: value.pause,
+            resume: value.resume,
         }
     }
 }
@@ -7412,19 +7410,19 @@ impl From<_cef_download_handler_t> for DownloadHandler {
     fn from(value: _cef_download_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            can_download: value.can_download.into(),
-            on_before_download: value.on_before_download.into(),
-            on_download_updated: value.on_download_updated.into(),
+            can_download: value.can_download,
+            on_before_download: value.on_before_download,
+            on_download_updated: value.on_download_updated,
         }
     }
 }
-impl Into<_cef_download_handler_t> for DownloadHandler {
-    fn into(self) -> _cef_download_handler_t {
-        _cef_download_handler_t {
-            base: self.base.into(),
-            can_download: self.can_download.into(),
-            on_before_download: self.on_before_download.into(),
-            on_download_updated: self.on_download_updated.into(),
+impl From<DownloadHandler> for _cef_download_handler_t {
+    fn from(value: DownloadHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            can_download: value.can_download,
+            on_before_download: value.on_before_download,
+            on_download_updated: value.on_download_updated,
         }
     }
 }
@@ -7460,17 +7458,17 @@ impl From<_cef_drag_handler_t> for DragHandler {
     fn from(value: _cef_drag_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_drag_enter: value.on_drag_enter.into(),
-            on_draggable_regions_changed: value.on_draggable_regions_changed.into(),
+            on_drag_enter: value.on_drag_enter,
+            on_draggable_regions_changed: value.on_draggable_regions_changed,
         }
     }
 }
-impl Into<_cef_drag_handler_t> for DragHandler {
-    fn into(self) -> _cef_drag_handler_t {
-        _cef_drag_handler_t {
-            base: self.base.into(),
-            on_drag_enter: self.on_drag_enter.into(),
-            on_draggable_regions_changed: self.on_draggable_regions_changed.into(),
+impl From<DragHandler> for _cef_drag_handler_t {
+    fn from(value: DragHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_drag_enter: value.on_drag_enter,
+            on_draggable_regions_changed: value.on_draggable_regions_changed,
         }
     }
 }
@@ -7500,15 +7498,15 @@ impl From<_cef_find_handler_t> for FindHandler {
     fn from(value: _cef_find_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_find_result: value.on_find_result.into(),
+            on_find_result: value.on_find_result,
         }
     }
 }
-impl Into<_cef_find_handler_t> for FindHandler {
-    fn into(self) -> _cef_find_handler_t {
-        _cef_find_handler_t {
-            base: self.base.into(),
-            on_find_result: self.on_find_result.into(),
+impl From<FindHandler> for _cef_find_handler_t {
+    fn from(value: FindHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_find_result: value.on_find_result,
         }
     }
 }
@@ -7544,19 +7542,19 @@ impl From<_cef_focus_handler_t> for FocusHandler {
     fn from(value: _cef_focus_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_take_focus: value.on_take_focus.into(),
-            on_set_focus: value.on_set_focus.into(),
-            on_got_focus: value.on_got_focus.into(),
+            on_take_focus: value.on_take_focus,
+            on_set_focus: value.on_set_focus,
+            on_got_focus: value.on_got_focus,
         }
     }
 }
-impl Into<_cef_focus_handler_t> for FocusHandler {
-    fn into(self) -> _cef_focus_handler_t {
-        _cef_focus_handler_t {
-            base: self.base.into(),
-            on_take_focus: self.on_take_focus.into(),
-            on_set_focus: self.on_set_focus.into(),
-            on_got_focus: self.on_got_focus.into(),
+impl From<FocusHandler> for _cef_focus_handler_t {
+    fn from(value: FocusHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_take_focus: value.on_take_focus,
+            on_set_focus: value.on_set_focus,
+            on_got_focus: value.on_got_focus,
         }
     }
 }
@@ -7612,23 +7610,23 @@ impl From<_cef_frame_handler_t> for FrameHandler {
     fn from(value: _cef_frame_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_frame_created: value.on_frame_created.into(),
-            on_frame_destroyed: value.on_frame_destroyed.into(),
-            on_frame_attached: value.on_frame_attached.into(),
-            on_frame_detached: value.on_frame_detached.into(),
-            on_main_frame_changed: value.on_main_frame_changed.into(),
+            on_frame_created: value.on_frame_created,
+            on_frame_destroyed: value.on_frame_destroyed,
+            on_frame_attached: value.on_frame_attached,
+            on_frame_detached: value.on_frame_detached,
+            on_main_frame_changed: value.on_main_frame_changed,
         }
     }
 }
-impl Into<_cef_frame_handler_t> for FrameHandler {
-    fn into(self) -> _cef_frame_handler_t {
-        _cef_frame_handler_t {
-            base: self.base.into(),
-            on_frame_created: self.on_frame_created.into(),
-            on_frame_destroyed: self.on_frame_destroyed.into(),
-            on_frame_attached: self.on_frame_attached.into(),
-            on_frame_detached: self.on_frame_detached.into(),
-            on_main_frame_changed: self.on_main_frame_changed.into(),
+impl From<FrameHandler> for _cef_frame_handler_t {
+    fn from(value: FrameHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_frame_created: value.on_frame_created,
+            on_frame_destroyed: value.on_frame_destroyed,
+            on_frame_attached: value.on_frame_attached,
+            on_frame_detached: value.on_frame_detached,
+            on_main_frame_changed: value.on_main_frame_changed,
         }
     }
 }
@@ -7654,15 +7652,15 @@ impl From<_cef_jsdialog_callback_t> for JsdialogCallback {
     fn from(value: _cef_jsdialog_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
+            cont: value.cont,
         }
     }
 }
-impl Into<_cef_jsdialog_callback_t> for JsdialogCallback {
-    fn into(self) -> _cef_jsdialog_callback_t {
-        _cef_jsdialog_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
+impl From<JsdialogCallback> for _cef_jsdialog_callback_t {
+    fn from(value: JsdialogCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
         }
     }
 }
@@ -7714,21 +7712,21 @@ impl From<_cef_jsdialog_handler_t> for JsdialogHandler {
     fn from(value: _cef_jsdialog_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_jsdialog: value.on_jsdialog.into(),
-            on_before_unload_dialog: value.on_before_unload_dialog.into(),
-            on_reset_dialog_state: value.on_reset_dialog_state.into(),
-            on_dialog_closed: value.on_dialog_closed.into(),
+            on_jsdialog: value.on_jsdialog,
+            on_before_unload_dialog: value.on_before_unload_dialog,
+            on_reset_dialog_state: value.on_reset_dialog_state,
+            on_dialog_closed: value.on_dialog_closed,
         }
     }
 }
-impl Into<_cef_jsdialog_handler_t> for JsdialogHandler {
-    fn into(self) -> _cef_jsdialog_handler_t {
-        _cef_jsdialog_handler_t {
-            base: self.base.into(),
-            on_jsdialog: self.on_jsdialog.into(),
-            on_before_unload_dialog: self.on_before_unload_dialog.into(),
-            on_reset_dialog_state: self.on_reset_dialog_state.into(),
-            on_dialog_closed: self.on_dialog_closed.into(),
+impl From<JsdialogHandler> for _cef_jsdialog_handler_t {
+    fn from(value: JsdialogHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_jsdialog: value.on_jsdialog,
+            on_before_unload_dialog: value.on_before_unload_dialog,
+            on_reset_dialog_state: value.on_reset_dialog_state,
+            on_dialog_closed: value.on_dialog_closed,
         }
     }
 }
@@ -7764,17 +7762,17 @@ impl From<_cef_keyboard_handler_t> for KeyboardHandler {
     fn from(value: _cef_keyboard_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_pre_key_event: value.on_pre_key_event.into(),
-            on_key_event: value.on_key_event.into(),
+            on_pre_key_event: value.on_pre_key_event,
+            on_key_event: value.on_key_event,
         }
     }
 }
-impl Into<_cef_keyboard_handler_t> for KeyboardHandler {
-    fn into(self) -> _cef_keyboard_handler_t {
-        _cef_keyboard_handler_t {
-            base: self.base.into(),
-            on_pre_key_event: self.on_pre_key_event.into(),
-            on_key_event: self.on_key_event.into(),
+impl From<KeyboardHandler> for _cef_keyboard_handler_t {
+    fn from(value: KeyboardHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_pre_key_event: value.on_pre_key_event,
+            on_key_event: value.on_key_event,
         }
     }
 }
@@ -7847,25 +7845,25 @@ impl From<_cef_life_span_handler_t> for LifeSpanHandler {
     fn from(value: _cef_life_span_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_before_popup: value.on_before_popup.into(),
-            on_before_popup_aborted: value.on_before_popup_aborted.into(),
-            on_before_dev_tools_popup: value.on_before_dev_tools_popup.into(),
-            on_after_created: value.on_after_created.into(),
-            do_close: value.do_close.into(),
-            on_before_close: value.on_before_close.into(),
+            on_before_popup: value.on_before_popup,
+            on_before_popup_aborted: value.on_before_popup_aborted,
+            on_before_dev_tools_popup: value.on_before_dev_tools_popup,
+            on_after_created: value.on_after_created,
+            do_close: value.do_close,
+            on_before_close: value.on_before_close,
         }
     }
 }
-impl Into<_cef_life_span_handler_t> for LifeSpanHandler {
-    fn into(self) -> _cef_life_span_handler_t {
-        _cef_life_span_handler_t {
-            base: self.base.into(),
-            on_before_popup: self.on_before_popup.into(),
-            on_before_popup_aborted: self.on_before_popup_aborted.into(),
-            on_before_dev_tools_popup: self.on_before_dev_tools_popup.into(),
-            on_after_created: self.on_after_created.into(),
-            do_close: self.do_close.into(),
-            on_before_close: self.on_before_close.into(),
+impl From<LifeSpanHandler> for _cef_life_span_handler_t {
+    fn from(value: LifeSpanHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_before_popup: value.on_before_popup,
+            on_before_popup_aborted: value.on_before_popup_aborted,
+            on_before_dev_tools_popup: value.on_before_dev_tools_popup,
+            on_after_created: value.on_after_created,
+            do_close: value.do_close,
+            on_before_close: value.on_before_close,
         }
     }
 }
@@ -7919,21 +7917,21 @@ impl From<_cef_load_handler_t> for LoadHandler {
     fn from(value: _cef_load_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_loading_state_change: value.on_loading_state_change.into(),
-            on_load_start: value.on_load_start.into(),
-            on_load_end: value.on_load_end.into(),
-            on_load_error: value.on_load_error.into(),
+            on_loading_state_change: value.on_loading_state_change,
+            on_load_start: value.on_load_start,
+            on_load_end: value.on_load_end,
+            on_load_error: value.on_load_error,
         }
     }
 }
-impl Into<_cef_load_handler_t> for LoadHandler {
-    fn into(self) -> _cef_load_handler_t {
-        _cef_load_handler_t {
-            base: self.base.into(),
-            on_loading_state_change: self.on_loading_state_change.into(),
-            on_load_start: self.on_load_start.into(),
-            on_load_end: self.on_load_end.into(),
-            on_load_error: self.on_load_error.into(),
+impl From<LoadHandler> for _cef_load_handler_t {
+    fn from(value: LoadHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_loading_state_change: value.on_loading_state_change,
+            on_load_start: value.on_load_start,
+            on_load_end: value.on_load_end,
+            on_load_error: value.on_load_error,
         }
     }
 }
@@ -7960,17 +7958,17 @@ impl From<_cef_media_access_callback_t> for MediaAccessCallback {
     fn from(value: _cef_media_access_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
-            cancel: value.cancel.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_media_access_callback_t> for MediaAccessCallback {
-    fn into(self) -> _cef_media_access_callback_t {
-        _cef_media_access_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
-            cancel: self.cancel.into(),
+impl From<MediaAccessCallback> for _cef_media_access_callback_t {
+    fn from(value: MediaAccessCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
@@ -7995,15 +7993,15 @@ impl From<_cef_permission_prompt_callback_t> for PermissionPromptCallback {
     fn from(value: _cef_permission_prompt_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
+            cont: value.cont,
         }
     }
 }
-impl Into<_cef_permission_prompt_callback_t> for PermissionPromptCallback {
-    fn into(self) -> _cef_permission_prompt_callback_t {
-        _cef_permission_prompt_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
+impl From<PermissionPromptCallback> for _cef_permission_prompt_callback_t {
+    fn from(value: PermissionPromptCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
         }
     }
 }
@@ -8050,19 +8048,19 @@ impl From<_cef_permission_handler_t> for PermissionHandler {
     fn from(value: _cef_permission_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_request_media_access_permission: value.on_request_media_access_permission.into(),
-            on_show_permission_prompt: value.on_show_permission_prompt.into(),
-            on_dismiss_permission_prompt: value.on_dismiss_permission_prompt.into(),
+            on_request_media_access_permission: value.on_request_media_access_permission,
+            on_show_permission_prompt: value.on_show_permission_prompt,
+            on_dismiss_permission_prompt: value.on_dismiss_permission_prompt,
         }
     }
 }
-impl Into<_cef_permission_handler_t> for PermissionHandler {
-    fn into(self) -> _cef_permission_handler_t {
-        _cef_permission_handler_t {
-            base: self.base.into(),
-            on_request_media_access_permission: self.on_request_media_access_permission.into(),
-            on_show_permission_prompt: self.on_show_permission_prompt.into(),
-            on_dismiss_permission_prompt: self.on_dismiss_permission_prompt.into(),
+impl From<PermissionHandler> for _cef_permission_handler_t {
+    fn from(value: PermissionHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_request_media_access_permission: value.on_request_media_access_permission,
+            on_show_permission_prompt: value.on_show_permission_prompt,
+            on_dismiss_permission_prompt: value.on_dismiss_permission_prompt,
         }
     }
 }
@@ -8172,57 +8170,57 @@ impl From<_cef_print_settings_t> for PrintSettings {
     fn from(value: _cef_print_settings_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_read_only: value.is_read_only.into(),
-            set_orientation: value.set_orientation.into(),
-            is_landscape: value.is_landscape.into(),
-            set_printer_printable_area: value.set_printer_printable_area.into(),
-            set_device_name: value.set_device_name.into(),
-            get_device_name: value.get_device_name.into(),
-            set_dpi: value.set_dpi.into(),
-            get_dpi: value.get_dpi.into(),
-            set_page_ranges: value.set_page_ranges.into(),
-            get_page_ranges_count: value.get_page_ranges_count.into(),
-            get_page_ranges: value.get_page_ranges.into(),
-            set_selection_only: value.set_selection_only.into(),
-            is_selection_only: value.is_selection_only.into(),
-            set_collate: value.set_collate.into(),
-            will_collate: value.will_collate.into(),
-            set_color_model: value.set_color_model.into(),
-            get_color_model: value.get_color_model.into(),
-            set_copies: value.set_copies.into(),
-            get_copies: value.get_copies.into(),
-            set_duplex_mode: value.set_duplex_mode.into(),
-            get_duplex_mode: value.get_duplex_mode.into(),
+            is_valid: value.is_valid,
+            is_read_only: value.is_read_only,
+            set_orientation: value.set_orientation,
+            is_landscape: value.is_landscape,
+            set_printer_printable_area: value.set_printer_printable_area,
+            set_device_name: value.set_device_name,
+            get_device_name: value.get_device_name,
+            set_dpi: value.set_dpi,
+            get_dpi: value.get_dpi,
+            set_page_ranges: value.set_page_ranges,
+            get_page_ranges_count: value.get_page_ranges_count,
+            get_page_ranges: value.get_page_ranges,
+            set_selection_only: value.set_selection_only,
+            is_selection_only: value.is_selection_only,
+            set_collate: value.set_collate,
+            will_collate: value.will_collate,
+            set_color_model: value.set_color_model,
+            get_color_model: value.get_color_model,
+            set_copies: value.set_copies,
+            get_copies: value.get_copies,
+            set_duplex_mode: value.set_duplex_mode,
+            get_duplex_mode: value.get_duplex_mode,
         }
     }
 }
-impl Into<_cef_print_settings_t> for PrintSettings {
-    fn into(self) -> _cef_print_settings_t {
-        _cef_print_settings_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_read_only: self.is_read_only.into(),
-            set_orientation: self.set_orientation.into(),
-            is_landscape: self.is_landscape.into(),
-            set_printer_printable_area: self.set_printer_printable_area.into(),
-            set_device_name: self.set_device_name.into(),
-            get_device_name: self.get_device_name.into(),
-            set_dpi: self.set_dpi.into(),
-            get_dpi: self.get_dpi.into(),
-            set_page_ranges: self.set_page_ranges.into(),
-            get_page_ranges_count: self.get_page_ranges_count.into(),
-            get_page_ranges: self.get_page_ranges.into(),
-            set_selection_only: self.set_selection_only.into(),
-            is_selection_only: self.is_selection_only.into(),
-            set_collate: self.set_collate.into(),
-            will_collate: self.will_collate.into(),
-            set_color_model: self.set_color_model.into(),
-            get_color_model: self.get_color_model.into(),
-            set_copies: self.set_copies.into(),
-            get_copies: self.get_copies.into(),
-            set_duplex_mode: self.set_duplex_mode.into(),
-            get_duplex_mode: self.get_duplex_mode.into(),
+impl From<PrintSettings> for _cef_print_settings_t {
+    fn from(value: PrintSettings) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_read_only: value.is_read_only,
+            set_orientation: value.set_orientation,
+            is_landscape: value.is_landscape,
+            set_printer_printable_area: value.set_printer_printable_area,
+            set_device_name: value.set_device_name,
+            get_device_name: value.get_device_name,
+            set_dpi: value.set_dpi,
+            get_dpi: value.get_dpi,
+            set_page_ranges: value.set_page_ranges,
+            get_page_ranges_count: value.get_page_ranges_count,
+            get_page_ranges: value.get_page_ranges,
+            set_selection_only: value.set_selection_only,
+            is_selection_only: value.is_selection_only,
+            set_collate: value.set_collate,
+            will_collate: value.will_collate,
+            set_color_model: value.set_color_model,
+            get_color_model: value.get_color_model,
+            set_copies: value.set_copies,
+            get_copies: value.get_copies,
+            set_duplex_mode: value.set_duplex_mode,
+            get_duplex_mode: value.get_duplex_mode,
         }
     }
 }
@@ -8249,17 +8247,17 @@ impl From<_cef_print_dialog_callback_t> for PrintDialogCallback {
     fn from(value: _cef_print_dialog_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
-            cancel: value.cancel.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_print_dialog_callback_t> for PrintDialogCallback {
-    fn into(self) -> _cef_print_dialog_callback_t {
-        _cef_print_dialog_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
-            cancel: self.cancel.into(),
+impl From<PrintDialogCallback> for _cef_print_dialog_callback_t {
+    fn from(value: PrintDialogCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
@@ -8280,15 +8278,15 @@ impl From<_cef_print_job_callback_t> for PrintJobCallback {
     fn from(value: _cef_print_job_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
+            cont: value.cont,
         }
     }
 }
-impl Into<_cef_print_job_callback_t> for PrintJobCallback {
-    fn into(self) -> _cef_print_job_callback_t {
-        _cef_print_job_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
+impl From<PrintJobCallback> for _cef_print_job_callback_t {
+    fn from(value: PrintJobCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
         }
     }
 }
@@ -8345,25 +8343,25 @@ impl From<_cef_print_handler_t> for PrintHandler {
     fn from(value: _cef_print_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_print_start: value.on_print_start.into(),
-            on_print_settings: value.on_print_settings.into(),
-            on_print_dialog: value.on_print_dialog.into(),
-            on_print_job: value.on_print_job.into(),
-            on_print_reset: value.on_print_reset.into(),
-            get_pdf_paper_size: value.get_pdf_paper_size.into(),
+            on_print_start: value.on_print_start,
+            on_print_settings: value.on_print_settings,
+            on_print_dialog: value.on_print_dialog,
+            on_print_job: value.on_print_job,
+            on_print_reset: value.on_print_reset,
+            get_pdf_paper_size: value.get_pdf_paper_size,
         }
     }
 }
-impl Into<_cef_print_handler_t> for PrintHandler {
-    fn into(self) -> _cef_print_handler_t {
-        _cef_print_handler_t {
-            base: self.base.into(),
-            on_print_start: self.on_print_start.into(),
-            on_print_settings: self.on_print_settings.into(),
-            on_print_dialog: self.on_print_dialog.into(),
-            on_print_job: self.on_print_job.into(),
-            on_print_reset: self.on_print_reset.into(),
-            get_pdf_paper_size: self.get_pdf_paper_size.into(),
+impl From<PrintHandler> for _cef_print_handler_t {
+    fn from(value: PrintHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_print_start: value.on_print_start,
+            on_print_settings: value.on_print_settings,
+            on_print_dialog: value.on_print_dialog,
+            on_print_job: value.on_print_job,
+            on_print_reset: value.on_print_reset,
+            get_pdf_paper_size: value.get_pdf_paper_size,
         }
     }
 }
@@ -8394,17 +8392,17 @@ impl From<_cef_accessibility_handler_t> for AccessibilityHandler {
     fn from(value: _cef_accessibility_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_accessibility_tree_change: value.on_accessibility_tree_change.into(),
-            on_accessibility_location_change: value.on_accessibility_location_change.into(),
+            on_accessibility_tree_change: value.on_accessibility_tree_change,
+            on_accessibility_location_change: value.on_accessibility_location_change,
         }
     }
 }
-impl Into<_cef_accessibility_handler_t> for AccessibilityHandler {
-    fn into(self) -> _cef_accessibility_handler_t {
-        _cef_accessibility_handler_t {
-            base: self.base.into(),
-            on_accessibility_tree_change: self.on_accessibility_tree_change.into(),
-            on_accessibility_location_change: self.on_accessibility_location_change.into(),
+impl From<AccessibilityHandler> for _cef_accessibility_handler_t {
+    fn from(value: AccessibilityHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_accessibility_tree_change: value.on_accessibility_tree_change,
+            on_accessibility_location_change: value.on_accessibility_location_change,
         }
     }
 }
@@ -8559,47 +8557,47 @@ impl From<_cef_render_handler_t> for RenderHandler {
     fn from(value: _cef_render_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            get_accessibility_handler: value.get_accessibility_handler.into(),
-            get_root_screen_rect: value.get_root_screen_rect.into(),
-            get_view_rect: value.get_view_rect.into(),
-            get_screen_point: value.get_screen_point.into(),
-            get_screen_info: value.get_screen_info.into(),
-            on_popup_show: value.on_popup_show.into(),
-            on_popup_size: value.on_popup_size.into(),
-            on_paint: value.on_paint.into(),
-            on_accelerated_paint: value.on_accelerated_paint.into(),
-            get_touch_handle_size: value.get_touch_handle_size.into(),
-            on_touch_handle_state_changed: value.on_touch_handle_state_changed.into(),
-            start_dragging: value.start_dragging.into(),
-            update_drag_cursor: value.update_drag_cursor.into(),
-            on_scroll_offset_changed: value.on_scroll_offset_changed.into(),
-            on_ime_composition_range_changed: value.on_ime_composition_range_changed.into(),
-            on_text_selection_changed: value.on_text_selection_changed.into(),
-            on_virtual_keyboard_requested: value.on_virtual_keyboard_requested.into(),
+            get_accessibility_handler: value.get_accessibility_handler,
+            get_root_screen_rect: value.get_root_screen_rect,
+            get_view_rect: value.get_view_rect,
+            get_screen_point: value.get_screen_point,
+            get_screen_info: value.get_screen_info,
+            on_popup_show: value.on_popup_show,
+            on_popup_size: value.on_popup_size,
+            on_paint: value.on_paint,
+            on_accelerated_paint: value.on_accelerated_paint,
+            get_touch_handle_size: value.get_touch_handle_size,
+            on_touch_handle_state_changed: value.on_touch_handle_state_changed,
+            start_dragging: value.start_dragging,
+            update_drag_cursor: value.update_drag_cursor,
+            on_scroll_offset_changed: value.on_scroll_offset_changed,
+            on_ime_composition_range_changed: value.on_ime_composition_range_changed,
+            on_text_selection_changed: value.on_text_selection_changed,
+            on_virtual_keyboard_requested: value.on_virtual_keyboard_requested,
         }
     }
 }
-impl Into<_cef_render_handler_t> for RenderHandler {
-    fn into(self) -> _cef_render_handler_t {
-        _cef_render_handler_t {
-            base: self.base.into(),
-            get_accessibility_handler: self.get_accessibility_handler.into(),
-            get_root_screen_rect: self.get_root_screen_rect.into(),
-            get_view_rect: self.get_view_rect.into(),
-            get_screen_point: self.get_screen_point.into(),
-            get_screen_info: self.get_screen_info.into(),
-            on_popup_show: self.on_popup_show.into(),
-            on_popup_size: self.on_popup_size.into(),
-            on_paint: self.on_paint.into(),
-            on_accelerated_paint: self.on_accelerated_paint.into(),
-            get_touch_handle_size: self.get_touch_handle_size.into(),
-            on_touch_handle_state_changed: self.on_touch_handle_state_changed.into(),
-            start_dragging: self.start_dragging.into(),
-            update_drag_cursor: self.update_drag_cursor.into(),
-            on_scroll_offset_changed: self.on_scroll_offset_changed.into(),
-            on_ime_composition_range_changed: self.on_ime_composition_range_changed.into(),
-            on_text_selection_changed: self.on_text_selection_changed.into(),
-            on_virtual_keyboard_requested: self.on_virtual_keyboard_requested.into(),
+impl From<RenderHandler> for _cef_render_handler_t {
+    fn from(value: RenderHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            get_accessibility_handler: value.get_accessibility_handler,
+            get_root_screen_rect: value.get_root_screen_rect,
+            get_view_rect: value.get_view_rect,
+            get_screen_point: value.get_screen_point,
+            get_screen_info: value.get_screen_info,
+            on_popup_show: value.on_popup_show,
+            on_popup_size: value.on_popup_size,
+            on_paint: value.on_paint,
+            on_accelerated_paint: value.on_accelerated_paint,
+            get_touch_handle_size: value.get_touch_handle_size,
+            on_touch_handle_state_changed: value.on_touch_handle_state_changed,
+            start_dragging: value.start_dragging,
+            update_drag_cursor: value.update_drag_cursor,
+            on_scroll_offset_changed: value.on_scroll_offset_changed,
+            on_ime_composition_range_changed: value.on_ime_composition_range_changed,
+            on_text_selection_changed: value.on_text_selection_changed,
+            on_virtual_keyboard_requested: value.on_virtual_keyboard_requested,
         }
     }
 }
@@ -8626,17 +8624,17 @@ impl From<_cef_auth_callback_t> for AuthCallback {
     fn from(value: _cef_auth_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
-            cancel: value.cancel.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_auth_callback_t> for AuthCallback {
-    fn into(self) -> _cef_auth_callback_t {
-        _cef_auth_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
-            cancel: self.cancel.into(),
+impl From<AuthCallback> for _cef_auth_callback_t {
+    fn from(value: AuthCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
+            cancel: value.cancel,
         }
     }
 }
@@ -8714,47 +8712,47 @@ impl From<_cef_response_t> for Response {
     fn from(value: _cef_response_t) -> Self {
         Self {
             base: value.base.into(),
-            is_read_only: value.is_read_only.into(),
-            get_error: value.get_error.into(),
-            set_error: value.set_error.into(),
-            get_status: value.get_status.into(),
-            set_status: value.set_status.into(),
-            get_status_text: value.get_status_text.into(),
-            set_status_text: value.set_status_text.into(),
-            get_mime_type: value.get_mime_type.into(),
-            set_mime_type: value.set_mime_type.into(),
-            get_charset: value.get_charset.into(),
-            set_charset: value.set_charset.into(),
-            get_header_by_name: value.get_header_by_name.into(),
-            set_header_by_name: value.set_header_by_name.into(),
-            get_header_map: value.get_header_map.into(),
-            set_header_map: value.set_header_map.into(),
-            get_url: value.get_url.into(),
-            set_url: value.set_url.into(),
+            is_read_only: value.is_read_only,
+            get_error: value.get_error,
+            set_error: value.set_error,
+            get_status: value.get_status,
+            set_status: value.set_status,
+            get_status_text: value.get_status_text,
+            set_status_text: value.set_status_text,
+            get_mime_type: value.get_mime_type,
+            set_mime_type: value.set_mime_type,
+            get_charset: value.get_charset,
+            set_charset: value.set_charset,
+            get_header_by_name: value.get_header_by_name,
+            set_header_by_name: value.set_header_by_name,
+            get_header_map: value.get_header_map,
+            set_header_map: value.set_header_map,
+            get_url: value.get_url,
+            set_url: value.set_url,
         }
     }
 }
-impl Into<_cef_response_t> for Response {
-    fn into(self) -> _cef_response_t {
-        _cef_response_t {
-            base: self.base.into(),
-            is_read_only: self.is_read_only.into(),
-            get_error: self.get_error.into(),
-            set_error: self.set_error.into(),
-            get_status: self.get_status.into(),
-            set_status: self.set_status.into(),
-            get_status_text: self.get_status_text.into(),
-            set_status_text: self.set_status_text.into(),
-            get_mime_type: self.get_mime_type.into(),
-            set_mime_type: self.set_mime_type.into(),
-            get_charset: self.get_charset.into(),
-            set_charset: self.set_charset.into(),
-            get_header_by_name: self.get_header_by_name.into(),
-            set_header_by_name: self.set_header_by_name.into(),
-            get_header_map: self.get_header_map.into(),
-            set_header_map: self.set_header_map.into(),
-            get_url: self.get_url.into(),
-            set_url: self.set_url.into(),
+impl From<Response> for _cef_response_t {
+    fn from(value: Response) -> Self {
+        Self {
+            base: value.base.into(),
+            is_read_only: value.is_read_only,
+            get_error: value.get_error,
+            set_error: value.set_error,
+            get_status: value.get_status,
+            set_status: value.set_status,
+            get_status_text: value.get_status_text,
+            set_status_text: value.set_status_text,
+            get_mime_type: value.get_mime_type,
+            set_mime_type: value.set_mime_type,
+            get_charset: value.get_charset,
+            set_charset: value.set_charset,
+            get_header_by_name: value.get_header_by_name,
+            set_header_by_name: value.set_header_by_name,
+            get_header_map: value.get_header_map,
+            set_header_map: value.set_header_map,
+            get_url: value.get_url,
+            set_url: value.set_url,
         }
     }
 }
@@ -8776,15 +8774,15 @@ impl From<_cef_resource_skip_callback_t> for ResourceSkipCallback {
     fn from(value: _cef_resource_skip_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
+            cont: value.cont,
         }
     }
 }
-impl Into<_cef_resource_skip_callback_t> for ResourceSkipCallback {
-    fn into(self) -> _cef_resource_skip_callback_t {
-        _cef_resource_skip_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
+impl From<ResourceSkipCallback> for _cef_resource_skip_callback_t {
+    fn from(value: ResourceSkipCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
         }
     }
 }
@@ -8809,15 +8807,15 @@ impl From<_cef_resource_read_callback_t> for ResourceReadCallback {
     fn from(value: _cef_resource_read_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            cont: value.cont.into(),
+            cont: value.cont,
         }
     }
 }
-impl Into<_cef_resource_read_callback_t> for ResourceReadCallback {
-    fn into(self) -> _cef_resource_read_callback_t {
-        _cef_resource_read_callback_t {
-            base: self.base.into(),
-            cont: self.cont.into(),
+impl From<ResourceReadCallback> for _cef_resource_read_callback_t {
+    fn from(value: ResourceReadCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont,
         }
     }
 }
@@ -8887,27 +8885,27 @@ impl From<_cef_resource_handler_t> for ResourceHandler {
     fn from(value: _cef_resource_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            open: value.open.into(),
-            process_request: value.process_request.into(),
-            get_response_headers: value.get_response_headers.into(),
-            skip: value.skip.into(),
-            read: value.read.into(),
-            read_response: value.read_response.into(),
-            cancel: value.cancel.into(),
+            open: value.open,
+            process_request: value.process_request,
+            get_response_headers: value.get_response_headers,
+            skip: value.skip,
+            read: value.read,
+            read_response: value.read_response,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_resource_handler_t> for ResourceHandler {
-    fn into(self) -> _cef_resource_handler_t {
-        _cef_resource_handler_t {
-            base: self.base.into(),
-            open: self.open.into(),
-            process_request: self.process_request.into(),
-            get_response_headers: self.get_response_headers.into(),
-            skip: self.skip.into(),
-            read: self.read.into(),
-            read_response: self.read_response.into(),
-            cancel: self.cancel.into(),
+impl From<ResourceHandler> for _cef_resource_handler_t {
+    fn from(value: ResourceHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            open: value.open,
+            process_request: value.process_request,
+            get_response_headers: value.get_response_headers,
+            skip: value.skip,
+            read: value.read,
+            read_response: value.read_response,
+            cancel: value.cancel,
         }
     }
 }
@@ -8940,17 +8938,17 @@ impl From<_cef_response_filter_t> for ResponseFilter {
     fn from(value: _cef_response_filter_t) -> Self {
         Self {
             base: value.base.into(),
-            init_filter: value.init_filter.into(),
-            filter: value.filter.into(),
+            init_filter: value.init_filter,
+            filter: value.filter,
         }
     }
 }
-impl Into<_cef_response_filter_t> for ResponseFilter {
-    fn into(self) -> _cef_response_filter_t {
-        _cef_response_filter_t {
-            base: self.base.into(),
-            init_filter: self.init_filter.into(),
-            filter: self.filter.into(),
+impl From<ResponseFilter> for _cef_response_filter_t {
+    fn from(value: ResponseFilter) -> Self {
+        Self {
+            base: value.base.into(),
+            init_filter: value.init_filter,
+            filter: value.filter,
         }
     }
 }
@@ -9042,29 +9040,29 @@ impl From<_cef_resource_request_handler_t> for ResourceRequestHandler {
     fn from(value: _cef_resource_request_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            get_cookie_access_filter: value.get_cookie_access_filter.into(),
-            on_before_resource_load: value.on_before_resource_load.into(),
-            get_resource_handler: value.get_resource_handler.into(),
-            on_resource_redirect: value.on_resource_redirect.into(),
-            on_resource_response: value.on_resource_response.into(),
-            get_resource_response_filter: value.get_resource_response_filter.into(),
-            on_resource_load_complete: value.on_resource_load_complete.into(),
-            on_protocol_execution: value.on_protocol_execution.into(),
+            get_cookie_access_filter: value.get_cookie_access_filter,
+            on_before_resource_load: value.on_before_resource_load,
+            get_resource_handler: value.get_resource_handler,
+            on_resource_redirect: value.on_resource_redirect,
+            on_resource_response: value.on_resource_response,
+            get_resource_response_filter: value.get_resource_response_filter,
+            on_resource_load_complete: value.on_resource_load_complete,
+            on_protocol_execution: value.on_protocol_execution,
         }
     }
 }
-impl Into<_cef_resource_request_handler_t> for ResourceRequestHandler {
-    fn into(self) -> _cef_resource_request_handler_t {
-        _cef_resource_request_handler_t {
-            base: self.base.into(),
-            get_cookie_access_filter: self.get_cookie_access_filter.into(),
-            on_before_resource_load: self.on_before_resource_load.into(),
-            get_resource_handler: self.get_resource_handler.into(),
-            on_resource_redirect: self.on_resource_redirect.into(),
-            on_resource_response: self.on_resource_response.into(),
-            get_resource_response_filter: self.get_resource_response_filter.into(),
-            on_resource_load_complete: self.on_resource_load_complete.into(),
-            on_protocol_execution: self.on_protocol_execution.into(),
+impl From<ResourceRequestHandler> for _cef_resource_request_handler_t {
+    fn from(value: ResourceRequestHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            get_cookie_access_filter: value.get_cookie_access_filter,
+            on_before_resource_load: value.on_before_resource_load,
+            get_resource_handler: value.get_resource_handler,
+            on_resource_redirect: value.on_resource_redirect,
+            on_resource_response: value.on_resource_response,
+            get_resource_response_filter: value.get_resource_response_filter,
+            on_resource_load_complete: value.on_resource_load_complete,
+            on_protocol_execution: value.on_protocol_execution,
         }
     }
 }
@@ -9102,17 +9100,17 @@ impl From<_cef_cookie_access_filter_t> for CookieAccessFilter {
     fn from(value: _cef_cookie_access_filter_t) -> Self {
         Self {
             base: value.base.into(),
-            can_send_cookie: value.can_send_cookie.into(),
-            can_save_cookie: value.can_save_cookie.into(),
+            can_send_cookie: value.can_send_cookie,
+            can_save_cookie: value.can_save_cookie,
         }
     }
 }
-impl Into<_cef_cookie_access_filter_t> for CookieAccessFilter {
-    fn into(self) -> _cef_cookie_access_filter_t {
-        _cef_cookie_access_filter_t {
-            base: self.base.into(),
-            can_send_cookie: self.can_send_cookie.into(),
-            can_save_cookie: self.can_save_cookie.into(),
+impl From<CookieAccessFilter> for _cef_cookie_access_filter_t {
+    fn from(value: CookieAccessFilter) -> Self {
+        Self {
+            base: value.base.into(),
+            can_send_cookie: value.can_send_cookie,
+            can_save_cookie: value.can_save_cookie,
         }
     }
 }
@@ -9137,17 +9135,17 @@ impl From<_cef_sslinfo_t> for Sslinfo {
     fn from(value: _cef_sslinfo_t) -> Self {
         Self {
             base: value.base.into(),
-            get_cert_status: value.get_cert_status.into(),
-            get_x_509_certificate: value.get_x509_certificate.into(),
+            get_cert_status: value.get_cert_status,
+            get_x_509_certificate: value.get_x509_certificate,
         }
     }
 }
-impl Into<_cef_sslinfo_t> for Sslinfo {
-    fn into(self) -> _cef_sslinfo_t {
-        _cef_sslinfo_t {
-            base: self.base.into(),
-            get_cert_status: self.get_cert_status.into(),
-            get_x509_certificate: self.get_x_509_certificate.into(),
+impl From<Sslinfo> for _cef_sslinfo_t {
+    fn from(value: Sslinfo) -> Self {
+        Self {
+            base: value.base.into(),
+            get_cert_status: value.get_cert_status,
+            get_x509_certificate: value.get_x_509_certificate,
         }
     }
 }
@@ -9172,17 +9170,17 @@ impl From<_cef_unresponsive_process_callback_t> for UnresponsiveProcessCallback 
     fn from(value: _cef_unresponsive_process_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            wait: value.wait.into(),
-            terminate: value.terminate.into(),
+            wait: value.wait,
+            terminate: value.terminate,
         }
     }
 }
-impl Into<_cef_unresponsive_process_callback_t> for UnresponsiveProcessCallback {
-    fn into(self) -> _cef_unresponsive_process_callback_t {
-        _cef_unresponsive_process_callback_t {
-            base: self.base.into(),
-            wait: self.wait.into(),
-            terminate: self.terminate.into(),
+impl From<UnresponsiveProcessCallback> for _cef_unresponsive_process_callback_t {
+    fn from(value: UnresponsiveProcessCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            wait: value.wait,
+            terminate: value.terminate,
         }
     }
 }
@@ -9207,15 +9205,15 @@ impl From<_cef_select_client_certificate_callback_t> for SelectClientCertificate
     fn from(value: _cef_select_client_certificate_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            select: value.select.into(),
+            select: value.select,
         }
     }
 }
-impl Into<_cef_select_client_certificate_callback_t> for SelectClientCertificateCallback {
-    fn into(self) -> _cef_select_client_certificate_callback_t {
-        _cef_select_client_certificate_callback_t {
-            base: self.base.into(),
-            select: self.select.into(),
+impl From<SelectClientCertificateCallback> for _cef_select_client_certificate_callback_t {
+    fn from(value: SelectClientCertificateCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            select: value.select,
         }
     }
 }
@@ -9335,35 +9333,35 @@ impl From<_cef_request_handler_t> for RequestHandler {
     fn from(value: _cef_request_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_before_browse: value.on_before_browse.into(),
-            on_open_urlfrom_tab: value.on_open_urlfrom_tab.into(),
-            get_resource_request_handler: value.get_resource_request_handler.into(),
-            get_auth_credentials: value.get_auth_credentials.into(),
-            on_certificate_error: value.on_certificate_error.into(),
-            on_select_client_certificate: value.on_select_client_certificate.into(),
-            on_render_view_ready: value.on_render_view_ready.into(),
-            on_render_process_unresponsive: value.on_render_process_unresponsive.into(),
-            on_render_process_responsive: value.on_render_process_responsive.into(),
-            on_render_process_terminated: value.on_render_process_terminated.into(),
-            on_document_available_in_main_frame: value.on_document_available_in_main_frame.into(),
+            on_before_browse: value.on_before_browse,
+            on_open_urlfrom_tab: value.on_open_urlfrom_tab,
+            get_resource_request_handler: value.get_resource_request_handler,
+            get_auth_credentials: value.get_auth_credentials,
+            on_certificate_error: value.on_certificate_error,
+            on_select_client_certificate: value.on_select_client_certificate,
+            on_render_view_ready: value.on_render_view_ready,
+            on_render_process_unresponsive: value.on_render_process_unresponsive,
+            on_render_process_responsive: value.on_render_process_responsive,
+            on_render_process_terminated: value.on_render_process_terminated,
+            on_document_available_in_main_frame: value.on_document_available_in_main_frame,
         }
     }
 }
-impl Into<_cef_request_handler_t> for RequestHandler {
-    fn into(self) -> _cef_request_handler_t {
-        _cef_request_handler_t {
-            base: self.base.into(),
-            on_before_browse: self.on_before_browse.into(),
-            on_open_urlfrom_tab: self.on_open_urlfrom_tab.into(),
-            get_resource_request_handler: self.get_resource_request_handler.into(),
-            get_auth_credentials: self.get_auth_credentials.into(),
-            on_certificate_error: self.on_certificate_error.into(),
-            on_select_client_certificate: self.on_select_client_certificate.into(),
-            on_render_view_ready: self.on_render_view_ready.into(),
-            on_render_process_unresponsive: self.on_render_process_unresponsive.into(),
-            on_render_process_responsive: self.on_render_process_responsive.into(),
-            on_render_process_terminated: self.on_render_process_terminated.into(),
-            on_document_available_in_main_frame: self.on_document_available_in_main_frame.into(),
+impl From<RequestHandler> for _cef_request_handler_t {
+    fn from(value: RequestHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_before_browse: value.on_before_browse,
+            on_open_urlfrom_tab: value.on_open_urlfrom_tab,
+            get_resource_request_handler: value.get_resource_request_handler,
+            get_auth_credentials: value.get_auth_credentials,
+            on_certificate_error: value.on_certificate_error,
+            on_select_client_certificate: value.on_select_client_certificate,
+            on_render_view_ready: value.on_render_view_ready,
+            on_render_process_unresponsive: value.on_render_process_unresponsive,
+            on_render_process_responsive: value.on_render_process_responsive,
+            on_render_process_terminated: value.on_render_process_terminated,
+            on_document_available_in_main_frame: value.on_document_available_in_main_frame,
         }
     }
 }
@@ -9445,51 +9443,51 @@ impl From<_cef_client_t> for Client {
     fn from(value: _cef_client_t) -> Self {
         Self {
             base: value.base.into(),
-            get_audio_handler: value.get_audio_handler.into(),
-            get_command_handler: value.get_command_handler.into(),
-            get_context_menu_handler: value.get_context_menu_handler.into(),
-            get_dialog_handler: value.get_dialog_handler.into(),
-            get_display_handler: value.get_display_handler.into(),
-            get_download_handler: value.get_download_handler.into(),
-            get_drag_handler: value.get_drag_handler.into(),
-            get_find_handler: value.get_find_handler.into(),
-            get_focus_handler: value.get_focus_handler.into(),
-            get_frame_handler: value.get_frame_handler.into(),
-            get_permission_handler: value.get_permission_handler.into(),
-            get_jsdialog_handler: value.get_jsdialog_handler.into(),
-            get_keyboard_handler: value.get_keyboard_handler.into(),
-            get_life_span_handler: value.get_life_span_handler.into(),
-            get_load_handler: value.get_load_handler.into(),
-            get_print_handler: value.get_print_handler.into(),
-            get_render_handler: value.get_render_handler.into(),
-            get_request_handler: value.get_request_handler.into(),
-            on_process_message_received: value.on_process_message_received.into(),
+            get_audio_handler: value.get_audio_handler,
+            get_command_handler: value.get_command_handler,
+            get_context_menu_handler: value.get_context_menu_handler,
+            get_dialog_handler: value.get_dialog_handler,
+            get_display_handler: value.get_display_handler,
+            get_download_handler: value.get_download_handler,
+            get_drag_handler: value.get_drag_handler,
+            get_find_handler: value.get_find_handler,
+            get_focus_handler: value.get_focus_handler,
+            get_frame_handler: value.get_frame_handler,
+            get_permission_handler: value.get_permission_handler,
+            get_jsdialog_handler: value.get_jsdialog_handler,
+            get_keyboard_handler: value.get_keyboard_handler,
+            get_life_span_handler: value.get_life_span_handler,
+            get_load_handler: value.get_load_handler,
+            get_print_handler: value.get_print_handler,
+            get_render_handler: value.get_render_handler,
+            get_request_handler: value.get_request_handler,
+            on_process_message_received: value.on_process_message_received,
         }
     }
 }
-impl Into<_cef_client_t> for Client {
-    fn into(self) -> _cef_client_t {
-        _cef_client_t {
-            base: self.base.into(),
-            get_audio_handler: self.get_audio_handler.into(),
-            get_command_handler: self.get_command_handler.into(),
-            get_context_menu_handler: self.get_context_menu_handler.into(),
-            get_dialog_handler: self.get_dialog_handler.into(),
-            get_display_handler: self.get_display_handler.into(),
-            get_download_handler: self.get_download_handler.into(),
-            get_drag_handler: self.get_drag_handler.into(),
-            get_find_handler: self.get_find_handler.into(),
-            get_focus_handler: self.get_focus_handler.into(),
-            get_frame_handler: self.get_frame_handler.into(),
-            get_permission_handler: self.get_permission_handler.into(),
-            get_jsdialog_handler: self.get_jsdialog_handler.into(),
-            get_keyboard_handler: self.get_keyboard_handler.into(),
-            get_life_span_handler: self.get_life_span_handler.into(),
-            get_load_handler: self.get_load_handler.into(),
-            get_print_handler: self.get_print_handler.into(),
-            get_render_handler: self.get_render_handler.into(),
-            get_request_handler: self.get_request_handler.into(),
-            on_process_message_received: self.on_process_message_received.into(),
+impl From<Client> for _cef_client_t {
+    fn from(value: Client) -> Self {
+        Self {
+            base: value.base.into(),
+            get_audio_handler: value.get_audio_handler,
+            get_command_handler: value.get_command_handler,
+            get_context_menu_handler: value.get_context_menu_handler,
+            get_dialog_handler: value.get_dialog_handler,
+            get_display_handler: value.get_display_handler,
+            get_download_handler: value.get_download_handler,
+            get_drag_handler: value.get_drag_handler,
+            get_find_handler: value.get_find_handler,
+            get_focus_handler: value.get_focus_handler,
+            get_frame_handler: value.get_frame_handler,
+            get_permission_handler: value.get_permission_handler,
+            get_jsdialog_handler: value.get_jsdialog_handler,
+            get_keyboard_handler: value.get_keyboard_handler,
+            get_life_span_handler: value.get_life_span_handler,
+            get_load_handler: value.get_load_handler,
+            get_print_handler: value.get_print_handler,
+            get_render_handler: value.get_render_handler,
+            get_request_handler: value.get_request_handler,
+            on_process_message_received: value.on_process_message_received,
         }
     }
 }
@@ -9583,53 +9581,53 @@ impl From<_cef_command_line_t> for CommandLine {
     fn from(value: _cef_command_line_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_read_only: value.is_read_only.into(),
-            copy: value.copy.into(),
-            init_from_argv: value.init_from_argv.into(),
-            init_from_string: value.init_from_string.into(),
-            reset: value.reset.into(),
-            get_argv: value.get_argv.into(),
-            get_command_line_string: value.get_command_line_string.into(),
-            get_program: value.get_program.into(),
-            set_program: value.set_program.into(),
-            has_switches: value.has_switches.into(),
-            has_switch: value.has_switch.into(),
-            get_switch_value: value.get_switch_value.into(),
-            get_switches: value.get_switches.into(),
-            append_switch: value.append_switch.into(),
-            append_switch_with_value: value.append_switch_with_value.into(),
-            has_arguments: value.has_arguments.into(),
-            get_arguments: value.get_arguments.into(),
-            append_argument: value.append_argument.into(),
-            prepend_wrapper: value.prepend_wrapper.into(),
+            is_valid: value.is_valid,
+            is_read_only: value.is_read_only,
+            copy: value.copy,
+            init_from_argv: value.init_from_argv,
+            init_from_string: value.init_from_string,
+            reset: value.reset,
+            get_argv: value.get_argv,
+            get_command_line_string: value.get_command_line_string,
+            get_program: value.get_program,
+            set_program: value.set_program,
+            has_switches: value.has_switches,
+            has_switch: value.has_switch,
+            get_switch_value: value.get_switch_value,
+            get_switches: value.get_switches,
+            append_switch: value.append_switch,
+            append_switch_with_value: value.append_switch_with_value,
+            has_arguments: value.has_arguments,
+            get_arguments: value.get_arguments,
+            append_argument: value.append_argument,
+            prepend_wrapper: value.prepend_wrapper,
         }
     }
 }
-impl Into<_cef_command_line_t> for CommandLine {
-    fn into(self) -> _cef_command_line_t {
-        _cef_command_line_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_read_only: self.is_read_only.into(),
-            copy: self.copy.into(),
-            init_from_argv: self.init_from_argv.into(),
-            init_from_string: self.init_from_string.into(),
-            reset: self.reset.into(),
-            get_argv: self.get_argv.into(),
-            get_command_line_string: self.get_command_line_string.into(),
-            get_program: self.get_program.into(),
-            set_program: self.set_program.into(),
-            has_switches: self.has_switches.into(),
-            has_switch: self.has_switch.into(),
-            get_switch_value: self.get_switch_value.into(),
-            get_switches: self.get_switches.into(),
-            append_switch: self.append_switch.into(),
-            append_switch_with_value: self.append_switch_with_value.into(),
-            has_arguments: self.has_arguments.into(),
-            get_arguments: self.get_arguments.into(),
-            append_argument: self.append_argument.into(),
-            prepend_wrapper: self.prepend_wrapper.into(),
+impl From<CommandLine> for _cef_command_line_t {
+    fn from(value: CommandLine) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_read_only: value.is_read_only,
+            copy: value.copy,
+            init_from_argv: value.init_from_argv,
+            init_from_string: value.init_from_string,
+            reset: value.reset,
+            get_argv: value.get_argv,
+            get_command_line_string: value.get_command_line_string,
+            get_program: value.get_program,
+            set_program: value.set_program,
+            has_switches: value.has_switches,
+            has_switch: value.has_switch,
+            get_switch_value: value.get_switch_value,
+            get_switches: value.get_switches,
+            append_switch: value.append_switch,
+            append_switch_with_value: value.append_switch_with_value,
+            has_arguments: value.has_arguments,
+            get_arguments: value.get_arguments,
+            append_argument: value.append_argument,
+            prepend_wrapper: value.prepend_wrapper,
         }
     }
 }
@@ -9666,17 +9664,17 @@ impl From<_cef_request_context_handler_t> for RequestContextHandler {
     fn from(value: _cef_request_context_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_request_context_initialized: value.on_request_context_initialized.into(),
-            get_resource_request_handler: value.get_resource_request_handler.into(),
+            on_request_context_initialized: value.on_request_context_initialized,
+            get_resource_request_handler: value.get_resource_request_handler,
         }
     }
 }
-impl Into<_cef_request_context_handler_t> for RequestContextHandler {
-    fn into(self) -> _cef_request_context_handler_t {
-        _cef_request_context_handler_t {
-            base: self.base.into(),
-            on_request_context_initialized: self.on_request_context_initialized.into(),
-            get_resource_request_handler: self.get_resource_request_handler.into(),
+impl From<RequestContextHandler> for _cef_request_context_handler_t {
+    fn from(value: RequestContextHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_request_context_initialized: value.on_request_context_initialized,
+            get_resource_request_handler: value.get_resource_request_handler,
         }
     }
 }
@@ -9731,27 +9729,27 @@ impl From<_cef_browser_process_handler_t> for BrowserProcessHandler {
     fn from(value: _cef_browser_process_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_register_custom_preferences: value.on_register_custom_preferences.into(),
-            on_context_initialized: value.on_context_initialized.into(),
-            on_before_child_process_launch: value.on_before_child_process_launch.into(),
-            on_already_running_app_relaunch: value.on_already_running_app_relaunch.into(),
-            on_schedule_message_pump_work: value.on_schedule_message_pump_work.into(),
-            get_default_client: value.get_default_client.into(),
-            get_default_request_context_handler: value.get_default_request_context_handler.into(),
+            on_register_custom_preferences: value.on_register_custom_preferences,
+            on_context_initialized: value.on_context_initialized,
+            on_before_child_process_launch: value.on_before_child_process_launch,
+            on_already_running_app_relaunch: value.on_already_running_app_relaunch,
+            on_schedule_message_pump_work: value.on_schedule_message_pump_work,
+            get_default_client: value.get_default_client,
+            get_default_request_context_handler: value.get_default_request_context_handler,
         }
     }
 }
-impl Into<_cef_browser_process_handler_t> for BrowserProcessHandler {
-    fn into(self) -> _cef_browser_process_handler_t {
-        _cef_browser_process_handler_t {
-            base: self.base.into(),
-            on_register_custom_preferences: self.on_register_custom_preferences.into(),
-            on_context_initialized: self.on_context_initialized.into(),
-            on_before_child_process_launch: self.on_before_child_process_launch.into(),
-            on_already_running_app_relaunch: self.on_already_running_app_relaunch.into(),
-            on_schedule_message_pump_work: self.on_schedule_message_pump_work.into(),
-            get_default_client: self.get_default_client.into(),
-            get_default_request_context_handler: self.get_default_request_context_handler.into(),
+impl From<BrowserProcessHandler> for _cef_browser_process_handler_t {
+    fn from(value: BrowserProcessHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_register_custom_preferences: value.on_register_custom_preferences,
+            on_context_initialized: value.on_context_initialized,
+            on_before_child_process_launch: value.on_before_child_process_launch,
+            on_already_running_app_relaunch: value.on_already_running_app_relaunch,
+            on_schedule_message_pump_work: value.on_schedule_message_pump_work,
+            get_default_client: value.get_default_client,
+            get_default_request_context_handler: value.get_default_request_context_handler,
         }
     }
 }
@@ -9771,15 +9769,15 @@ impl From<_cef_task_t> for Task {
     fn from(value: _cef_task_t) -> Self {
         Self {
             base: value.base.into(),
-            execute: value.execute.into(),
+            execute: value.execute,
         }
     }
 }
-impl Into<_cef_task_t> for Task {
-    fn into(self) -> _cef_task_t {
-        _cef_task_t {
-            base: self.base.into(),
-            execute: self.execute.into(),
+impl From<Task> for _cef_task_t {
+    fn from(value: Task) -> Self {
+        Self {
+            base: value.base.into(),
+            execute: value.execute,
         }
     }
 }
@@ -9826,23 +9824,23 @@ impl From<_cef_task_runner_t> for TaskRunner {
     fn from(value: _cef_task_runner_t) -> Self {
         Self {
             base: value.base.into(),
-            is_same: value.is_same.into(),
-            belongs_to_current_thread: value.belongs_to_current_thread.into(),
-            belongs_to_thread: value.belongs_to_thread.into(),
-            post_task: value.post_task.into(),
-            post_delayed_task: value.post_delayed_task.into(),
+            is_same: value.is_same,
+            belongs_to_current_thread: value.belongs_to_current_thread,
+            belongs_to_thread: value.belongs_to_thread,
+            post_task: value.post_task,
+            post_delayed_task: value.post_delayed_task,
         }
     }
 }
-impl Into<_cef_task_runner_t> for TaskRunner {
-    fn into(self) -> _cef_task_runner_t {
-        _cef_task_runner_t {
-            base: self.base.into(),
-            is_same: self.is_same.into(),
-            belongs_to_current_thread: self.belongs_to_current_thread.into(),
-            belongs_to_thread: self.belongs_to_thread.into(),
-            post_task: self.post_task.into(),
-            post_delayed_task: self.post_delayed_task.into(),
+impl From<TaskRunner> for _cef_task_runner_t {
+    fn from(value: TaskRunner) -> Self {
+        Self {
+            base: value.base.into(),
+            is_same: value.is_same,
+            belongs_to_current_thread: value.belongs_to_current_thread,
+            belongs_to_thread: value.belongs_to_thread,
+            post_task: value.post_task,
+            post_delayed_task: value.post_delayed_task,
         }
     }
 }
@@ -9898,31 +9896,31 @@ impl From<_cef_v8_context_t> for V8Context {
     fn from(value: _cef_v8_context_t) -> Self {
         Self {
             base: value.base.into(),
-            get_task_runner: value.get_task_runner.into(),
-            is_valid: value.is_valid.into(),
-            get_browser: value.get_browser.into(),
-            get_frame: value.get_frame.into(),
-            get_global: value.get_global.into(),
-            enter: value.enter.into(),
-            exit: value.exit.into(),
-            is_same: value.is_same.into(),
-            eval: value.eval.into(),
+            get_task_runner: value.get_task_runner,
+            is_valid: value.is_valid,
+            get_browser: value.get_browser,
+            get_frame: value.get_frame,
+            get_global: value.get_global,
+            enter: value.enter,
+            exit: value.exit,
+            is_same: value.is_same,
+            eval: value.eval,
         }
     }
 }
-impl Into<_cef_v8_context_t> for V8Context {
-    fn into(self) -> _cef_v8_context_t {
-        _cef_v8_context_t {
-            base: self.base.into(),
-            get_task_runner: self.get_task_runner.into(),
-            is_valid: self.is_valid.into(),
-            get_browser: self.get_browser.into(),
-            get_frame: self.get_frame.into(),
-            get_global: self.get_global.into(),
-            enter: self.enter.into(),
-            exit: self.exit.into(),
-            is_same: self.is_same.into(),
-            eval: self.eval.into(),
+impl From<V8Context> for _cef_v8_context_t {
+    fn from(value: V8Context) -> Self {
+        Self {
+            base: value.base.into(),
+            get_task_runner: value.get_task_runner,
+            is_valid: value.is_valid,
+            get_browser: value.get_browser,
+            get_frame: value.get_frame,
+            get_global: value.get_global,
+            enter: value.enter,
+            exit: value.exit,
+            is_same: value.is_same,
+            eval: value.eval,
         }
     }
 }
@@ -9952,15 +9950,15 @@ impl From<_cef_v8_handler_t> for V8Handler {
     fn from(value: _cef_v8_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            execute: value.execute.into(),
+            execute: value.execute,
         }
     }
 }
-impl Into<_cef_v8_handler_t> for V8Handler {
-    fn into(self) -> _cef_v8_handler_t {
-        _cef_v8_handler_t {
-            base: self.base.into(),
-            execute: self.execute.into(),
+impl From<V8Handler> for _cef_v8_handler_t {
+    fn from(value: V8Handler) -> Self {
+        Self {
+            base: value.base.into(),
+            execute: value.execute,
         }
     }
 }
@@ -9997,17 +9995,17 @@ impl From<_cef_v8_accessor_t> for V8Accessor {
     fn from(value: _cef_v8_accessor_t) -> Self {
         Self {
             base: value.base.into(),
-            get: value.get.into(),
-            set: value.set.into(),
+            get: value.get,
+            set: value.set,
         }
     }
 }
-impl Into<_cef_v8_accessor_t> for V8Accessor {
-    fn into(self) -> _cef_v8_accessor_t {
-        _cef_v8_accessor_t {
-            base: self.base.into(),
-            get: self.get.into(),
-            set: self.set.into(),
+impl From<V8Accessor> for _cef_v8_accessor_t {
+    fn from(value: V8Accessor) -> Self {
+        Self {
+            base: value.base.into(),
+            get: value.get,
+            set: value.set,
         }
     }
 }
@@ -10062,21 +10060,21 @@ impl From<_cef_v8_interceptor_t> for V8Interceptor {
     fn from(value: _cef_v8_interceptor_t) -> Self {
         Self {
             base: value.base.into(),
-            get_byname: value.get_byname.into(),
-            get_byindex: value.get_byindex.into(),
-            set_byname: value.set_byname.into(),
-            set_byindex: value.set_byindex.into(),
+            get_byname: value.get_byname,
+            get_byindex: value.get_byindex,
+            set_byname: value.set_byname,
+            set_byindex: value.set_byindex,
         }
     }
 }
-impl Into<_cef_v8_interceptor_t> for V8Interceptor {
-    fn into(self) -> _cef_v8_interceptor_t {
-        _cef_v8_interceptor_t {
-            base: self.base.into(),
-            get_byname: self.get_byname.into(),
-            get_byindex: self.get_byindex.into(),
-            set_byname: self.set_byname.into(),
-            set_byindex: self.set_byindex.into(),
+impl From<V8Interceptor> for _cef_v8_interceptor_t {
+    fn from(value: V8Interceptor) -> Self {
+        Self {
+            base: value.base.into(),
+            get_byname: value.get_byname,
+            get_byindex: value.get_byindex,
+            set_byname: value.set_byname,
+            set_byindex: value.set_byindex,
         }
     }
 }
@@ -10119,29 +10117,29 @@ impl From<_cef_v8_exception_t> for V8Exception {
     fn from(value: _cef_v8_exception_t) -> Self {
         Self {
             base: value.base.into(),
-            get_message: value.get_message.into(),
-            get_source_line: value.get_source_line.into(),
-            get_script_resource_name: value.get_script_resource_name.into(),
-            get_line_number: value.get_line_number.into(),
-            get_start_position: value.get_start_position.into(),
-            get_end_position: value.get_end_position.into(),
-            get_start_column: value.get_start_column.into(),
-            get_end_column: value.get_end_column.into(),
+            get_message: value.get_message,
+            get_source_line: value.get_source_line,
+            get_script_resource_name: value.get_script_resource_name,
+            get_line_number: value.get_line_number,
+            get_start_position: value.get_start_position,
+            get_end_position: value.get_end_position,
+            get_start_column: value.get_start_column,
+            get_end_column: value.get_end_column,
         }
     }
 }
-impl Into<_cef_v8_exception_t> for V8Exception {
-    fn into(self) -> _cef_v8_exception_t {
-        _cef_v8_exception_t {
-            base: self.base.into(),
-            get_message: self.get_message.into(),
-            get_source_line: self.get_source_line.into(),
-            get_script_resource_name: self.get_script_resource_name.into(),
-            get_line_number: self.get_line_number.into(),
-            get_start_position: self.get_start_position.into(),
-            get_end_position: self.get_end_position.into(),
-            get_start_column: self.get_start_column.into(),
-            get_end_column: self.get_end_column.into(),
+impl From<V8Exception> for _cef_v8_exception_t {
+    fn from(value: V8Exception) -> Self {
+        Self {
+            base: value.base.into(),
+            get_message: value.get_message,
+            get_source_line: value.get_source_line,
+            get_script_resource_name: value.get_script_resource_name,
+            get_line_number: value.get_line_number,
+            get_start_position: value.get_start_position,
+            get_end_position: value.get_end_position,
+            get_start_column: value.get_start_column,
+            get_end_column: value.get_end_column,
         }
     }
 }
@@ -10166,15 +10164,15 @@ impl From<_cef_v8_array_buffer_release_callback_t> for V8ArrayBufferReleaseCallb
     fn from(value: _cef_v8_array_buffer_release_callback_t) -> Self {
         Self {
             base: value.base.into(),
-            release_buffer: value.release_buffer.into(),
+            release_buffer: value.release_buffer,
         }
     }
 }
-impl Into<_cef_v8_array_buffer_release_callback_t> for V8ArrayBufferReleaseCallback {
-    fn into(self) -> _cef_v8_array_buffer_release_callback_t {
-        _cef_v8_array_buffer_release_callback_t {
-            base: self.base.into(),
-            release_buffer: self.release_buffer.into(),
+impl From<V8ArrayBufferReleaseCallback> for _cef_v8_array_buffer_release_callback_t {
+    fn from(value: V8ArrayBufferReleaseCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            release_buffer: value.release_buffer,
         }
     }
 }
@@ -10410,117 +10408,117 @@ impl From<_cef_v8_value_t> for V8Value {
     fn from(value: _cef_v8_value_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_undefined: value.is_undefined.into(),
-            is_null: value.is_null.into(),
-            is_bool: value.is_bool.into(),
-            is_int: value.is_int.into(),
-            is_uint: value.is_uint.into(),
-            is_double: value.is_double.into(),
-            is_date: value.is_date.into(),
-            is_string: value.is_string.into(),
-            is_object: value.is_object.into(),
-            is_array: value.is_array.into(),
-            is_array_buffer: value.is_array_buffer.into(),
-            is_function: value.is_function.into(),
-            is_promise: value.is_promise.into(),
-            is_same: value.is_same.into(),
-            get_bool_value: value.get_bool_value.into(),
-            get_int_value: value.get_int_value.into(),
-            get_uint_value: value.get_uint_value.into(),
-            get_double_value: value.get_double_value.into(),
-            get_date_value: value.get_date_value.into(),
-            get_string_value: value.get_string_value.into(),
-            is_user_created: value.is_user_created.into(),
-            has_exception: value.has_exception.into(),
-            get_exception: value.get_exception.into(),
-            clear_exception: value.clear_exception.into(),
-            will_rethrow_exceptions: value.will_rethrow_exceptions.into(),
-            set_rethrow_exceptions: value.set_rethrow_exceptions.into(),
-            has_value_bykey: value.has_value_bykey.into(),
-            has_value_byindex: value.has_value_byindex.into(),
-            delete_value_bykey: value.delete_value_bykey.into(),
-            delete_value_byindex: value.delete_value_byindex.into(),
-            get_value_bykey: value.get_value_bykey.into(),
-            get_value_byindex: value.get_value_byindex.into(),
-            set_value_bykey: value.set_value_bykey.into(),
-            set_value_byindex: value.set_value_byindex.into(),
-            set_value_byaccessor: value.set_value_byaccessor.into(),
-            get_keys: value.get_keys.into(),
-            set_user_data: value.set_user_data.into(),
-            get_user_data: value.get_user_data.into(),
-            get_externally_allocated_memory: value.get_externally_allocated_memory.into(),
-            adjust_externally_allocated_memory: value.adjust_externally_allocated_memory.into(),
-            get_array_length: value.get_array_length.into(),
-            get_array_buffer_release_callback: value.get_array_buffer_release_callback.into(),
-            neuter_array_buffer: value.neuter_array_buffer.into(),
-            get_array_buffer_byte_length: value.get_array_buffer_byte_length.into(),
-            get_array_buffer_data: value.get_array_buffer_data.into(),
-            get_function_name: value.get_function_name.into(),
-            get_function_handler: value.get_function_handler.into(),
-            execute_function: value.execute_function.into(),
-            execute_function_with_context: value.execute_function_with_context.into(),
-            resolve_promise: value.resolve_promise.into(),
-            reject_promise: value.reject_promise.into(),
+            is_valid: value.is_valid,
+            is_undefined: value.is_undefined,
+            is_null: value.is_null,
+            is_bool: value.is_bool,
+            is_int: value.is_int,
+            is_uint: value.is_uint,
+            is_double: value.is_double,
+            is_date: value.is_date,
+            is_string: value.is_string,
+            is_object: value.is_object,
+            is_array: value.is_array,
+            is_array_buffer: value.is_array_buffer,
+            is_function: value.is_function,
+            is_promise: value.is_promise,
+            is_same: value.is_same,
+            get_bool_value: value.get_bool_value,
+            get_int_value: value.get_int_value,
+            get_uint_value: value.get_uint_value,
+            get_double_value: value.get_double_value,
+            get_date_value: value.get_date_value,
+            get_string_value: value.get_string_value,
+            is_user_created: value.is_user_created,
+            has_exception: value.has_exception,
+            get_exception: value.get_exception,
+            clear_exception: value.clear_exception,
+            will_rethrow_exceptions: value.will_rethrow_exceptions,
+            set_rethrow_exceptions: value.set_rethrow_exceptions,
+            has_value_bykey: value.has_value_bykey,
+            has_value_byindex: value.has_value_byindex,
+            delete_value_bykey: value.delete_value_bykey,
+            delete_value_byindex: value.delete_value_byindex,
+            get_value_bykey: value.get_value_bykey,
+            get_value_byindex: value.get_value_byindex,
+            set_value_bykey: value.set_value_bykey,
+            set_value_byindex: value.set_value_byindex,
+            set_value_byaccessor: value.set_value_byaccessor,
+            get_keys: value.get_keys,
+            set_user_data: value.set_user_data,
+            get_user_data: value.get_user_data,
+            get_externally_allocated_memory: value.get_externally_allocated_memory,
+            adjust_externally_allocated_memory: value.adjust_externally_allocated_memory,
+            get_array_length: value.get_array_length,
+            get_array_buffer_release_callback: value.get_array_buffer_release_callback,
+            neuter_array_buffer: value.neuter_array_buffer,
+            get_array_buffer_byte_length: value.get_array_buffer_byte_length,
+            get_array_buffer_data: value.get_array_buffer_data,
+            get_function_name: value.get_function_name,
+            get_function_handler: value.get_function_handler,
+            execute_function: value.execute_function,
+            execute_function_with_context: value.execute_function_with_context,
+            resolve_promise: value.resolve_promise,
+            reject_promise: value.reject_promise,
         }
     }
 }
-impl Into<_cef_v8_value_t> for V8Value {
-    fn into(self) -> _cef_v8_value_t {
-        _cef_v8_value_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_undefined: self.is_undefined.into(),
-            is_null: self.is_null.into(),
-            is_bool: self.is_bool.into(),
-            is_int: self.is_int.into(),
-            is_uint: self.is_uint.into(),
-            is_double: self.is_double.into(),
-            is_date: self.is_date.into(),
-            is_string: self.is_string.into(),
-            is_object: self.is_object.into(),
-            is_array: self.is_array.into(),
-            is_array_buffer: self.is_array_buffer.into(),
-            is_function: self.is_function.into(),
-            is_promise: self.is_promise.into(),
-            is_same: self.is_same.into(),
-            get_bool_value: self.get_bool_value.into(),
-            get_int_value: self.get_int_value.into(),
-            get_uint_value: self.get_uint_value.into(),
-            get_double_value: self.get_double_value.into(),
-            get_date_value: self.get_date_value.into(),
-            get_string_value: self.get_string_value.into(),
-            is_user_created: self.is_user_created.into(),
-            has_exception: self.has_exception.into(),
-            get_exception: self.get_exception.into(),
-            clear_exception: self.clear_exception.into(),
-            will_rethrow_exceptions: self.will_rethrow_exceptions.into(),
-            set_rethrow_exceptions: self.set_rethrow_exceptions.into(),
-            has_value_bykey: self.has_value_bykey.into(),
-            has_value_byindex: self.has_value_byindex.into(),
-            delete_value_bykey: self.delete_value_bykey.into(),
-            delete_value_byindex: self.delete_value_byindex.into(),
-            get_value_bykey: self.get_value_bykey.into(),
-            get_value_byindex: self.get_value_byindex.into(),
-            set_value_bykey: self.set_value_bykey.into(),
-            set_value_byindex: self.set_value_byindex.into(),
-            set_value_byaccessor: self.set_value_byaccessor.into(),
-            get_keys: self.get_keys.into(),
-            set_user_data: self.set_user_data.into(),
-            get_user_data: self.get_user_data.into(),
-            get_externally_allocated_memory: self.get_externally_allocated_memory.into(),
-            adjust_externally_allocated_memory: self.adjust_externally_allocated_memory.into(),
-            get_array_length: self.get_array_length.into(),
-            get_array_buffer_release_callback: self.get_array_buffer_release_callback.into(),
-            neuter_array_buffer: self.neuter_array_buffer.into(),
-            get_array_buffer_byte_length: self.get_array_buffer_byte_length.into(),
-            get_array_buffer_data: self.get_array_buffer_data.into(),
-            get_function_name: self.get_function_name.into(),
-            get_function_handler: self.get_function_handler.into(),
-            execute_function: self.execute_function.into(),
-            execute_function_with_context: self.execute_function_with_context.into(),
-            resolve_promise: self.resolve_promise.into(),
-            reject_promise: self.reject_promise.into(),
+impl From<V8Value> for _cef_v8_value_t {
+    fn from(value: V8Value) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_undefined: value.is_undefined,
+            is_null: value.is_null,
+            is_bool: value.is_bool,
+            is_int: value.is_int,
+            is_uint: value.is_uint,
+            is_double: value.is_double,
+            is_date: value.is_date,
+            is_string: value.is_string,
+            is_object: value.is_object,
+            is_array: value.is_array,
+            is_array_buffer: value.is_array_buffer,
+            is_function: value.is_function,
+            is_promise: value.is_promise,
+            is_same: value.is_same,
+            get_bool_value: value.get_bool_value,
+            get_int_value: value.get_int_value,
+            get_uint_value: value.get_uint_value,
+            get_double_value: value.get_double_value,
+            get_date_value: value.get_date_value,
+            get_string_value: value.get_string_value,
+            is_user_created: value.is_user_created,
+            has_exception: value.has_exception,
+            get_exception: value.get_exception,
+            clear_exception: value.clear_exception,
+            will_rethrow_exceptions: value.will_rethrow_exceptions,
+            set_rethrow_exceptions: value.set_rethrow_exceptions,
+            has_value_bykey: value.has_value_bykey,
+            has_value_byindex: value.has_value_byindex,
+            delete_value_bykey: value.delete_value_bykey,
+            delete_value_byindex: value.delete_value_byindex,
+            get_value_bykey: value.get_value_bykey,
+            get_value_byindex: value.get_value_byindex,
+            set_value_bykey: value.set_value_bykey,
+            set_value_byindex: value.set_value_byindex,
+            set_value_byaccessor: value.set_value_byaccessor,
+            get_keys: value.get_keys,
+            set_user_data: value.set_user_data,
+            get_user_data: value.get_user_data,
+            get_externally_allocated_memory: value.get_externally_allocated_memory,
+            adjust_externally_allocated_memory: value.adjust_externally_allocated_memory,
+            get_array_length: value.get_array_length,
+            get_array_buffer_release_callback: value.get_array_buffer_release_callback,
+            neuter_array_buffer: value.neuter_array_buffer,
+            get_array_buffer_byte_length: value.get_array_buffer_byte_length,
+            get_array_buffer_data: value.get_array_buffer_data,
+            get_function_name: value.get_function_name,
+            get_function_handler: value.get_function_handler,
+            execute_function: value.execute_function,
+            execute_function_with_context: value.execute_function_with_context,
+            resolve_promise: value.resolve_promise,
+            reject_promise: value.reject_promise,
         }
     }
 }
@@ -10551,19 +10549,19 @@ impl From<_cef_v8_stack_trace_t> for V8StackTrace {
     fn from(value: _cef_v8_stack_trace_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            get_frame_count: value.get_frame_count.into(),
-            get_frame: value.get_frame.into(),
+            is_valid: value.is_valid,
+            get_frame_count: value.get_frame_count,
+            get_frame: value.get_frame,
         }
     }
 }
-impl Into<_cef_v8_stack_trace_t> for V8StackTrace {
-    fn into(self) -> _cef_v8_stack_trace_t {
-        _cef_v8_stack_trace_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            get_frame_count: self.get_frame_count.into(),
-            get_frame: self.get_frame.into(),
+impl From<V8StackTrace> for _cef_v8_stack_trace_t {
+    fn from(value: V8StackTrace) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            get_frame_count: value.get_frame_count,
+            get_frame: value.get_frame,
         }
     }
 }
@@ -10606,29 +10604,29 @@ impl From<_cef_v8_stack_frame_t> for V8StackFrame {
     fn from(value: _cef_v8_stack_frame_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            get_script_name: value.get_script_name.into(),
-            get_script_name_or_source_url: value.get_script_name_or_source_url.into(),
-            get_function_name: value.get_function_name.into(),
-            get_line_number: value.get_line_number.into(),
-            get_column: value.get_column.into(),
-            is_eval: value.is_eval.into(),
-            is_constructor: value.is_constructor.into(),
+            is_valid: value.is_valid,
+            get_script_name: value.get_script_name,
+            get_script_name_or_source_url: value.get_script_name_or_source_url,
+            get_function_name: value.get_function_name,
+            get_line_number: value.get_line_number,
+            get_column: value.get_column,
+            is_eval: value.is_eval,
+            is_constructor: value.is_constructor,
         }
     }
 }
-impl Into<_cef_v8_stack_frame_t> for V8StackFrame {
-    fn into(self) -> _cef_v8_stack_frame_t {
-        _cef_v8_stack_frame_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            get_script_name: self.get_script_name.into(),
-            get_script_name_or_source_url: self.get_script_name_or_source_url.into(),
-            get_function_name: self.get_function_name.into(),
-            get_line_number: self.get_line_number.into(),
-            get_column: self.get_column.into(),
-            is_eval: self.is_eval.into(),
-            is_constructor: self.is_constructor.into(),
+impl From<V8StackFrame> for _cef_v8_stack_frame_t {
+    fn from(value: V8StackFrame) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            get_script_name: value.get_script_name,
+            get_script_name_or_source_url: value.get_script_name_or_source_url,
+            get_function_name: value.get_function_name,
+            get_line_number: value.get_line_number,
+            get_column: value.get_column,
+            is_eval: value.is_eval,
+            is_constructor: value.is_constructor,
         }
     }
 }
@@ -10711,31 +10709,31 @@ impl From<_cef_render_process_handler_t> for RenderProcessHandler {
     fn from(value: _cef_render_process_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            on_web_kit_initialized: value.on_web_kit_initialized.into(),
-            on_browser_created: value.on_browser_created.into(),
-            on_browser_destroyed: value.on_browser_destroyed.into(),
-            get_load_handler: value.get_load_handler.into(),
-            on_context_created: value.on_context_created.into(),
-            on_context_released: value.on_context_released.into(),
-            on_uncaught_exception: value.on_uncaught_exception.into(),
-            on_focused_node_changed: value.on_focused_node_changed.into(),
-            on_process_message_received: value.on_process_message_received.into(),
+            on_web_kit_initialized: value.on_web_kit_initialized,
+            on_browser_created: value.on_browser_created,
+            on_browser_destroyed: value.on_browser_destroyed,
+            get_load_handler: value.get_load_handler,
+            on_context_created: value.on_context_created,
+            on_context_released: value.on_context_released,
+            on_uncaught_exception: value.on_uncaught_exception,
+            on_focused_node_changed: value.on_focused_node_changed,
+            on_process_message_received: value.on_process_message_received,
         }
     }
 }
-impl Into<_cef_render_process_handler_t> for RenderProcessHandler {
-    fn into(self) -> _cef_render_process_handler_t {
-        _cef_render_process_handler_t {
-            base: self.base.into(),
-            on_web_kit_initialized: self.on_web_kit_initialized.into(),
-            on_browser_created: self.on_browser_created.into(),
-            on_browser_destroyed: self.on_browser_destroyed.into(),
-            get_load_handler: self.get_load_handler.into(),
-            on_context_created: self.on_context_created.into(),
-            on_context_released: self.on_context_released.into(),
-            on_uncaught_exception: self.on_uncaught_exception.into(),
-            on_focused_node_changed: self.on_focused_node_changed.into(),
-            on_process_message_received: self.on_process_message_received.into(),
+impl From<RenderProcessHandler> for _cef_render_process_handler_t {
+    fn from(value: RenderProcessHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_web_kit_initialized: value.on_web_kit_initialized,
+            on_browser_created: value.on_browser_created,
+            on_browser_destroyed: value.on_browser_destroyed,
+            get_load_handler: value.get_load_handler,
+            on_context_created: value.on_context_created,
+            on_context_released: value.on_context_released,
+            on_uncaught_exception: value.on_uncaught_exception,
+            on_focused_node_changed: value.on_focused_node_changed,
+            on_process_message_received: value.on_process_message_received,
         }
     }
 }
@@ -10778,19 +10776,19 @@ impl From<_cef_resource_bundle_handler_t> for ResourceBundleHandler {
     fn from(value: _cef_resource_bundle_handler_t) -> Self {
         Self {
             base: value.base.into(),
-            get_localized_string: value.get_localized_string.into(),
-            get_data_resource: value.get_data_resource.into(),
-            get_data_resource_for_scale: value.get_data_resource_for_scale.into(),
+            get_localized_string: value.get_localized_string,
+            get_data_resource: value.get_data_resource,
+            get_data_resource_for_scale: value.get_data_resource_for_scale,
         }
     }
 }
-impl Into<_cef_resource_bundle_handler_t> for ResourceBundleHandler {
-    fn into(self) -> _cef_resource_bundle_handler_t {
-        _cef_resource_bundle_handler_t {
-            base: self.base.into(),
-            get_localized_string: self.get_localized_string.into(),
-            get_data_resource: self.get_data_resource.into(),
-            get_data_resource_for_scale: self.get_data_resource_for_scale.into(),
+impl From<ResourceBundleHandler> for _cef_resource_bundle_handler_t {
+    fn from(value: ResourceBundleHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            get_localized_string: value.get_localized_string,
+            get_data_resource: value.get_data_resource,
+            get_data_resource_for_scale: value.get_data_resource_for_scale,
         }
     }
 }
@@ -10816,15 +10814,15 @@ impl From<_cef_scheme_registrar_t> for SchemeRegistrar {
     fn from(value: _cef_scheme_registrar_t) -> Self {
         Self {
             base: value.base.into(),
-            add_custom_scheme: value.add_custom_scheme.into(),
+            add_custom_scheme: value.add_custom_scheme,
         }
     }
 }
-impl Into<_cef_scheme_registrar_t> for SchemeRegistrar {
-    fn into(self) -> _cef_scheme_registrar_t {
-        _cef_scheme_registrar_t {
-            base: self.base.into(),
-            add_custom_scheme: self.add_custom_scheme.into(),
+impl From<SchemeRegistrar> for _cef_scheme_registrar_t {
+    fn from(value: SchemeRegistrar) -> Self {
+        Self {
+            base: value.base.into(),
+            add_custom_scheme: value.add_custom_scheme,
         }
     }
 }
@@ -10852,15 +10850,15 @@ impl From<_cef_scheme_handler_factory_t> for SchemeHandlerFactory {
     fn from(value: _cef_scheme_handler_factory_t) -> Self {
         Self {
             base: value.base.into(),
-            create: value.create.into(),
+            create: value.create,
         }
     }
 }
-impl Into<_cef_scheme_handler_factory_t> for SchemeHandlerFactory {
-    fn into(self) -> _cef_scheme_handler_factory_t {
-        _cef_scheme_handler_factory_t {
-            base: self.base.into(),
-            create: self.create.into(),
+impl From<SchemeHandlerFactory> for _cef_scheme_handler_factory_t {
+    fn from(value: SchemeHandlerFactory) -> Self {
+        Self {
+            base: value.base.into(),
+            create: value.create,
         }
     }
 }
@@ -10898,23 +10896,23 @@ impl From<_cef_app_t> for App {
     fn from(value: _cef_app_t) -> Self {
         Self {
             base: value.base.into(),
-            on_before_command_line_processing: value.on_before_command_line_processing.into(),
-            on_register_custom_schemes: value.on_register_custom_schemes.into(),
-            get_resource_bundle_handler: value.get_resource_bundle_handler.into(),
-            get_browser_process_handler: value.get_browser_process_handler.into(),
-            get_render_process_handler: value.get_render_process_handler.into(),
+            on_before_command_line_processing: value.on_before_command_line_processing,
+            on_register_custom_schemes: value.on_register_custom_schemes,
+            get_resource_bundle_handler: value.get_resource_bundle_handler,
+            get_browser_process_handler: value.get_browser_process_handler,
+            get_render_process_handler: value.get_render_process_handler,
         }
     }
 }
-impl Into<_cef_app_t> for App {
-    fn into(self) -> _cef_app_t {
-        _cef_app_t {
-            base: self.base.into(),
-            on_before_command_line_processing: self.on_before_command_line_processing.into(),
-            on_register_custom_schemes: self.on_register_custom_schemes.into(),
-            get_resource_bundle_handler: self.get_resource_bundle_handler.into(),
-            get_browser_process_handler: self.get_browser_process_handler.into(),
-            get_render_process_handler: self.get_render_process_handler.into(),
+impl From<App> for _cef_app_t {
+    fn from(value: App) -> Self {
+        Self {
+            base: value.base.into(),
+            on_before_command_line_processing: value.on_before_command_line_processing,
+            on_register_custom_schemes: value.on_register_custom_schemes,
+            get_resource_bundle_handler: value.get_resource_bundle_handler,
+            get_browser_process_handler: value.get_browser_process_handler,
+            get_render_process_handler: value.get_render_process_handler,
         }
     }
 }
@@ -10952,27 +10950,27 @@ impl From<_cef_urlrequest_t> for Urlrequest {
     fn from(value: _cef_urlrequest_t) -> Self {
         Self {
             base: value.base.into(),
-            get_request: value.get_request.into(),
-            get_client: value.get_client.into(),
-            get_request_status: value.get_request_status.into(),
-            get_request_error: value.get_request_error.into(),
-            get_response: value.get_response.into(),
-            response_was_cached: value.response_was_cached.into(),
-            cancel: value.cancel.into(),
+            get_request: value.get_request,
+            get_client: value.get_client,
+            get_request_status: value.get_request_status,
+            get_request_error: value.get_request_error,
+            get_response: value.get_response,
+            response_was_cached: value.response_was_cached,
+            cancel: value.cancel,
         }
     }
 }
-impl Into<_cef_urlrequest_t> for Urlrequest {
-    fn into(self) -> _cef_urlrequest_t {
-        _cef_urlrequest_t {
-            base: self.base.into(),
-            get_request: self.get_request.into(),
-            get_client: self.get_client.into(),
-            get_request_status: self.get_request_status.into(),
-            get_request_error: self.get_request_error.into(),
-            get_response: self.get_response.into(),
-            response_was_cached: self.response_was_cached.into(),
-            cancel: self.cancel.into(),
+impl From<Urlrequest> for _cef_urlrequest_t {
+    fn from(value: Urlrequest) -> Self {
+        Self {
+            base: value.base.into(),
+            get_request: value.get_request,
+            get_client: value.get_client,
+            get_request_status: value.get_request_status,
+            get_request_error: value.get_request_error,
+            get_response: value.get_response,
+            response_was_cached: value.response_was_cached,
+            cancel: value.cancel,
         }
     }
 }
@@ -11032,23 +11030,23 @@ impl From<_cef_urlrequest_client_t> for UrlrequestClient {
     fn from(value: _cef_urlrequest_client_t) -> Self {
         Self {
             base: value.base.into(),
-            on_request_complete: value.on_request_complete.into(),
-            on_upload_progress: value.on_upload_progress.into(),
-            on_download_progress: value.on_download_progress.into(),
-            on_download_data: value.on_download_data.into(),
-            get_auth_credentials: value.get_auth_credentials.into(),
+            on_request_complete: value.on_request_complete,
+            on_upload_progress: value.on_upload_progress,
+            on_download_progress: value.on_download_progress,
+            on_download_data: value.on_download_data,
+            get_auth_credentials: value.get_auth_credentials,
         }
     }
 }
-impl Into<_cef_urlrequest_client_t> for UrlrequestClient {
-    fn into(self) -> _cef_urlrequest_client_t {
-        _cef_urlrequest_client_t {
-            base: self.base.into(),
-            on_request_complete: self.on_request_complete.into(),
-            on_upload_progress: self.on_upload_progress.into(),
-            on_download_progress: self.on_download_progress.into(),
-            on_download_data: self.on_download_data.into(),
-            get_auth_credentials: self.get_auth_credentials.into(),
+impl From<UrlrequestClient> for _cef_urlrequest_client_t {
+    fn from(value: UrlrequestClient) -> Self {
+        Self {
+            base: value.base.into(),
+            on_request_complete: value.on_request_complete,
+            on_upload_progress: value.on_upload_progress,
+            on_download_progress: value.on_download_progress,
+            on_download_data: value.on_download_data,
+            get_auth_credentials: value.get_auth_credentials,
         }
     }
 }
@@ -11076,19 +11074,19 @@ impl From<_cef_layout_t> for Layout {
     fn from(value: _cef_layout_t) -> Self {
         Self {
             base: value.base.into(),
-            as_box_layout: value.as_box_layout.into(),
-            as_fill_layout: value.as_fill_layout.into(),
-            is_valid: value.is_valid.into(),
+            as_box_layout: value.as_box_layout,
+            as_fill_layout: value.as_fill_layout,
+            is_valid: value.is_valid,
         }
     }
 }
-impl Into<_cef_layout_t> for Layout {
-    fn into(self) -> _cef_layout_t {
-        _cef_layout_t {
-            base: self.base.into(),
-            as_box_layout: self.as_box_layout.into(),
-            as_fill_layout: self.as_fill_layout.into(),
-            is_valid: self.is_valid.into(),
+impl From<Layout> for _cef_layout_t {
+    fn from(value: Layout) -> Self {
+        Self {
+            base: value.base.into(),
+            as_box_layout: value.as_box_layout,
+            as_fill_layout: value.as_fill_layout,
+            is_valid: value.is_valid,
         }
     }
 }
@@ -11117,17 +11115,17 @@ impl From<_cef_box_layout_t> for BoxLayout {
     fn from(value: _cef_box_layout_t) -> Self {
         Self {
             base: value.base.into(),
-            set_flex_for_view: value.set_flex_for_view.into(),
-            clear_flex_for_view: value.clear_flex_for_view.into(),
+            set_flex_for_view: value.set_flex_for_view,
+            clear_flex_for_view: value.clear_flex_for_view,
         }
     }
 }
-impl Into<_cef_box_layout_t> for BoxLayout {
-    fn into(self) -> _cef_box_layout_t {
-        _cef_box_layout_t {
-            base: self.base.into(),
-            set_flex_for_view: self.set_flex_for_view.into(),
-            clear_flex_for_view: self.clear_flex_for_view.into(),
+impl From<BoxLayout> for _cef_box_layout_t {
+    fn from(value: BoxLayout) -> Self {
+        Self {
+            base: value.base.into(),
+            set_flex_for_view: value.set_flex_for_view,
+            clear_flex_for_view: value.clear_flex_for_view,
         }
     }
 }
@@ -11149,10 +11147,10 @@ impl From<_cef_fill_layout_t> for FillLayout {
         }
     }
 }
-impl Into<_cef_fill_layout_t> for FillLayout {
-    fn into(self) -> _cef_fill_layout_t {
-        _cef_fill_layout_t {
-            base: self.base.into(),
+impl From<FillLayout> for _cef_fill_layout_t {
+    fn from(value: FillLayout) -> Self {
+        Self {
+            base: value.base.into(),
         }
     }
 }
@@ -11235,35 +11233,35 @@ impl From<_cef_view_delegate_t> for ViewDelegate {
     fn from(value: _cef_view_delegate_t) -> Self {
         Self {
             base: value.base.into(),
-            get_preferred_size: value.get_preferred_size.into(),
-            get_minimum_size: value.get_minimum_size.into(),
-            get_maximum_size: value.get_maximum_size.into(),
-            get_height_for_width: value.get_height_for_width.into(),
-            on_parent_view_changed: value.on_parent_view_changed.into(),
-            on_child_view_changed: value.on_child_view_changed.into(),
-            on_window_changed: value.on_window_changed.into(),
-            on_layout_changed: value.on_layout_changed.into(),
-            on_focus: value.on_focus.into(),
-            on_blur: value.on_blur.into(),
-            on_theme_changed: value.on_theme_changed.into(),
+            get_preferred_size: value.get_preferred_size,
+            get_minimum_size: value.get_minimum_size,
+            get_maximum_size: value.get_maximum_size,
+            get_height_for_width: value.get_height_for_width,
+            on_parent_view_changed: value.on_parent_view_changed,
+            on_child_view_changed: value.on_child_view_changed,
+            on_window_changed: value.on_window_changed,
+            on_layout_changed: value.on_layout_changed,
+            on_focus: value.on_focus,
+            on_blur: value.on_blur,
+            on_theme_changed: value.on_theme_changed,
         }
     }
 }
-impl Into<_cef_view_delegate_t> for ViewDelegate {
-    fn into(self) -> _cef_view_delegate_t {
-        _cef_view_delegate_t {
-            base: self.base.into(),
-            get_preferred_size: self.get_preferred_size.into(),
-            get_minimum_size: self.get_minimum_size.into(),
-            get_maximum_size: self.get_maximum_size.into(),
-            get_height_for_width: self.get_height_for_width.into(),
-            on_parent_view_changed: self.on_parent_view_changed.into(),
-            on_child_view_changed: self.on_child_view_changed.into(),
-            on_window_changed: self.on_window_changed.into(),
-            on_layout_changed: self.on_layout_changed.into(),
-            on_focus: self.on_focus.into(),
-            on_blur: self.on_blur.into(),
-            on_theme_changed: self.on_theme_changed.into(),
+impl From<ViewDelegate> for _cef_view_delegate_t {
+    fn from(value: ViewDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            get_preferred_size: value.get_preferred_size,
+            get_minimum_size: value.get_minimum_size,
+            get_maximum_size: value.get_maximum_size,
+            get_height_for_width: value.get_height_for_width,
+            on_parent_view_changed: value.on_parent_view_changed,
+            on_child_view_changed: value.on_child_view_changed,
+            on_window_changed: value.on_window_changed,
+            on_layout_changed: value.on_layout_changed,
+            on_focus: value.on_focus,
+            on_blur: value.on_blur,
+            on_theme_changed: value.on_theme_changed,
         }
     }
 }
@@ -11460,117 +11458,117 @@ impl From<_cef_view_t> for View {
     fn from(value: _cef_view_t) -> Self {
         Self {
             base: value.base.into(),
-            as_browser_view: value.as_browser_view.into(),
-            as_button: value.as_button.into(),
-            as_panel: value.as_panel.into(),
-            as_scroll_view: value.as_scroll_view.into(),
-            as_textfield: value.as_textfield.into(),
-            get_type_string: value.get_type_string.into(),
-            to_string: value.to_string.into(),
-            is_valid: value.is_valid.into(),
-            is_attached: value.is_attached.into(),
-            is_same: value.is_same.into(),
-            get_delegate: value.get_delegate.into(),
-            get_window: value.get_window.into(),
-            get_id: value.get_id.into(),
-            set_id: value.set_id.into(),
-            get_group_id: value.get_group_id.into(),
-            set_group_id: value.set_group_id.into(),
-            get_parent_view: value.get_parent_view.into(),
-            get_view_for_id: value.get_view_for_id.into(),
-            set_bounds: value.set_bounds.into(),
-            get_bounds: value.get_bounds.into(),
-            get_bounds_in_screen: value.get_bounds_in_screen.into(),
-            set_size: value.set_size.into(),
-            get_size: value.get_size.into(),
-            set_position: value.set_position.into(),
-            get_position: value.get_position.into(),
-            set_insets: value.set_insets.into(),
-            get_insets: value.get_insets.into(),
-            get_preferred_size: value.get_preferred_size.into(),
-            size_to_preferred_size: value.size_to_preferred_size.into(),
-            get_minimum_size: value.get_minimum_size.into(),
-            get_maximum_size: value.get_maximum_size.into(),
-            get_height_for_width: value.get_height_for_width.into(),
-            invalidate_layout: value.invalidate_layout.into(),
-            set_visible: value.set_visible.into(),
-            is_visible: value.is_visible.into(),
-            is_drawn: value.is_drawn.into(),
-            set_enabled: value.set_enabled.into(),
-            is_enabled: value.is_enabled.into(),
-            set_focusable: value.set_focusable.into(),
-            is_focusable: value.is_focusable.into(),
-            is_accessibility_focusable: value.is_accessibility_focusable.into(),
-            has_focus: value.has_focus.into(),
-            request_focus: value.request_focus.into(),
-            set_background_color: value.set_background_color.into(),
-            get_background_color: value.get_background_color.into(),
-            get_theme_color: value.get_theme_color.into(),
-            convert_point_to_screen: value.convert_point_to_screen.into(),
-            convert_point_from_screen: value.convert_point_from_screen.into(),
-            convert_point_to_window: value.convert_point_to_window.into(),
-            convert_point_from_window: value.convert_point_from_window.into(),
-            convert_point_to_view: value.convert_point_to_view.into(),
-            convert_point_from_view: value.convert_point_from_view.into(),
+            as_browser_view: value.as_browser_view,
+            as_button: value.as_button,
+            as_panel: value.as_panel,
+            as_scroll_view: value.as_scroll_view,
+            as_textfield: value.as_textfield,
+            get_type_string: value.get_type_string,
+            to_string: value.to_string,
+            is_valid: value.is_valid,
+            is_attached: value.is_attached,
+            is_same: value.is_same,
+            get_delegate: value.get_delegate,
+            get_window: value.get_window,
+            get_id: value.get_id,
+            set_id: value.set_id,
+            get_group_id: value.get_group_id,
+            set_group_id: value.set_group_id,
+            get_parent_view: value.get_parent_view,
+            get_view_for_id: value.get_view_for_id,
+            set_bounds: value.set_bounds,
+            get_bounds: value.get_bounds,
+            get_bounds_in_screen: value.get_bounds_in_screen,
+            set_size: value.set_size,
+            get_size: value.get_size,
+            set_position: value.set_position,
+            get_position: value.get_position,
+            set_insets: value.set_insets,
+            get_insets: value.get_insets,
+            get_preferred_size: value.get_preferred_size,
+            size_to_preferred_size: value.size_to_preferred_size,
+            get_minimum_size: value.get_minimum_size,
+            get_maximum_size: value.get_maximum_size,
+            get_height_for_width: value.get_height_for_width,
+            invalidate_layout: value.invalidate_layout,
+            set_visible: value.set_visible,
+            is_visible: value.is_visible,
+            is_drawn: value.is_drawn,
+            set_enabled: value.set_enabled,
+            is_enabled: value.is_enabled,
+            set_focusable: value.set_focusable,
+            is_focusable: value.is_focusable,
+            is_accessibility_focusable: value.is_accessibility_focusable,
+            has_focus: value.has_focus,
+            request_focus: value.request_focus,
+            set_background_color: value.set_background_color,
+            get_background_color: value.get_background_color,
+            get_theme_color: value.get_theme_color,
+            convert_point_to_screen: value.convert_point_to_screen,
+            convert_point_from_screen: value.convert_point_from_screen,
+            convert_point_to_window: value.convert_point_to_window,
+            convert_point_from_window: value.convert_point_from_window,
+            convert_point_to_view: value.convert_point_to_view,
+            convert_point_from_view: value.convert_point_from_view,
         }
     }
 }
-impl Into<_cef_view_t> for View {
-    fn into(self) -> _cef_view_t {
-        _cef_view_t {
-            base: self.base.into(),
-            as_browser_view: self.as_browser_view.into(),
-            as_button: self.as_button.into(),
-            as_panel: self.as_panel.into(),
-            as_scroll_view: self.as_scroll_view.into(),
-            as_textfield: self.as_textfield.into(),
-            get_type_string: self.get_type_string.into(),
-            to_string: self.to_string.into(),
-            is_valid: self.is_valid.into(),
-            is_attached: self.is_attached.into(),
-            is_same: self.is_same.into(),
-            get_delegate: self.get_delegate.into(),
-            get_window: self.get_window.into(),
-            get_id: self.get_id.into(),
-            set_id: self.set_id.into(),
-            get_group_id: self.get_group_id.into(),
-            set_group_id: self.set_group_id.into(),
-            get_parent_view: self.get_parent_view.into(),
-            get_view_for_id: self.get_view_for_id.into(),
-            set_bounds: self.set_bounds.into(),
-            get_bounds: self.get_bounds.into(),
-            get_bounds_in_screen: self.get_bounds_in_screen.into(),
-            set_size: self.set_size.into(),
-            get_size: self.get_size.into(),
-            set_position: self.set_position.into(),
-            get_position: self.get_position.into(),
-            set_insets: self.set_insets.into(),
-            get_insets: self.get_insets.into(),
-            get_preferred_size: self.get_preferred_size.into(),
-            size_to_preferred_size: self.size_to_preferred_size.into(),
-            get_minimum_size: self.get_minimum_size.into(),
-            get_maximum_size: self.get_maximum_size.into(),
-            get_height_for_width: self.get_height_for_width.into(),
-            invalidate_layout: self.invalidate_layout.into(),
-            set_visible: self.set_visible.into(),
-            is_visible: self.is_visible.into(),
-            is_drawn: self.is_drawn.into(),
-            set_enabled: self.set_enabled.into(),
-            is_enabled: self.is_enabled.into(),
-            set_focusable: self.set_focusable.into(),
-            is_focusable: self.is_focusable.into(),
-            is_accessibility_focusable: self.is_accessibility_focusable.into(),
-            has_focus: self.has_focus.into(),
-            request_focus: self.request_focus.into(),
-            set_background_color: self.set_background_color.into(),
-            get_background_color: self.get_background_color.into(),
-            get_theme_color: self.get_theme_color.into(),
-            convert_point_to_screen: self.convert_point_to_screen.into(),
-            convert_point_from_screen: self.convert_point_from_screen.into(),
-            convert_point_to_window: self.convert_point_to_window.into(),
-            convert_point_from_window: self.convert_point_from_window.into(),
-            convert_point_to_view: self.convert_point_to_view.into(),
-            convert_point_from_view: self.convert_point_from_view.into(),
+impl From<View> for _cef_view_t {
+    fn from(value: View) -> Self {
+        Self {
+            base: value.base.into(),
+            as_browser_view: value.as_browser_view,
+            as_button: value.as_button,
+            as_panel: value.as_panel,
+            as_scroll_view: value.as_scroll_view,
+            as_textfield: value.as_textfield,
+            get_type_string: value.get_type_string,
+            to_string: value.to_string,
+            is_valid: value.is_valid,
+            is_attached: value.is_attached,
+            is_same: value.is_same,
+            get_delegate: value.get_delegate,
+            get_window: value.get_window,
+            get_id: value.get_id,
+            set_id: value.set_id,
+            get_group_id: value.get_group_id,
+            set_group_id: value.set_group_id,
+            get_parent_view: value.get_parent_view,
+            get_view_for_id: value.get_view_for_id,
+            set_bounds: value.set_bounds,
+            get_bounds: value.get_bounds,
+            get_bounds_in_screen: value.get_bounds_in_screen,
+            set_size: value.set_size,
+            get_size: value.get_size,
+            set_position: value.set_position,
+            get_position: value.get_position,
+            set_insets: value.set_insets,
+            get_insets: value.get_insets,
+            get_preferred_size: value.get_preferred_size,
+            size_to_preferred_size: value.size_to_preferred_size,
+            get_minimum_size: value.get_minimum_size,
+            get_maximum_size: value.get_maximum_size,
+            get_height_for_width: value.get_height_for_width,
+            invalidate_layout: value.invalidate_layout,
+            set_visible: value.set_visible,
+            is_visible: value.is_visible,
+            is_drawn: value.is_drawn,
+            set_enabled: value.set_enabled,
+            is_enabled: value.is_enabled,
+            set_focusable: value.set_focusable,
+            is_focusable: value.is_focusable,
+            is_accessibility_focusable: value.is_accessibility_focusable,
+            has_focus: value.has_focus,
+            request_focus: value.request_focus,
+            set_background_color: value.set_background_color,
+            get_background_color: value.get_background_color,
+            get_theme_color: value.get_theme_color,
+            convert_point_to_screen: value.convert_point_to_screen,
+            convert_point_from_screen: value.convert_point_from_screen,
+            convert_point_to_window: value.convert_point_to_window,
+            convert_point_from_window: value.convert_point_from_window,
+            convert_point_to_view: value.convert_point_to_view,
+            convert_point_from_view: value.convert_point_from_view,
         }
     }
 }
@@ -11607,25 +11605,25 @@ impl From<_cef_button_t> for Button {
     fn from(value: _cef_button_t) -> Self {
         Self {
             base: value.base.into(),
-            as_label_button: value.as_label_button.into(),
-            set_state: value.set_state.into(),
-            get_state: value.get_state.into(),
-            set_ink_drop_enabled: value.set_ink_drop_enabled.into(),
-            set_tooltip_text: value.set_tooltip_text.into(),
-            set_accessible_name: value.set_accessible_name.into(),
+            as_label_button: value.as_label_button,
+            set_state: value.set_state,
+            get_state: value.get_state,
+            set_ink_drop_enabled: value.set_ink_drop_enabled,
+            set_tooltip_text: value.set_tooltip_text,
+            set_accessible_name: value.set_accessible_name,
         }
     }
 }
-impl Into<_cef_button_t> for Button {
-    fn into(self) -> _cef_button_t {
-        _cef_button_t {
-            base: self.base.into(),
-            as_label_button: self.as_label_button.into(),
-            set_state: self.set_state.into(),
-            get_state: self.get_state.into(),
-            set_ink_drop_enabled: self.set_ink_drop_enabled.into(),
-            set_tooltip_text: self.set_tooltip_text.into(),
-            set_accessible_name: self.set_accessible_name.into(),
+impl From<Button> for _cef_button_t {
+    fn from(value: Button) -> Self {
+        Self {
+            base: value.base.into(),
+            as_label_button: value.as_label_button,
+            set_state: value.set_state,
+            get_state: value.get_state,
+            set_ink_drop_enabled: value.set_ink_drop_enabled,
+            set_tooltip_text: value.set_tooltip_text,
+            set_accessible_name: value.set_accessible_name,
         }
     }
 }
@@ -11650,17 +11648,17 @@ impl From<_cef_button_delegate_t> for ButtonDelegate {
     fn from(value: _cef_button_delegate_t) -> Self {
         Self {
             base: value.base.into(),
-            on_button_pressed: value.on_button_pressed.into(),
-            on_button_state_changed: value.on_button_state_changed.into(),
+            on_button_pressed: value.on_button_pressed,
+            on_button_state_changed: value.on_button_state_changed,
         }
     }
 }
-impl Into<_cef_button_delegate_t> for ButtonDelegate {
-    fn into(self) -> _cef_button_delegate_t {
-        _cef_button_delegate_t {
-            base: self.base.into(),
-            on_button_pressed: self.on_button_pressed.into(),
-            on_button_state_changed: self.on_button_state_changed.into(),
+impl From<ButtonDelegate> for _cef_button_delegate_t {
+    fn from(value: ButtonDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            on_button_pressed: value.on_button_pressed,
+            on_button_state_changed: value.on_button_state_changed,
         }
     }
 }
@@ -11726,35 +11724,35 @@ impl From<_cef_label_button_t> for LabelButton {
     fn from(value: _cef_label_button_t) -> Self {
         Self {
             base: value.base.into(),
-            as_menu_button: value.as_menu_button.into(),
-            set_text: value.set_text.into(),
-            get_text: value.get_text.into(),
-            set_image: value.set_image.into(),
-            get_image: value.get_image.into(),
-            set_text_color: value.set_text_color.into(),
-            set_enabled_text_colors: value.set_enabled_text_colors.into(),
-            set_font_list: value.set_font_list.into(),
-            set_horizontal_alignment: value.set_horizontal_alignment.into(),
-            set_minimum_size: value.set_minimum_size.into(),
-            set_maximum_size: value.set_maximum_size.into(),
+            as_menu_button: value.as_menu_button,
+            set_text: value.set_text,
+            get_text: value.get_text,
+            set_image: value.set_image,
+            get_image: value.get_image,
+            set_text_color: value.set_text_color,
+            set_enabled_text_colors: value.set_enabled_text_colors,
+            set_font_list: value.set_font_list,
+            set_horizontal_alignment: value.set_horizontal_alignment,
+            set_minimum_size: value.set_minimum_size,
+            set_maximum_size: value.set_maximum_size,
         }
     }
 }
-impl Into<_cef_label_button_t> for LabelButton {
-    fn into(self) -> _cef_label_button_t {
-        _cef_label_button_t {
-            base: self.base.into(),
-            as_menu_button: self.as_menu_button.into(),
-            set_text: self.set_text.into(),
-            get_text: self.get_text.into(),
-            set_image: self.set_image.into(),
-            get_image: self.get_image.into(),
-            set_text_color: self.set_text_color.into(),
-            set_enabled_text_colors: self.set_enabled_text_colors.into(),
-            set_font_list: self.set_font_list.into(),
-            set_horizontal_alignment: self.set_horizontal_alignment.into(),
-            set_minimum_size: self.set_minimum_size.into(),
-            set_maximum_size: self.set_maximum_size.into(),
+impl From<LabelButton> for _cef_label_button_t {
+    fn from(value: LabelButton) -> Self {
+        Self {
+            base: value.base.into(),
+            as_menu_button: value.as_menu_button,
+            set_text: value.set_text,
+            get_text: value.get_text,
+            set_image: value.set_image,
+            get_image: value.get_image,
+            set_text_color: value.set_text_color,
+            set_enabled_text_colors: value.set_enabled_text_colors,
+            set_font_list: value.set_font_list,
+            set_horizontal_alignment: value.set_horizontal_alignment,
+            set_minimum_size: value.set_minimum_size,
+            set_maximum_size: value.set_maximum_size,
         }
     }
 }
@@ -11772,7 +11770,7 @@ pub trait ImplMenuButtonPressedLock: Clone + Sized + Rc {
 }
 impl ImplMenuButtonPressedLock for MenuButtonPressedLock {
     fn get_raw(&self) -> *mut _cef_menu_button_pressed_lock_t {
-        unsafe { RefGuard::as_raw(&self.0) }
+        unsafe { RefGuard::into_raw(&self.0) }
     }
 }
 impl Rc for _cef_menu_button_pressed_lock_t {
@@ -11786,24 +11784,24 @@ impl Rc for MenuButtonPressedLock {
     }
 }
 impl ConvertParam<*mut _cef_menu_button_pressed_lock_t> for &MenuButtonPressedLock {
-    fn as_raw(self) -> *mut _cef_menu_button_pressed_lock_t {
+    fn into_raw(self) -> *mut _cef_menu_button_pressed_lock_t {
         ImplMenuButtonPressedLock::get_raw(self)
     }
 }
 impl ConvertParam<*mut _cef_menu_button_pressed_lock_t> for &mut MenuButtonPressedLock {
-    fn as_raw(self) -> *mut _cef_menu_button_pressed_lock_t {
+    fn into_raw(self) -> *mut _cef_menu_button_pressed_lock_t {
         ImplMenuButtonPressedLock::get_raw(self)
     }
 }
 impl ConvertReturnValue<MenuButtonPressedLock> for *mut _cef_menu_button_pressed_lock_t {
-    fn as_wrapper(self) -> MenuButtonPressedLock {
+    fn wrap_result(self) -> MenuButtonPressedLock {
         MenuButtonPressedLock(unsafe { RefGuard::from_raw(self) })
     }
 }
-impl Into<*mut _cef_menu_button_pressed_lock_t> for MenuButtonPressedLock {
-    fn into(self) -> *mut _cef_menu_button_pressed_lock_t {
-        let object = ImplMenuButtonPressedLock::get_raw(&self);
-        std::mem::forget(self);
+impl From<MenuButtonPressedLock> for *mut _cef_menu_button_pressed_lock_t {
+    fn from(value: MenuButtonPressedLock) -> Self {
+        let object = ImplMenuButtonPressedLock::get_raw(&value);
+        std::mem::forget(value);
         object
     }
 }
@@ -11830,15 +11828,15 @@ impl From<_cef_menu_button_delegate_t> for MenuButtonDelegate {
     fn from(value: _cef_menu_button_delegate_t) -> Self {
         Self {
             base: value.base.into(),
-            on_menu_button_pressed: value.on_menu_button_pressed.into(),
+            on_menu_button_pressed: value.on_menu_button_pressed,
         }
     }
 }
-impl Into<_cef_menu_button_delegate_t> for MenuButtonDelegate {
-    fn into(self) -> _cef_menu_button_delegate_t {
-        _cef_menu_button_delegate_t {
-            base: self.base.into(),
-            on_menu_button_pressed: self.on_menu_button_pressed.into(),
+impl From<MenuButtonDelegate> for _cef_menu_button_delegate_t {
+    fn from(value: MenuButtonDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            on_menu_button_pressed: value.on_menu_button_pressed,
         }
     }
 }
@@ -11867,17 +11865,17 @@ impl From<_cef_menu_button_t> for MenuButton {
     fn from(value: _cef_menu_button_t) -> Self {
         Self {
             base: value.base.into(),
-            show_menu: value.show_menu.into(),
-            trigger_menu: value.trigger_menu.into(),
+            show_menu: value.show_menu,
+            trigger_menu: value.trigger_menu,
         }
     }
 }
-impl Into<_cef_menu_button_t> for MenuButton {
-    fn into(self) -> _cef_menu_button_t {
-        _cef_menu_button_t {
-            base: self.base.into(),
-            show_menu: self.show_menu.into(),
-            trigger_menu: self.trigger_menu.into(),
+impl From<MenuButton> for _cef_menu_button_t {
+    fn from(value: MenuButton) -> Self {
+        Self {
+            base: value.base.into(),
+            show_menu: value.show_menu,
+            trigger_menu: value.trigger_menu,
         }
     }
 }
@@ -11909,17 +11907,17 @@ impl From<_cef_textfield_delegate_t> for TextfieldDelegate {
     fn from(value: _cef_textfield_delegate_t) -> Self {
         Self {
             base: value.base.into(),
-            on_key_event: value.on_key_event.into(),
-            on_after_user_action: value.on_after_user_action.into(),
+            on_key_event: value.on_key_event,
+            on_after_user_action: value.on_after_user_action,
         }
     }
 }
-impl Into<_cef_textfield_delegate_t> for TextfieldDelegate {
-    fn into(self) -> _cef_textfield_delegate_t {
-        _cef_textfield_delegate_t {
-            base: self.base.into(),
-            on_key_event: self.on_key_event.into(),
-            on_after_user_action: self.on_after_user_action.into(),
+impl From<TextfieldDelegate> for _cef_textfield_delegate_t {
+    fn from(value: TextfieldDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            on_key_event: value.on_key_event,
+            on_after_user_action: value.on_after_user_action,
         }
     }
 }
@@ -12046,75 +12044,75 @@ impl From<_cef_textfield_t> for Textfield {
     fn from(value: _cef_textfield_t) -> Self {
         Self {
             base: value.base.into(),
-            set_password_input: value.set_password_input.into(),
-            is_password_input: value.is_password_input.into(),
-            set_read_only: value.set_read_only.into(),
-            is_read_only: value.is_read_only.into(),
-            get_text: value.get_text.into(),
-            set_text: value.set_text.into(),
-            append_text: value.append_text.into(),
-            insert_or_replace_text: value.insert_or_replace_text.into(),
-            has_selection: value.has_selection.into(),
-            get_selected_text: value.get_selected_text.into(),
-            select_all: value.select_all.into(),
-            clear_selection: value.clear_selection.into(),
-            get_selected_range: value.get_selected_range.into(),
-            select_range: value.select_range.into(),
-            get_cursor_position: value.get_cursor_position.into(),
-            set_text_color: value.set_text_color.into(),
-            get_text_color: value.get_text_color.into(),
-            set_selection_text_color: value.set_selection_text_color.into(),
-            get_selection_text_color: value.get_selection_text_color.into(),
-            set_selection_background_color: value.set_selection_background_color.into(),
-            get_selection_background_color: value.get_selection_background_color.into(),
-            set_font_list: value.set_font_list.into(),
-            apply_text_color: value.apply_text_color.into(),
-            apply_text_style: value.apply_text_style.into(),
-            is_command_enabled: value.is_command_enabled.into(),
-            execute_command: value.execute_command.into(),
-            clear_edit_history: value.clear_edit_history.into(),
-            set_placeholder_text: value.set_placeholder_text.into(),
-            get_placeholder_text: value.get_placeholder_text.into(),
-            set_placeholder_text_color: value.set_placeholder_text_color.into(),
-            set_accessible_name: value.set_accessible_name.into(),
+            set_password_input: value.set_password_input,
+            is_password_input: value.is_password_input,
+            set_read_only: value.set_read_only,
+            is_read_only: value.is_read_only,
+            get_text: value.get_text,
+            set_text: value.set_text,
+            append_text: value.append_text,
+            insert_or_replace_text: value.insert_or_replace_text,
+            has_selection: value.has_selection,
+            get_selected_text: value.get_selected_text,
+            select_all: value.select_all,
+            clear_selection: value.clear_selection,
+            get_selected_range: value.get_selected_range,
+            select_range: value.select_range,
+            get_cursor_position: value.get_cursor_position,
+            set_text_color: value.set_text_color,
+            get_text_color: value.get_text_color,
+            set_selection_text_color: value.set_selection_text_color,
+            get_selection_text_color: value.get_selection_text_color,
+            set_selection_background_color: value.set_selection_background_color,
+            get_selection_background_color: value.get_selection_background_color,
+            set_font_list: value.set_font_list,
+            apply_text_color: value.apply_text_color,
+            apply_text_style: value.apply_text_style,
+            is_command_enabled: value.is_command_enabled,
+            execute_command: value.execute_command,
+            clear_edit_history: value.clear_edit_history,
+            set_placeholder_text: value.set_placeholder_text,
+            get_placeholder_text: value.get_placeholder_text,
+            set_placeholder_text_color: value.set_placeholder_text_color,
+            set_accessible_name: value.set_accessible_name,
         }
     }
 }
-impl Into<_cef_textfield_t> for Textfield {
-    fn into(self) -> _cef_textfield_t {
-        _cef_textfield_t {
-            base: self.base.into(),
-            set_password_input: self.set_password_input.into(),
-            is_password_input: self.is_password_input.into(),
-            set_read_only: self.set_read_only.into(),
-            is_read_only: self.is_read_only.into(),
-            get_text: self.get_text.into(),
-            set_text: self.set_text.into(),
-            append_text: self.append_text.into(),
-            insert_or_replace_text: self.insert_or_replace_text.into(),
-            has_selection: self.has_selection.into(),
-            get_selected_text: self.get_selected_text.into(),
-            select_all: self.select_all.into(),
-            clear_selection: self.clear_selection.into(),
-            get_selected_range: self.get_selected_range.into(),
-            select_range: self.select_range.into(),
-            get_cursor_position: self.get_cursor_position.into(),
-            set_text_color: self.set_text_color.into(),
-            get_text_color: self.get_text_color.into(),
-            set_selection_text_color: self.set_selection_text_color.into(),
-            get_selection_text_color: self.get_selection_text_color.into(),
-            set_selection_background_color: self.set_selection_background_color.into(),
-            get_selection_background_color: self.get_selection_background_color.into(),
-            set_font_list: self.set_font_list.into(),
-            apply_text_color: self.apply_text_color.into(),
-            apply_text_style: self.apply_text_style.into(),
-            is_command_enabled: self.is_command_enabled.into(),
-            execute_command: self.execute_command.into(),
-            clear_edit_history: self.clear_edit_history.into(),
-            set_placeholder_text: self.set_placeholder_text.into(),
-            get_placeholder_text: self.get_placeholder_text.into(),
-            set_placeholder_text_color: self.set_placeholder_text_color.into(),
-            set_accessible_name: self.set_accessible_name.into(),
+impl From<Textfield> for _cef_textfield_t {
+    fn from(value: Textfield) -> Self {
+        Self {
+            base: value.base.into(),
+            set_password_input: value.set_password_input,
+            is_password_input: value.is_password_input,
+            set_read_only: value.set_read_only,
+            is_read_only: value.is_read_only,
+            get_text: value.get_text,
+            set_text: value.set_text,
+            append_text: value.append_text,
+            insert_or_replace_text: value.insert_or_replace_text,
+            has_selection: value.has_selection,
+            get_selected_text: value.get_selected_text,
+            select_all: value.select_all,
+            clear_selection: value.clear_selection,
+            get_selected_range: value.get_selected_range,
+            select_range: value.select_range,
+            get_cursor_position: value.get_cursor_position,
+            set_text_color: value.set_text_color,
+            get_text_color: value.get_text_color,
+            set_selection_text_color: value.set_selection_text_color,
+            get_selection_text_color: value.get_selection_text_color,
+            set_selection_background_color: value.set_selection_background_color,
+            get_selection_background_color: value.get_selection_background_color,
+            set_font_list: value.set_font_list,
+            apply_text_color: value.apply_text_color,
+            apply_text_style: value.apply_text_style,
+            is_command_enabled: value.is_command_enabled,
+            execute_command: value.execute_command,
+            clear_edit_history: value.clear_edit_history,
+            set_placeholder_text: value.set_placeholder_text,
+            get_placeholder_text: value.get_placeholder_text,
+            set_placeholder_text_color: value.set_placeholder_text_color,
+            set_accessible_name: value.set_accessible_name,
         }
     }
 }
@@ -12186,33 +12184,31 @@ impl From<_cef_browser_view_delegate_t> for BrowserViewDelegate {
     fn from(value: _cef_browser_view_delegate_t) -> Self {
         Self {
             base: value.base.into(),
-            on_browser_created: value.on_browser_created.into(),
-            on_browser_destroyed: value.on_browser_destroyed.into(),
-            get_delegate_for_popup_browser_view: value.get_delegate_for_popup_browser_view.into(),
-            on_popup_browser_view_created: value.on_popup_browser_view_created.into(),
-            get_chrome_toolbar_type: value.get_chrome_toolbar_type.into(),
+            on_browser_created: value.on_browser_created,
+            on_browser_destroyed: value.on_browser_destroyed,
+            get_delegate_for_popup_browser_view: value.get_delegate_for_popup_browser_view,
+            on_popup_browser_view_created: value.on_popup_browser_view_created,
+            get_chrome_toolbar_type: value.get_chrome_toolbar_type,
             use_frameless_window_for_picture_in_picture: value
-                .use_frameless_window_for_picture_in_picture
-                .into(),
-            on_gesture_command: value.on_gesture_command.into(),
-            get_browser_runtime_style: value.get_browser_runtime_style.into(),
+                .use_frameless_window_for_picture_in_picture,
+            on_gesture_command: value.on_gesture_command,
+            get_browser_runtime_style: value.get_browser_runtime_style,
         }
     }
 }
-impl Into<_cef_browser_view_delegate_t> for BrowserViewDelegate {
-    fn into(self) -> _cef_browser_view_delegate_t {
-        _cef_browser_view_delegate_t {
-            base: self.base.into(),
-            on_browser_created: self.on_browser_created.into(),
-            on_browser_destroyed: self.on_browser_destroyed.into(),
-            get_delegate_for_popup_browser_view: self.get_delegate_for_popup_browser_view.into(),
-            on_popup_browser_view_created: self.on_popup_browser_view_created.into(),
-            get_chrome_toolbar_type: self.get_chrome_toolbar_type.into(),
-            use_frameless_window_for_picture_in_picture: self
-                .use_frameless_window_for_picture_in_picture
-                .into(),
-            on_gesture_command: self.on_gesture_command.into(),
-            get_browser_runtime_style: self.get_browser_runtime_style.into(),
+impl From<BrowserViewDelegate> for _cef_browser_view_delegate_t {
+    fn from(value: BrowserViewDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            on_browser_created: value.on_browser_created,
+            on_browser_destroyed: value.on_browser_destroyed,
+            get_delegate_for_popup_browser_view: value.get_delegate_for_popup_browser_view,
+            on_popup_browser_view_created: value.on_popup_browser_view_created,
+            get_chrome_toolbar_type: value.get_chrome_toolbar_type,
+            use_frameless_window_for_picture_in_picture: value
+                .use_frameless_window_for_picture_in_picture,
+            on_gesture_command: value.on_gesture_command,
+            get_browser_runtime_style: value.get_browser_runtime_style,
         }
     }
 }
@@ -12246,21 +12242,21 @@ impl From<_cef_browser_view_t> for BrowserView {
     fn from(value: _cef_browser_view_t) -> Self {
         Self {
             base: value.base.into(),
-            get_browser: value.get_browser.into(),
-            get_chrome_toolbar: value.get_chrome_toolbar.into(),
-            set_prefer_accelerators: value.set_prefer_accelerators.into(),
-            get_runtime_style: value.get_runtime_style.into(),
+            get_browser: value.get_browser,
+            get_chrome_toolbar: value.get_chrome_toolbar,
+            set_prefer_accelerators: value.set_prefer_accelerators,
+            get_runtime_style: value.get_runtime_style,
         }
     }
 }
-impl Into<_cef_browser_view_t> for BrowserView {
-    fn into(self) -> _cef_browser_view_t {
-        _cef_browser_view_t {
-            base: self.base.into(),
-            get_browser: self.get_browser.into(),
-            get_chrome_toolbar: self.get_chrome_toolbar.into(),
-            set_prefer_accelerators: self.set_prefer_accelerators.into(),
-            get_runtime_style: self.get_runtime_style.into(),
+impl From<BrowserView> for _cef_browser_view_t {
+    fn from(value: BrowserView) -> Self {
+        Self {
+            base: value.base.into(),
+            get_browser: value.get_browser,
+            get_chrome_toolbar: value.get_chrome_toolbar,
+            set_prefer_accelerators: value.set_prefer_accelerators,
+            get_runtime_style: value.get_runtime_style,
         }
     }
 }
@@ -12300,27 +12296,27 @@ impl From<_cef_scroll_view_t> for ScrollView {
     fn from(value: _cef_scroll_view_t) -> Self {
         Self {
             base: value.base.into(),
-            set_content_view: value.set_content_view.into(),
-            get_content_view: value.get_content_view.into(),
-            get_visible_content_rect: value.get_visible_content_rect.into(),
-            has_horizontal_scrollbar: value.has_horizontal_scrollbar.into(),
-            get_horizontal_scrollbar_height: value.get_horizontal_scrollbar_height.into(),
-            has_vertical_scrollbar: value.has_vertical_scrollbar.into(),
-            get_vertical_scrollbar_width: value.get_vertical_scrollbar_width.into(),
+            set_content_view: value.set_content_view,
+            get_content_view: value.get_content_view,
+            get_visible_content_rect: value.get_visible_content_rect,
+            has_horizontal_scrollbar: value.has_horizontal_scrollbar,
+            get_horizontal_scrollbar_height: value.get_horizontal_scrollbar_height,
+            has_vertical_scrollbar: value.has_vertical_scrollbar,
+            get_vertical_scrollbar_width: value.get_vertical_scrollbar_width,
         }
     }
 }
-impl Into<_cef_scroll_view_t> for ScrollView {
-    fn into(self) -> _cef_scroll_view_t {
-        _cef_scroll_view_t {
-            base: self.base.into(),
-            set_content_view: self.set_content_view.into(),
-            get_content_view: self.get_content_view.into(),
-            get_visible_content_rect: self.get_visible_content_rect.into(),
-            has_horizontal_scrollbar: self.has_horizontal_scrollbar.into(),
-            get_horizontal_scrollbar_height: self.get_horizontal_scrollbar_height.into(),
-            has_vertical_scrollbar: self.has_vertical_scrollbar.into(),
-            get_vertical_scrollbar_width: self.get_vertical_scrollbar_width.into(),
+impl From<ScrollView> for _cef_scroll_view_t {
+    fn from(value: ScrollView) -> Self {
+        Self {
+            base: value.base.into(),
+            set_content_view: value.set_content_view,
+            get_content_view: value.get_content_view,
+            get_visible_content_rect: value.get_visible_content_rect,
+            has_horizontal_scrollbar: value.has_horizontal_scrollbar,
+            get_horizontal_scrollbar_height: value.get_horizontal_scrollbar_height,
+            has_vertical_scrollbar: value.has_vertical_scrollbar,
+            get_vertical_scrollbar_width: value.get_vertical_scrollbar_width,
         }
     }
 }
@@ -12356,27 +12352,27 @@ impl From<_cef_display_t> for Display {
     fn from(value: _cef_display_t) -> Self {
         Self {
             base: value.base.into(),
-            get_id: value.get_id.into(),
-            get_device_scale_factor: value.get_device_scale_factor.into(),
-            convert_point_to_pixels: value.convert_point_to_pixels.into(),
-            convert_point_from_pixels: value.convert_point_from_pixels.into(),
-            get_bounds: value.get_bounds.into(),
-            get_work_area: value.get_work_area.into(),
-            get_rotation: value.get_rotation.into(),
+            get_id: value.get_id,
+            get_device_scale_factor: value.get_device_scale_factor,
+            convert_point_to_pixels: value.convert_point_to_pixels,
+            convert_point_from_pixels: value.convert_point_from_pixels,
+            get_bounds: value.get_bounds,
+            get_work_area: value.get_work_area,
+            get_rotation: value.get_rotation,
         }
     }
 }
-impl Into<_cef_display_t> for Display {
-    fn into(self) -> _cef_display_t {
-        _cef_display_t {
-            base: self.base.into(),
-            get_id: self.get_id.into(),
-            get_device_scale_factor: self.get_device_scale_factor.into(),
-            convert_point_to_pixels: self.convert_point_to_pixels.into(),
-            convert_point_from_pixels: self.convert_point_from_pixels.into(),
-            get_bounds: self.get_bounds.into(),
-            get_work_area: self.get_work_area.into(),
-            get_rotation: self.get_rotation.into(),
+impl From<Display> for _cef_display_t {
+    fn from(value: Display) -> Self {
+        Self {
+            base: value.base.into(),
+            get_id: value.get_id,
+            get_device_scale_factor: value.get_device_scale_factor,
+            convert_point_to_pixels: value.convert_point_to_pixels,
+            convert_point_from_pixels: value.convert_point_from_pixels,
+            get_bounds: value.get_bounds,
+            get_work_area: value.get_work_area,
+            get_rotation: value.get_rotation,
         }
     }
 }
@@ -12465,51 +12461,51 @@ impl From<_cef_overlay_controller_t> for OverlayController {
     fn from(value: _cef_overlay_controller_t) -> Self {
         Self {
             base: value.base.into(),
-            is_valid: value.is_valid.into(),
-            is_same: value.is_same.into(),
-            get_contents_view: value.get_contents_view.into(),
-            get_window: value.get_window.into(),
-            get_docking_mode: value.get_docking_mode.into(),
-            destroy: value.destroy.into(),
-            set_bounds: value.set_bounds.into(),
-            get_bounds: value.get_bounds.into(),
-            get_bounds_in_screen: value.get_bounds_in_screen.into(),
-            set_size: value.set_size.into(),
-            get_size: value.get_size.into(),
-            set_position: value.set_position.into(),
-            get_position: value.get_position.into(),
-            set_insets: value.set_insets.into(),
-            get_insets: value.get_insets.into(),
-            size_to_preferred_size: value.size_to_preferred_size.into(),
-            set_visible: value.set_visible.into(),
-            is_visible: value.is_visible.into(),
-            is_drawn: value.is_drawn.into(),
+            is_valid: value.is_valid,
+            is_same: value.is_same,
+            get_contents_view: value.get_contents_view,
+            get_window: value.get_window,
+            get_docking_mode: value.get_docking_mode,
+            destroy: value.destroy,
+            set_bounds: value.set_bounds,
+            get_bounds: value.get_bounds,
+            get_bounds_in_screen: value.get_bounds_in_screen,
+            set_size: value.set_size,
+            get_size: value.get_size,
+            set_position: value.set_position,
+            get_position: value.get_position,
+            set_insets: value.set_insets,
+            get_insets: value.get_insets,
+            size_to_preferred_size: value.size_to_preferred_size,
+            set_visible: value.set_visible,
+            is_visible: value.is_visible,
+            is_drawn: value.is_drawn,
         }
     }
 }
-impl Into<_cef_overlay_controller_t> for OverlayController {
-    fn into(self) -> _cef_overlay_controller_t {
-        _cef_overlay_controller_t {
-            base: self.base.into(),
-            is_valid: self.is_valid.into(),
-            is_same: self.is_same.into(),
-            get_contents_view: self.get_contents_view.into(),
-            get_window: self.get_window.into(),
-            get_docking_mode: self.get_docking_mode.into(),
-            destroy: self.destroy.into(),
-            set_bounds: self.set_bounds.into(),
-            get_bounds: self.get_bounds.into(),
-            get_bounds_in_screen: self.get_bounds_in_screen.into(),
-            set_size: self.set_size.into(),
-            get_size: self.get_size.into(),
-            set_position: self.set_position.into(),
-            get_position: self.get_position.into(),
-            set_insets: self.set_insets.into(),
-            get_insets: self.get_insets.into(),
-            size_to_preferred_size: self.size_to_preferred_size.into(),
-            set_visible: self.set_visible.into(),
-            is_visible: self.is_visible.into(),
-            is_drawn: self.is_drawn.into(),
+impl From<OverlayController> for _cef_overlay_controller_t {
+    fn from(value: OverlayController) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            is_same: value.is_same,
+            get_contents_view: value.get_contents_view,
+            get_window: value.get_window,
+            get_docking_mode: value.get_docking_mode,
+            destroy: value.destroy,
+            set_bounds: value.set_bounds,
+            get_bounds: value.get_bounds,
+            get_bounds_in_screen: value.get_bounds_in_screen,
+            set_size: value.set_size,
+            get_size: value.get_size,
+            set_position: value.set_position,
+            get_position: value.get_position,
+            set_insets: value.set_insets,
+            get_insets: value.get_insets,
+            size_to_preferred_size: value.size_to_preferred_size,
+            set_visible: value.set_visible,
+            is_visible: value.is_visible,
+            is_drawn: value.is_drawn,
         }
     }
 }
@@ -12531,10 +12527,10 @@ impl From<_cef_panel_delegate_t> for PanelDelegate {
         }
     }
 }
-impl Into<_cef_panel_delegate_t> for PanelDelegate {
-    fn into(self) -> _cef_panel_delegate_t {
-        _cef_panel_delegate_t {
-            base: self.base.into(),
+impl From<PanelDelegate> for _cef_panel_delegate_t {
+    fn from(value: PanelDelegate) -> Self {
+        Self {
+            base: value.base.into(),
         }
     }
 }
@@ -12599,37 +12595,37 @@ impl From<_cef_panel_t> for Panel {
     fn from(value: _cef_panel_t) -> Self {
         Self {
             base: value.base.into(),
-            as_window: value.as_window.into(),
-            set_to_fill_layout: value.set_to_fill_layout.into(),
-            set_to_box_layout: value.set_to_box_layout.into(),
-            get_layout: value.get_layout.into(),
-            layout: value.layout.into(),
-            add_child_view: value.add_child_view.into(),
-            add_child_view_at: value.add_child_view_at.into(),
-            reorder_child_view: value.reorder_child_view.into(),
-            remove_child_view: value.remove_child_view.into(),
-            remove_all_child_views: value.remove_all_child_views.into(),
-            get_child_view_count: value.get_child_view_count.into(),
-            get_child_view_at: value.get_child_view_at.into(),
+            as_window: value.as_window,
+            set_to_fill_layout: value.set_to_fill_layout,
+            set_to_box_layout: value.set_to_box_layout,
+            get_layout: value.get_layout,
+            layout: value.layout,
+            add_child_view: value.add_child_view,
+            add_child_view_at: value.add_child_view_at,
+            reorder_child_view: value.reorder_child_view,
+            remove_child_view: value.remove_child_view,
+            remove_all_child_views: value.remove_all_child_views,
+            get_child_view_count: value.get_child_view_count,
+            get_child_view_at: value.get_child_view_at,
         }
     }
 }
-impl Into<_cef_panel_t> for Panel {
-    fn into(self) -> _cef_panel_t {
-        _cef_panel_t {
-            base: self.base.into(),
-            as_window: self.as_window.into(),
-            set_to_fill_layout: self.set_to_fill_layout.into(),
-            set_to_box_layout: self.set_to_box_layout.into(),
-            get_layout: self.get_layout.into(),
-            layout: self.layout.into(),
-            add_child_view: self.add_child_view.into(),
-            add_child_view_at: self.add_child_view_at.into(),
-            reorder_child_view: self.reorder_child_view.into(),
-            remove_child_view: self.remove_child_view.into(),
-            remove_all_child_views: self.remove_all_child_views.into(),
-            get_child_view_count: self.get_child_view_count.into(),
-            get_child_view_at: self.get_child_view_at.into(),
+impl From<Panel> for _cef_panel_t {
+    fn from(value: Panel) -> Self {
+        Self {
+            base: value.base.into(),
+            as_window: value.as_window,
+            set_to_fill_layout: value.set_to_fill_layout,
+            set_to_box_layout: value.set_to_box_layout,
+            get_layout: value.get_layout,
+            layout: value.layout,
+            add_child_view: value.add_child_view,
+            add_child_view_at: value.add_child_view_at,
+            reorder_child_view: value.reorder_child_view,
+            remove_child_view: value.remove_child_view,
+            remove_all_child_views: value.remove_all_child_views,
+            get_child_view_count: value.get_child_view_count,
+            get_child_view_at: value.get_child_view_at,
         }
     }
 }
@@ -12784,59 +12780,59 @@ impl From<_cef_window_delegate_t> for WindowDelegate {
     fn from(value: _cef_window_delegate_t) -> Self {
         Self {
             base: value.base.into(),
-            on_window_created: value.on_window_created.into(),
-            on_window_closing: value.on_window_closing.into(),
-            on_window_destroyed: value.on_window_destroyed.into(),
-            on_window_activation_changed: value.on_window_activation_changed.into(),
-            on_window_bounds_changed: value.on_window_bounds_changed.into(),
-            on_window_fullscreen_transition: value.on_window_fullscreen_transition.into(),
-            get_parent_window: value.get_parent_window.into(),
-            is_window_modal_dialog: value.is_window_modal_dialog.into(),
-            get_initial_bounds: value.get_initial_bounds.into(),
-            get_initial_show_state: value.get_initial_show_state.into(),
-            is_frameless: value.is_frameless.into(),
-            with_standard_window_buttons: value.with_standard_window_buttons.into(),
-            get_titlebar_height: value.get_titlebar_height.into(),
-            accepts_first_mouse: value.accepts_first_mouse.into(),
-            can_resize: value.can_resize.into(),
-            can_maximize: value.can_maximize.into(),
-            can_minimize: value.can_minimize.into(),
-            can_close: value.can_close.into(),
-            on_accelerator: value.on_accelerator.into(),
-            on_key_event: value.on_key_event.into(),
-            on_theme_colors_changed: value.on_theme_colors_changed.into(),
-            get_window_runtime_style: value.get_window_runtime_style.into(),
-            get_linux_window_properties: value.get_linux_window_properties.into(),
+            on_window_created: value.on_window_created,
+            on_window_closing: value.on_window_closing,
+            on_window_destroyed: value.on_window_destroyed,
+            on_window_activation_changed: value.on_window_activation_changed,
+            on_window_bounds_changed: value.on_window_bounds_changed,
+            on_window_fullscreen_transition: value.on_window_fullscreen_transition,
+            get_parent_window: value.get_parent_window,
+            is_window_modal_dialog: value.is_window_modal_dialog,
+            get_initial_bounds: value.get_initial_bounds,
+            get_initial_show_state: value.get_initial_show_state,
+            is_frameless: value.is_frameless,
+            with_standard_window_buttons: value.with_standard_window_buttons,
+            get_titlebar_height: value.get_titlebar_height,
+            accepts_first_mouse: value.accepts_first_mouse,
+            can_resize: value.can_resize,
+            can_maximize: value.can_maximize,
+            can_minimize: value.can_minimize,
+            can_close: value.can_close,
+            on_accelerator: value.on_accelerator,
+            on_key_event: value.on_key_event,
+            on_theme_colors_changed: value.on_theme_colors_changed,
+            get_window_runtime_style: value.get_window_runtime_style,
+            get_linux_window_properties: value.get_linux_window_properties,
         }
     }
 }
-impl Into<_cef_window_delegate_t> for WindowDelegate {
-    fn into(self) -> _cef_window_delegate_t {
-        _cef_window_delegate_t {
-            base: self.base.into(),
-            on_window_created: self.on_window_created.into(),
-            on_window_closing: self.on_window_closing.into(),
-            on_window_destroyed: self.on_window_destroyed.into(),
-            on_window_activation_changed: self.on_window_activation_changed.into(),
-            on_window_bounds_changed: self.on_window_bounds_changed.into(),
-            on_window_fullscreen_transition: self.on_window_fullscreen_transition.into(),
-            get_parent_window: self.get_parent_window.into(),
-            is_window_modal_dialog: self.is_window_modal_dialog.into(),
-            get_initial_bounds: self.get_initial_bounds.into(),
-            get_initial_show_state: self.get_initial_show_state.into(),
-            is_frameless: self.is_frameless.into(),
-            with_standard_window_buttons: self.with_standard_window_buttons.into(),
-            get_titlebar_height: self.get_titlebar_height.into(),
-            accepts_first_mouse: self.accepts_first_mouse.into(),
-            can_resize: self.can_resize.into(),
-            can_maximize: self.can_maximize.into(),
-            can_minimize: self.can_minimize.into(),
-            can_close: self.can_close.into(),
-            on_accelerator: self.on_accelerator.into(),
-            on_key_event: self.on_key_event.into(),
-            on_theme_colors_changed: self.on_theme_colors_changed.into(),
-            get_window_runtime_style: self.get_window_runtime_style.into(),
-            get_linux_window_properties: self.get_linux_window_properties.into(),
+impl From<WindowDelegate> for _cef_window_delegate_t {
+    fn from(value: WindowDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            on_window_created: value.on_window_created,
+            on_window_closing: value.on_window_closing,
+            on_window_destroyed: value.on_window_destroyed,
+            on_window_activation_changed: value.on_window_activation_changed,
+            on_window_bounds_changed: value.on_window_bounds_changed,
+            on_window_fullscreen_transition: value.on_window_fullscreen_transition,
+            get_parent_window: value.get_parent_window,
+            is_window_modal_dialog: value.is_window_modal_dialog,
+            get_initial_bounds: value.get_initial_bounds,
+            get_initial_show_state: value.get_initial_show_state,
+            is_frameless: value.is_frameless,
+            with_standard_window_buttons: value.with_standard_window_buttons,
+            get_titlebar_height: value.get_titlebar_height,
+            accepts_first_mouse: value.accepts_first_mouse,
+            can_resize: value.can_resize,
+            can_maximize: value.can_maximize,
+            can_minimize: value.can_minimize,
+            can_close: value.can_close,
+            on_accelerator: value.on_accelerator,
+            on_key_event: value.on_key_event,
+            on_theme_colors_changed: value.on_theme_colors_changed,
+            get_window_runtime_style: value.get_window_runtime_style,
+            get_linux_window_properties: value.get_linux_window_properties,
         }
     }
 }
@@ -12999,97 +12995,97 @@ impl From<_cef_window_t> for Window {
     fn from(value: _cef_window_t) -> Self {
         Self {
             base: value.base.into(),
-            show: value.show.into(),
-            show_as_browser_modal_dialog: value.show_as_browser_modal_dialog.into(),
-            hide: value.hide.into(),
-            center_window: value.center_window.into(),
-            close: value.close.into(),
-            is_closed: value.is_closed.into(),
-            activate: value.activate.into(),
-            deactivate: value.deactivate.into(),
-            is_active: value.is_active.into(),
-            bring_to_top: value.bring_to_top.into(),
-            set_always_on_top: value.set_always_on_top.into(),
-            is_always_on_top: value.is_always_on_top.into(),
-            maximize: value.maximize.into(),
-            minimize: value.minimize.into(),
-            restore: value.restore.into(),
-            set_fullscreen: value.set_fullscreen.into(),
-            is_maximized: value.is_maximized.into(),
-            is_minimized: value.is_minimized.into(),
-            is_fullscreen: value.is_fullscreen.into(),
-            get_focused_view: value.get_focused_view.into(),
-            set_title: value.set_title.into(),
-            get_title: value.get_title.into(),
-            set_window_icon: value.set_window_icon.into(),
-            get_window_icon: value.get_window_icon.into(),
-            set_window_app_icon: value.set_window_app_icon.into(),
-            get_window_app_icon: value.get_window_app_icon.into(),
-            add_overlay_view: value.add_overlay_view.into(),
-            show_menu: value.show_menu.into(),
-            cancel_menu: value.cancel_menu.into(),
-            get_display: value.get_display.into(),
-            get_client_area_bounds_in_screen: value.get_client_area_bounds_in_screen.into(),
-            set_draggable_regions: value.set_draggable_regions.into(),
-            get_window_handle: value.get_window_handle.into(),
-            send_key_press: value.send_key_press.into(),
-            send_mouse_move: value.send_mouse_move.into(),
-            send_mouse_events: value.send_mouse_events.into(),
-            set_accelerator: value.set_accelerator.into(),
-            remove_accelerator: value.remove_accelerator.into(),
-            remove_all_accelerators: value.remove_all_accelerators.into(),
-            set_theme_color: value.set_theme_color.into(),
-            theme_changed: value.theme_changed.into(),
-            get_runtime_style: value.get_runtime_style.into(),
+            show: value.show,
+            show_as_browser_modal_dialog: value.show_as_browser_modal_dialog,
+            hide: value.hide,
+            center_window: value.center_window,
+            close: value.close,
+            is_closed: value.is_closed,
+            activate: value.activate,
+            deactivate: value.deactivate,
+            is_active: value.is_active,
+            bring_to_top: value.bring_to_top,
+            set_always_on_top: value.set_always_on_top,
+            is_always_on_top: value.is_always_on_top,
+            maximize: value.maximize,
+            minimize: value.minimize,
+            restore: value.restore,
+            set_fullscreen: value.set_fullscreen,
+            is_maximized: value.is_maximized,
+            is_minimized: value.is_minimized,
+            is_fullscreen: value.is_fullscreen,
+            get_focused_view: value.get_focused_view,
+            set_title: value.set_title,
+            get_title: value.get_title,
+            set_window_icon: value.set_window_icon,
+            get_window_icon: value.get_window_icon,
+            set_window_app_icon: value.set_window_app_icon,
+            get_window_app_icon: value.get_window_app_icon,
+            add_overlay_view: value.add_overlay_view,
+            show_menu: value.show_menu,
+            cancel_menu: value.cancel_menu,
+            get_display: value.get_display,
+            get_client_area_bounds_in_screen: value.get_client_area_bounds_in_screen,
+            set_draggable_regions: value.set_draggable_regions,
+            get_window_handle: value.get_window_handle,
+            send_key_press: value.send_key_press,
+            send_mouse_move: value.send_mouse_move,
+            send_mouse_events: value.send_mouse_events,
+            set_accelerator: value.set_accelerator,
+            remove_accelerator: value.remove_accelerator,
+            remove_all_accelerators: value.remove_all_accelerators,
+            set_theme_color: value.set_theme_color,
+            theme_changed: value.theme_changed,
+            get_runtime_style: value.get_runtime_style,
         }
     }
 }
-impl Into<_cef_window_t> for Window {
-    fn into(self) -> _cef_window_t {
-        _cef_window_t {
-            base: self.base.into(),
-            show: self.show.into(),
-            show_as_browser_modal_dialog: self.show_as_browser_modal_dialog.into(),
-            hide: self.hide.into(),
-            center_window: self.center_window.into(),
-            close: self.close.into(),
-            is_closed: self.is_closed.into(),
-            activate: self.activate.into(),
-            deactivate: self.deactivate.into(),
-            is_active: self.is_active.into(),
-            bring_to_top: self.bring_to_top.into(),
-            set_always_on_top: self.set_always_on_top.into(),
-            is_always_on_top: self.is_always_on_top.into(),
-            maximize: self.maximize.into(),
-            minimize: self.minimize.into(),
-            restore: self.restore.into(),
-            set_fullscreen: self.set_fullscreen.into(),
-            is_maximized: self.is_maximized.into(),
-            is_minimized: self.is_minimized.into(),
-            is_fullscreen: self.is_fullscreen.into(),
-            get_focused_view: self.get_focused_view.into(),
-            set_title: self.set_title.into(),
-            get_title: self.get_title.into(),
-            set_window_icon: self.set_window_icon.into(),
-            get_window_icon: self.get_window_icon.into(),
-            set_window_app_icon: self.set_window_app_icon.into(),
-            get_window_app_icon: self.get_window_app_icon.into(),
-            add_overlay_view: self.add_overlay_view.into(),
-            show_menu: self.show_menu.into(),
-            cancel_menu: self.cancel_menu.into(),
-            get_display: self.get_display.into(),
-            get_client_area_bounds_in_screen: self.get_client_area_bounds_in_screen.into(),
-            set_draggable_regions: self.set_draggable_regions.into(),
-            get_window_handle: self.get_window_handle.into(),
-            send_key_press: self.send_key_press.into(),
-            send_mouse_move: self.send_mouse_move.into(),
-            send_mouse_events: self.send_mouse_events.into(),
-            set_accelerator: self.set_accelerator.into(),
-            remove_accelerator: self.remove_accelerator.into(),
-            remove_all_accelerators: self.remove_all_accelerators.into(),
-            set_theme_color: self.set_theme_color.into(),
-            theme_changed: self.theme_changed.into(),
-            get_runtime_style: self.get_runtime_style.into(),
+impl From<Window> for _cef_window_t {
+    fn from(value: Window) -> Self {
+        Self {
+            base: value.base.into(),
+            show: value.show,
+            show_as_browser_modal_dialog: value.show_as_browser_modal_dialog,
+            hide: value.hide,
+            center_window: value.center_window,
+            close: value.close,
+            is_closed: value.is_closed,
+            activate: value.activate,
+            deactivate: value.deactivate,
+            is_active: value.is_active,
+            bring_to_top: value.bring_to_top,
+            set_always_on_top: value.set_always_on_top,
+            is_always_on_top: value.is_always_on_top,
+            maximize: value.maximize,
+            minimize: value.minimize,
+            restore: value.restore,
+            set_fullscreen: value.set_fullscreen,
+            is_maximized: value.is_maximized,
+            is_minimized: value.is_minimized,
+            is_fullscreen: value.is_fullscreen,
+            get_focused_view: value.get_focused_view,
+            set_title: value.set_title,
+            get_title: value.get_title,
+            set_window_icon: value.set_window_icon,
+            get_window_icon: value.get_window_icon,
+            set_window_app_icon: value.set_window_app_icon,
+            get_window_app_icon: value.get_window_app_icon,
+            add_overlay_view: value.add_overlay_view,
+            show_menu: value.show_menu,
+            cancel_menu: value.cancel_menu,
+            get_display: value.get_display,
+            get_client_area_bounds_in_screen: value.get_client_area_bounds_in_screen,
+            set_draggable_regions: value.set_draggable_regions,
+            get_window_handle: value.get_window_handle,
+            send_key_press: value.send_key_press,
+            send_mouse_move: value.send_mouse_move,
+            send_mouse_events: value.send_mouse_events,
+            set_accelerator: value.set_accelerator,
+            remove_accelerator: value.remove_accelerator,
+            remove_all_accelerators: value.remove_all_accelerators,
+            set_theme_color: value.set_theme_color,
+            theme_changed: value.theme_changed,
+            get_runtime_style: value.get_runtime_style,
         }
     }
 }
@@ -13117,9 +13113,9 @@ impl From<cef_content_setting_types_t> for ContentSettingTypes {
         Self(value)
     }
 }
-impl Into<cef_content_setting_types_t> for ContentSettingTypes {
-    fn into(self) -> cef_content_setting_types_t {
-        self.0
+impl From<ContentSettingTypes> for cef_content_setting_types_t {
+    fn from(value: ContentSettingTypes) -> Self {
+        value.0
     }
 }
 impl Default for ContentSettingTypes {
@@ -13146,9 +13142,9 @@ impl From<cef_content_setting_values_t> for ContentSettingValues {
         Self(value)
     }
 }
-impl Into<cef_content_setting_values_t> for ContentSettingValues {
-    fn into(self) -> cef_content_setting_values_t {
-        self.0
+impl From<ContentSettingValues> for cef_content_setting_values_t {
+    fn from(value: ContentSettingValues) -> Self {
+        value.0
     }
 }
 impl Default for ContentSettingValues {
@@ -13175,9 +13171,9 @@ impl From<cef_color_type_t> for ColorType {
         Self(value)
     }
 }
-impl Into<cef_color_type_t> for ColorType {
-    fn into(self) -> cef_color_type_t {
-        self.0
+impl From<ColorType> for cef_color_type_t {
+    fn from(value: ColorType) -> Self {
+        value.0
     }
 }
 impl Default for ColorType {
@@ -13204,9 +13200,9 @@ impl From<cef_runtime_style_t> for RuntimeStyle {
         Self(value)
     }
 }
-impl Into<cef_runtime_style_t> for RuntimeStyle {
-    fn into(self) -> cef_runtime_style_t {
-        self.0
+impl From<RuntimeStyle> for cef_runtime_style_t {
+    fn from(value: RuntimeStyle) -> Self {
+        value.0
     }
 }
 impl Default for RuntimeStyle {
@@ -13233,9 +13229,9 @@ impl From<cef_log_severity_t> for LogSeverity {
         Self(value)
     }
 }
-impl Into<cef_log_severity_t> for LogSeverity {
-    fn into(self) -> cef_log_severity_t {
-        self.0
+impl From<LogSeverity> for cef_log_severity_t {
+    fn from(value: LogSeverity) -> Self {
+        value.0
     }
 }
 impl Default for LogSeverity {
@@ -13262,9 +13258,9 @@ impl From<cef_log_items_t> for LogItems {
         Self(value)
     }
 }
-impl Into<cef_log_items_t> for LogItems {
-    fn into(self) -> cef_log_items_t {
-        self.0
+impl From<LogItems> for cef_log_items_t {
+    fn from(value: LogItems) -> Self {
+        value.0
     }
 }
 impl Default for LogItems {
@@ -13291,9 +13287,9 @@ impl From<cef_state_t> for State {
         Self(value)
     }
 }
-impl Into<cef_state_t> for State {
-    fn into(self) -> cef_state_t {
-        self.0
+impl From<State> for cef_state_t {
+    fn from(value: State) -> Self {
+        value.0
     }
 }
 impl Default for State {
@@ -13320,9 +13316,9 @@ impl From<cef_return_value_t> for ReturnValue {
         Self(value)
     }
 }
-impl Into<cef_return_value_t> for ReturnValue {
-    fn into(self) -> cef_return_value_t {
-        self.0
+impl From<ReturnValue> for cef_return_value_t {
+    fn from(value: ReturnValue) -> Self {
+        value.0
     }
 }
 impl Default for ReturnValue {
@@ -13349,9 +13345,9 @@ impl From<cef_cookie_priority_t> for CookiePriority {
         Self(value)
     }
 }
-impl Into<cef_cookie_priority_t> for CookiePriority {
-    fn into(self) -> cef_cookie_priority_t {
-        self.0
+impl From<CookiePriority> for cef_cookie_priority_t {
+    fn from(value: CookiePriority) -> Self {
+        value.0
     }
 }
 impl Default for CookiePriority {
@@ -13378,9 +13374,9 @@ impl From<cef_cookie_same_site_t> for CookieSameSite {
         Self(value)
     }
 }
-impl Into<cef_cookie_same_site_t> for CookieSameSite {
-    fn into(self) -> cef_cookie_same_site_t {
-        self.0
+impl From<CookieSameSite> for cef_cookie_same_site_t {
+    fn from(value: CookieSameSite) -> Self {
+        value.0
     }
 }
 impl Default for CookieSameSite {
@@ -13407,9 +13403,9 @@ impl From<cef_termination_status_t> for TerminationStatus {
         Self(value)
     }
 }
-impl Into<cef_termination_status_t> for TerminationStatus {
-    fn into(self) -> cef_termination_status_t {
-        self.0
+impl From<TerminationStatus> for cef_termination_status_t {
+    fn from(value: TerminationStatus) -> Self {
+        value.0
     }
 }
 impl Default for TerminationStatus {
@@ -13436,9 +13432,9 @@ impl From<cef_path_key_t> for PathKey {
         Self(value)
     }
 }
-impl Into<cef_path_key_t> for PathKey {
-    fn into(self) -> cef_path_key_t {
-        self.0
+impl From<PathKey> for cef_path_key_t {
+    fn from(value: PathKey) -> Self {
+        value.0
     }
 }
 impl Default for PathKey {
@@ -13465,9 +13461,9 @@ impl From<cef_storage_type_t> for StorageType {
         Self(value)
     }
 }
-impl Into<cef_storage_type_t> for StorageType {
-    fn into(self) -> cef_storage_type_t {
-        self.0
+impl From<StorageType> for cef_storage_type_t {
+    fn from(value: StorageType) -> Self {
+        value.0
     }
 }
 impl Default for StorageType {
@@ -13494,9 +13490,9 @@ impl From<cef_errorcode_t> for Errorcode {
         Self(value)
     }
 }
-impl Into<cef_errorcode_t> for Errorcode {
-    fn into(self) -> cef_errorcode_t {
-        self.0
+impl From<Errorcode> for cef_errorcode_t {
+    fn from(value: Errorcode) -> Self {
+        value.0
     }
 }
 impl Default for Errorcode {
@@ -13523,9 +13519,9 @@ impl From<cef_cert_status_t> for CertStatus {
         Self(value)
     }
 }
-impl Into<cef_cert_status_t> for CertStatus {
-    fn into(self) -> cef_cert_status_t {
-        self.0
+impl From<CertStatus> for cef_cert_status_t {
+    fn from(value: CertStatus) -> Self {
+        value.0
     }
 }
 impl Default for CertStatus {
@@ -13552,9 +13548,9 @@ impl From<cef_resultcode_t> for Resultcode {
         Self(value)
     }
 }
-impl Into<cef_resultcode_t> for Resultcode {
-    fn into(self) -> cef_resultcode_t {
-        self.0
+impl From<Resultcode> for cef_resultcode_t {
+    fn from(value: Resultcode) -> Self {
+        value.0
     }
 }
 impl Default for Resultcode {
@@ -13581,9 +13577,9 @@ impl From<cef_window_open_disposition_t> for WindowOpenDisposition {
         Self(value)
     }
 }
-impl Into<cef_window_open_disposition_t> for WindowOpenDisposition {
-    fn into(self) -> cef_window_open_disposition_t {
-        self.0
+impl From<WindowOpenDisposition> for cef_window_open_disposition_t {
+    fn from(value: WindowOpenDisposition) -> Self {
+        value.0
     }
 }
 impl Default for WindowOpenDisposition {
@@ -13610,9 +13606,9 @@ impl From<cef_drag_operations_mask_t> for DragOperationsMask {
         Self(value)
     }
 }
-impl Into<cef_drag_operations_mask_t> for DragOperationsMask {
-    fn into(self) -> cef_drag_operations_mask_t {
-        self.0
+impl From<DragOperationsMask> for cef_drag_operations_mask_t {
+    fn from(value: DragOperationsMask) -> Self {
+        value.0
     }
 }
 impl Default for DragOperationsMask {
@@ -13639,9 +13635,9 @@ impl From<cef_text_input_mode_t> for TextInputMode {
         Self(value)
     }
 }
-impl Into<cef_text_input_mode_t> for TextInputMode {
-    fn into(self) -> cef_text_input_mode_t {
-        self.0
+impl From<TextInputMode> for cef_text_input_mode_t {
+    fn from(value: TextInputMode) -> Self {
+        value.0
     }
 }
 impl Default for TextInputMode {
@@ -13668,9 +13664,9 @@ impl From<cef_v8_propertyattribute_t> for V8Propertyattribute {
         Self(value)
     }
 }
-impl Into<cef_v8_propertyattribute_t> for V8Propertyattribute {
-    fn into(self) -> cef_v8_propertyattribute_t {
-        self.0
+impl From<V8Propertyattribute> for cef_v8_propertyattribute_t {
+    fn from(value: V8Propertyattribute) -> Self {
+        value.0
     }
 }
 impl Default for V8Propertyattribute {
@@ -13697,9 +13693,9 @@ impl From<cef_postdataelement_type_t> for PostdataelementType {
         Self(value)
     }
 }
-impl Into<cef_postdataelement_type_t> for PostdataelementType {
-    fn into(self) -> cef_postdataelement_type_t {
-        self.0
+impl From<PostdataelementType> for cef_postdataelement_type_t {
+    fn from(value: PostdataelementType) -> Self {
+        value.0
     }
 }
 impl Default for PostdataelementType {
@@ -13726,9 +13722,9 @@ impl From<cef_resource_type_t> for ResourceType {
         Self(value)
     }
 }
-impl Into<cef_resource_type_t> for ResourceType {
-    fn into(self) -> cef_resource_type_t {
-        self.0
+impl From<ResourceType> for cef_resource_type_t {
+    fn from(value: ResourceType) -> Self {
+        value.0
     }
 }
 impl Default for ResourceType {
@@ -13755,9 +13751,9 @@ impl From<cef_transition_type_t> for TransitionType {
         Self(value)
     }
 }
-impl Into<cef_transition_type_t> for TransitionType {
-    fn into(self) -> cef_transition_type_t {
-        self.0
+impl From<TransitionType> for cef_transition_type_t {
+    fn from(value: TransitionType) -> Self {
+        value.0
     }
 }
 impl Default for TransitionType {
@@ -13784,9 +13780,9 @@ impl From<cef_urlrequest_flags_t> for UrlrequestFlags {
         Self(value)
     }
 }
-impl Into<cef_urlrequest_flags_t> for UrlrequestFlags {
-    fn into(self) -> cef_urlrequest_flags_t {
-        self.0
+impl From<UrlrequestFlags> for cef_urlrequest_flags_t {
+    fn from(value: UrlrequestFlags) -> Self {
+        value.0
     }
 }
 impl Default for UrlrequestFlags {
@@ -13813,9 +13809,9 @@ impl From<cef_urlrequest_status_t> for UrlrequestStatus {
         Self(value)
     }
 }
-impl Into<cef_urlrequest_status_t> for UrlrequestStatus {
-    fn into(self) -> cef_urlrequest_status_t {
-        self.0
+impl From<UrlrequestStatus> for cef_urlrequest_status_t {
+    fn from(value: UrlrequestStatus) -> Self {
+        value.0
     }
 }
 impl Default for UrlrequestStatus {
@@ -13842,9 +13838,9 @@ impl From<cef_process_id_t> for ProcessId {
         Self(value)
     }
 }
-impl Into<cef_process_id_t> for ProcessId {
-    fn into(self) -> cef_process_id_t {
-        self.0
+impl From<ProcessId> for cef_process_id_t {
+    fn from(value: ProcessId) -> Self {
+        value.0
     }
 }
 impl Default for ProcessId {
@@ -13871,9 +13867,9 @@ impl From<cef_thread_id_t> for ThreadId {
         Self(value)
     }
 }
-impl Into<cef_thread_id_t> for ThreadId {
-    fn into(self) -> cef_thread_id_t {
-        self.0
+impl From<ThreadId> for cef_thread_id_t {
+    fn from(value: ThreadId) -> Self {
+        value.0
     }
 }
 impl Default for ThreadId {
@@ -13900,9 +13896,9 @@ impl From<cef_thread_priority_t> for ThreadPriority {
         Self(value)
     }
 }
-impl Into<cef_thread_priority_t> for ThreadPriority {
-    fn into(self) -> cef_thread_priority_t {
-        self.0
+impl From<ThreadPriority> for cef_thread_priority_t {
+    fn from(value: ThreadPriority) -> Self {
+        value.0
     }
 }
 impl Default for ThreadPriority {
@@ -13929,9 +13925,9 @@ impl From<cef_message_loop_type_t> for MessageLoopType {
         Self(value)
     }
 }
-impl Into<cef_message_loop_type_t> for MessageLoopType {
-    fn into(self) -> cef_message_loop_type_t {
-        self.0
+impl From<MessageLoopType> for cef_message_loop_type_t {
+    fn from(value: MessageLoopType) -> Self {
+        value.0
     }
 }
 impl Default for MessageLoopType {
@@ -13958,9 +13954,9 @@ impl From<cef_com_init_mode_t> for ComInitMode {
         Self(value)
     }
 }
-impl Into<cef_com_init_mode_t> for ComInitMode {
-    fn into(self) -> cef_com_init_mode_t {
-        self.0
+impl From<ComInitMode> for cef_com_init_mode_t {
+    fn from(value: ComInitMode) -> Self {
+        value.0
     }
 }
 impl Default for ComInitMode {
@@ -13987,9 +13983,9 @@ impl From<cef_value_type_t> for ValueType {
         Self(value)
     }
 }
-impl Into<cef_value_type_t> for ValueType {
-    fn into(self) -> cef_value_type_t {
-        self.0
+impl From<ValueType> for cef_value_type_t {
+    fn from(value: ValueType) -> Self {
+        value.0
     }
 }
 impl Default for ValueType {
@@ -14016,9 +14012,9 @@ impl From<cef_jsdialog_type_t> for JsdialogType {
         Self(value)
     }
 }
-impl Into<cef_jsdialog_type_t> for JsdialogType {
-    fn into(self) -> cef_jsdialog_type_t {
-        self.0
+impl From<JsdialogType> for cef_jsdialog_type_t {
+    fn from(value: JsdialogType) -> Self {
+        value.0
     }
 }
 impl Default for JsdialogType {
@@ -14045,9 +14041,9 @@ impl From<cef_menu_id_t> for MenuId {
         Self(value)
     }
 }
-impl Into<cef_menu_id_t> for MenuId {
-    fn into(self) -> cef_menu_id_t {
-        self.0
+impl From<MenuId> for cef_menu_id_t {
+    fn from(value: MenuId) -> Self {
+        value.0
     }
 }
 impl Default for MenuId {
@@ -14074,9 +14070,9 @@ impl From<cef_mouse_button_type_t> for MouseButtonType {
         Self(value)
     }
 }
-impl Into<cef_mouse_button_type_t> for MouseButtonType {
-    fn into(self) -> cef_mouse_button_type_t {
-        self.0
+impl From<MouseButtonType> for cef_mouse_button_type_t {
+    fn from(value: MouseButtonType) -> Self {
+        value.0
     }
 }
 impl Default for MouseButtonType {
@@ -14103,9 +14099,9 @@ impl From<cef_touch_event_type_t> for TouchEventType {
         Self(value)
     }
 }
-impl Into<cef_touch_event_type_t> for TouchEventType {
-    fn into(self) -> cef_touch_event_type_t {
-        self.0
+impl From<TouchEventType> for cef_touch_event_type_t {
+    fn from(value: TouchEventType) -> Self {
+        value.0
     }
 }
 impl Default for TouchEventType {
@@ -14132,9 +14128,9 @@ impl From<cef_pointer_type_t> for PointerType {
         Self(value)
     }
 }
-impl Into<cef_pointer_type_t> for PointerType {
-    fn into(self) -> cef_pointer_type_t {
-        self.0
+impl From<PointerType> for cef_pointer_type_t {
+    fn from(value: PointerType) -> Self {
+        value.0
     }
 }
 impl Default for PointerType {
@@ -14161,9 +14157,9 @@ impl From<cef_paint_element_type_t> for PaintElementType {
         Self(value)
     }
 }
-impl Into<cef_paint_element_type_t> for PaintElementType {
-    fn into(self) -> cef_paint_element_type_t {
-        self.0
+impl From<PaintElementType> for cef_paint_element_type_t {
+    fn from(value: PaintElementType) -> Self {
+        value.0
     }
 }
 impl Default for PaintElementType {
@@ -14190,9 +14186,9 @@ impl From<cef_event_flags_t> for EventFlags {
         Self(value)
     }
 }
-impl Into<cef_event_flags_t> for EventFlags {
-    fn into(self) -> cef_event_flags_t {
-        self.0
+impl From<EventFlags> for cef_event_flags_t {
+    fn from(value: EventFlags) -> Self {
+        value.0
     }
 }
 impl Default for EventFlags {
@@ -14219,9 +14215,9 @@ impl From<cef_menu_item_type_t> for MenuItemType {
         Self(value)
     }
 }
-impl Into<cef_menu_item_type_t> for MenuItemType {
-    fn into(self) -> cef_menu_item_type_t {
-        self.0
+impl From<MenuItemType> for cef_menu_item_type_t {
+    fn from(value: MenuItemType) -> Self {
+        value.0
     }
 }
 impl Default for MenuItemType {
@@ -14248,9 +14244,9 @@ impl From<cef_context_menu_type_flags_t> for ContextMenuTypeFlags {
         Self(value)
     }
 }
-impl Into<cef_context_menu_type_flags_t> for ContextMenuTypeFlags {
-    fn into(self) -> cef_context_menu_type_flags_t {
-        self.0
+impl From<ContextMenuTypeFlags> for cef_context_menu_type_flags_t {
+    fn from(value: ContextMenuTypeFlags) -> Self {
+        value.0
     }
 }
 impl Default for ContextMenuTypeFlags {
@@ -14277,9 +14273,9 @@ impl From<cef_context_menu_media_type_t> for ContextMenuMediaType {
         Self(value)
     }
 }
-impl Into<cef_context_menu_media_type_t> for ContextMenuMediaType {
-    fn into(self) -> cef_context_menu_media_type_t {
-        self.0
+impl From<ContextMenuMediaType> for cef_context_menu_media_type_t {
+    fn from(value: ContextMenuMediaType) -> Self {
+        value.0
     }
 }
 impl Default for ContextMenuMediaType {
@@ -14306,9 +14302,9 @@ impl From<cef_context_menu_media_state_flags_t> for ContextMenuMediaStateFlags {
         Self(value)
     }
 }
-impl Into<cef_context_menu_media_state_flags_t> for ContextMenuMediaStateFlags {
-    fn into(self) -> cef_context_menu_media_state_flags_t {
-        self.0
+impl From<ContextMenuMediaStateFlags> for cef_context_menu_media_state_flags_t {
+    fn from(value: ContextMenuMediaStateFlags) -> Self {
+        value.0
     }
 }
 impl Default for ContextMenuMediaStateFlags {
@@ -14335,9 +14331,9 @@ impl From<cef_context_menu_edit_state_flags_t> for ContextMenuEditStateFlags {
         Self(value)
     }
 }
-impl Into<cef_context_menu_edit_state_flags_t> for ContextMenuEditStateFlags {
-    fn into(self) -> cef_context_menu_edit_state_flags_t {
-        self.0
+impl From<ContextMenuEditStateFlags> for cef_context_menu_edit_state_flags_t {
+    fn from(value: ContextMenuEditStateFlags) -> Self {
+        value.0
     }
 }
 impl Default for ContextMenuEditStateFlags {
@@ -14364,9 +14360,9 @@ impl From<cef_quick_menu_edit_state_flags_t> for QuickMenuEditStateFlags {
         Self(value)
     }
 }
-impl Into<cef_quick_menu_edit_state_flags_t> for QuickMenuEditStateFlags {
-    fn into(self) -> cef_quick_menu_edit_state_flags_t {
-        self.0
+impl From<QuickMenuEditStateFlags> for cef_quick_menu_edit_state_flags_t {
+    fn from(value: QuickMenuEditStateFlags) -> Self {
+        value.0
     }
 }
 impl Default for QuickMenuEditStateFlags {
@@ -14393,9 +14389,9 @@ impl From<cef_key_event_type_t> for KeyEventType {
         Self(value)
     }
 }
-impl Into<cef_key_event_type_t> for KeyEventType {
-    fn into(self) -> cef_key_event_type_t {
-        self.0
+impl From<KeyEventType> for cef_key_event_type_t {
+    fn from(value: KeyEventType) -> Self {
+        value.0
     }
 }
 impl Default for KeyEventType {
@@ -14422,9 +14418,9 @@ impl From<cef_focus_source_t> for FocusSource {
         Self(value)
     }
 }
-impl Into<cef_focus_source_t> for FocusSource {
-    fn into(self) -> cef_focus_source_t {
-        self.0
+impl From<FocusSource> for cef_focus_source_t {
+    fn from(value: FocusSource) -> Self {
+        value.0
     }
 }
 impl Default for FocusSource {
@@ -14451,9 +14447,9 @@ impl From<cef_navigation_type_t> for NavigationType {
         Self(value)
     }
 }
-impl Into<cef_navigation_type_t> for NavigationType {
-    fn into(self) -> cef_navigation_type_t {
-        self.0
+impl From<NavigationType> for cef_navigation_type_t {
+    fn from(value: NavigationType) -> Self {
+        value.0
     }
 }
 impl Default for NavigationType {
@@ -14480,9 +14476,9 @@ impl From<cef_xml_encoding_type_t> for XmlEncodingType {
         Self(value)
     }
 }
-impl Into<cef_xml_encoding_type_t> for XmlEncodingType {
-    fn into(self) -> cef_xml_encoding_type_t {
-        self.0
+impl From<XmlEncodingType> for cef_xml_encoding_type_t {
+    fn from(value: XmlEncodingType) -> Self {
+        value.0
     }
 }
 impl Default for XmlEncodingType {
@@ -14509,9 +14505,9 @@ impl From<cef_xml_node_type_t> for XmlNodeType {
         Self(value)
     }
 }
-impl Into<cef_xml_node_type_t> for XmlNodeType {
-    fn into(self) -> cef_xml_node_type_t {
-        self.0
+impl From<XmlNodeType> for cef_xml_node_type_t {
+    fn from(value: XmlNodeType) -> Self {
+        value.0
     }
 }
 impl Default for XmlNodeType {
@@ -14538,9 +14534,9 @@ impl From<cef_dom_document_type_t> for DomDocumentType {
         Self(value)
     }
 }
-impl Into<cef_dom_document_type_t> for DomDocumentType {
-    fn into(self) -> cef_dom_document_type_t {
-        self.0
+impl From<DomDocumentType> for cef_dom_document_type_t {
+    fn from(value: DomDocumentType) -> Self {
+        value.0
     }
 }
 impl Default for DomDocumentType {
@@ -14567,9 +14563,9 @@ impl From<cef_dom_event_category_t> for DomEventCategory {
         Self(value)
     }
 }
-impl Into<cef_dom_event_category_t> for DomEventCategory {
-    fn into(self) -> cef_dom_event_category_t {
-        self.0
+impl From<DomEventCategory> for cef_dom_event_category_t {
+    fn from(value: DomEventCategory) -> Self {
+        value.0
     }
 }
 impl Default for DomEventCategory {
@@ -14596,9 +14592,9 @@ impl From<cef_dom_event_phase_t> for DomEventPhase {
         Self(value)
     }
 }
-impl Into<cef_dom_event_phase_t> for DomEventPhase {
-    fn into(self) -> cef_dom_event_phase_t {
-        self.0
+impl From<DomEventPhase> for cef_dom_event_phase_t {
+    fn from(value: DomEventPhase) -> Self {
+        value.0
     }
 }
 impl Default for DomEventPhase {
@@ -14625,9 +14621,9 @@ impl From<cef_dom_node_type_t> for DomNodeType {
         Self(value)
     }
 }
-impl Into<cef_dom_node_type_t> for DomNodeType {
-    fn into(self) -> cef_dom_node_type_t {
-        self.0
+impl From<DomNodeType> for cef_dom_node_type_t {
+    fn from(value: DomNodeType) -> Self {
+        value.0
     }
 }
 impl Default for DomNodeType {
@@ -14654,9 +14650,9 @@ impl From<cef_dom_form_control_type_t> for DomFormControlType {
         Self(value)
     }
 }
-impl Into<cef_dom_form_control_type_t> for DomFormControlType {
-    fn into(self) -> cef_dom_form_control_type_t {
-        self.0
+impl From<DomFormControlType> for cef_dom_form_control_type_t {
+    fn from(value: DomFormControlType) -> Self {
+        value.0
     }
 }
 impl Default for DomFormControlType {
@@ -14683,9 +14679,9 @@ impl From<cef_file_dialog_mode_t> for FileDialogMode {
         Self(value)
     }
 }
-impl Into<cef_file_dialog_mode_t> for FileDialogMode {
-    fn into(self) -> cef_file_dialog_mode_t {
-        self.0
+impl From<FileDialogMode> for cef_file_dialog_mode_t {
+    fn from(value: FileDialogMode) -> Self {
+        value.0
     }
 }
 impl Default for FileDialogMode {
@@ -14712,9 +14708,9 @@ impl From<cef_color_model_t> for ColorModel {
         Self(value)
     }
 }
-impl Into<cef_color_model_t> for ColorModel {
-    fn into(self) -> cef_color_model_t {
-        self.0
+impl From<ColorModel> for cef_color_model_t {
+    fn from(value: ColorModel) -> Self {
+        value.0
     }
 }
 impl Default for ColorModel {
@@ -14741,9 +14737,9 @@ impl From<cef_duplex_mode_t> for DuplexMode {
         Self(value)
     }
 }
-impl Into<cef_duplex_mode_t> for DuplexMode {
-    fn into(self) -> cef_duplex_mode_t {
-        self.0
+impl From<DuplexMode> for cef_duplex_mode_t {
+    fn from(value: DuplexMode) -> Self {
+        value.0
     }
 }
 impl Default for DuplexMode {
@@ -14770,9 +14766,9 @@ impl From<cef_cursor_type_t> for CursorType {
         Self(value)
     }
 }
-impl Into<cef_cursor_type_t> for CursorType {
-    fn into(self) -> cef_cursor_type_t {
-        self.0
+impl From<CursorType> for cef_cursor_type_t {
+    fn from(value: CursorType) -> Self {
+        value.0
     }
 }
 impl Default for CursorType {
@@ -14799,9 +14795,9 @@ impl From<cef_uri_unescape_rule_t> for UriUnescapeRule {
         Self(value)
     }
 }
-impl Into<cef_uri_unescape_rule_t> for UriUnescapeRule {
-    fn into(self) -> cef_uri_unescape_rule_t {
-        self.0
+impl From<UriUnescapeRule> for cef_uri_unescape_rule_t {
+    fn from(value: UriUnescapeRule) -> Self {
+        value.0
     }
 }
 impl Default for UriUnescapeRule {
@@ -14828,9 +14824,9 @@ impl From<cef_json_parser_options_t> for JsonParserOptions {
         Self(value)
     }
 }
-impl Into<cef_json_parser_options_t> for JsonParserOptions {
-    fn into(self) -> cef_json_parser_options_t {
-        self.0
+impl From<JsonParserOptions> for cef_json_parser_options_t {
+    fn from(value: JsonParserOptions) -> Self {
+        value.0
     }
 }
 impl Default for JsonParserOptions {
@@ -14857,9 +14853,9 @@ impl From<cef_json_writer_options_t> for JsonWriterOptions {
         Self(value)
     }
 }
-impl Into<cef_json_writer_options_t> for JsonWriterOptions {
-    fn into(self) -> cef_json_writer_options_t {
-        self.0
+impl From<JsonWriterOptions> for cef_json_writer_options_t {
+    fn from(value: JsonWriterOptions) -> Self {
+        value.0
     }
 }
 impl Default for JsonWriterOptions {
@@ -14886,9 +14882,9 @@ impl From<cef_pdf_print_margin_type_t> for PdfPrintMarginType {
         Self(value)
     }
 }
-impl Into<cef_pdf_print_margin_type_t> for PdfPrintMarginType {
-    fn into(self) -> cef_pdf_print_margin_type_t {
-        self.0
+impl From<PdfPrintMarginType> for cef_pdf_print_margin_type_t {
+    fn from(value: PdfPrintMarginType) -> Self {
+        value.0
     }
 }
 impl Default for PdfPrintMarginType {
@@ -14915,9 +14911,9 @@ impl From<cef_scale_factor_t> for ScaleFactor {
         Self(value)
     }
 }
-impl Into<cef_scale_factor_t> for ScaleFactor {
-    fn into(self) -> cef_scale_factor_t {
-        self.0
+impl From<ScaleFactor> for cef_scale_factor_t {
+    fn from(value: ScaleFactor) -> Self {
+        value.0
     }
 }
 impl Default for ScaleFactor {
@@ -14944,9 +14940,9 @@ impl From<cef_referrer_policy_t> for ReferrerPolicy {
         Self(value)
     }
 }
-impl Into<cef_referrer_policy_t> for ReferrerPolicy {
-    fn into(self) -> cef_referrer_policy_t {
-        self.0
+impl From<ReferrerPolicy> for cef_referrer_policy_t {
+    fn from(value: ReferrerPolicy) -> Self {
+        value.0
     }
 }
 impl Default for ReferrerPolicy {
@@ -14973,9 +14969,9 @@ impl From<cef_response_filter_status_t> for ResponseFilterStatus {
         Self(value)
     }
 }
-impl Into<cef_response_filter_status_t> for ResponseFilterStatus {
-    fn into(self) -> cef_response_filter_status_t {
-        self.0
+impl From<ResponseFilterStatus> for cef_response_filter_status_t {
+    fn from(value: ResponseFilterStatus) -> Self {
+        value.0
     }
 }
 impl Default for ResponseFilterStatus {
@@ -15002,9 +14998,9 @@ impl From<cef_alpha_type_t> for AlphaType {
         Self(value)
     }
 }
-impl Into<cef_alpha_type_t> for AlphaType {
-    fn into(self) -> cef_alpha_type_t {
-        self.0
+impl From<AlphaType> for cef_alpha_type_t {
+    fn from(value: AlphaType) -> Self {
+        value.0
     }
 }
 impl Default for AlphaType {
@@ -15031,9 +15027,9 @@ impl From<cef_text_style_t> for TextStyle {
         Self(value)
     }
 }
-impl Into<cef_text_style_t> for TextStyle {
-    fn into(self) -> cef_text_style_t {
-        self.0
+impl From<TextStyle> for cef_text_style_t {
+    fn from(value: TextStyle) -> Self {
+        value.0
     }
 }
 impl Default for TextStyle {
@@ -15060,9 +15056,9 @@ impl From<cef_axis_alignment_t> for AxisAlignment {
         Self(value)
     }
 }
-impl Into<cef_axis_alignment_t> for AxisAlignment {
-    fn into(self) -> cef_axis_alignment_t {
-        self.0
+impl From<AxisAlignment> for cef_axis_alignment_t {
+    fn from(value: AxisAlignment) -> Self {
+        value.0
     }
 }
 impl Default for AxisAlignment {
@@ -15089,9 +15085,9 @@ impl From<cef_button_state_t> for ButtonState {
         Self(value)
     }
 }
-impl Into<cef_button_state_t> for ButtonState {
-    fn into(self) -> cef_button_state_t {
-        self.0
+impl From<ButtonState> for cef_button_state_t {
+    fn from(value: ButtonState) -> Self {
+        value.0
     }
 }
 impl Default for ButtonState {
@@ -15118,9 +15114,9 @@ impl From<cef_horizontal_alignment_t> for HorizontalAlignment {
         Self(value)
     }
 }
-impl Into<cef_horizontal_alignment_t> for HorizontalAlignment {
-    fn into(self) -> cef_horizontal_alignment_t {
-        self.0
+impl From<HorizontalAlignment> for cef_horizontal_alignment_t {
+    fn from(value: HorizontalAlignment) -> Self {
+        value.0
     }
 }
 impl Default for HorizontalAlignment {
@@ -15147,9 +15143,9 @@ impl From<cef_menu_anchor_position_t> for MenuAnchorPosition {
         Self(value)
     }
 }
-impl Into<cef_menu_anchor_position_t> for MenuAnchorPosition {
-    fn into(self) -> cef_menu_anchor_position_t {
-        self.0
+impl From<MenuAnchorPosition> for cef_menu_anchor_position_t {
+    fn from(value: MenuAnchorPosition) -> Self {
+        value.0
     }
 }
 impl Default for MenuAnchorPosition {
@@ -15176,9 +15172,9 @@ impl From<cef_menu_color_type_t> for MenuColorType {
         Self(value)
     }
 }
-impl Into<cef_menu_color_type_t> for MenuColorType {
-    fn into(self) -> cef_menu_color_type_t {
-        self.0
+impl From<MenuColorType> for cef_menu_color_type_t {
+    fn from(value: MenuColorType) -> Self {
+        value.0
     }
 }
 impl Default for MenuColorType {
@@ -15205,9 +15201,9 @@ impl From<cef_ssl_version_t> for SslVersion {
         Self(value)
     }
 }
-impl Into<cef_ssl_version_t> for SslVersion {
-    fn into(self) -> cef_ssl_version_t {
-        self.0
+impl From<SslVersion> for cef_ssl_version_t {
+    fn from(value: SslVersion) -> Self {
+        value.0
     }
 }
 impl Default for SslVersion {
@@ -15234,9 +15230,9 @@ impl From<cef_ssl_content_status_t> for SslContentStatus {
         Self(value)
     }
 }
-impl Into<cef_ssl_content_status_t> for SslContentStatus {
-    fn into(self) -> cef_ssl_content_status_t {
-        self.0
+impl From<SslContentStatus> for cef_ssl_content_status_t {
+    fn from(value: SslContentStatus) -> Self {
+        value.0
     }
 }
 impl Default for SslContentStatus {
@@ -15263,9 +15259,9 @@ impl From<cef_scheme_options_t> for SchemeOptions {
         Self(value)
     }
 }
-impl Into<cef_scheme_options_t> for SchemeOptions {
-    fn into(self) -> cef_scheme_options_t {
-        self.0
+impl From<SchemeOptions> for cef_scheme_options_t {
+    fn from(value: SchemeOptions) -> Self {
+        value.0
     }
 }
 impl Default for SchemeOptions {
@@ -15292,9 +15288,9 @@ impl From<cef_composition_underline_style_t> for CompositionUnderlineStyle {
         Self(value)
     }
 }
-impl Into<cef_composition_underline_style_t> for CompositionUnderlineStyle {
-    fn into(self) -> cef_composition_underline_style_t {
-        self.0
+impl From<CompositionUnderlineStyle> for cef_composition_underline_style_t {
+    fn from(value: CompositionUnderlineStyle) -> Self {
+        value.0
     }
 }
 impl Default for CompositionUnderlineStyle {
@@ -15321,9 +15317,9 @@ impl From<cef_channel_layout_t> for ChannelLayout {
         Self(value)
     }
 }
-impl Into<cef_channel_layout_t> for ChannelLayout {
-    fn into(self) -> cef_channel_layout_t {
-        self.0
+impl From<ChannelLayout> for cef_channel_layout_t {
+    fn from(value: ChannelLayout) -> Self {
+        value.0
     }
 }
 impl Default for ChannelLayout {
@@ -15350,9 +15346,9 @@ impl From<cef_media_route_create_result_t> for MediaRouteCreateResult {
         Self(value)
     }
 }
-impl Into<cef_media_route_create_result_t> for MediaRouteCreateResult {
-    fn into(self) -> cef_media_route_create_result_t {
-        self.0
+impl From<MediaRouteCreateResult> for cef_media_route_create_result_t {
+    fn from(value: MediaRouteCreateResult) -> Self {
+        value.0
     }
 }
 impl Default for MediaRouteCreateResult {
@@ -15379,9 +15375,9 @@ impl From<cef_media_route_connection_state_t> for MediaRouteConnectionState {
         Self(value)
     }
 }
-impl Into<cef_media_route_connection_state_t> for MediaRouteConnectionState {
-    fn into(self) -> cef_media_route_connection_state_t {
-        self.0
+impl From<MediaRouteConnectionState> for cef_media_route_connection_state_t {
+    fn from(value: MediaRouteConnectionState) -> Self {
+        value.0
     }
 }
 impl Default for MediaRouteConnectionState {
@@ -15408,9 +15404,9 @@ impl From<cef_media_sink_icon_type_t> for MediaSinkIconType {
         Self(value)
     }
 }
-impl Into<cef_media_sink_icon_type_t> for MediaSinkIconType {
-    fn into(self) -> cef_media_sink_icon_type_t {
-        self.0
+impl From<MediaSinkIconType> for cef_media_sink_icon_type_t {
+    fn from(value: MediaSinkIconType) -> Self {
+        value.0
     }
 }
 impl Default for MediaSinkIconType {
@@ -15437,9 +15433,9 @@ impl From<cef_text_field_commands_t> for TextFieldCommands {
         Self(value)
     }
 }
-impl Into<cef_text_field_commands_t> for TextFieldCommands {
-    fn into(self) -> cef_text_field_commands_t {
-        self.0
+impl From<TextFieldCommands> for cef_text_field_commands_t {
+    fn from(value: TextFieldCommands) -> Self {
+        value.0
     }
 }
 impl Default for TextFieldCommands {
@@ -15466,9 +15462,9 @@ impl From<cef_chrome_toolbar_type_t> for ChromeToolbarType {
         Self(value)
     }
 }
-impl Into<cef_chrome_toolbar_type_t> for ChromeToolbarType {
-    fn into(self) -> cef_chrome_toolbar_type_t {
-        self.0
+impl From<ChromeToolbarType> for cef_chrome_toolbar_type_t {
+    fn from(value: ChromeToolbarType) -> Self {
+        value.0
     }
 }
 impl Default for ChromeToolbarType {
@@ -15495,9 +15491,9 @@ impl From<cef_chrome_page_action_icon_type_t> for ChromePageActionIconType {
         Self(value)
     }
 }
-impl Into<cef_chrome_page_action_icon_type_t> for ChromePageActionIconType {
-    fn into(self) -> cef_chrome_page_action_icon_type_t {
-        self.0
+impl From<ChromePageActionIconType> for cef_chrome_page_action_icon_type_t {
+    fn from(value: ChromePageActionIconType) -> Self {
+        value.0
     }
 }
 impl Default for ChromePageActionIconType {
@@ -15524,9 +15520,9 @@ impl From<cef_chrome_toolbar_button_type_t> for ChromeToolbarButtonType {
         Self(value)
     }
 }
-impl Into<cef_chrome_toolbar_button_type_t> for ChromeToolbarButtonType {
-    fn into(self) -> cef_chrome_toolbar_button_type_t {
-        self.0
+impl From<ChromeToolbarButtonType> for cef_chrome_toolbar_button_type_t {
+    fn from(value: ChromeToolbarButtonType) -> Self {
+        value.0
     }
 }
 impl Default for ChromeToolbarButtonType {
@@ -15553,9 +15549,9 @@ impl From<cef_docking_mode_t> for DockingMode {
         Self(value)
     }
 }
-impl Into<cef_docking_mode_t> for DockingMode {
-    fn into(self) -> cef_docking_mode_t {
-        self.0
+impl From<DockingMode> for cef_docking_mode_t {
+    fn from(value: DockingMode) -> Self {
+        value.0
     }
 }
 impl Default for DockingMode {
@@ -15582,9 +15578,9 @@ impl From<cef_show_state_t> for ShowState {
         Self(value)
     }
 }
-impl Into<cef_show_state_t> for ShowState {
-    fn into(self) -> cef_show_state_t {
-        self.0
+impl From<ShowState> for cef_show_state_t {
+    fn from(value: ShowState) -> Self {
+        value.0
     }
 }
 impl Default for ShowState {
@@ -15611,9 +15607,9 @@ impl From<cef_touch_handle_state_flags_t> for TouchHandleStateFlags {
         Self(value)
     }
 }
-impl Into<cef_touch_handle_state_flags_t> for TouchHandleStateFlags {
-    fn into(self) -> cef_touch_handle_state_flags_t {
-        self.0
+impl From<TouchHandleStateFlags> for cef_touch_handle_state_flags_t {
+    fn from(value: TouchHandleStateFlags) -> Self {
+        value.0
     }
 }
 impl Default for TouchHandleStateFlags {
@@ -15640,9 +15636,9 @@ impl From<cef_media_access_permission_types_t> for MediaAccessPermissionTypes {
         Self(value)
     }
 }
-impl Into<cef_media_access_permission_types_t> for MediaAccessPermissionTypes {
-    fn into(self) -> cef_media_access_permission_types_t {
-        self.0
+impl From<MediaAccessPermissionTypes> for cef_media_access_permission_types_t {
+    fn from(value: MediaAccessPermissionTypes) -> Self {
+        value.0
     }
 }
 impl Default for MediaAccessPermissionTypes {
@@ -15669,9 +15665,9 @@ impl From<cef_permission_request_types_t> for PermissionRequestTypes {
         Self(value)
     }
 }
-impl Into<cef_permission_request_types_t> for PermissionRequestTypes {
-    fn into(self) -> cef_permission_request_types_t {
-        self.0
+impl From<PermissionRequestTypes> for cef_permission_request_types_t {
+    fn from(value: PermissionRequestTypes) -> Self {
+        value.0
     }
 }
 impl Default for PermissionRequestTypes {
@@ -15698,9 +15694,9 @@ impl From<cef_permission_request_result_t> for PermissionRequestResult {
         Self(value)
     }
 }
-impl Into<cef_permission_request_result_t> for PermissionRequestResult {
-    fn into(self) -> cef_permission_request_result_t {
-        self.0
+impl From<PermissionRequestResult> for cef_permission_request_result_t {
+    fn from(value: PermissionRequestResult) -> Self {
+        value.0
     }
 }
 impl Default for PermissionRequestResult {
@@ -15727,9 +15723,9 @@ impl From<cef_test_cert_type_t> for TestCertType {
         Self(value)
     }
 }
-impl Into<cef_test_cert_type_t> for TestCertType {
-    fn into(self) -> cef_test_cert_type_t {
-        self.0
+impl From<TestCertType> for cef_test_cert_type_t {
+    fn from(value: TestCertType) -> Self {
+        value.0
     }
 }
 impl Default for TestCertType {
@@ -15756,9 +15752,9 @@ impl From<cef_preferences_type_t> for PreferencesType {
         Self(value)
     }
 }
-impl Into<cef_preferences_type_t> for PreferencesType {
-    fn into(self) -> cef_preferences_type_t {
-        self.0
+impl From<PreferencesType> for cef_preferences_type_t {
+    fn from(value: PreferencesType) -> Self {
+        value.0
     }
 }
 impl Default for PreferencesType {
@@ -15785,9 +15781,9 @@ impl From<cef_download_interrupt_reason_t> for DownloadInterruptReason {
         Self(value)
     }
 }
-impl Into<cef_download_interrupt_reason_t> for DownloadInterruptReason {
-    fn into(self) -> cef_download_interrupt_reason_t {
-        self.0
+impl From<DownloadInterruptReason> for cef_download_interrupt_reason_t {
+    fn from(value: DownloadInterruptReason) -> Self {
+        value.0
     }
 }
 impl Default for DownloadInterruptReason {
@@ -15814,9 +15810,9 @@ impl From<cef_gesture_command_t> for GestureCommand {
         Self(value)
     }
 }
-impl Into<cef_gesture_command_t> for GestureCommand {
-    fn into(self) -> cef_gesture_command_t {
-        self.0
+impl From<GestureCommand> for cef_gesture_command_t {
+    fn from(value: GestureCommand) -> Self {
+        value.0
     }
 }
 impl Default for GestureCommand {
@@ -15843,9 +15839,9 @@ impl From<cef_zoom_command_t> for ZoomCommand {
         Self(value)
     }
 }
-impl Into<cef_zoom_command_t> for ZoomCommand {
-    fn into(self) -> cef_zoom_command_t {
-        self.0
+impl From<ZoomCommand> for cef_zoom_command_t {
+    fn from(value: ZoomCommand) -> Self {
+        value.0
     }
 }
 impl Default for ZoomCommand {
@@ -15872,9 +15868,9 @@ impl From<cef_color_variant_t> for ColorVariant {
         Self(value)
     }
 }
-impl Into<cef_color_variant_t> for ColorVariant {
-    fn into(self) -> cef_color_variant_t {
-        self.0
+impl From<ColorVariant> for cef_color_variant_t {
+    fn from(value: ColorVariant) -> Self {
+        value.0
     }
 }
 impl Default for ColorVariant {
@@ -15901,9 +15897,9 @@ impl From<cef_task_type_t> for TaskType {
         Self(value)
     }
 }
-impl Into<cef_task_type_t> for TaskType {
-    fn into(self) -> cef_task_type_t {
-        self.0
+impl From<TaskType> for cef_task_type_t {
+    fn from(value: TaskType) -> Self {
+        value.0
     }
 }
 impl Default for TaskType {
@@ -15916,7 +15912,7 @@ impl Default for TaskType {
 pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
     unsafe {
         let result = cef_sandbox_info_create();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -15925,8 +15921,7 @@ pub fn sandbox_info_destroy(sandbox_info: *mut u8) {
     unsafe {
         let arg_sandbox_info = sandbox_info;
         let arg_sandbox_info = arg_sandbox_info as *mut _;
-        let result = cef_sandbox_info_destroy(arg_sandbox_info);
-        result.as_wrapper()
+        cef_sandbox_info_destroy(arg_sandbox_info);
     }
 }
 
@@ -15937,10 +15932,8 @@ pub fn api_hash(
 ) -> *const ::std::os::raw::c_char {
     unsafe {
         let (arg_version, arg_entry) = (version, entry);
-        let arg_version = arg_version;
-        let arg_entry = arg_entry;
         let result = cef_api_hash(arg_version, arg_entry);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -15948,7 +15941,7 @@ pub fn api_hash(
 pub fn api_version() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_api_version();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -15971,11 +15964,10 @@ pub fn string_wide_set(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_copy = arg_copy;
         let result = cef_string_wide_set(arg_src, arg_src_len, arg_output, arg_copy);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -15998,11 +15990,10 @@ pub fn string_utf8_set(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_copy = arg_copy;
         let result = cef_string_utf8_set(arg_src, arg_src_len, arg_output, arg_copy);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16025,11 +16016,10 @@ pub fn string_utf16_set(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_copy = arg_copy;
         let result = cef_string_utf16_set(arg_src, arg_src_len, arg_output, arg_copy);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16038,10 +16028,9 @@ pub fn string_wide_clear(str_: Option<&mut CefStringWide>) {
     unsafe {
         let arg_str_ = str_;
         let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_wide_clear(arg_str_);
-        result.as_wrapper()
+        cef_string_wide_clear(arg_str_);
     }
 }
 
@@ -16050,10 +16039,9 @@ pub fn string_utf8_clear(str_: Option<&mut CefStringUtf8>) {
     unsafe {
         let arg_str_ = str_;
         let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_utf8_clear(arg_str_);
-        result.as_wrapper()
+        cef_string_utf8_clear(arg_str_);
     }
 }
 
@@ -16062,10 +16050,9 @@ pub fn string_utf16_clear(str_: Option<&mut CefStringUtf16>) {
     unsafe {
         let arg_str_ = str_;
         let arg_str_ = arg_str_
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_utf16_clear(arg_str_);
-        result.as_wrapper()
+        cef_string_utf16_clear(arg_str_);
     }
 }
 
@@ -16077,13 +16064,13 @@ pub fn string_wide_cmp(
     unsafe {
         let (arg_str_1, arg_str_2) = (str_1, str_2);
         let arg_str_1 = arg_str_1
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let arg_str_2 = arg_str_2
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_string_wide_cmp(arg_str_1, arg_str_2);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16095,13 +16082,13 @@ pub fn string_utf8_cmp(
     unsafe {
         let (arg_str_1, arg_str_2) = (str_1, str_2);
         let arg_str_1 = arg_str_1
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let arg_str_2 = arg_str_2
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_string_utf8_cmp(arg_str_1, arg_str_2);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16113,13 +16100,13 @@ pub fn string_utf16_cmp(
     unsafe {
         let (arg_str_1, arg_str_2) = (str_1, str_2);
         let arg_str_1 = arg_str_1
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let arg_str_2 = arg_str_2
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_string_utf16_cmp(arg_str_1, arg_str_2);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16141,10 +16128,10 @@ pub fn string_wide_to_utf8(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_wide_to_utf8(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16166,10 +16153,10 @@ pub fn string_utf8_to_wide(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_utf8_to_wide(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16191,10 +16178,10 @@ pub fn string_wide_to_utf16(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_wide_to_utf16(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16216,10 +16203,10 @@ pub fn string_utf16_to_wide(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_utf16_to_wide(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16241,10 +16228,10 @@ pub fn string_utf8_to_utf16(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_utf8_to_utf16(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16266,10 +16253,10 @@ pub fn string_utf16_to_utf8(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_utf16_to_utf8(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16291,10 +16278,10 @@ pub fn string_ascii_to_wide(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_ascii_to_wide(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16316,10 +16303,10 @@ pub fn string_ascii_to_utf16(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_ascii_to_utf16(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16327,7 +16314,7 @@ pub fn string_ascii_to_utf16(
 pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
     unsafe {
         let result = cef_string_userfree_wide_alloc();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16335,7 +16322,7 @@ pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
 pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
     unsafe {
         let result = cef_string_userfree_utf8_alloc();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16343,7 +16330,7 @@ pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
 pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
     unsafe {
         let result = cef_string_userfree_utf16_alloc();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16351,9 +16338,8 @@ pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
 pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_.as_raw();
-        let result = cef_string_userfree_wide_free(arg_str_);
-        result.as_wrapper()
+        let arg_str_ = arg_str_.into_raw();
+        cef_string_userfree_wide_free(arg_str_);
     }
 }
 
@@ -16361,9 +16347,8 @@ pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
 pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_.as_raw();
-        let result = cef_string_userfree_utf8_free(arg_str_);
-        result.as_wrapper()
+        let arg_str_ = arg_str_.into_raw();
+        cef_string_userfree_utf8_free(arg_str_);
     }
 }
 
@@ -16371,9 +16356,8 @@ pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
 pub fn string_userfree_utf16_free(str_: CefStringUserfreeUtf16) {
     unsafe {
         let arg_str_ = str_;
-        let arg_str_ = arg_str_.as_raw();
-        let result = cef_string_userfree_utf16_free(arg_str_);
-        result.as_wrapper()
+        let arg_str_ = arg_str_.into_raw();
+        cef_string_userfree_utf16_free(arg_str_);
     }
 }
 
@@ -16395,10 +16379,10 @@ pub fn string_utf16_to_lower(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_utf16_to_lower(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16420,10 +16404,10 @@ pub fn string_utf16_to_upper(
             })
             .unwrap_or(std::ptr::null());
         let arg_output = arg_output
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_utf16_to_upper(arg_src, arg_src_len, arg_output);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16434,7 +16418,7 @@ pub fn string_list_alloc() -> Option<CefStringList> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -16444,10 +16428,10 @@ pub fn string_list_size(list: Option<&mut CefStringList>) -> usize {
     unsafe {
         let arg_list = list;
         let arg_list = arg_list
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_list_size(arg_list);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16460,14 +16444,13 @@ pub fn string_list_value(
     unsafe {
         let (arg_list, arg_index, arg_value) = (list, index, value);
         let arg_list = arg_list
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_index = arg_index;
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_list_value(arg_list, arg_index, arg_value);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16476,13 +16459,12 @@ pub fn string_list_append(list: Option<&mut CefStringList>, value: Option<&CefSt
     unsafe {
         let (arg_list, arg_value) = (list, value);
         let arg_list = arg_list
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
-        let result = cef_string_list_append(arg_list, arg_value);
-        result.as_wrapper()
+        cef_string_list_append(arg_list, arg_value);
     }
 }
 
@@ -16491,10 +16473,9 @@ pub fn string_list_clear(list: Option<&mut CefStringList>) {
     unsafe {
         let arg_list = list;
         let arg_list = arg_list
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_list_clear(arg_list);
-        result.as_wrapper()
+        cef_string_list_clear(arg_list);
     }
 }
 
@@ -16503,10 +16484,9 @@ pub fn string_list_free(list: Option<&mut CefStringList>) {
     unsafe {
         let arg_list = list;
         let arg_list = arg_list
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_list_free(arg_list);
-        result.as_wrapper()
+        cef_string_list_free(arg_list);
     }
 }
 
@@ -16515,13 +16495,13 @@ pub fn string_list_copy(list: Option<&mut CefStringList>) -> Option<CefStringLis
     unsafe {
         let arg_list = list;
         let arg_list = arg_list
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_list_copy(arg_list);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -16533,7 +16513,7 @@ pub fn string_map_alloc() -> Option<CefStringMap> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -16543,10 +16523,10 @@ pub fn string_map_size(map: Option<&mut CefStringMap>) -> usize {
     unsafe {
         let arg_map = map;
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_map_size(arg_map);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16559,14 +16539,16 @@ pub fn string_map_find(
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_key = arg_key.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_key = arg_key
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_map_find(arg_map, arg_key, arg_value);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16579,14 +16561,13 @@ pub fn string_map_key(
     unsafe {
         let (arg_map, arg_index, arg_key) = (map, index, key);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_index = arg_index;
         let arg_key = arg_key
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_map_key(arg_map, arg_index, arg_key);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16599,14 +16580,13 @@ pub fn string_map_value(
     unsafe {
         let (arg_map, arg_index, arg_value) = (map, index, value);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_index = arg_index;
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_map_value(arg_map, arg_index, arg_value);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16619,14 +16599,16 @@ pub fn string_map_append(
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_key = arg_key.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_key = arg_key
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_string_map_append(arg_map, arg_key, arg_value);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16635,10 +16617,9 @@ pub fn string_map_clear(map: Option<&mut CefStringMap>) {
     unsafe {
         let arg_map = map;
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_map_clear(arg_map);
-        result.as_wrapper()
+        cef_string_map_clear(arg_map);
     }
 }
 
@@ -16647,10 +16628,9 @@ pub fn string_map_free(map: Option<&mut CefStringMap>) {
     unsafe {
         let arg_map = map;
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_map_free(arg_map);
-        result.as_wrapper()
+        cef_string_map_free(arg_map);
     }
 }
 
@@ -16661,7 +16641,7 @@ pub fn string_multimap_alloc() -> Option<CefStringMultimap> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -16671,10 +16651,10 @@ pub fn string_multimap_size(map: Option<&mut CefStringMultimap>) -> usize {
     unsafe {
         let arg_map = map;
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_multimap_size(arg_map);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16686,11 +16666,13 @@ pub fn string_multimap_find_count(
     unsafe {
         let (arg_map, arg_key) = (map, key);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_key = arg_key.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_key = arg_key
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let result = cef_string_multimap_find_count(arg_map, arg_key);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16704,15 +16686,16 @@ pub fn string_multimap_enumerate(
     unsafe {
         let (arg_map, arg_key, arg_value_index, arg_value) = (map, key, value_index, value);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_key = arg_key.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
-        let arg_value_index = arg_value_index;
+        let arg_key = arg_key
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_multimap_enumerate(arg_map, arg_key, arg_value_index, arg_value);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16725,14 +16708,13 @@ pub fn string_multimap_key(
     unsafe {
         let (arg_map, arg_index, arg_key) = (map, index, key);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_index = arg_index;
         let arg_key = arg_key
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_multimap_key(arg_map, arg_index, arg_key);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16745,14 +16727,13 @@ pub fn string_multimap_value(
     unsafe {
         let (arg_map, arg_index, arg_value) = (map, index, value);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_index = arg_index;
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
         let result = cef_string_multimap_value(arg_map, arg_index, arg_value);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16765,14 +16746,16 @@ pub fn string_multimap_append(
     unsafe {
         let (arg_map, arg_key, arg_value) = (map, key, value);
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let arg_key = arg_key.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_key = arg_key
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_string_multimap_append(arg_map, arg_key, arg_value);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16781,10 +16764,9 @@ pub fn string_multimap_clear(map: Option<&mut CefStringMultimap>) {
     unsafe {
         let arg_map = map;
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_multimap_clear(arg_map);
-        result.as_wrapper()
+        cef_string_multimap_clear(arg_map);
     }
 }
 
@@ -16793,10 +16775,9 @@ pub fn string_multimap_free(map: Option<&mut CefStringMultimap>) {
     unsafe {
         let arg_map = map;
         let arg_map = arg_map
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_string_multimap_free(arg_map);
-        result.as_wrapper()
+        cef_string_multimap_free(arg_map);
     }
 }
 
@@ -16813,7 +16794,7 @@ pub fn time_to_timet(cef_time: Option<&Time>, time: Option<&mut time_t>) -> ::st
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_to_timet(arg_cef_time, arg_time);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16821,14 +16802,13 @@ pub fn time_to_timet(cef_time: Option<&Time>, time: Option<&mut time_t>) -> ::st
 pub fn time_from_timet(time: time_t, cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_time, arg_cef_time) = (time, cef_time);
-        let arg_time = arg_time;
         let mut arg_cef_time = arg_cef_time.cloned().map(|arg| arg.into());
         let arg_cef_time = arg_cef_time
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_from_timet(arg_time, arg_cef_time);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16845,7 +16825,7 @@ pub fn time_to_doublet(cef_time: Option<&Time>, time: Option<&mut f64>) -> ::std
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_to_doublet(arg_cef_time, arg_time);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16853,14 +16833,13 @@ pub fn time_to_doublet(cef_time: Option<&Time>, time: Option<&mut f64>) -> ::std
 pub fn time_from_doublet(time: f64, cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_time, arg_cef_time) = (time, cef_time);
-        let arg_time = arg_time;
         let mut arg_cef_time = arg_cef_time.cloned().map(|arg| arg.into());
         let arg_cef_time = arg_cef_time
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_from_doublet(arg_time, arg_cef_time);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16874,7 +16853,7 @@ pub fn time_now(cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_now(arg_cef_time);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16882,7 +16861,7 @@ pub fn time_now(cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
 pub fn basetime_now() -> Basetime {
     unsafe {
         let result = cef_basetime_now();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16908,7 +16887,7 @@ pub fn time_delta(
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_delta(arg_cef_time_1, arg_cef_time_2, arg_delta);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16927,7 +16906,7 @@ pub fn time_to_basetime(from: Option<&Time>, to: Option<&mut Basetime>) -> ::std
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_to_basetime(arg_from, arg_to);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16941,7 +16920,7 @@ pub fn time_from_basetime(from: _cef_basetime_t, to: Option<&mut Time>) -> ::std
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_time_from_basetime(arg_from, arg_to);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -16952,7 +16931,7 @@ pub fn value_create() -> Option<Value> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -16975,7 +16954,7 @@ pub fn binary_value_create(data: Option<&[u8]>) -> Option<BinaryValue> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -16987,7 +16966,7 @@ pub fn dictionary_value_create() -> Option<DictionaryValue> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -16999,7 +16978,7 @@ pub fn list_value_create() -> Option<ListValue> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17011,7 +16990,7 @@ pub fn image_create() -> Option<Image> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17021,13 +17000,13 @@ pub fn stream_reader_create_for_file(file_name: Option<&CefString>) -> Option<St
     unsafe {
         let arg_file_name = file_name;
         let arg_file_name = arg_file_name
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_stream_reader_create_for_file(arg_file_name);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17037,12 +17016,11 @@ pub fn stream_reader_create_for_data(data: *mut u8, size: usize) -> Option<Strea
     unsafe {
         let (arg_data, arg_size) = (data, size);
         let arg_data = arg_data as *mut _;
-        let arg_size = arg_size;
         let result = cef_stream_reader_create_for_data(arg_data, arg_size);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17060,7 +17038,7 @@ pub fn stream_reader_create_for_handler(handler: Option<&mut ReadHandler>) -> Op
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17070,13 +17048,13 @@ pub fn stream_writer_create_for_file(file_name: Option<&CefString>) -> Option<St
     unsafe {
         let arg_file_name = file_name;
         let arg_file_name = arg_file_name
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_stream_writer_create_for_file(arg_file_name);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17096,7 +17074,7 @@ pub fn stream_writer_create_for_handler(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17108,7 +17086,7 @@ pub fn drag_data_create() -> Option<DragData> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17117,12 +17095,14 @@ pub fn drag_data_create() -> Option<DragData> {
 pub fn process_message_create(name: Option<&CefString>) -> Option<ProcessMessage> {
     unsafe {
         let arg_name = name;
-        let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_name = arg_name
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let result = cef_process_message_create(arg_name);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17134,7 +17114,7 @@ pub fn request_create() -> Option<Request> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17146,7 +17126,7 @@ pub fn post_data_create() -> Option<PostData> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17158,7 +17138,7 @@ pub fn post_data_element_create() -> Option<PostDataElement> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17178,7 +17158,7 @@ pub fn cookie_manager_get_global_manager(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17196,7 +17176,7 @@ pub fn media_router_get_global(callback: Option<&mut CompletionCallback>) -> Opt
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17206,10 +17186,9 @@ pub fn preference_manager_get_chrome_variations_as_switches(switches: Option<&mu
     unsafe {
         let arg_switches = switches;
         let arg_switches = arg_switches
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_preference_manager_get_chrome_variations_as_switches(arg_switches);
-        result.as_wrapper()
+        cef_preference_manager_get_chrome_variations_as_switches(arg_switches);
     }
 }
 
@@ -17218,10 +17197,9 @@ pub fn preference_manager_get_chrome_variations_as_strings(strings: Option<&mut 
     unsafe {
         let arg_strings = strings;
         let arg_strings = arg_strings
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_preference_manager_get_chrome_variations_as_strings(arg_strings);
-        result.as_wrapper()
+        cef_preference_manager_get_chrome_variations_as_strings(arg_strings);
     }
 }
 
@@ -17232,7 +17210,7 @@ pub fn preference_manager_get_global() -> Option<PreferenceManager> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17244,7 +17222,7 @@ pub fn request_context_get_global_context() -> Option<RequestContext> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17270,7 +17248,7 @@ pub fn request_context_create_context(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17296,7 +17274,7 @@ pub fn request_context_cef_create_context_shared(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17336,7 +17314,9 @@ pub fn browser_host_create_browser(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_url = arg_url.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_url = arg_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let arg_settings = arg_settings.cloned().map(|arg| arg.into());
         let arg_settings = arg_settings
             .as_ref()
@@ -17360,7 +17340,7 @@ pub fn browser_host_create_browser(
             arg_extra_info,
             arg_request_context,
         );
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17399,7 +17379,9 @@ pub fn browser_host_create_browser_sync(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_url = arg_url.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_url = arg_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let arg_settings = arg_settings.cloned().map(|arg| arg.into());
         let arg_settings = arg_settings
             .as_ref()
@@ -17426,7 +17408,7 @@ pub fn browser_host_create_browser_sync(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17437,12 +17419,11 @@ pub fn browser_host_get_browser_by_identifier(
 ) -> Option<Browser> {
     unsafe {
         let arg_browser_id = browser_id;
-        let arg_browser_id = arg_browser_id;
         let result = cef_browser_host_get_browser_by_identifier(arg_browser_id);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17460,7 +17441,7 @@ pub fn menu_model_create(delegate: Option<&mut MenuModelDelegate>) -> Option<Men
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17472,7 +17453,7 @@ pub fn print_settings_create() -> Option<PrintSettings> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17484,7 +17465,7 @@ pub fn response_create() -> Option<Response> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17493,9 +17474,9 @@ pub fn response_create() -> Option<Response> {
 pub fn is_cert_status_error(status: CertStatus) -> ::std::os::raw::c_int {
     unsafe {
         let arg_status = status;
-        let arg_status = arg_status.as_raw();
+        let arg_status = arg_status.into_raw();
         let result = cef_is_cert_status_error(arg_status);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17506,7 +17487,7 @@ pub fn command_line_create() -> Option<CommandLine> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17518,7 +17499,7 @@ pub fn command_line_get_global() -> Option<CommandLine> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17530,7 +17511,7 @@ pub fn task_runner_get_for_current_thread() -> Option<TaskRunner> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17539,12 +17520,12 @@ pub fn task_runner_get_for_current_thread() -> Option<TaskRunner> {
 pub fn task_runner_get_for_thread(thread_id: ThreadId) -> Option<TaskRunner> {
     unsafe {
         let arg_thread_id = thread_id;
-        let arg_thread_id = arg_thread_id.as_raw();
+        let arg_thread_id = arg_thread_id.into_raw();
         let result = cef_task_runner_get_for_thread(arg_thread_id);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17553,9 +17534,9 @@ pub fn task_runner_get_for_thread(thread_id: ThreadId) -> Option<TaskRunner> {
 pub fn currently_on(thread_id: ThreadId) -> ::std::os::raw::c_int {
     unsafe {
         let arg_thread_id = thread_id;
-        let arg_thread_id = arg_thread_id.as_raw();
+        let arg_thread_id = arg_thread_id.into_raw();
         let result = cef_currently_on(arg_thread_id);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17563,14 +17544,14 @@ pub fn currently_on(thread_id: ThreadId) -> ::std::os::raw::c_int {
 pub fn post_task(thread_id: ThreadId, task: Option<&mut Task>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_thread_id, arg_task) = (thread_id, task);
-        let arg_thread_id = arg_thread_id.as_raw();
+        let arg_thread_id = arg_thread_id.into_raw();
         let mut arg_task = arg_task.cloned().map(|arg| arg.into());
         let arg_task = arg_task
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_post_task(arg_thread_id, arg_task);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17582,15 +17563,14 @@ pub fn post_delayed_task(
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_thread_id, arg_task, arg_delay_ms) = (thread_id, task, delay_ms);
-        let arg_thread_id = arg_thread_id.as_raw();
+        let arg_thread_id = arg_thread_id.into_raw();
         let mut arg_task = arg_task.cloned().map(|arg| arg.into());
         let arg_task = arg_task
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_delay_ms = arg_delay_ms;
         let result = cef_post_delayed_task(arg_thread_id, arg_task, arg_delay_ms);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17601,7 +17581,7 @@ pub fn v8_context_get_current_context() -> Option<V8Context> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17613,7 +17593,7 @@ pub fn v8_context_get_entered_context() -> Option<V8Context> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17622,7 +17602,7 @@ pub fn v8_context_get_entered_context() -> Option<V8Context> {
 pub fn v8_context_in_context() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_v8_context_in_context();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17633,7 +17613,7 @@ pub fn v8_value_create_undefined() -> Option<V8Value> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17645,7 +17625,7 @@ pub fn v8_value_create_null() -> Option<V8Value> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17654,12 +17634,11 @@ pub fn v8_value_create_null() -> Option<V8Value> {
 pub fn v8_value_create_bool(value: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
-        let arg_value = arg_value;
         let result = cef_v8_value_create_bool(arg_value);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17668,12 +17647,11 @@ pub fn v8_value_create_bool(value: ::std::os::raw::c_int) -> Option<V8Value> {
 pub fn v8_value_create_int(value: i32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
-        let arg_value = arg_value;
         let result = cef_v8_value_create_int(arg_value);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17682,12 +17660,11 @@ pub fn v8_value_create_int(value: i32) -> Option<V8Value> {
 pub fn v8_value_create_uint(value: u32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
-        let arg_value = arg_value;
         let result = cef_v8_value_create_uint(arg_value);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17696,12 +17673,11 @@ pub fn v8_value_create_uint(value: u32) -> Option<V8Value> {
 pub fn v8_value_create_double(value: f64) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
-        let arg_value = arg_value;
         let result = cef_v8_value_create_double(arg_value);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17714,7 +17690,7 @@ pub fn v8_value_create_date(date: _cef_basetime_t) -> Option<V8Value> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17724,13 +17700,13 @@ pub fn v8_value_create_string(value: Option<&CefString>) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
         let arg_value = arg_value
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_v8_value_create_string(arg_value);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17756,7 +17732,7 @@ pub fn v8_value_create_object(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17765,12 +17741,11 @@ pub fn v8_value_create_object(
 pub fn v8_value_create_array(length: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_length = length;
-        let arg_length = arg_length;
         let result = cef_v8_value_create_array(arg_length);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17784,7 +17759,6 @@ pub fn v8_value_create_array_buffer(
     unsafe {
         let (arg_buffer, arg_length, arg_release_callback) = (buffer, length, release_callback);
         let arg_buffer = arg_buffer as *mut _;
-        let arg_length = arg_length;
         let mut arg_release_callback = arg_release_callback.cloned().map(|arg| arg.into());
         let arg_release_callback = arg_release_callback
             .as_mut()
@@ -17794,7 +17768,7 @@ pub fn v8_value_create_array_buffer(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17804,12 +17778,11 @@ pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) ->
     unsafe {
         let (arg_buffer, arg_length) = (buffer, length);
         let arg_buffer = arg_buffer as *mut _;
-        let arg_length = arg_length;
         let result = cef_v8_value_create_array_buffer_with_copy(arg_buffer, arg_length);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17821,7 +17794,9 @@ pub fn v8_value_create_function(
 ) -> Option<V8Value> {
     unsafe {
         let (arg_name, arg_handler) = (name, handler);
-        let arg_name = arg_name.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_name = arg_name
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let mut arg_handler = arg_handler.cloned().map(|arg| arg.into());
         let arg_handler = arg_handler
             .as_mut()
@@ -17831,7 +17806,7 @@ pub fn v8_value_create_function(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17843,7 +17818,7 @@ pub fn v8_value_create_promise() -> Option<V8Value> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17852,12 +17827,11 @@ pub fn v8_value_create_promise() -> Option<V8Value> {
 pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V8StackTrace> {
     unsafe {
         let arg_frame_limit = frame_limit;
-        let arg_frame_limit = arg_frame_limit;
         let result = cef_v8_stack_trace_get_current(arg_frame_limit);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -17872,10 +17846,10 @@ pub fn register_extension(
         let (arg_extension_name, arg_javascript_code, arg_handler) =
             (extension_name, javascript_code, handler);
         let arg_extension_name = arg_extension_name
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let arg_javascript_code = arg_javascript_code
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let mut arg_handler = arg_handler.cloned().map(|arg| arg.into());
         let arg_handler = arg_handler
@@ -17883,7 +17857,7 @@ pub fn register_extension(
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_register_extension(arg_extension_name, arg_javascript_code, arg_handler);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17896,10 +17870,10 @@ pub fn register_scheme_handler_factory(
     unsafe {
         let (arg_scheme_name, arg_domain_name, arg_factory) = (scheme_name, domain_name, factory);
         let arg_scheme_name = arg_scheme_name
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let arg_domain_name = arg_domain_name
-            .map(|arg| arg.as_raw())
+            .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let mut arg_factory = arg_factory.cloned().map(|arg| arg.into());
         let arg_factory = arg_factory
@@ -17908,7 +17882,7 @@ pub fn register_scheme_handler_factory(
             .unwrap_or(std::ptr::null_mut());
         let result =
             cef_register_scheme_handler_factory(arg_scheme_name, arg_domain_name, arg_factory);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17916,7 +17890,7 @@ pub fn register_scheme_handler_factory(
 pub fn clear_scheme_handler_factories() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_clear_scheme_handler_factories();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17941,7 +17915,7 @@ pub fn execute_process(
             .unwrap_or(std::ptr::null_mut());
         let arg_windows_sandbox_info = arg_windows_sandbox_info as *mut _;
         let result = cef_execute_process(arg_args, arg_application, arg_windows_sandbox_info);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17977,7 +17951,7 @@ pub fn initialize(
             arg_application,
             arg_windows_sandbox_info,
         );
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -17985,39 +17959,35 @@ pub fn initialize(
 pub fn get_exit_code() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_get_exit_code();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
 /// See [cef_shutdown] for more documentation.
 pub fn shutdown() {
     unsafe {
-        let result = cef_shutdown();
-        result.as_wrapper()
+        cef_shutdown();
     }
 }
 
 /// See [cef_do_message_loop_work] for more documentation.
 pub fn do_message_loop_work() {
     unsafe {
-        let result = cef_do_message_loop_work();
-        result.as_wrapper()
+        cef_do_message_loop_work();
     }
 }
 
 /// See [cef_run_message_loop] for more documentation.
 pub fn run_message_loop() {
     unsafe {
-        let result = cef_run_message_loop();
-        result.as_wrapper()
+        cef_run_message_loop();
     }
 }
 
 /// See [cef_quit_message_loop] for more documentation.
 pub fn quit_message_loop() {
     unsafe {
-        let result = cef_quit_message_loop();
-        result.as_wrapper()
+        cef_quit_message_loop();
     }
 }
 
@@ -18048,7 +18018,7 @@ pub fn urlrequest_create(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18065,12 +18035,14 @@ pub fn label_button_create(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_text = arg_text.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let result = cef_label_button_create(arg_delegate, arg_text);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18087,12 +18059,14 @@ pub fn menu_button_create(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_text = arg_text.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let result = cef_menu_button_create(arg_delegate, arg_text);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18110,7 +18084,7 @@ pub fn textfield_create(delegate: Option<&mut TextfieldDelegate>) -> Option<Text
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18132,7 +18106,9 @@ pub fn browser_view_create(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_url = arg_url.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+        let arg_url = arg_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
         let arg_settings = arg_settings.cloned().map(|arg| arg.into());
         let arg_settings = arg_settings
             .as_ref()
@@ -18164,7 +18140,7 @@ pub fn browser_view_create(
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18182,7 +18158,7 @@ pub fn browser_view_get_for_browser(browser: Option<&mut Browser>) -> Option<Bro
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18200,7 +18176,7 @@ pub fn scroll_view_create(delegate: Option<&mut ViewDelegate>) -> Option<ScrollV
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18212,7 +18188,7 @@ pub fn display_get_primary() -> Option<Display> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18229,12 +18205,11 @@ pub fn display_get_nearest_point(
             .as_ref()
             .map(std::ptr::from_ref)
             .unwrap_or(std::ptr::null());
-        let arg_input_pixel_coords = arg_input_pixel_coords;
         let result = cef_display_get_nearest_point(arg_point, arg_input_pixel_coords);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18251,12 +18226,11 @@ pub fn display_get_matching_bounds(
             .as_ref()
             .map(std::ptr::from_ref)
             .unwrap_or(std::ptr::null());
-        let arg_input_pixel_coords = arg_input_pixel_coords;
         let result = cef_display_get_matching_bounds(arg_bounds, arg_input_pixel_coords);
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18265,7 +18239,7 @@ pub fn display_get_matching_bounds(
 pub fn display_get_count() -> usize {
     unsafe {
         let result = cef_display_get_count();
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -18296,7 +18270,7 @@ pub fn display_get_alls(displays: Option<&mut Vec<Option<Display>>>) {
         } else {
             vec_displays.as_mut_ptr()
         };
-        let result = cef_display_get_alls(arg_displays_count, arg_displays);
+        cef_display_get_alls(arg_displays_count, arg_displays);
         if let Some(out_displays) = out_displays {
             *out_displays = vec_displays
                 .into_iter()
@@ -18305,12 +18279,11 @@ pub fn display_get_alls(displays: Option<&mut Vec<Option<Display>>>) {
                     if elem.is_null() {
                         None
                     } else {
-                        Some(elem.as_wrapper())
+                        Some(elem.wrap_result())
                     }
                 })
                 .collect();
         }
-        result.as_wrapper()
     }
 }
 
@@ -18324,7 +18297,7 @@ pub fn display_convert_screen_point_to_pixels(point: Option<&Point>) -> Point {
             .map(std::ptr::from_ref)
             .unwrap_or(std::ptr::null());
         let result = cef_display_convert_screen_point_to_pixels(arg_point);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -18338,7 +18311,7 @@ pub fn display_convert_screen_point_from_pixels(point: Option<&Point>) -> Point 
             .map(std::ptr::from_ref)
             .unwrap_or(std::ptr::null());
         let result = cef_display_convert_screen_point_from_pixels(arg_point);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -18352,7 +18325,7 @@ pub fn display_convert_screen_rect_to_pixels(rect: Option<&Rect>) -> Rect {
             .map(std::ptr::from_ref)
             .unwrap_or(std::ptr::null());
         let result = cef_display_convert_screen_rect_to_pixels(arg_rect);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -18366,7 +18339,7 @@ pub fn display_convert_screen_rect_from_pixels(rect: Option<&Rect>) -> Rect {
             .map(std::ptr::from_ref)
             .unwrap_or(std::ptr::null());
         let result = cef_display_convert_screen_rect_from_pixels(arg_rect);
-        result.as_wrapper()
+        result.wrap_result()
     }
 }
 
@@ -18383,7 +18356,7 @@ pub fn panel_create(delegate: Option<&mut PanelDelegate>) -> Option<Panel> {
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
@@ -18401,7 +18374,7 @@ pub fn window_create_top_level(delegate: Option<&mut WindowDelegate>) -> Option<
         if result.is_null() {
             None
         } else {
-            Some(result.as_wrapper())
+            Some(result.wrap_result())
         }
     }
 }
