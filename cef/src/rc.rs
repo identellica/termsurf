@@ -1,48 +1,12 @@
 //! Reference counted module
 //!
 //! Many cef types are reference counted, this module is the building block to create them. Users
-//! typically don't need to uses these types, but anyone who want to add feaures and
-//! implementations to this crate will need to understand them.
-//!
-//! In order to create a new Rust type for a raw cef type, simply create a module for it first. And
-//! then work on the implementations based on following conditions:
-//!
-//! ## If raw cef type is a simple struct with basic fields
-//! For example like [`cef_settings_t`], just create a struct like [`Settings`] and define a method
-//! `as_raw` that can create the raw cef type.
-//!
-//! ## If raw cef type has [`cef_base_ref_counted_t`]...
-//!
-//! ## ...and it's a delegate type we should create in Rust and pass to C API
-//!
-//! For example like [`cef_window_delegate_t`], Define a trait like [`WindowDelegate`] with trait bound of [`Sized`].
-//! We define a trampoline function with the same signature, and then define a trait method like
-//! [`WindowDelegate::on_window_created`]. Finally, define a trait method [`into_raw`] that can
-//! create raw cef type with reference counted. In the implementation of [`into_raw`], create the raw
-//! cef type by `unsafe { std::mem::zeroed }` first. And then fill each field by adding the
-//! trampoline function. Return the value by calling [`RcImpl::new`]. This is the wrapper to add
-//! [`cef_base_ref_counted_t`] to the type, so the trampoline function can call [`RcImpl::get`] to
-//! retreive rust type and use it.
-//!
-//! ### ... and if it's a type we sould get from C API
-//! For example like [`cef_window_t`], it should implement [`Rc`] trait fisrt.
-//! There are some private macros `impl_rc` in this module for you to implement it.
-//! And then define a new type like [`Window`] to wrap the raw type with [`RefGuard`].
-//! Finally, define a method called `from_raw`. For more implementation details, please see the
-//! documentation of [`RefGuard`].
-//!
-//! [`cef_settings_t`]: cef_dll_sys::cef_settings_t
-//! [`cef_window_delegate_t`]: cef_dll_sys::cef_window_delegate_t
-//! [`Settings`]: crate::Settings
-//! [`WindowDelegate`]: crate::WindowDelegate
-//! [`WindowDelegate::on_window_created`]: crate::WindowDelegate::on_window_created
-//! [`into_raw`]: crate::WindowDelegate::into_raw
-//! [`cef_window_t`]: cef_dll_sys::cef_window_t
-//! [`Window`]: crate::Window
+//! typically don't need to uses these types, the `update-bindings` tool generates all the code
+//! which should ever call them.
 
 use std::{
     fmt::Debug,
-    mem::{self, ManuallyDrop},
+    mem,
     ops::Deref,
     ptr::NonNull,
     sync::atomic::{fence, AtomicUsize, Ordering},
@@ -64,6 +28,11 @@ pub trait Rc {
 
     /// Decrease reference count by 1 and release the value if the count meets 0.
     /// Reuturn `True` if it is released.
+    ///
+    /// # Safety
+    ///
+    /// Calling this method when you need to manually handle the reference count.
+    /// Otherwise, these methods shouldn't be called externally in most cases.
     unsafe fn release(&self) -> bool {
         self.as_base().release()
     }
@@ -121,7 +90,7 @@ impl Rc for cef_base_ref_counted_t {
 }
 
 pub trait ConvertParam<T: Sized> {
-    fn as_raw(self) -> T;
+    fn into_raw(self) -> T;
 }
 
 impl<T, U> ConvertParam<U> for T
@@ -129,7 +98,7 @@ where
     T: Sized + Into<U>,
     U: Sized,
 {
-    fn as_raw(self) -> U {
+    fn into_raw(self) -> U {
         self.into()
     }
 }
@@ -146,8 +115,8 @@ where
     /// the `self` type (usually the first parameter). This means we pass the ownership of the
     /// value to the function call. Using this method elsewehre may cause incorrect reference count
     /// and memory safety issues.
-    fn as_raw(self) -> *mut T {
-        unsafe { self.as_raw() }
+    fn into_raw(self) -> *mut T {
+        unsafe { self.into_raw() }
     }
 }
 
@@ -200,6 +169,7 @@ where
     T: Sized + Into<P>,
     P: Sized + Copy + Into<T>,
 {
+    #[allow(clippy::not_unsafe_ptr_arg_deref)]
     fn from(value: *const P) -> Self {
         let value = unsafe { value.as_ref() }
             .map(|value| (*value).into())
@@ -233,7 +203,7 @@ where
 }
 
 pub trait ConvertReturnValue<T: Sized> {
-    fn as_wrapper(self) -> T;
+    fn wrap_result(self) -> T;
 }
 
 impl<T, U> ConvertReturnValue<U> for T
@@ -241,7 +211,7 @@ where
     T: Sized + Into<U>,
     U: Sized,
 {
-    fn as_wrapper(self) -> U {
+    fn wrap_result(self) -> U {
         self.into()
     }
 }
@@ -295,20 +265,8 @@ impl<T: Rc> RefGuard<T> {
     /// the `self` type (usually the first parameter). This means we pass the ownership of the
     /// value to the function call. Using this method elsewhere may cause incorrect reference count
     /// and memory safety issues.
-    pub unsafe fn as_raw(&self) -> *mut T {
+    pub unsafe fn into_raw(&self) -> *mut T {
         self.object
-    }
-
-    /// Consume the [RefGuard] and return the raw pointer without decrease the reference count.
-    ///
-    /// # Safety
-    ///
-    /// This should be used when you need to pass wrapper type to the FFI function as **parameter**, and it is **not**
-    /// the `self` type (usually the first parameter). This means we pass the ownership of the
-    /// value to the function call. Using this method elsewhere may cause incorrect reference count
-    /// and memory safety issues.
-    pub unsafe fn into_raw(self) -> *mut T {
-        ManuallyDrop::new(self).object
     }
 
     /// Convert the value to another value that is also reference counted.
@@ -318,7 +276,7 @@ impl<T: Rc> RefGuard<T> {
     /// This should be used when the type has type `U` as its base type. Using this method
     /// elsewhere may cause memory safety issues.
     pub unsafe fn convert<U: Rc>(&self) -> RefGuard<U> {
-        RefGuard::from_raw_add_ref(self.as_raw() as *mut _)
+        RefGuard::from_raw_add_ref(self.into_raw() as *mut _)
     }
 }
 

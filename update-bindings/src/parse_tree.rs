@@ -420,7 +420,7 @@ impl SignatureRef<'_> {
         let capture = self.capture_merged_params(tree);
         let args = self.merge_params(tree).filter_map(|arg| match arg {
             MergedParam::Receiver => Some(quote! {
-                let arg_self_ = self.as_raw();
+                let arg_self_ = self.into_raw();
             }),
             MergedParam::Single {
                 name,
@@ -453,7 +453,7 @@ impl SignatureRef<'_> {
                                     Some(quote!{
                                         let #name = #name.map(|arg| {
                                             arg.add_ref();
-                                            arg.as_raw()
+                                            arg.into_raw()
                                         }).unwrap_or(std::ptr::null_mut());
                                     })
                                 } else {
@@ -522,7 +522,7 @@ impl SignatureRef<'_> {
                                 };
 
                                 Some(quote! {
-                                    let #name = #name.map(|arg| arg.as_raw()).#impl_default;
+                                    let #name = #name.map(|arg| arg.into_raw()).#impl_default;
                                 })
                             }
                             Some(NameMapEntry {
@@ -540,12 +540,12 @@ impl SignatureRef<'_> {
                                 };
 
                                 Some(quote! {
-                                    let #name = #name.map(|arg| arg.as_raw()).#impl_default;
+                                    let #name = #name.map(|arg| arg.into_raw()).#impl_default;
                                 })
                             }
                             Some(_) => {
                                 Some(quote! {
-                                    let #name = #name.as_raw();
+                                    let #name = #name.into_raw();
                                 })
                             }
                             None => {
@@ -563,7 +563,7 @@ impl SignatureRef<'_> {
                                     [TypeModifier::ConstPtr, ..] => Some(quote! { as *const _ }),
                                     _ => None,
                                 };
-                                Some(quote! {
+                                cast.map(|cast| quote! {
                                     let #name = #name #cast;
                                 })
                             }
@@ -740,7 +740,7 @@ impl SignatureRef<'_> {
                         *#out_name = #vec_name
                             .into_iter()
                             .take(#out_count)
-                            .map(|elem| if elem.is_null() { None } else { Some(elem.as_wrapper()) })
+                            .map(|elem| if elem.is_null() { None } else { Some(elem.wrap_result()) })
                             .collect();
                     }
                 })
@@ -912,7 +912,7 @@ impl SignatureRef<'_> {
                             }
                         }
                     })
-                    .or(Some(quote! { let #arg_name = #arg_name.as_raw(); }))
+                    .or(Some(quote! { let #arg_name = #arg_name.into_raw(); }))
             }
             MergedParam::Bounded {
                 count_name,
@@ -955,9 +955,7 @@ impl SignatureRef<'_> {
                                                     })
                                                     .collect::<Vec<_>>()
                                             });
-                                            let #arg_name = #vec_name.as_ref().map(|arg| {
-                                                arg.as_slice()
-                                            });
+                                            let #arg_name = #vec_name.as_deref();
                                         })
                                     },
                                     [TypeModifier::MutSlice] => {
@@ -1013,7 +1011,7 @@ impl SignatureRef<'_> {
                             }
                         }
                     })
-                    .or(Some(quote! { let #arg_name = #arg_name.as_raw(); }))
+                    .or(Some(quote! { let #arg_name = #arg_name.into_raw(); }))
             }
             MergedParam::Buffer {
                 slice_name,
@@ -1056,7 +1054,7 @@ impl SignatureRef<'_> {
                     }
                     _ => None,
                 }
-                .or(Some(quote! { let #arg_name = #arg_name.as_raw(); }))
+                .or(Some(quote! { let #arg_name = #arg_name.into_raw(); }))
             }
             _ => None,
         });
@@ -1601,7 +1599,9 @@ impl ParseTree<'_> {
                 dead_code,
                 improper_ctypes_definitions,
                 non_camel_case_types,
-                unused_variables
+                unused_variables,
+                clippy::not_unsafe_ptr_arg_deref,
+                clippy::too_many_arguments
             )]
             use crate::rc::{
                 ConvertParam, ConvertReturnValue, Rc, RcImpl, RefGuard, WrapParamRef,
@@ -1780,21 +1780,26 @@ impl ParseTree<'_> {
             let name = &m.name;
             let name = format_ident!("{name}");
             let pre_forward_args = m.unwrap_rust_args(self);
-            let args = m.inputs.iter().map(|arg| {
-                let name = make_snake_case_value_name(&arg.name);
-                let name = format_ident!("arg_{name}");
-                quote! { #name }
-            });
+            let args: Vec<_> = m
+                .inputs
+                .iter()
+                .map(|arg| {
+                    let name = make_snake_case_value_name(&arg.name);
+                    let name = format_ident!("arg_{name}");
+                    quote! { #name }
+                })
+                .collect();
             let post_forward_args = m.rewrap_rust_args(self);
             let output_type = m.output.and_then(|ty| {
                 let ty = self.resolve_type_aliases(ty);
                 syn::parse2::<ModifiedType>(ty.to_token_stream()).ok()
             });
-            let wrap_result = output_type
+
+            output_type
                 .as_ref()
-                .and_then(|ModifiedType { modifiers, ty, .. }| {
+                .map(|ModifiedType { modifiers, ty, .. }| {
                     let ty = ty.to_token_stream().to_string();
-                    match modifiers.as_slice() {
+                    let wrap_result = match modifiers.as_slice() {
                         [TypeModifier::ConstPtr | TypeModifier::MutPtr]
                             if ty != quote! { ::std::os::raw::c_void }.to_string() =>
                         {
@@ -1806,7 +1811,7 @@ impl ParseTree<'_> {
                                     if result.is_null() {
                                         None
                                     } else {
-                                        Some(result.as_wrapper())
+                                        Some(result.wrap_result())
                                     }
                                 }),
                                 _ => None,
@@ -1814,28 +1819,42 @@ impl ParseTree<'_> {
                         }
                         _ => None,
                     }
-                })
-                .unwrap_or(quote! { result.as_wrapper() });
-            let impl_default = output_type
-                .and_then(|ty| {
-                    (ty.ty.to_token_stream().to_string()
-                        != quote! { ::std::os::raw::c_void }.to_string())
-                    .then(|| quote! { .unwrap_or_default() })
-                })
-                .unwrap_or(quote! { .unwrap_or_else(|| std::mem::zeroed()) });
-            quote! {
-                #sig {
-                    unsafe {
-                        self.0.#name.map(|f| {
-                            #pre_forward_args
-                            let result = f(#(#args),*);
-                            #post_forward_args
-                            #wrap_result
+                    .unwrap_or(quote! { result.wrap_result() });
+
+                    let impl_default = output_type
+                        .as_ref()
+                        .and_then(|ty| {
+                            (ty.ty.to_token_stream().to_string()
+                                != quote! { ::std::os::raw::c_void }.to_string())
+                            .then(|| quote! { .unwrap_or_default() })
                         })
-                        #impl_default
+                        .unwrap_or(quote! { .unwrap_or_else(|| std::mem::zeroed()) });
+
+                    quote! {
+                        #sig {
+                            unsafe {
+                                self.0.#name.map(|f| {
+                                    #pre_forward_args
+                                    let result = f(#(#args),*);
+                                    #post_forward_args
+                                    #wrap_result
+                                })
+                                #impl_default
+                            }
+                        }
                     }
-                }
-            }
+                })
+                .unwrap_or(quote! {
+                    #sig {
+                        unsafe {
+                            if let Some(f) = self.0.#name {
+                                #pre_forward_args
+                                f(#(#args),*);
+                                #post_forward_args
+                            }
+                        }
+                    }
+                })
         });
 
         let base_name = self.base(name);
@@ -1903,7 +1922,7 @@ impl ParseTree<'_> {
                         quote! {
                             #sig {
                                 #base(unsafe {
-                                    RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
+                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0) as *mut _)
                                 })
                                 .#name(#(#args),*)
                             }
@@ -1915,7 +1934,7 @@ impl ParseTree<'_> {
                             #(#base_methods)*
 
                             fn get_raw(&self) -> *mut #base_ident {
-                                unsafe { RefGuard::as_raw(&self.0) as *mut _ }
+                                unsafe { RefGuard::into_raw(&self.0) as *mut _ }
                             }
                         }
                     }
@@ -1943,7 +1962,7 @@ impl ParseTree<'_> {
                 #(#methods)*
 
                 fn get_raw(&self) -> *mut #name_ident {
-                    unsafe { RefGuard::as_raw(&self.0) }
+                    unsafe { RefGuard::into_raw(&self.0) }
                 }
             }
 
@@ -1960,27 +1979,27 @@ impl ParseTree<'_> {
             }
 
             impl ConvertParam<*mut #name_ident> for &#rust_name {
-                fn as_raw(self) -> *mut #name_ident {
+                fn into_raw(self) -> *mut #name_ident {
                     #impl_trait::get_raw(self)
                 }
             }
 
             impl ConvertParam<*mut #name_ident> for &mut #rust_name {
-                fn as_raw(self) -> *mut #name_ident {
+                fn into_raw(self) -> *mut #name_ident {
                     #impl_trait::get_raw(self)
                 }
             }
 
             impl ConvertReturnValue<#rust_name> for *mut #name_ident {
-                fn as_wrapper(self) -> #rust_name {
+                fn wrap_result(self) -> #rust_name {
                     #rust_name(unsafe { RefGuard::from_raw(self) })
                 }
             }
 
-            impl Into<*mut #name_ident> for #rust_name {
-                fn into(self) -> *mut #name_ident {
-                    let object = #impl_trait::get_raw(&self);
-                    std::mem::forget(self);
+            impl From<#rust_name> for *mut #name_ident {
+                fn from(value: #rust_name) -> Self {
+                    let object = #impl_trait::get_raw(&value);
+                    std::mem::forget(value);
                     object
                 }
             }
@@ -2011,7 +2030,7 @@ impl ParseTree<'_> {
 
                 impl #rust_name {
                     fn get_raw(&self) -> *mut #name_ident {
-                        unsafe { RefGuard::as_raw(&self.0) }
+                        unsafe { RefGuard::into_raw(&self.0) }
                     }
                 }
 
@@ -2022,27 +2041,27 @@ impl ParseTree<'_> {
                 }
 
                 impl ConvertParam<*mut #name_ident> for &#rust_name {
-                    fn as_raw(self) -> *mut #name_ident {
+                    fn into_raw(self) -> *mut #name_ident {
                         self.get_raw()
                     }
                 }
 
                 impl ConvertParam<*mut #name_ident> for &mut #rust_name {
-                    fn as_raw(self) -> *mut #name_ident {
+                    fn into_raw(self) -> *mut #name_ident {
                         self.get_raw()
                     }
                 }
 
                 impl ConvertReturnValue<#rust_name> for *mut #name_ident {
-                    fn as_wrapper(self) -> #rust_name {
+                    fn wrap_result(self) -> #rust_name {
                         #rust_name(unsafe { RefGuard::from_raw(self) })
                     }
                 }
 
-                impl Into<*mut #name_ident> for #rust_name {
-                    fn into(self) -> *mut #name_ident {
-                        let object = self.get_raw();
-                        std::mem::forget(self);
+                impl From<#rust_name> for *mut #name_ident {
+                    fn from(value: #rust_name) -> Self {
+                        let object = value.get_raw();
+                        std::mem::forget(value);
                         object
                     }
                 }
@@ -2064,21 +2083,26 @@ impl ParseTree<'_> {
             let name = &m.name;
             let name = format_ident!("{name}");
             let pre_forward_args = m.unwrap_rust_args(self);
-            let args = m.inputs.iter().map(|arg| {
-                let name = make_snake_case_value_name(&arg.name);
-                let name = format_ident!("arg_{name}");
-                quote! { #name }
-            });
+            let args: Vec<_> = m
+                .inputs
+                .iter()
+                .map(|arg| {
+                    let name = make_snake_case_value_name(&arg.name);
+                    let name = format_ident!("arg_{name}");
+                    quote! { #name }
+                })
+                .collect();
             let post_forward_args = m.rewrap_rust_args(self);
             let output_type = m.output.and_then(|ty| {
                 let ty = self.resolve_type_aliases(ty);
                 syn::parse2::<ModifiedType>(ty.to_token_stream()).ok()
             });
-            let wrap_result = output_type
+
+            output_type
                 .as_ref()
-                .and_then(|ModifiedType { modifiers, ty, .. }| {
+                .map(|ModifiedType { modifiers, ty, .. }| {
                     let ty = ty.to_token_stream().to_string();
-                    match modifiers.as_slice() {
+                    let wrap_result = match modifiers.as_slice() {
                         [TypeModifier::ConstPtr | TypeModifier::MutPtr]
                             if ty != quote! { ::std::os::raw::c_void }.to_string() =>
                         {
@@ -2090,7 +2114,7 @@ impl ParseTree<'_> {
                                     if result.is_null() {
                                         None
                                     } else {
-                                        Some(result.as_wrapper())
+                                        Some(result.wrap_result())
                                     }
                                 }),
                                 _ => None,
@@ -2098,28 +2122,42 @@ impl ParseTree<'_> {
                         }
                         _ => None,
                     }
-                })
-                .unwrap_or(quote! { result.as_wrapper() });
-            let impl_default = output_type
-                .and_then(|ty| {
-                    (ty.ty.to_token_stream().to_string()
-                        != quote! { ::std::os::raw::c_void }.to_string())
-                    .then(|| quote! { .unwrap_or_default() })
-                })
-                .unwrap_or(quote! { .unwrap_or_else(|| std::mem::zeroed()) });
-            quote! {
-                #sig {
-                    unsafe {
-                        self.0.#name.map(|f| {
-                            #pre_forward_args
-                            let result = f(#(#args),*);
-                            #post_forward_args
-                            #wrap_result
+                    .unwrap_or(quote! { result.wrap_result() });
+
+                    let impl_default = output_type
+                        .as_ref()
+                        .and_then(|ty| {
+                            (ty.ty.to_token_stream().to_string()
+                                != quote! { ::std::os::raw::c_void }.to_string())
+                            .then(|| quote! { .unwrap_or_default() })
                         })
-                        #impl_default
+                        .unwrap_or(quote! { .unwrap_or_else(|| std::mem::zeroed()) });
+
+                    quote! {
+                        #sig {
+                            unsafe {
+                                self.0.#name.map(|f| {
+                                    #pre_forward_args
+                                    let result = f(#(#args),*);
+                                    #post_forward_args
+                                    #wrap_result
+                                })
+                                #impl_default
+                            }
+                        }
                     }
-                }
-            }
+                })
+                .unwrap_or(quote! {
+                    #sig {
+                        unsafe {
+                            if let Some(f) = self.0.#name {
+                                #pre_forward_args
+                                f(#(#args),*);
+                                #post_forward_args
+                            }
+                        }
+                    }
+                })
         });
 
         let base_name = self.base(name);
@@ -2220,7 +2258,7 @@ impl ParseTree<'_> {
                         quote! {
                             #sig {
                                 #base(unsafe {
-                                    RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _)
+                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0) as *mut _)
                                 })
                                 .#name(#(#args),*)
                             }
@@ -2232,7 +2270,7 @@ impl ParseTree<'_> {
                             #(#base_methods)*
 
                             fn get_raw(&self) -> *mut #base_ident {
-                                unsafe { RefGuard::as_raw(&self.0) as *mut _ }
+                                unsafe { RefGuard::into_raw(&self.0) as *mut _ }
                             }
                         }
                     }
@@ -2279,7 +2317,7 @@ impl ParseTree<'_> {
                 let output = original_output.as_ref().map(|output| {
                     quote! { -> #output }
                 });
-                let forward_output = original_output.map(|output| {
+                let forward_output = original_output.and_then(|output| {
                     match syn::parse2::<ModifiedType>(output) {
                         Ok(ModifiedType { ty, modifiers }) => {
                             self.cef_name_map
@@ -2295,19 +2333,31 @@ impl ParseTree<'_> {
                                         [TypeModifier::MutPtr] => {
                                             Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
                                         }
-                                        _ => None,
+                                        _ => Some(quote! { result.into() }),
                                     }
-                                    _ => None,
+                                    _ => Some(quote! { result.into() }),
+                                })
+                                .or_else(|| {
+                                    if unwrapped_args.is_empty() {
+                                        None
+                                    } else {
+                                        Some(quote! { result })
+                                    }
                                 })
                         }
                         _ => None,
-                    }.unwrap_or(quote! { result.into() })
+                    }
                 });
+                let mut call_impl =
+                    quote! { #impl_trait::#name(&arg_self_.interface, #(#forward_args),*) };
+                if forward_output.is_some() || !unwrapped_args.is_empty() {
+                    call_impl = quote! { let result = #call_impl; };
+                }
 
                 quote! {
                     extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
                         #wrapped_args
-                        let result = #impl_trait::#name(&arg_self_.interface, #(#forward_args),*);
+                        #call_impl
                         #unwrapped_args
                         #forward_output
                     }
@@ -2330,7 +2380,7 @@ impl ParseTree<'_> {
                         <T as #impl_trait>::init_methods(&mut cef_object);
                         let object = RcImpl::new(cef_object, interface);
                         <T as #wrap_trait>::wrap_rc(&mut (*object).interface, object);
-                        (object as *mut #name_ident).as_wrapper()
+                        (object as *mut #name_ident).wrap_result()
                     }
                 }
             }
@@ -2366,7 +2416,7 @@ impl ParseTree<'_> {
                 #(#methods)*
 
                 fn get_raw(&self) -> *mut #name_ident {
-                    unsafe { RefGuard::as_raw(&self.0) }
+                    unsafe { RefGuard::into_raw(&self.0) }
                 }
             }
 
@@ -2383,27 +2433,27 @@ impl ParseTree<'_> {
             }
 
             impl ConvertParam<*mut #name_ident> for &#rust_name {
-                fn as_raw(self) -> *mut #name_ident {
+                fn into_raw(self) -> *mut #name_ident {
                     #impl_trait::get_raw(self)
                 }
             }
 
             impl ConvertParam<*mut #name_ident> for &mut #rust_name {
-                fn as_raw(self) -> *mut #name_ident {
+                fn into_raw(self) -> *mut #name_ident {
                     #impl_trait::get_raw(self)
                 }
             }
 
             impl ConvertReturnValue<#rust_name> for *mut #name_ident {
-                fn as_wrapper(self) -> #rust_name {
+                fn wrap_result(self) -> #rust_name {
                     #rust_name(unsafe { RefGuard::from_raw(self) })
                 }
             }
 
-            impl Into<*mut #name_ident> for #rust_name {
-                fn into(self) -> *mut #name_ident {
-                    let object = #impl_trait::get_raw(&self);
-                    std::mem::forget(self);
+            impl From <#rust_name> for *mut #name_ident {
+                fn from(value: #rust_name) -> Self {
+                    let object = #impl_trait::get_raw(&value);
+                    std::mem::forget(value);
                     object
                 }
             }
@@ -2439,26 +2489,26 @@ impl ParseTree<'_> {
                 }
 
                 impl ConvertParam<*mut #name_ident> for &#rust_name {
-                    fn as_raw(self) -> *mut #name_ident {
+                    fn into_raw(self) -> *mut #name_ident {
                         self.get_raw()
                     }
                 }
 
                 impl ConvertParam<*mut #name_ident> for &mut #rust_name {
-                    fn as_raw(self) -> *mut #name_ident {
+                    fn into_raw(self) -> *mut #name_ident {
                         self.get_raw()
                     }
                 }
 
                 impl ConvertReturnValue<#rust_name> for *mut #name_ident {
-                    fn as_wrapper(self) -> #rust_name {
+                    fn wrap_result(self) -> #rust_name {
                         #rust_name(self)
                     }
                 }
 
-                impl Into<*mut #name_ident> for #rust_name {
-                    fn into(self) -> *mut #name_ident {
-                        self.get_raw()
+                impl From<#rust_name> for *mut #name_ident {
+                    fn from(value: #rust_name) -> Self {
+                        value.get_raw()
                     }
                 }
 
@@ -2479,21 +2529,26 @@ impl ParseTree<'_> {
             let name = &m.name;
             let name = format_ident!("{name}");
             let pre_forward_args = m.unwrap_rust_args(self);
-            let args = m.inputs.iter().map(|arg| {
-                let name = make_snake_case_value_name(&arg.name);
-                let name = format_ident!("arg_{name}");
-                quote! { #name }
-            });
+            let args: Vec<_> = m
+                .inputs
+                .iter()
+                .map(|arg| {
+                    let name = make_snake_case_value_name(&arg.name);
+                    let name = format_ident!("arg_{name}");
+                    quote! { #name }
+                })
+                .collect();
             let post_forward_args = m.rewrap_rust_args(self);
             let output_type = m.output.and_then(|ty| {
                 let ty = self.resolve_type_aliases(ty);
                 syn::parse2::<ModifiedType>(ty.to_token_stream()).ok()
             });
-            let wrap_result = output_type
+
+            output_type
                 .as_ref()
-                .and_then(|ModifiedType { modifiers, ty, .. }| {
+                .map(|ModifiedType { modifiers, ty, .. }| {
                     let ty = ty.to_token_stream().to_string();
-                    match modifiers.as_slice() {
+                    let wrap_result = match modifiers.as_slice() {
                         [TypeModifier::ConstPtr | TypeModifier::MutPtr]
                             if ty != quote! { ::std::os::raw::c_void }.to_string() =>
                         {
@@ -2505,7 +2560,7 @@ impl ParseTree<'_> {
                                     if result.is_null() {
                                         None
                                     } else {
-                                        Some(result.as_wrapper())
+                                        Some(result.wrap_result())
                                     }
                                 }),
                                 _ => None,
@@ -2513,28 +2568,42 @@ impl ParseTree<'_> {
                         }
                         _ => None,
                     }
-                })
-                .unwrap_or(quote! { result.as_wrapper() });
-            let impl_default = output_type
-                .and_then(|ty| {
-                    (ty.ty.to_token_stream().to_string()
-                        != quote! { ::std::os::raw::c_void }.to_string())
-                    .then(|| quote! { .unwrap_or_default() })
-                })
-                .unwrap_or(quote! { .unwrap_or_else(|| std::mem::zeroed()) });
-            quote! {
-                #sig {
-                    unsafe {
-                        self.0.as_ref().and_then(|this| this.#name).map(|f| {
-                            #pre_forward_args
-                            let result = f(#(#args),*);
-                            #post_forward_args
-                            #wrap_result
+                    .unwrap_or(quote! { result.wrap_result() });
+
+                    let impl_default = output_type
+                        .as_ref()
+                        .and_then(|ty| {
+                            (ty.ty.to_token_stream().to_string()
+                                != quote! { ::std::os::raw::c_void }.to_string())
+                            .then(|| quote! { .unwrap_or_default() })
                         })
-                        #impl_default
+                        .unwrap_or(quote! { .unwrap_or_else(|| std::mem::zeroed()) });
+
+                    quote! {
+                        #sig {
+                            unsafe {
+                                self.0.as_ref().and_then(|this| this.#name).map(|f| {
+                                    #pre_forward_args
+                                    let result = f(#(#args),*);
+                                    #post_forward_args
+                                    #wrap_result
+                                })
+                                #impl_default
+                            }
+                        }
                     }
-                }
-            }
+                })
+                .unwrap_or(quote! {
+                    #sig {
+                        unsafe {
+                            if let Some(f) = self.0.as_ref().and_then(|this| this.#name) {
+                                #pre_forward_args
+                                f(#(#args),*);
+                                #post_forward_args
+                            }
+                        }
+                    }
+                })
         });
 
         let base_name = self.base(name);
@@ -2676,7 +2745,7 @@ impl ParseTree<'_> {
                 let output = original_output.as_ref().map(|output| {
                     quote! { -> #output }
                 });
-                let forward_output = original_output.map(|output| {
+                let forward_output = original_output.and_then(|output| {
                     match syn::parse2::<ModifiedType>(output) {
                         Ok(ModifiedType { ty, modifiers }) => {
                             self.cef_name_map
@@ -2692,19 +2761,31 @@ impl ParseTree<'_> {
                                         [TypeModifier::MutPtr] => {
                                             Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
                                         }
-                                        _ => None,
+                                        _ => Some(quote! { result.into() }),
                                     }
-                                    _ => None,
+                                    _ => Some(quote! { result.into() }),
+                                })
+                                .or_else(|| {
+                                    if unwrapped_args.is_empty() {
+                                        None
+                                    } else {
+                                        Some(quote! { result })
+                                    }
                                 })
                         }
                         _ => None,
-                    }.unwrap_or(quote! { result.into() })
+                    }
                 });
+                let mut call_impl =
+                    quote! { #impl_trait::#name(&arg_self_.interface, #(#forward_args),*) };
+                if forward_output.is_some() || !unwrapped_args.is_empty() {
+                    call_impl = quote! { let result = #call_impl; };
+                }
 
                 quote! {
                     extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
                         #wrapped_args
-                        let result = #impl_trait::#name(&arg_self_.interface, #(#forward_args),*);
+                        #call_impl
                         #unwrapped_args
                         #forward_output
                     }
@@ -2747,26 +2828,26 @@ impl ParseTree<'_> {
             }
 
             impl ConvertParam<*mut #name_ident> for &#rust_name {
-                fn as_raw(self) -> *mut #name_ident {
+                fn into_raw(self) -> *mut #name_ident {
                     #impl_trait::get_raw(self)
                 }
             }
 
             impl ConvertParam<*mut #name_ident> for &mut #rust_name {
-                fn as_raw(self) -> *mut #name_ident {
+                fn into_raw(self) -> *mut #name_ident {
                     #impl_trait::get_raw(self)
                 }
             }
 
             impl ConvertReturnValue<#rust_name> for *mut #name_ident {
-                fn as_wrapper(self) -> #rust_name {
+                fn wrap_result(self) -> #rust_name {
                     #rust_name(self)
                 }
             }
 
-            impl Into<*mut #name_ident> for #rust_name {
-                fn into(self) -> *mut #name_ident {
-                    #impl_trait::get_raw(&self)
+            impl From<#rust_name> for *mut #name_ident {
+                fn from(value: #rust_name) -> Self {
+                    #impl_trait::get_raw(&value)
                 }
             }
 
@@ -2829,20 +2910,20 @@ impl ParseTree<'_> {
                         }
                     }
 
-                    impl Into<*const #name_ident> for &#rust_name {
-                        fn into(self) -> *const #name_ident {
-                            self.as_ref() as *const #name_ident
+                    impl From<&#rust_name> for *const #name_ident {
+                        fn from(value: &#rust_name) -> Self {
+                            value.as_ref() as *const #name_ident
                         }
                     }
 
-                    impl Into<*mut #name_ident> for &mut #rust_name {
-                        fn into(self) -> *mut #name_ident {
-                            self.as_mut() as *mut #name_ident
+                    impl From<&mut #rust_name> for *mut #name_ident  {
+                        fn from(value: &mut #rust_name) -> Self {
+                            value.as_mut() as *mut #name_ident
                         }
                     }
 
-                    impl Into<#name_ident> for #rust_name {
-                        fn into(self) -> #name_ident {
+                    impl From<#rust_name> for #name_ident  {
+                        fn from(value: #rust_name) -> Self {
                             self.0
                         }
                     }
@@ -2886,7 +2967,8 @@ impl ParseTree<'_> {
                         });
                     let rust_ty = ty.ty.to_token_stream();
                     let ty_string = rust_ty.to_string();
-                    let rust_ty = match self.cef_name_map.get(&ty_string) {
+                    let entry = self.cef_name_map.get(&ty_string);
+                    let rust_ty = match entry.as_ref() {
                         Some(NameMapEntry { name, .. }) => {
                             let name = format_ident!("{name}");
                             quote! { #name }
@@ -2906,28 +2988,35 @@ impl ParseTree<'_> {
                         Some(TypeModifier::Array { size }) => quote! { [#rust_ty; #size] },
                         _ => rust_ty,
                     };
-                    (rust_name, name.clone(), quote! { #(#modifiers)* #rust_ty })
+                    (
+                        rust_name,
+                        name.clone(),
+                        entry,
+                        quote! { #(#modifiers)* #rust_ty },
+                    )
                 })
                 .collect::<Vec<_>>();
-            let fields_decl = fields.iter().map(|(rust_name, _, ty)| {
+            let fields_decl = fields.iter().map(|(rust_name, _, _, ty)| {
                 quote! { pub #rust_name: #ty, }
             });
-            let from_fields = fields.iter().filter_map(|(rust_name, name, ty)| {
+            let from_cef_fields = fields.iter().filter_map(|(rust_name, name, entry, ty)| {
                 let ty = syn::parse2::<ModifiedType>(ty.clone()).ok()?;
-                Some(match ty.modifiers.last() {
-                    Some(TypeModifier::Array { .. }) => {
+                Some(match (ty.modifiers.last(), entry) {
+                    (Some(TypeModifier::Array { .. }), _) => {
                         quote! { #rust_name: init_array_field(value.#name), }
                     }
-                    _ => quote! { #rust_name: value.#name.into(), },
+                    (_, Some(_)) => quote! { #rust_name: value.#name.into(), },
+                    _ => quote! { #rust_name: value.#name, },
                 })
             });
-            let into_fields = fields.iter().filter_map(|(rust_name, name, ty)| {
+            let from_rust_fields = fields.iter().filter_map(|(rust_name, name, entry, ty)| {
                 let ty = syn::parse2::<ModifiedType>(ty.clone()).ok()?;
-                Some(match ty.modifiers.last() {
-                    Some(TypeModifier::Array { .. }) => {
-                        quote! { #name: init_array_field(self.#rust_name), }
+                Some(match (ty.modifiers.last(), entry) {
+                    (Some(TypeModifier::Array { .. }), _) => {
+                        quote! { #name: init_array_field(value.#rust_name), }
                     }
-                    _ => quote! { #name: self.#rust_name.into(), },
+                    (_, Some(_)) => quote! { #name: value.#rust_name.into(), },
+                    _ => quote! { #name: value.#rust_name, },
                 })
             });
             let impl_default = match s.fields.first() {
@@ -2951,15 +3040,15 @@ impl ParseTree<'_> {
                 impl From<#name_ident> for #rust_name {
                     fn from(value: #name_ident) -> Self {
                         Self {
-                            #(#from_fields)*
+                            #(#from_cef_fields)*
                         }
                     }
                 }
 
-                impl Into<#name_ident> for #rust_name {
-                    fn into(self) -> #name_ident {
-                        #name_ident {
-                            #(#into_fields)*
+                impl From<#rust_name> for #name_ident {
+                    fn from(value: #rust_name) -> Self {
+                        Self {
+                            #(#from_rust_fields)*
                         }
                     }
                 }
@@ -3015,9 +3104,9 @@ impl ParseTree<'_> {
                     }
                 }
 
-                impl Into<#name> for #rust_name {
-                    fn into(self) -> #name {
-                        self.0
+                impl From<#rust_name> for #name  {
+                    fn from(value: #rust_name) -> Self {
+                        value.0
                     }
                 }
 
@@ -3059,17 +3148,20 @@ impl ParseTree<'_> {
                 })
                 .collect::<Vec<_>>();
             let unwrap_args = global_fn.unwrap_rust_args(self);
-            let forward_args = inputs.iter().map(|(rust_name, _)| {
-                quote! { #rust_name }
-            });
+            let forward_args: Vec<_> = inputs
+                .iter()
+                .map(|(rust_name, _)| {
+                    quote! { #rust_name }
+                })
+                .collect();
             let rewrap_args = global_fn.rewrap_rust_args(self);
-            let wrap_result = global_fn
+            let wrapper = global_fn
                 .output
-                .and_then(|ty| {
-                    let ModifiedType { modifiers, ty, .. } =
-                        syn::parse2::<ModifiedType>(self.resolve_type_aliases(ty)).ok()?;
+                .as_ref()
+                .and_then(|ty| syn::parse2::<ModifiedType>(self.resolve_type_aliases(ty)).ok())
+                .map(|ModifiedType { modifiers, ty, .. }| {
                     let ty = ty.to_token_stream().to_string();
-                    match modifiers.as_slice() {
+                    let wrap_result = match modifiers.as_slice() {
                         [TypeModifier::ConstPtr | TypeModifier::MutPtr]
                             if ty != quote! { ::std::os::raw::c_void }.to_string() =>
                         {
@@ -3081,7 +3173,7 @@ impl ParseTree<'_> {
                                     if result.is_null() {
                                         None
                                     } else {
-                                        Some(result.as_wrapper())
+                                        Some(result.wrap_result())
                                     }
                                 }),
                                 _ => None,
@@ -3089,20 +3181,29 @@ impl ParseTree<'_> {
                         }
                         _ => None,
                     }
-                })
-                .unwrap_or(quote! { result.as_wrapper() });
+                    .unwrap_or(quote! { result.wrap_result() });
 
-            let wrapper = quote! {
-                pub fn #name(#args) #output {
-                    unsafe {
-                        #unwrap_args
-                        let result = #original_name(#(#forward_args),*);
-                        #rewrap_args
-                        #wrap_result
+                    quote! {
+                        pub fn #name(#args) #output {
+                            unsafe {
+                                #unwrap_args
+                                let result = #original_name(#(#forward_args),*);
+                                #rewrap_args
+                                #wrap_result
+                            }
+                        }
                     }
-                }
-            }
-            .to_string();
+                })
+                .unwrap_or(quote! {
+                    pub fn #name(#args) {
+                        unsafe {
+                            #unwrap_args
+                            #original_name(#(#forward_args),*);
+                            #rewrap_args
+                        }
+                    }
+                })
+                .to_string();
             writeln!(f, "{wrapper}")?;
         }
         Ok(())
