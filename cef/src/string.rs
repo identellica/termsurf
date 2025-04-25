@@ -1305,15 +1305,31 @@ impl Debug for CefStringMultimap {
 mod test {
     use crate::*;
 
+    #[cfg(target_os = "macos")]
+    fn ensure_dll_loaded() {
+        use std::sync::Once;
+
+        static LOAD_DLL: Once = Once::new();
+
+        LOAD_DLL.call_once(|| {
+            use std::os::unix::ffi::OsStrExt;
+
+            let cef_dir = sys::get_cef_dir().expect("CEF not found");
+            let framework_dir = cef_dir
+                .join(sys::FRAMEWORK_PATH)
+                .canonicalize()
+                .expect("failed to get framework path");
+            let framework_dir =
+                std::ffi::CString::new(framework_dir.as_os_str().as_bytes()).expect("invalid path");
+
+            assert_eq!(sys::cef_load_library(framework_dir.as_ptr().cast()), 1);
+        })
+    }
+
     #[test]
     fn test_string_list() {
         #[cfg(target_os = "macos")]
-        let _loader = {
-            let loader =
-                library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
-            assert!(loader.load());
-            loader
-        };
+        ensure_dll_loaded();
 
         let mut list = CefStringList::new();
         list.append("foo");
@@ -1327,12 +1343,7 @@ mod test {
     #[test]
     fn test_string_map() {
         #[cfg(target_os = "macos")]
-        let _loader = {
-            let loader =
-                library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
-            assert!(loader.load());
-            loader
-        };
+        ensure_dll_loaded();
 
         let mut map = CefStringMap::new();
         map.append("foo", "value1");
@@ -1353,12 +1364,7 @@ mod test {
     #[test]
     fn test_string_multimap() {
         #[cfg(target_os = "macos")]
-        let _loader = {
-            let loader =
-                library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
-            assert!(loader.load());
-            loader
-        };
+        ensure_dll_loaded();
 
         let mut map = CefStringMultimap::new();
         map.append("foo", "value1a");
