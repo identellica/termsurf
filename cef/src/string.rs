@@ -1322,7 +1322,10 @@ mod test {
             let framework_dir =
                 std::ffi::CString::new(framework_dir.as_os_str().as_bytes()).expect("invalid path");
 
-            assert_eq!(sys::cef_load_library(framework_dir.as_ptr().cast()), 1);
+            assert_eq!(
+                unsafe { sys::cef_load_library(framework_dir.as_ptr().cast()) },
+                1
+            );
         })
     }
 
