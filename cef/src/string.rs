@@ -774,12 +774,74 @@ impl Display for CefStringWide {
     }
 }
 
+enum CefStringCollection<T> {
+    Borrowed(Option<T>),
+    BorrowedMut(Option<NonNull<T>>),
+    Free(Option<NonNull<T>>),
+}
+
+impl<T> Clone for CefStringCollection<T>
+where
+    T: Copy,
+{
+    fn clone(&self) -> Self {
+        let data: Option<&T> = self.into();
+        let data = data.map(ptr::from_ref).unwrap_or(ptr::null());
+        data.into()
+    }
+}
+
+impl<T> Default for CefStringCollection<T> {
+    fn default() -> Self {
+        Self::Borrowed(None)
+    }
+}
+
+impl<T> From<*const T> for CefStringCollection<T>
+where
+    T: Copy,
+{
+    fn from(value: *const T) -> Self {
+        Self::Borrowed(unsafe { value.as_ref() }.copied())
+    }
+}
+
+impl<T> From<*mut T> for CefStringCollection<T> {
+    fn from(value: *mut T) -> Self {
+        Self::BorrowedMut(NonNull::new(value))
+    }
+}
+
+impl<'a, T> From<&'a CefStringCollection<T>> for Option<&'a T> {
+    fn from(value: &'a CefStringCollection<T>) -> Self {
+        match value {
+            CefStringCollection::Borrowed(value) => value.as_ref(),
+            CefStringCollection::BorrowedMut(value) | CefStringCollection::Free(value) => {
+                value.as_ref().map(|value| unsafe { value.as_ref() })
+            }
+        }
+    }
+}
+
+impl<'a, T> From<&'a mut CefStringCollection<T>> for Option<&'a mut T> {
+    fn from(value: &'a mut CefStringCollection<T>) -> Self {
+        match value {
+            CefStringCollection::BorrowedMut(value) | CefStringCollection::Free(value) => {
+                value.as_mut().map(|value| unsafe { value.as_mut() })
+            }
+            _ => None,
+        }
+    }
+}
+
 /// See [_cef_string_list_t] for more documentation.
-pub struct CefStringList(CefStringData<_cef_string_list_t>);
+pub struct CefStringList(CefStringCollection<_cef_string_list_t>);
 
 impl CefStringList {
     pub fn new() -> Self {
-        Self(CefStringData::Clear(Some(unsafe { mem::zeroed() })))
+        Self(CefStringCollection::Free(NonNull::new(unsafe {
+            cef_dll_sys::cef_string_list_alloc()
+        })))
     }
 
     pub fn append(&mut self, value: &str) -> bool {
@@ -803,8 +865,8 @@ impl Default for CefStringList {
 impl Drop for CefStringList {
     fn drop(&mut self) {
         unsafe {
-            if let CefStringData::Clear(Some(list)) = &mut self.0 {
-                cef_dll_sys::cef_string_list_clear(list);
+            if let CefStringCollection::Free(Some(list)) = &mut self.0 {
+                cef_dll_sys::cef_string_list_free(list.as_ptr());
             }
         }
     }
@@ -838,14 +900,14 @@ impl From<&mut CefStringList> for *mut _cef_string_list_t {
 
 impl From<_cef_string_list_t> for CefStringList {
     fn from(value: _cef_string_list_t) -> Self {
-        Self(CefStringData::Borrowed(Some(value)))
+        Self(CefStringCollection::Borrowed(Some(value)))
     }
 }
 
 impl From<CefStringList> for _cef_string_list_t {
     fn from(value: CefStringList) -> Self {
         match value.0 {
-            CefStringData::Borrowed(value) => value,
+            CefStringCollection::Borrowed(value) => value,
             _ => None,
         }
         .unwrap_or(unsafe { mem::zeroed() })
@@ -905,11 +967,13 @@ impl Debug for CefStringList {
 }
 
 /// See [_cef_string_map_t] for more documentation.
-pub struct CefStringMap(CefStringData<_cef_string_map_t>);
+pub struct CefStringMap(CefStringCollection<_cef_string_map_t>);
 
 impl CefStringMap {
     pub fn new() -> Self {
-        Self(CefStringData::Clear(Some(unsafe { mem::zeroed() })))
+        Self(CefStringCollection::Free(NonNull::new(unsafe {
+            cef_dll_sys::cef_string_map_alloc()
+        })))
     }
 
     pub fn append(&mut self, key: &str, value: &str) -> bool {
@@ -933,8 +997,8 @@ impl Default for CefStringMap {
 impl Drop for CefStringMap {
     fn drop(&mut self) {
         unsafe {
-            if let CefStringData::Clear(Some(map)) = &mut self.0 {
-                cef_dll_sys::cef_string_map_clear(map);
+            if let CefStringCollection::Free(Some(map)) = &mut self.0 {
+                cef_dll_sys::cef_string_map_free(map.as_ptr());
             }
         }
     }
@@ -968,14 +1032,14 @@ impl From<&mut CefStringMap> for *mut _cef_string_map_t {
 
 impl From<_cef_string_map_t> for CefStringMap {
     fn from(value: _cef_string_map_t) -> Self {
-        Self(CefStringData::Borrowed(Some(value)))
+        Self(CefStringCollection::Borrowed(Some(value)))
     }
 }
 
 impl From<CefStringMap> for _cef_string_map_t {
     fn from(value: CefStringMap) -> Self {
         match value.0 {
-            CefStringData::Borrowed(value) => value,
+            CefStringCollection::Borrowed(value) => value,
             _ => None,
         }
         .unwrap_or(unsafe { mem::zeroed() })
@@ -1049,11 +1113,13 @@ impl Debug for CefStringMap {
 }
 
 /// See [_cef_string_multimap_t] for more documentation.
-pub struct CefStringMultimap(CefStringData<_cef_string_multimap_t>);
+pub struct CefStringMultimap(CefStringCollection<_cef_string_multimap_t>);
 
 impl CefStringMultimap {
     pub fn new() -> Self {
-        Self(CefStringData::Clear(Some(unsafe { mem::zeroed() })))
+        Self(CefStringCollection::Free(NonNull::new(unsafe {
+            cef_dll_sys::cef_string_multimap_alloc()
+        })))
     }
 
     pub fn append(&mut self, key: &str, value: &str) -> bool {
@@ -1077,8 +1143,8 @@ impl Default for CefStringMultimap {
 impl Drop for CefStringMultimap {
     fn drop(&mut self) {
         unsafe {
-            if let CefStringData::Clear(Some(map)) = &mut self.0 {
-                cef_dll_sys::cef_string_multimap_clear(map);
+            if let CefStringCollection::Free(Some(map)) = &mut self.0 {
+                cef_dll_sys::cef_string_multimap_clear(map.as_ptr());
             }
         }
     }
@@ -1112,17 +1178,70 @@ impl From<&mut CefStringMultimap> for *mut _cef_string_multimap_t {
 
 impl From<_cef_string_multimap_t> for CefStringMultimap {
     fn from(value: _cef_string_multimap_t) -> Self {
-        Self(CefStringData::Borrowed(Some(value)))
+        Self(CefStringCollection::Borrowed(Some(value)))
     }
 }
 
 impl From<CefStringMultimap> for _cef_string_multimap_t {
     fn from(value: CefStringMultimap) -> Self {
         match value.0 {
-            CefStringData::Borrowed(value) => value,
+            CefStringCollection::Borrowed(value) => value,
             _ => None,
         }
         .unwrap_or(unsafe { mem::zeroed() })
+    }
+}
+
+impl IntoIterator for CefStringMultimap {
+    type Item = (String, Vec<String>);
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        let mut multimap = self;
+        let multimap: *mut _cef_string_multimap_t = (&mut multimap).into();
+        let multimap = unsafe { multimap.as_mut() };
+        let mut entries = vec![];
+        multimap
+            .map(|multimap| {
+                unsafe {
+                    let count = cef_dll_sys::cef_string_multimap_size(multimap);
+                    let mut visited: BTreeSet<String> = Default::default();
+                    for i in 0..count {
+                        let mut key = mem::zeroed();
+                        if cef_dll_sys::cef_string_multimap_key(multimap, i, &mut key) != 0 {
+                            let key = CefString::from(ptr::from_ref(&key));
+                            let key_string = key.to_string();
+                            if visited.contains(&key_string) {
+                                continue;
+                            }
+
+                            let count = cef_dll_sys::cef_string_multimap_find_count(
+                                multimap,
+                                (&key).into(),
+                            );
+                            let mut values = vec![];
+                            for i in 0..count {
+                                let mut value = mem::zeroed();
+                                if cef_dll_sys::cef_string_multimap_enumerate(
+                                    multimap,
+                                    (&key).into(),
+                                    i,
+                                    &mut value,
+                                ) != 0
+                                {
+                                    values.push(CefString::from(ptr::from_ref(&value)).to_string());
+                                }
+                            }
+
+                            visited.insert(key_string.clone());
+                            entries.push((key_string, values));
+                        }
+                    }
+                }
+                entries
+            })
+            .unwrap_or_default()
+            .into_iter()
     }
 }
 
@@ -1179,5 +1298,94 @@ impl Debug for CefStringMultimap {
 
             write!(f, "}}")
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::*;
+
+    #[test]
+    fn test_string_list() {
+        #[cfg(target_os = "macos")]
+        let _loader = {
+            let loader =
+                library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
+            assert!(loader.load());
+            loader
+        };
+
+        let mut list = CefStringList::new();
+        list.append("foo");
+        list.append("bar");
+        list.append("baz");
+
+        let values: Vec<_> = list.into_iter().collect();
+        assert_eq!(values, vec!["foo", "bar", "baz"]);
+    }
+
+    #[test]
+    fn test_string_map() {
+        #[cfg(target_os = "macos")]
+        let _loader = {
+            let loader =
+                library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
+            assert!(loader.load());
+            loader
+        };
+
+        let mut map = CefStringMap::new();
+        map.append("foo", "value1");
+        map.append("bar", "value2");
+        map.append("baz", "value3");
+
+        let values: Vec<_> = map.into_iter().collect();
+        assert_eq!(
+            values,
+            vec![
+                ("foo".to_string(), "value1".to_string()),
+                ("bar".to_string(), "value2".to_string()),
+                ("baz".to_string(), "value3".to_string())
+            ]
+        );
+    }
+
+    #[test]
+    fn test_string_multimap() {
+        #[cfg(target_os = "macos")]
+        let _loader = {
+            let loader =
+                library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
+            assert!(loader.load());
+            loader
+        };
+
+        let mut map = CefStringMultimap::new();
+        map.append("foo", "value1a");
+        map.append("bar", "value2a");
+        map.append("bar", "value2b");
+        map.append("baz", "value3a");
+        map.append("baz", "value3b");
+        map.append("baz", "value3c");
+
+        let values: Vec<_> = map.into_iter().collect();
+        assert_eq!(
+            values,
+            vec![
+                ("foo".to_string(), vec!["value1a".to_string()]),
+                (
+                    "bar".to_string(),
+                    vec!["value2a".to_string(), "value2b".to_string()]
+                ),
+                (
+                    "baz".to_string(),
+                    vec![
+                        "value3a".to_string(),
+                        "value3b".to_string(),
+                        "value3c".to_string()
+                    ]
+                )
+            ]
+        );
     }
 }
