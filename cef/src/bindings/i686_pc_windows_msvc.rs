@@ -15920,7 +15920,7 @@ pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
 pub fn sandbox_info_destroy(sandbox_info: *mut u8) {
     unsafe {
         let arg_sandbox_info = sandbox_info;
-        let arg_sandbox_info = arg_sandbox_info as *mut _;
+        let arg_sandbox_info = arg_sandbox_info.cast();
         cef_sandbox_info_destroy(arg_sandbox_info);
     }
 }
@@ -15959,7 +15959,7 @@ pub fn string_wide_set(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -15985,7 +15985,7 @@ pub fn string_utf8_set(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16011,7 +16011,7 @@ pub fn string_utf16_set(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16123,7 +16123,7 @@ pub fn string_wide_to_utf8(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16148,7 +16148,7 @@ pub fn string_utf8_to_wide(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16173,7 +16173,7 @@ pub fn string_wide_to_utf16(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16198,7 +16198,7 @@ pub fn string_utf16_to_wide(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16223,7 +16223,7 @@ pub fn string_utf8_to_utf16(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16248,7 +16248,7 @@ pub fn string_utf16_to_utf8(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16273,7 +16273,7 @@ pub fn string_ascii_to_wide(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16298,7 +16298,7 @@ pub fn string_ascii_to_utf16(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16374,7 +16374,7 @@ pub fn string_utf16_to_lower(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16399,7 +16399,7 @@ pub fn string_utf16_to_upper(
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -16946,7 +16946,7 @@ pub fn binary_value_create(data: Option<&[u8]>) -> Option<BinaryValue> {
                 if arg.is_empty() {
                     None
                 } else {
-                    Some(arg.as_ptr() as *const _)
+                    Some(arg.as_ptr().cast())
                 }
             })
             .unwrap_or(std::ptr::null());
@@ -17015,7 +17015,7 @@ pub fn stream_reader_create_for_file(file_name: Option<&CefString>) -> Option<St
 pub fn stream_reader_create_for_data(data: *mut u8, size: usize) -> Option<StreamReader> {
     unsafe {
         let (arg_data, arg_size) = (data, size);
-        let arg_data = arg_data as *mut _;
+        let arg_data = arg_data.cast();
         let result = cef_stream_reader_create_for_data(arg_data, arg_size);
         if result.is_null() {
             None
@@ -17758,7 +17758,7 @@ pub fn v8_value_create_array_buffer(
 ) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length, arg_release_callback) = (buffer, length, release_callback);
-        let arg_buffer = arg_buffer as *mut _;
+        let arg_buffer = arg_buffer.cast();
         let mut arg_release_callback = arg_release_callback.cloned().map(|arg| arg.into());
         let arg_release_callback = arg_release_callback
             .as_mut()
@@ -17777,7 +17777,7 @@ pub fn v8_value_create_array_buffer(
 pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length) = (buffer, length);
-        let arg_buffer = arg_buffer as *mut _;
+        let arg_buffer = arg_buffer.cast();
         let result = cef_v8_value_create_array_buffer_with_copy(arg_buffer, arg_length);
         if result.is_null() {
             None
@@ -17913,7 +17913,7 @@ pub fn execute_process(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_windows_sandbox_info = arg_windows_sandbox_info as *mut _;
+        let arg_windows_sandbox_info = arg_windows_sandbox_info.cast();
         let result = cef_execute_process(arg_args, arg_application, arg_windows_sandbox_info);
         result.wrap_result()
     }
@@ -17944,7 +17944,7 @@ pub fn initialize(
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_windows_sandbox_info = arg_windows_sandbox_info as *mut _;
+        let arg_windows_sandbox_info = arg_windows_sandbox_info.cast();
         let result = cef_initialize(
             arg_args,
             arg_settings,
