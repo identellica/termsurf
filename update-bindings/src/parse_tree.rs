@@ -443,7 +443,7 @@ impl SignatureRef<'_> {
                                                 arg.add_ref();
                                                 ptr = arg.get_raw();
                                             }
-                                            &mut ptr as *mut _
+                                            std::ptr::from_mut(&mut ptr)
                                         })
                                         .unwrap_or(std::ptr::null_mut());
                                 })
@@ -552,19 +552,20 @@ impl SignatureRef<'_> {
                                 let is_void = ty_string == quote!{ ::std::os::raw::c_void }.to_string();
                                 let cast = match modifiers {
                                     [TypeModifier::MutPtr] if !is_void => Some(quote! {
-                                        .map(std::ptr::from_mut)
-                                        .unwrap_or(std::ptr::null_mut())
+                                        #name
+                                            .map(std::ptr::from_mut)
+                                            .unwrap_or(std::ptr::null_mut())
                                     }),
                                     [TypeModifier::ConstPtr] if !is_void  => Some(quote! {
-                                        .map(std::ptr::from_ref)
-                                        .unwrap_or(std::ptr::null())
+                                        #name
+                                            .map(std::ptr::from_ref)
+                                            .unwrap_or(std::ptr::null())
                                     }),
-                                    [TypeModifier::MutPtr, ..] => Some(quote! { as *mut _ }),
-                                    [TypeModifier::ConstPtr, ..] => Some(quote! { as *const _ }),
+                                    [TypeModifier::MutPtr | TypeModifier::ConstPtr, ..] => Some(quote! { #name.cast() }),
                                     _ => None,
                                 };
                                 cast.map(|cast| quote! {
-                                    let #name = #name #cast;
+                                    let #name = #cast;
                                 })
                             }
                         }
@@ -672,7 +673,7 @@ impl SignatureRef<'_> {
                             if arg.is_empty() {
                                 None
                             } else {
-                                Some(arg.as_ptr() as *const _)
+                                Some(arg.as_ptr().cast())
                             }
                         })
                         .unwrap_or(std::ptr::null());
@@ -702,7 +703,7 @@ impl SignatureRef<'_> {
                                 if arg.is_empty() {
                                     None
                                 } else {
-                                    Some(arg.as_mut_ptr() as *mut _)
+                                    Some(arg.as_mut_ptr().cast())
                                 }
                             })
                             .unwrap_or(std::ptr::null_mut());
@@ -880,10 +881,10 @@ impl SignatureRef<'_> {
                             if ty.to_string() == quote!{ ::std::os::raw::c_void }.to_string() {
                                 match modifiers {
                                     [TypeModifier::MutPtr] => Some(quote! {
-                                        let #arg_name = #arg_name as *mut _;
+                                        let #arg_name = #arg_name.cast();
                                     }),
                                     [TypeModifier::ConstPtr] => Some(quote! {
-                                        let #arg_name = #arg_name as *const _;
+                                        let #arg_name = #arg_name.cast();
                                     }),
                                     _ => {
                                         Some(quote! {})
@@ -1031,7 +1032,7 @@ impl SignatureRef<'_> {
                 match slice_modifiers.as_slice() {
                     [TypeModifier::Slice] => Some(quote! {
                         let #arg_name = (!#arg_name.is_null() && #arg_size > 0).then(|| unsafe {
-                            std::slice::from_raw_parts(#arg_name as *const _, #arg_size)
+                            std::slice::from_raw_parts(#arg_name.cast(), #arg_size)
                         });
                     }),
                     [TypeModifier::MutSlice] => {
@@ -1046,7 +1047,7 @@ impl SignatureRef<'_> {
                         Some(quote! {
                             #out_size
                             let #out_name = (!#arg_name.is_null() && #arg_size > 0).then(|| unsafe {
-                                std::slice::from_raw_parts_mut(#arg_name as *mut _, #arg_size)
+                                std::slice::from_raw_parts_mut(#arg_name.cast(), #arg_size)
                             });
                             let mut #vec_name = #out_name.as_ref().map(|arg| arg.to_vec());
                             let #arg_name = #vec_name.as_mut();
@@ -1872,7 +1873,7 @@ impl ParseTree<'_> {
             .map(|impl_base_name| {
                 quote! {
                     fn get_raw(&self) -> *mut #name_ident {
-                        <Self as #impl_base_name>::get_raw(self) as *mut _
+                        <Self as #impl_base_name>::get_raw(self).cast()
                     }
                 }
             })
@@ -1922,7 +1923,7 @@ impl ParseTree<'_> {
                         quote! {
                             #sig {
                                 #base(unsafe {
-                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0) as *mut _)
+                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast())
                                 })
                                 .#name(#(#args),*)
                             }
@@ -1934,7 +1935,7 @@ impl ParseTree<'_> {
                             #(#base_methods)*
 
                             fn get_raw(&self) -> *mut #base_ident {
-                                unsafe { RefGuard::into_raw(&self.0) as *mut _ }
+                                unsafe { RefGuard::into_raw(&self.0).cast() }
                             }
                         }
                     }
@@ -2176,7 +2177,7 @@ impl ParseTree<'_> {
             .map(|impl_base_name| {
                 quote! {
                     fn get_raw(&self) -> *mut #name_ident {
-                        <Self as #impl_base_name>::get_raw(self) as *mut _
+                        <Self as #impl_base_name>::get_raw(self).cast()
                     }
                 }
             })
@@ -2258,7 +2259,7 @@ impl ParseTree<'_> {
                         quote! {
                             #sig {
                                 #base(unsafe {
-                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0) as *mut _)
+                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast())
                                 })
                                 .#name(#(#args),*)
                             }
@@ -2270,7 +2271,7 @@ impl ParseTree<'_> {
                             #(#base_methods)*
 
                             fn get_raw(&self) -> *mut #base_ident {
-                                unsafe { RefGuard::into_raw(&self.0) as *mut _ }
+                                unsafe { RefGuard::into_raw(&self.0).cast() }
                             }
                         }
                     }
@@ -2380,7 +2381,8 @@ impl ParseTree<'_> {
                         <T as #impl_trait>::init_methods(&mut cef_object);
                         let object = RcImpl::new(cef_object, interface);
                         <T as #wrap_trait>::wrap_rc(&mut (*object).interface, object);
-                        (object as *mut #name_ident).wrap_result()
+                        let object: *mut #name_ident = object.cast();
+                        object.wrap_result()
                     }
                 }
             }
@@ -2621,7 +2623,7 @@ impl ParseTree<'_> {
             .map(|impl_base_name| {
                 quote! {
                     fn get_raw(&self) -> *mut #name_ident {
-                        <Self as #impl_base_name>::get_raw(self) as *mut _
+                        <Self as #impl_base_name>::get_raw(self).cast()
                     }
                 }
             })
@@ -2688,7 +2690,7 @@ impl ParseTree<'_> {
                         });
                         quote! {
                             #sig {
-                                #base(self.0 as *mut _).#name(#(#args),*)
+                                #base(self.0.cast()).#name(#(#args),*)
                             }
                         }
                     });
@@ -2698,7 +2700,7 @@ impl ParseTree<'_> {
                             #(#base_methods)*
 
                             fn get_raw(&self) -> *mut #name_ident {
-                                self.0 as *mut _
+                                self.0.cast()
                             }
                         }
                     }
@@ -2912,13 +2914,13 @@ impl ParseTree<'_> {
 
                     impl From<&#rust_name> for *const #name_ident {
                         fn from(value: &#rust_name) -> Self {
-                            value.as_ref() as *const #name_ident
+                            std::ptr::from_ref(value).cast()
                         }
                     }
 
                     impl From<&mut #rust_name> for *mut #name_ident  {
                         fn from(value: &mut #rust_name) -> Self {
-                            value.as_mut() as *mut #name_ident
+                            std::ptr::from_mut(value).cast()
                         }
                     }
 

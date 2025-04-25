@@ -45,7 +45,7 @@ impl Rc for DemoApp {
 
 impl ImplApp for DemoApp {
     fn get_raw(&self) -> *mut cef_dll_sys::_cef_app_t {
-        self.object as *mut cef_dll_sys::_cef_app_t
+        self.object.cast()
     }
 
     fn get_browser_process_handler(&self) -> Option<BrowserProcessHandler> {
@@ -162,7 +162,7 @@ impl Rc for DemoClient {
 
 impl ImplClient for DemoClient {
     fn get_raw(&self) -> *mut cef_dll_sys::_cef_client_t {
-        self.0 as *mut cef_dll_sys::_cef_client_t
+        self.0.cast()
     }
 }
 
@@ -220,7 +220,7 @@ impl ImplViewDelegate for DemoWindowDelegate {
     }
 
     fn get_raw(&self) -> *mut cef_dll_sys::_cef_view_delegate_t {
-        self.base as *mut cef_dll_sys::_cef_view_delegate_t
+        self.base.cast()
     }
 }
 
