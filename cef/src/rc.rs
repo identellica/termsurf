@@ -8,7 +8,7 @@ use std::{
     fmt::Debug,
     mem,
     ops::Deref,
-    ptr::NonNull,
+    ptr::{self, NonNull},
     sync::atomic::{fence, AtomicUsize, Ordering},
 };
 
@@ -54,13 +54,13 @@ pub trait Rc {
 impl Rc for cef_base_ref_counted_t {
     unsafe fn add_ref(&self) {
         if let Some(add_ref) = self.add_ref {
-            add_ref(self as *const _ as *mut _);
+            add_ref(ptr::from_ref(self) as *mut _);
         }
     }
 
     fn has_one_ref(&self) -> bool {
         if let Some(has_one_ref) = self.has_one_ref {
-            let result = unsafe { has_one_ref(self as *const _ as *mut _) };
+            let result = unsafe { has_one_ref(ptr::from_ref(self) as *mut _) };
             return result == 1;
         }
 
@@ -69,7 +69,7 @@ impl Rc for cef_base_ref_counted_t {
 
     fn has_at_least_one_ref(&self) -> bool {
         if let Some(has_at_least_one_ref) = self.has_at_least_one_ref {
-            let result = unsafe { has_at_least_one_ref(self as *const _ as *mut _) };
+            let result = unsafe { has_at_least_one_ref(ptr::from_ref(self) as *mut _) };
             return result == 1;
         }
 
@@ -78,7 +78,7 @@ impl Rc for cef_base_ref_counted_t {
 
     unsafe fn release(&self) -> bool {
         if let Some(release) = self.release {
-            return release(self as *const _ as *mut _) == 1;
+            return release(ptr::from_ref(self) as *mut _) == 1;
         }
 
         false
@@ -276,7 +276,7 @@ impl<T: Rc> RefGuard<T> {
     /// This should be used when the type has type `U` as its base type. Using this method
     /// elsewhere may cause memory safety issues.
     pub unsafe fn convert<U: Rc>(&self) -> RefGuard<U> {
-        RefGuard::from_raw_add_ref(self.into_raw() as *mut _)
+        RefGuard::from_raw_add_ref(self.into_raw().cast())
     }
 }
 
@@ -320,7 +320,8 @@ pub struct RcImpl<T, I> {
 
 impl<T, I> RcImpl<T, I> {
     pub fn new(mut cef_object: T, interface: I) -> *mut RcImpl<T, I> {
-        let base = unsafe { &mut *(&mut cef_object as *mut T as *mut cef_base_ref_counted_t) };
+        let base: &mut cef_base_ref_counted_t =
+            unsafe { &mut *(ptr::from_mut(&mut cef_object).cast()) };
 
         base.size = std::mem::size_of::<T>();
         base.add_ref = Some(add_ref::<T, I>);
@@ -336,18 +337,18 @@ impl<T, I> RcImpl<T, I> {
     }
 
     pub fn get<'a>(ptr: *mut T) -> &'a mut RcImpl<T, I> {
-        unsafe { &mut *(ptr as *mut RcImpl<T, I>) }
+        unsafe { &mut *(ptr.cast()) }
     }
 }
 
 extern "C" fn add_ref<T, I>(this: *mut cef_base_ref_counted_t) {
-    let obj = RcImpl::<T, I>::get(this as *mut T);
+    let obj = RcImpl::<T, I>::get(this.cast());
 
     obj.ref_count.fetch_add(1, Ordering::Relaxed);
 }
 
 extern "C" fn has_one_ref<T, I>(this: *mut cef_base_ref_counted_t) -> i32 {
-    let obj = RcImpl::<T, I>::get(this as *mut T);
+    let obj = RcImpl::<T, I>::get(this.cast());
 
     if obj.ref_count.load(Ordering::Relaxed) == 1 {
         1
@@ -357,7 +358,7 @@ extern "C" fn has_one_ref<T, I>(this: *mut cef_base_ref_counted_t) -> i32 {
 }
 
 extern "C" fn has_at_least_one_ref<T, I>(this: *mut cef_base_ref_counted_t) -> i32 {
-    let obj = RcImpl::<T, I>::get(this as *mut T);
+    let obj = RcImpl::<T, I>::get(this.cast());
 
     if obj.ref_count.load(Ordering::Relaxed) >= 1 {
         1
@@ -367,13 +368,13 @@ extern "C" fn has_at_least_one_ref<T, I>(this: *mut cef_base_ref_counted_t) -> i
 }
 
 pub extern "C" fn release<T, I>(this: *mut cef_base_ref_counted_t) -> i32 {
-    let obj = RcImpl::<T, I>::get(this as *mut T);
+    let obj = RcImpl::<T, I>::get(this.cast());
 
     if obj.ref_count.fetch_sub(1, Ordering::Release) != 1 {
         0
     } else {
         fence(Ordering::Acquire);
-        let _ = unsafe { Box::from_raw(this as *mut RcImpl<T, I>) };
+        let _: Box<RcImpl<T, I>> = unsafe { Box::from_raw(this.cast()) };
         1
     }
 }
