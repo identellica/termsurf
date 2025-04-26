@@ -1695,7 +1695,7 @@ impl ParseTree<'_> {
                 .split_whitespace()
                 .flat_map(|word| word.chars())
                 .collect();
-            let comment = format!("See [{comment_ty}] for more documentation.");
+            let comment = format!("See [`{comment_ty}`] for more documentation.");
             let (Some(rust_name), Some(arg_ty)) = (
                 make_rust_type_name(name.as_str()),
                 self.resolve_modified_type(ty),
@@ -1881,7 +1881,12 @@ impl ParseTree<'_> {
         let impl_base_name = impl_base_name.unwrap_or(quote! { Clone + Sized + Rc });
         let impl_methods = s.methods.iter().map(|m| {
             let sig = m.get_signature(self);
-            quote! { #sig; }
+            let method_name = &m.name;
+            let comment = format!("See [`{name}::{method_name}`] for more documentation.");
+            quote! {
+                #[doc = #comment]
+                #sig;
+            }
         });
 
         let mut base_name = base_name;
@@ -2185,6 +2190,8 @@ impl ParseTree<'_> {
         let impl_base_name = impl_base_name.unwrap_or(quote! { Clone + Sized + Rc });
         let impl_methods = s.methods.iter().map(|m| {
             let sig = m.get_signature(self);
+            let method_name = &m.name;
+            let comment = format!("See [`{name}::{method_name}`] for more documentation.");
             let impl_default =
                 m.output.map(
                     |ty| match syn::parse2::<ModifiedType>(ty.to_token_stream()) {
@@ -2198,6 +2205,7 @@ impl ParseTree<'_> {
                     },
                 );
             quote! {
+                #[doc = #comment]
                 #sig {
                     #impl_default
                 }
@@ -2633,7 +2641,10 @@ impl ParseTree<'_> {
         let impl_base_name = impl_base_name.unwrap_or(quote! { Sized });
         let impl_methods = s.methods.iter().map(|m| {
             let sig = m.get_signature(self);
+            let method_name = &m.name;
+            let comment = format!("See [`{name}::{method_name}`] for more documentation.");
             quote! {
+                #[doc = #comment]
                 #sig;
             }
         });
@@ -2880,7 +2891,7 @@ impl ParseTree<'_> {
             let rust_name = format_ident!("{rust_name}");
 
             let name = s.name.as_str();
-            writeln!(f, "\n/// See [{name}] for more documentation.")?;
+            writeln!(f, "\n/// See [`{name}`] for more documentation.")?;
 
             if CUSTOM_STRING_TYPES.contains(&name) {
                 self.write_custom_string_type(f, &rust_name)?;
@@ -3078,7 +3089,7 @@ impl ParseTree<'_> {
             .filter_map(|e| make_rust_type_name(&e.name).map(|rust_name| (rust_name, e)));
         for (rust_name, e) in enum_names {
             let name = &e.name;
-            writeln!(f, "\n/// See [{name}] for more documentation.")?;
+            writeln!(f, "\n/// See [`{name}`] for more documentation.")?;
             let name = format_ident!("{name}");
             let rust_name = format_ident!("{rust_name}");
             let impl_default =
@@ -3133,7 +3144,7 @@ impl ParseTree<'_> {
 
         for global_fn in self.global_function_declarations.iter() {
             let original_name = global_fn.name.as_str();
-            writeln!(f, "\n/// See [{original_name}] for more documentation.")?;
+            writeln!(f, "\n/// See [`{original_name}`] for more documentation.")?;
             let name = pattern
                 .captures(original_name)
                 .and_then(|captures| captures.get(1))
