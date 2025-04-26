@@ -48,7 +48,7 @@ impl ImplApp for DemoApp {
         self.object.cast()
     }
 
-    fn get_browser_process_handler(&self) -> Option<BrowserProcessHandler> {
+    fn browser_process_handler(&self) -> Option<BrowserProcessHandler> {
         Some(DemoBrowserProcessHandler::new(self.window.clone()))
     }
 }
@@ -295,7 +295,7 @@ fn main() {
         println!("launch browser process");
         assert!(ret == -1, "cannot execute browser process");
     } else {
-        let process_type = CefString::from(&cmd.get_switch_value(Some(&switch)));
+        let process_type = CefString::from(&cmd.switch_value(Some(&switch)));
         println!("launch process {process_type}");
         assert!(ret >= 0, "cannot execute non-browser process");
         // non-browser process does not initialize cef

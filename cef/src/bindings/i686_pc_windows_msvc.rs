@@ -22,58 +22,58 @@ where
     })
 }
 
-/// See [cef_string_wide_t] for more documentation.
+/// See [`cef_string_wide_t`] for more documentation.
 pub use crate::string::CefStringUserfreeWide;
 
-/// See [cef_string_utf8_t] for more documentation.
+/// See [`cef_string_utf8_t`] for more documentation.
 pub use crate::string::CefStringUserfreeUtf8;
 
-/// See [cef_string_utf16_t] for more documentation.
+/// See [`cef_string_utf16_t`] for more documentation.
 pub use crate::string::CefStringUserfreeUtf16;
 
-/// See [char16_t] for more documentation.
+/// See [`char16_t`] for more documentation.
 pub type Char = char16_t;
 
-/// See [cef_string_userfree_utf16_t] for more documentation.
+/// See [`cef_string_userfree_utf16_t`] for more documentation.
 pub type CefStringUserfree = CefStringUserfreeUtf16;
 
-/// See [cef_string_utf16_t] for more documentation.
+/// See [`cef_string_utf16_t`] for more documentation.
 pub type CefString = CefStringUtf16;
 
-/// See [HCURSOR] for more documentation.
+/// See [`HCURSOR`] for more documentation.
 pub type CursorHandle = HCURSOR;
 
-/// See [MSG] for more documentation.
+/// See [`MSG`] for more documentation.
 pub type EventHandle = *mut MSG;
 
-/// See [HWND] for more documentation.
+/// See [`HWND`] for more documentation.
 pub type WindowHandle = HWND;
 
-/// See [HANDLE] for more documentation.
+/// See [`HANDLE`] for more documentation.
 pub type SharedTextureHandle = HANDLE;
 
-/// See [u32] for more documentation.
+/// See [`u32`] for more documentation.
 pub type Color = u32;
 
-/// See [_cef_string_wide_t] for more documentation.
+/// See [`_cef_string_wide_t`] for more documentation.
 pub use crate::string::CefStringWide;
 
-/// See [_cef_string_utf8_t] for more documentation.
+/// See [`_cef_string_utf8_t`] for more documentation.
 pub use crate::string::CefStringUtf8;
 
-/// See [_cef_string_utf16_t] for more documentation.
+/// See [`_cef_string_utf16_t`] for more documentation.
 pub use crate::string::CefStringUtf16;
 
-/// See [_cef_string_list_t] for more documentation.
+/// See [`_cef_string_list_t`] for more documentation.
 pub use crate::string::CefStringList;
 
-/// See [_cef_string_map_t] for more documentation.
+/// See [`_cef_string_map_t`] for more documentation.
 pub use crate::string::CefStringMap;
 
-/// See [_cef_string_multimap_t] for more documentation.
+/// See [`_cef_string_multimap_t`] for more documentation.
 pub use crate::string::CefStringMultimap;
 
-/// See [_cef_basetime_t] for more documentation.
+/// See [`_cef_basetime_t`] for more documentation.
 #[derive(Clone)]
 pub struct Basetime {
     pub val: i64,
@@ -94,7 +94,7 @@ impl Default for Basetime {
     }
 }
 
-/// See [_cef_time_t] for more documentation.
+/// See [`_cef_time_t`] for more documentation.
 #[derive(Clone)]
 pub struct Time {
     pub year: ::std::os::raw::c_int,
@@ -140,7 +140,7 @@ impl Default for Time {
     }
 }
 
-/// See [_cef_point_t] for more documentation.
+/// See [`_cef_point_t`] for more documentation.
 #[derive(Clone)]
 pub struct Point {
     pub x: ::std::os::raw::c_int,
@@ -168,7 +168,7 @@ impl Default for Point {
     }
 }
 
-/// See [_cef_rect_t] for more documentation.
+/// See [`_cef_rect_t`] for more documentation.
 #[derive(Clone)]
 pub struct Rect {
     pub x: ::std::os::raw::c_int,
@@ -202,7 +202,7 @@ impl Default for Rect {
     }
 }
 
-/// See [_cef_size_t] for more documentation.
+/// See [`_cef_size_t`] for more documentation.
 #[derive(Clone)]
 pub struct Size {
     pub width: ::std::os::raw::c_int,
@@ -230,7 +230,7 @@ impl Default for Size {
     }
 }
 
-/// See [_cef_insets_t] for more documentation.
+/// See [`_cef_insets_t`] for more documentation.
 #[derive(Clone)]
 pub struct Insets {
     pub top: ::std::os::raw::c_int,
@@ -264,7 +264,7 @@ impl Default for Insets {
     }
 }
 
-/// See [_cef_accelerated_paint_info_common_t] for more documentation.
+/// See [`_cef_accelerated_paint_info_common_t`] for more documentation.
 #[derive(Clone)]
 pub struct AcceleratedPaintInfoCommon {
     pub size: usize,
@@ -328,7 +328,7 @@ impl Default for AcceleratedPaintInfoCommon {
     }
 }
 
-/// See [_cef_main_args_t] for more documentation.
+/// See [`_cef_main_args_t`] for more documentation.
 #[derive(Clone)]
 pub struct MainArgs {
     pub instance: HINSTANCE,
@@ -353,7 +353,7 @@ impl Default for MainArgs {
     }
 }
 
-/// See [_cef_window_info_t] for more documentation.
+/// See [`_cef_window_info_t`] for more documentation.
 #[derive(Clone)]
 pub struct WindowInfo {
     pub size: usize,
@@ -414,7 +414,7 @@ impl Default for WindowInfo {
     }
 }
 
-/// See [_cef_accelerated_paint_info_t] for more documentation.
+/// See [`_cef_accelerated_paint_info_t`] for more documentation.
 #[derive(Clone)]
 pub struct AcceleratedPaintInfo {
     pub size: usize,
@@ -451,7 +451,7 @@ impl Default for AcceleratedPaintInfo {
     }
 }
 
-/// See [_cef_settings_t] for more documentation.
+/// See [`_cef_settings_t`] for more documentation.
 #[derive(Clone)]
 pub struct Settings {
     pub size: usize,
@@ -566,7 +566,7 @@ impl Default for Settings {
     }
 }
 
-/// See [_cef_request_context_settings_t] for more documentation.
+/// See [`_cef_request_context_settings_t`] for more documentation.
 #[derive(Clone)]
 pub struct RequestContextSettings {
     pub size: usize,
@@ -609,7 +609,7 @@ impl Default for RequestContextSettings {
     }
 }
 
-/// See [_cef_browser_settings_t] for more documentation.
+/// See [`_cef_browser_settings_t`] for more documentation.
 #[derive(Clone)]
 pub struct BrowserSettings {
     pub size: usize,
@@ -718,7 +718,7 @@ impl Default for BrowserSettings {
     }
 }
 
-/// See [_cef_urlparts_t] for more documentation.
+/// See [`_cef_urlparts_t`] for more documentation.
 #[derive(Clone)]
 pub struct Urlparts {
     pub size: usize,
@@ -776,7 +776,7 @@ impl Default for Urlparts {
     }
 }
 
-/// See [_cef_cookie_t] for more documentation.
+/// See [`_cef_cookie_t`] for more documentation.
 #[derive(Clone)]
 pub struct Cookie {
     pub size: usize,
@@ -840,7 +840,7 @@ impl Default for Cookie {
     }
 }
 
-/// See [_cef_draggable_region_t] for more documentation.
+/// See [`_cef_draggable_region_t`] for more documentation.
 #[derive(Clone)]
 pub struct DraggableRegion {
     pub bounds: Rect,
@@ -868,7 +868,7 @@ impl Default for DraggableRegion {
     }
 }
 
-/// See [_cef_screen_info_t] for more documentation.
+/// See [`_cef_screen_info_t`] for more documentation.
 #[derive(Clone)]
 pub struct ScreenInfo {
     pub size: usize,
@@ -914,7 +914,7 @@ impl Default for ScreenInfo {
     }
 }
 
-/// See [_cef_linux_window_properties_t] for more documentation.
+/// See [`_cef_linux_window_properties_t`] for more documentation.
 #[derive(Clone)]
 pub struct LinuxWindowProperties {
     pub size: usize,
@@ -954,7 +954,7 @@ impl Default for LinuxWindowProperties {
     }
 }
 
-/// See [_cef_mouse_event_t] for more documentation.
+/// See [`_cef_mouse_event_t`] for more documentation.
 #[derive(Clone)]
 pub struct MouseEvent {
     pub x: ::std::os::raw::c_int,
@@ -985,7 +985,7 @@ impl Default for MouseEvent {
     }
 }
 
-/// See [_cef_touch_event_t] for more documentation.
+/// See [`_cef_touch_event_t`] for more documentation.
 #[derive(Clone)]
 pub struct TouchEvent {
     pub id: ::std::os::raw::c_int,
@@ -1037,7 +1037,7 @@ impl Default for TouchEvent {
     }
 }
 
-/// See [_cef_key_event_t] for more documentation.
+/// See [`_cef_key_event_t`] for more documentation.
 #[derive(Clone)]
 pub struct KeyEvent {
     pub size: usize,
@@ -1089,7 +1089,7 @@ impl Default for KeyEvent {
     }
 }
 
-/// See [_cef_popup_features_t] for more documentation.
+/// See [`_cef_popup_features_t`] for more documentation.
 #[derive(Clone)]
 pub struct PopupFeatures {
     pub size: usize,
@@ -1144,7 +1144,7 @@ impl Default for PopupFeatures {
     }
 }
 
-/// See [_cef_cursor_info_t] for more documentation.
+/// See [`_cef_cursor_info_t`] for more documentation.
 #[derive(Clone)]
 pub struct CursorInfo {
     pub hotspot: Point,
@@ -1178,7 +1178,7 @@ impl Default for CursorInfo {
     }
 }
 
-/// See [_cef_pdf_print_settings_t] for more documentation.
+/// See [`_cef_pdf_print_settings_t`] for more documentation.
 #[derive(Clone)]
 pub struct PdfPrintSettings {
     pub size: usize,
@@ -1257,7 +1257,7 @@ impl Default for PdfPrintSettings {
     }
 }
 
-/// See [_cef_box_layout_settings_t] for more documentation.
+/// See [`_cef_box_layout_settings_t`] for more documentation.
 #[derive(Clone)]
 pub struct BoxLayoutSettings {
     pub size: usize,
@@ -1312,7 +1312,7 @@ impl Default for BoxLayoutSettings {
     }
 }
 
-/// See [_cef_range_t] for more documentation.
+/// See [`_cef_range_t`] for more documentation.
 #[derive(Clone)]
 pub struct Range {
     pub from: u32,
@@ -1340,7 +1340,7 @@ impl Default for Range {
     }
 }
 
-/// See [_cef_composition_underline_t] for more documentation.
+/// See [`_cef_composition_underline_t`] for more documentation.
 #[derive(Clone)]
 pub struct CompositionUnderline {
     pub size: usize,
@@ -1383,7 +1383,7 @@ impl Default for CompositionUnderline {
     }
 }
 
-/// See [_cef_audio_parameters_t] for more documentation.
+/// See [`_cef_audio_parameters_t`] for more documentation.
 #[derive(Clone)]
 pub struct AudioParameters {
     pub size: usize,
@@ -1420,7 +1420,7 @@ impl Default for AudioParameters {
     }
 }
 
-/// See [_cef_media_sink_device_info_t] for more documentation.
+/// See [`_cef_media_sink_device_info_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaSinkDeviceInfo {
     pub size: usize,
@@ -1457,7 +1457,7 @@ impl Default for MediaSinkDeviceInfo {
     }
 }
 
-/// See [_cef_touch_handle_state_t] for more documentation.
+/// See [`_cef_touch_handle_state_t`] for more documentation.
 #[derive(Clone)]
 pub struct TouchHandleState {
     pub size: usize,
@@ -1509,7 +1509,7 @@ impl Default for TouchHandleState {
     }
 }
 
-/// See [_cef_task_info_t] for more documentation.
+/// See [`_cef_task_info_t`] for more documentation.
 #[derive(Clone)]
 pub struct TaskInfo {
     pub size: usize,
@@ -1564,7 +1564,7 @@ impl Default for TaskInfo {
     }
 }
 
-/// See [_cef_base_ref_counted_t] for more documentation.
+/// See [`_cef_base_ref_counted_t`] for more documentation.
 #[derive(Clone)]
 pub struct BaseRefCounted(RefGuard<_cef_base_ref_counted_t>);
 impl BaseRefCounted {
@@ -1605,7 +1605,7 @@ impl Default for BaseRefCounted {
     }
 }
 
-/// See [_cef_base_scoped_t] for more documentation.
+/// See [`_cef_base_scoped_t`] for more documentation.
 #[derive(Clone, Copy)]
 pub struct BaseScoped(*mut _cef_base_scoped_t);
 impl BaseScoped {
@@ -1639,7 +1639,7 @@ impl Default for BaseScoped {
     }
 }
 
-/// See [_cef_dev_tools_message_observer_t] for more documentation.
+/// See [`_cef_dev_tools_message_observer_t`] for more documentation.
 #[derive(Clone)]
 pub struct DevToolsMessageObserver {
     pub base: BaseRefCounted,
@@ -1713,7 +1713,7 @@ impl Default for DevToolsMessageObserver {
     }
 }
 
-/// See [_cef_value_t] for more documentation.
+/// See [`_cef_value_t`] for more documentation.
 #[derive(Clone)]
 pub struct Value {
     pub base: BaseRefCounted,
@@ -1871,7 +1871,7 @@ impl Default for Value {
     }
 }
 
-/// See [_cef_binary_value_t] for more documentation.
+/// See [`_cef_binary_value_t`] for more documentation.
 #[derive(Clone)]
 pub struct BinaryValue {
     pub base: BaseRefCounted,
@@ -1948,7 +1948,7 @@ impl Default for BinaryValue {
     }
 }
 
-/// See [_cef_dictionary_value_t] for more documentation.
+/// See [`_cef_dictionary_value_t`] for more documentation.
 #[derive(Clone)]
 pub struct DictionaryValue {
     pub base: BaseRefCounted,
@@ -2198,7 +2198,7 @@ impl Default for DictionaryValue {
     }
 }
 
-/// See [_cef_list_value_t] for more documentation.
+/// See [`_cef_list_value_t`] for more documentation.
 #[derive(Clone)]
 pub struct ListValue {
     pub base: BaseRefCounted,
@@ -2430,7 +2430,7 @@ impl Default for ListValue {
     }
 }
 
-/// See [_cef_image_t] for more documentation.
+/// See [`_cef_image_t`] for more documentation.
 #[derive(Clone)]
 pub struct Image {
     pub base: BaseRefCounted,
@@ -2571,7 +2571,7 @@ impl Default for Image {
     }
 }
 
-/// See [_cef_read_handler_t] for more documentation.
+/// See [`_cef_read_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct ReadHandler {
     pub base: BaseRefCounted,
@@ -2629,7 +2629,7 @@ impl Default for ReadHandler {
     }
 }
 
-/// See [_cef_stream_reader_t] for more documentation.
+/// See [`_cef_stream_reader_t`] for more documentation.
 #[derive(Clone)]
 pub struct StreamReader {
     pub base: BaseRefCounted,
@@ -2687,7 +2687,7 @@ impl Default for StreamReader {
     }
 }
 
-/// See [_cef_write_handler_t] for more documentation.
+/// See [`_cef_write_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct WriteHandler {
     pub base: BaseRefCounted,
@@ -2745,7 +2745,7 @@ impl Default for WriteHandler {
     }
 }
 
-/// See [_cef_stream_writer_t] for more documentation.
+/// See [`_cef_stream_writer_t`] for more documentation.
 #[derive(Clone)]
 pub struct StreamWriter {
     pub base: BaseRefCounted,
@@ -2803,7 +2803,7 @@ impl Default for StreamWriter {
     }
 }
 
-/// See [_cef_drag_data_t] for more documentation.
+/// See [`_cef_drag_data_t`] for more documentation.
 #[derive(Clone)]
 pub struct DragData {
     pub base: BaseRefCounted,
@@ -2974,7 +2974,7 @@ impl Default for DragData {
     }
 }
 
-/// See [_cef_domvisitor_t] for more documentation.
+/// See [`_cef_domvisitor_t`] for more documentation.
 #[derive(Clone)]
 pub struct Domvisitor {
     pub base: BaseRefCounted,
@@ -3007,7 +3007,7 @@ impl Default for Domvisitor {
     }
 }
 
-/// See [_cef_domdocument_t] for more documentation.
+/// See [`_cef_domdocument_t`] for more documentation.
 #[derive(Clone)]
 pub struct Domdocument {
     pub base: BaseRefCounted,
@@ -3108,7 +3108,7 @@ impl Default for Domdocument {
     }
 }
 
-/// See [_cef_domnode_t] for more documentation.
+/// See [`_cef_domnode_t`] for more documentation.
 #[derive(Clone)]
 pub struct Domnode {
     pub base: BaseRefCounted,
@@ -3278,7 +3278,7 @@ impl Default for Domnode {
     }
 }
 
-/// See [_cef_shared_memory_region_t] for more documentation.
+/// See [`_cef_shared_memory_region_t`] for more documentation.
 #[derive(Clone)]
 pub struct SharedMemoryRegion {
     pub base: BaseRefCounted,
@@ -3322,7 +3322,7 @@ impl Default for SharedMemoryRegion {
     }
 }
 
-/// See [_cef_process_message_t] for more documentation.
+/// See [`_cef_process_message_t`] for more documentation.
 #[derive(Clone)]
 pub struct ProcessMessage {
     pub base: BaseRefCounted,
@@ -3381,7 +3381,7 @@ impl Default for ProcessMessage {
     }
 }
 
-/// See [_cef_request_t] for more documentation.
+/// See [`_cef_request_t`] for more documentation.
 #[derive(Clone)]
 pub struct Request {
     pub base: BaseRefCounted,
@@ -3533,7 +3533,7 @@ impl Default for Request {
     }
 }
 
-/// See [_cef_post_data_t] for more documentation.
+/// See [`_cef_post_data_t`] for more documentation.
 #[derive(Clone)]
 pub struct PostData {
     pub base: BaseRefCounted,
@@ -3601,7 +3601,7 @@ impl Default for PostData {
     }
 }
 
-/// See [_cef_post_data_element_t] for more documentation.
+/// See [`_cef_post_data_element_t`] for more documentation.
 #[derive(Clone)]
 pub struct PostDataElement {
     pub base: BaseRefCounted,
@@ -3678,7 +3678,7 @@ impl Default for PostDataElement {
     }
 }
 
-/// See [_cef_string_visitor_t] for more documentation.
+/// See [`_cef_string_visitor_t`] for more documentation.
 #[derive(Clone)]
 pub struct CefStringVisitor {
     pub base: BaseRefCounted,
@@ -3708,7 +3708,7 @@ impl Default for CefStringVisitor {
     }
 }
 
-/// See [_cef_frame_t] for more documentation.
+/// See [`_cef_frame_t`] for more documentation.
 #[derive(Clone)]
 pub struct Frame {
     pub base: BaseRefCounted,
@@ -3859,7 +3859,7 @@ impl Default for Frame {
     }
 }
 
-/// See [_cef_x509_cert_principal_t] for more documentation.
+/// See [`_cef_x509_cert_principal_t`] for more documentation.
 #[derive(Clone)]
 pub struct X509CertPrincipal {
     pub base: BaseRefCounted,
@@ -3925,7 +3925,7 @@ impl Default for X509CertPrincipal {
     }
 }
 
-/// See [_cef_x509_certificate_t] for more documentation.
+/// See [`_cef_x509_certificate_t`] for more documentation.
 #[derive(Clone)]
 pub struct X509Certificate {
     pub base: BaseRefCounted,
@@ -4012,7 +4012,7 @@ impl Default for X509Certificate {
     }
 }
 
-/// See [_cef_sslstatus_t] for more documentation.
+/// See [`_cef_sslstatus_t`] for more documentation.
 #[derive(Clone)]
 pub struct Sslstatus {
     pub base: BaseRefCounted,
@@ -4062,7 +4062,7 @@ impl Default for Sslstatus {
     }
 }
 
-/// See [_cef_navigation_entry_t] for more documentation.
+/// See [`_cef_navigation_entry_t`] for more documentation.
 #[derive(Clone)]
 pub struct NavigationEntry {
     pub base: BaseRefCounted,
@@ -4137,7 +4137,7 @@ impl Default for NavigationEntry {
     }
 }
 
-/// See [_cef_registration_t] for more documentation.
+/// See [`_cef_registration_t`] for more documentation.
 #[derive(Clone)]
 pub struct Registration(RefGuard<_cef_registration_t>);
 pub trait ImplRegistration: Clone + Sized + Rc {
@@ -4186,7 +4186,7 @@ impl Default for Registration {
     }
 }
 
-/// See [_cef_callback_t] for more documentation.
+/// See [`_cef_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct Callback {
     pub base: BaseRefCounted,
@@ -4217,7 +4217,7 @@ impl Default for Callback {
     }
 }
 
-/// See [_cef_completion_callback_t] for more documentation.
+/// See [`_cef_completion_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct CompletionCallback {
     pub base: BaseRefCounted,
@@ -4246,7 +4246,7 @@ impl Default for CompletionCallback {
     }
 }
 
-/// See [_cef_cookie_manager_t] for more documentation.
+/// See [`_cef_cookie_manager_t`] for more documentation.
 #[derive(Clone)]
 pub struct CookieManager {
     pub base: BaseRefCounted,
@@ -4317,7 +4317,7 @@ impl Default for CookieManager {
     }
 }
 
-/// See [_cef_cookie_visitor_t] for more documentation.
+/// See [`_cef_cookie_visitor_t`] for more documentation.
 #[derive(Clone)]
 pub struct CookieVisitor {
     pub base: BaseRefCounted,
@@ -4353,7 +4353,7 @@ impl Default for CookieVisitor {
     }
 }
 
-/// See [_cef_set_cookie_callback_t] for more documentation.
+/// See [`_cef_set_cookie_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct SetCookieCallback {
     pub base: BaseRefCounted,
@@ -4386,7 +4386,7 @@ impl Default for SetCookieCallback {
     }
 }
 
-/// See [_cef_delete_cookies_callback_t] for more documentation.
+/// See [`_cef_delete_cookies_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct DeleteCookiesCallback {
     pub base: BaseRefCounted,
@@ -4419,7 +4419,7 @@ impl Default for DeleteCookiesCallback {
     }
 }
 
-/// See [_cef_media_router_t] for more documentation.
+/// See [`_cef_media_router_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaRouter {
     pub base: BaseRefCounted,
@@ -4478,7 +4478,7 @@ impl Default for MediaRouter {
     }
 }
 
-/// See [_cef_media_observer_t] for more documentation.
+/// See [`_cef_media_observer_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaObserver {
     pub base: BaseRefCounted,
@@ -4540,7 +4540,7 @@ impl Default for MediaObserver {
     }
 }
 
-/// See [_cef_media_route_t] for more documentation.
+/// See [`_cef_media_route_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaRoute {
     pub base: BaseRefCounted,
@@ -4593,7 +4593,7 @@ impl Default for MediaRoute {
     }
 }
 
-/// See [_cef_media_route_create_callback_t] for more documentation.
+/// See [`_cef_media_route_create_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaRouteCreateCallback {
     pub base: BaseRefCounted,
@@ -4628,7 +4628,7 @@ impl Default for MediaRouteCreateCallback {
     }
 }
 
-/// See [_cef_media_sink_t] for more documentation.
+/// See [`_cef_media_sink_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaSink {
     pub base: BaseRefCounted,
@@ -4694,7 +4694,7 @@ impl Default for MediaSink {
     }
 }
 
-/// See [_cef_media_sink_device_info_callback_t] for more documentation.
+/// See [`_cef_media_sink_device_info_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaSinkDeviceInfoCallback {
     pub base: BaseRefCounted,
@@ -4727,7 +4727,7 @@ impl Default for MediaSinkDeviceInfoCallback {
     }
 }
 
-/// See [_cef_media_source_t] for more documentation.
+/// See [`_cef_media_source_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaSource {
     pub base: BaseRefCounted,
@@ -4767,7 +4767,7 @@ impl Default for MediaSource {
     }
 }
 
-/// See [_cef_preference_registrar_t] for more documentation.
+/// See [`_cef_preference_registrar_t`] for more documentation.
 #[derive(Clone)]
 pub struct PreferenceRegistrar {
     pub base: BaseScoped,
@@ -4801,7 +4801,7 @@ impl Default for PreferenceRegistrar {
     }
 }
 
-/// See [_cef_preference_observer_t] for more documentation.
+/// See [`_cef_preference_observer_t`] for more documentation.
 #[derive(Clone)]
 pub struct PreferenceObserver {
     pub base: BaseRefCounted,
@@ -4834,7 +4834,7 @@ impl Default for PreferenceObserver {
     }
 }
 
-/// See [_cef_preference_manager_t] for more documentation.
+/// See [`_cef_preference_manager_t`] for more documentation.
 #[derive(Clone)]
 pub struct PreferenceManager {
     pub base: BaseRefCounted,
@@ -4910,7 +4910,7 @@ impl Default for PreferenceManager {
     }
 }
 
-/// See [_cef_resolve_callback_t] for more documentation.
+/// See [`_cef_resolve_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct ResolveCallback {
     pub base: BaseRefCounted,
@@ -4944,7 +4944,7 @@ impl Default for ResolveCallback {
     }
 }
 
-/// See [_cef_setting_observer_t] for more documentation.
+/// See [`_cef_setting_observer_t`] for more documentation.
 #[derive(Clone)]
 pub struct SettingObserver {
     pub base: BaseRefCounted,
@@ -4979,7 +4979,7 @@ impl Default for SettingObserver {
     }
 }
 
-/// See [_cef_request_context_t] for more documentation.
+/// See [`_cef_request_context_t`] for more documentation.
 #[derive(Clone)]
 pub struct RequestContext {
     pub base: PreferenceManager,
@@ -5175,7 +5175,7 @@ impl Default for RequestContext {
     }
 }
 
-/// See [_cef_browser_t] for more documentation.
+/// See [`_cef_browser_t`] for more documentation.
 #[derive(Clone)]
 pub struct Browser {
     pub base: BaseRefCounted,
@@ -5304,7 +5304,7 @@ impl Default for Browser {
     }
 }
 
-/// See [_cef_run_file_dialog_callback_t] for more documentation.
+/// See [`_cef_run_file_dialog_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct RunFileDialogCallback {
     pub base: BaseRefCounted,
@@ -5337,7 +5337,7 @@ impl Default for RunFileDialogCallback {
     }
 }
 
-/// See [_cef_navigation_entry_visitor_t] for more documentation.
+/// See [`_cef_navigation_entry_visitor_t`] for more documentation.
 #[derive(Clone)]
 pub struct NavigationEntryVisitor {
     pub base: BaseRefCounted,
@@ -5373,7 +5373,7 @@ impl Default for NavigationEntryVisitor {
     }
 }
 
-/// See [_cef_pdf_print_callback_t] for more documentation.
+/// See [`_cef_pdf_print_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct PdfPrintCallback {
     pub base: BaseRefCounted,
@@ -5407,7 +5407,7 @@ impl Default for PdfPrintCallback {
     }
 }
 
-/// See [_cef_download_image_callback_t] for more documentation.
+/// See [`_cef_download_image_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct DownloadImageCallback {
     pub base: BaseRefCounted,
@@ -5442,7 +5442,7 @@ impl Default for DownloadImageCallback {
     }
 }
 
-/// See [_cef_browser_host_t] for more documentation.
+/// See [`_cef_browser_host_t`] for more documentation.
 #[derive(Clone)]
 pub struct BrowserHost {
     pub base: BaseRefCounted,
@@ -5924,7 +5924,7 @@ impl Default for BrowserHost {
     }
 }
 
-/// See [_cef_audio_handler_t] for more documentation.
+/// See [`_cef_audio_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct AudioHandler {
     pub base: BaseRefCounted,
@@ -5993,7 +5993,7 @@ impl Default for AudioHandler {
     }
 }
 
-/// See [_cef_command_handler_t] for more documentation.
+/// See [`_cef_command_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct CommandHandler {
     pub base: BaseRefCounted,
@@ -6062,7 +6062,7 @@ impl Default for CommandHandler {
     }
 }
 
-/// See [_cef_menu_model_delegate_t] for more documentation.
+/// See [`_cef_menu_model_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct MenuModelDelegate {
     pub base: BaseRefCounted,
@@ -6149,7 +6149,7 @@ impl Default for MenuModelDelegate {
     }
 }
 
-/// See [_cef_menu_model_t] for more documentation.
+/// See [`_cef_menu_model_t`] for more documentation.
 #[derive(Clone)]
 pub struct MenuModel {
     pub base: BaseRefCounted,
@@ -6660,7 +6660,7 @@ impl Default for MenuModel {
     }
 }
 
-/// See [_cef_run_context_menu_callback_t] for more documentation.
+/// See [`_cef_run_context_menu_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct RunContextMenuCallback {
     pub base: BaseRefCounted,
@@ -6699,7 +6699,7 @@ impl Default for RunContextMenuCallback {
     }
 }
 
-/// See [_cef_run_quick_menu_callback_t] for more documentation.
+/// See [`_cef_run_quick_menu_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct RunQuickMenuCallback {
     pub base: BaseRefCounted,
@@ -6738,7 +6738,7 @@ impl Default for RunQuickMenuCallback {
     }
 }
 
-/// See [_cef_context_menu_handler_t] for more documentation.
+/// See [`_cef_context_menu_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct ContextMenuHandler {
     pub base: BaseRefCounted,
@@ -6840,7 +6840,7 @@ impl Default for ContextMenuHandler {
     }
 }
 
-/// See [_cef_context_menu_params_t] for more documentation.
+/// See [`_cef_context_menu_params_t`] for more documentation.
 #[derive(Clone)]
 pub struct ContextMenuParams {
     pub base: BaseRefCounted,
@@ -6976,7 +6976,7 @@ impl Default for ContextMenuParams {
     }
 }
 
-/// See [_cef_file_dialog_callback_t] for more documentation.
+/// See [`_cef_file_dialog_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct FileDialogCallback {
     pub base: BaseRefCounted,
@@ -7013,7 +7013,7 @@ impl Default for FileDialogCallback {
     }
 }
 
-/// See [_cef_dialog_handler_t] for more documentation.
+/// See [`_cef_dialog_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct DialogHandler {
     pub base: BaseRefCounted,
@@ -7053,7 +7053,7 @@ impl Default for DialogHandler {
     }
 }
 
-/// See [_cef_display_handler_t] for more documentation.
+/// See [`_cef_display_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct DisplayHandler {
     pub base: BaseRefCounted,
@@ -7184,7 +7184,7 @@ impl Default for DisplayHandler {
     }
 }
 
-/// See [_cef_download_item_t] for more documentation.
+/// See [`_cef_download_item_t`] for more documentation.
 #[derive(Clone)]
 pub struct DownloadItem {
     pub base: BaseRefCounted,
@@ -7302,7 +7302,7 @@ impl Default for DownloadItem {
     }
 }
 
-/// See [_cef_before_download_callback_t] for more documentation.
+/// See [`_cef_before_download_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct BeforeDownloadCallback {
     pub base: BaseRefCounted,
@@ -7336,7 +7336,7 @@ impl Default for BeforeDownloadCallback {
     }
 }
 
-/// See [_cef_download_item_callback_t] for more documentation.
+/// See [`_cef_download_item_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct DownloadItemCallback {
     pub base: BaseRefCounted,
@@ -7376,7 +7376,7 @@ impl Default for DownloadItemCallback {
     }
 }
 
-/// See [_cef_download_handler_t] for more documentation.
+/// See [`_cef_download_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct DownloadHandler {
     pub base: BaseRefCounted,
@@ -7432,7 +7432,7 @@ impl Default for DownloadHandler {
     }
 }
 
-/// See [_cef_drag_handler_t] for more documentation.
+/// See [`_cef_drag_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct DragHandler {
     pub base: BaseRefCounted,
@@ -7478,7 +7478,7 @@ impl Default for DragHandler {
     }
 }
 
-/// See [_cef_find_handler_t] for more documentation.
+/// See [`_cef_find_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct FindHandler {
     pub base: BaseRefCounted,
@@ -7516,7 +7516,7 @@ impl Default for FindHandler {
     }
 }
 
-/// See [_cef_focus_handler_t] for more documentation.
+/// See [`_cef_focus_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct FocusHandler {
     pub base: BaseRefCounted,
@@ -7564,7 +7564,7 @@ impl Default for FocusHandler {
     }
 }
 
-/// See [_cef_frame_handler_t] for more documentation.
+/// See [`_cef_frame_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct FrameHandler {
     pub base: BaseRefCounted,
@@ -7636,7 +7636,7 @@ impl Default for FrameHandler {
     }
 }
 
-/// See [_cef_jsdialog_callback_t] for more documentation.
+/// See [`_cef_jsdialog_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct JsdialogCallback {
     pub base: BaseRefCounted,
@@ -7670,7 +7670,7 @@ impl Default for JsdialogCallback {
     }
 }
 
-/// See [_cef_jsdialog_handler_t] for more documentation.
+/// See [`_cef_jsdialog_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct JsdialogHandler {
     pub base: BaseRefCounted,
@@ -7736,7 +7736,7 @@ impl Default for JsdialogHandler {
     }
 }
 
-/// See [_cef_keyboard_handler_t] for more documentation.
+/// See [`_cef_keyboard_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct KeyboardHandler {
     pub base: BaseRefCounted,
@@ -7782,7 +7782,7 @@ impl Default for KeyboardHandler {
     }
 }
 
-/// See [_cef_life_span_handler_t] for more documentation.
+/// See [`_cef_life_span_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct LifeSpanHandler {
     pub base: BaseRefCounted,
@@ -7873,7 +7873,7 @@ impl Default for LifeSpanHandler {
     }
 }
 
-/// See [_cef_load_handler_t] for more documentation.
+/// See [`_cef_load_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct LoadHandler {
     pub base: BaseRefCounted,
@@ -7941,7 +7941,7 @@ impl Default for LoadHandler {
     }
 }
 
-/// See [_cef_media_access_callback_t] for more documentation.
+/// See [`_cef_media_access_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct MediaAccessCallback {
     pub base: BaseRefCounted,
@@ -7978,7 +7978,7 @@ impl Default for MediaAccessCallback {
     }
 }
 
-/// See [_cef_permission_prompt_callback_t] for more documentation.
+/// See [`_cef_permission_prompt_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct PermissionPromptCallback {
     pub base: BaseRefCounted,
@@ -8011,7 +8011,7 @@ impl Default for PermissionPromptCallback {
     }
 }
 
-/// See [_cef_permission_handler_t] for more documentation.
+/// See [`_cef_permission_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct PermissionHandler {
     pub base: BaseRefCounted,
@@ -8070,7 +8070,7 @@ impl Default for PermissionHandler {
     }
 }
 
-/// See [_cef_print_settings_t] for more documentation.
+/// See [`_cef_print_settings_t`] for more documentation.
 #[derive(Clone)]
 pub struct PrintSettings {
     pub base: BaseRefCounted,
@@ -8230,7 +8230,7 @@ impl Default for PrintSettings {
     }
 }
 
-/// See [_cef_print_dialog_callback_t] for more documentation.
+/// See [`_cef_print_dialog_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct PrintDialogCallback {
     pub base: BaseRefCounted,
@@ -8267,7 +8267,7 @@ impl Default for PrintDialogCallback {
     }
 }
 
-/// See [_cef_print_job_callback_t] for more documentation.
+/// See [`_cef_print_job_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct PrintJobCallback {
     pub base: BaseRefCounted,
@@ -8296,7 +8296,7 @@ impl Default for PrintJobCallback {
     }
 }
 
-/// See [_cef_print_handler_t] for more documentation.
+/// See [`_cef_print_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct PrintHandler {
     pub base: BaseRefCounted,
@@ -8371,7 +8371,7 @@ impl Default for PrintHandler {
     }
 }
 
-/// See [_cef_accessibility_handler_t] for more documentation.
+/// See [`_cef_accessibility_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct AccessibilityHandler {
     pub base: BaseRefCounted,
@@ -8412,7 +8412,7 @@ impl Default for AccessibilityHandler {
     }
 }
 
-/// See [_cef_render_handler_t] for more documentation.
+/// See [`_cef_render_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct RenderHandler {
     pub base: BaseRefCounted,
@@ -8607,7 +8607,7 @@ impl Default for RenderHandler {
     }
 }
 
-/// See [_cef_auth_callback_t] for more documentation.
+/// See [`_cef_auth_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct AuthCallback {
     pub base: BaseRefCounted,
@@ -8644,7 +8644,7 @@ impl Default for AuthCallback {
     }
 }
 
-/// See [_cef_response_t] for more documentation.
+/// See [`_cef_response_t`] for more documentation.
 #[derive(Clone)]
 pub struct Response {
     pub base: BaseRefCounted,
@@ -8762,7 +8762,7 @@ impl Default for Response {
     }
 }
 
-/// See [_cef_resource_skip_callback_t] for more documentation.
+/// See [`_cef_resource_skip_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct ResourceSkipCallback {
     pub base: BaseRefCounted,
@@ -8792,7 +8792,7 @@ impl Default for ResourceSkipCallback {
     }
 }
 
-/// See [_cef_resource_read_callback_t] for more documentation.
+/// See [`_cef_resource_read_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct ResourceReadCallback {
     pub base: BaseRefCounted,
@@ -8825,7 +8825,7 @@ impl Default for ResourceReadCallback {
     }
 }
 
-/// See [_cef_resource_handler_t] for more documentation.
+/// See [`_cef_resource_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct ResourceHandler {
     pub base: BaseRefCounted,
@@ -8915,7 +8915,7 @@ impl Default for ResourceHandler {
     }
 }
 
-/// See [_cef_response_filter_t] for more documentation.
+/// See [`_cef_response_filter_t`] for more documentation.
 #[derive(Clone)]
 pub struct ResponseFilter {
     pub base: BaseRefCounted,
@@ -8958,7 +8958,7 @@ impl Default for ResponseFilter {
     }
 }
 
-/// See [_cef_resource_request_handler_t] for more documentation.
+/// See [`_cef_resource_request_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct ResourceRequestHandler {
     pub base: BaseRefCounted,
@@ -9072,7 +9072,7 @@ impl Default for ResourceRequestHandler {
     }
 }
 
-/// See [_cef_cookie_access_filter_t] for more documentation.
+/// See [`_cef_cookie_access_filter_t`] for more documentation.
 #[derive(Clone)]
 pub struct CookieAccessFilter {
     pub base: BaseRefCounted,
@@ -9120,7 +9120,7 @@ impl Default for CookieAccessFilter {
     }
 }
 
-/// See [_cef_sslinfo_t] for more documentation.
+/// See [`_cef_sslinfo_t`] for more documentation.
 #[derive(Clone)]
 pub struct Sslinfo {
     pub base: BaseRefCounted,
@@ -9155,7 +9155,7 @@ impl Default for Sslinfo {
     }
 }
 
-/// See [_cef_unresponsive_process_callback_t] for more documentation.
+/// See [`_cef_unresponsive_process_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct UnresponsiveProcessCallback {
     pub base: BaseRefCounted,
@@ -9190,7 +9190,7 @@ impl Default for UnresponsiveProcessCallback {
     }
 }
 
-/// See [_cef_select_client_certificate_callback_t] for more documentation.
+/// See [`_cef_select_client_certificate_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct SelectClientCertificateCallback {
     pub base: BaseRefCounted,
@@ -9223,7 +9223,7 @@ impl Default for SelectClientCertificateCallback {
     }
 }
 
-/// See [_cef_request_handler_t] for more documentation.
+/// See [`_cef_request_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct RequestHandler {
     pub base: BaseRefCounted,
@@ -9371,7 +9371,7 @@ impl Default for RequestHandler {
     }
 }
 
-/// See [_cef_client_t] for more documentation.
+/// See [`_cef_client_t`] for more documentation.
 #[derive(Clone)]
 pub struct Client {
     pub base: BaseRefCounted,
@@ -9497,7 +9497,7 @@ impl Default for Client {
     }
 }
 
-/// See [_cef_command_line_t] for more documentation.
+/// See [`_cef_command_line_t`] for more documentation.
 #[derive(Clone)]
 pub struct CommandLine {
     pub base: BaseRefCounted,
@@ -9637,7 +9637,7 @@ impl Default for CommandLine {
     }
 }
 
-/// See [_cef_request_context_handler_t] for more documentation.
+/// See [`_cef_request_context_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct RequestContextHandler {
     pub base: BaseRefCounted,
@@ -9684,7 +9684,7 @@ impl Default for RequestContextHandler {
     }
 }
 
-/// See [_cef_browser_process_handler_t] for more documentation.
+/// See [`_cef_browser_process_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct BrowserProcessHandler {
     pub base: BaseRefCounted,
@@ -9759,7 +9759,7 @@ impl Default for BrowserProcessHandler {
     }
 }
 
-/// See [_cef_task_t] for more documentation.
+/// See [`_cef_task_t`] for more documentation.
 #[derive(Clone)]
 pub struct Task {
     pub base: BaseRefCounted,
@@ -9787,7 +9787,7 @@ impl Default for Task {
     }
 }
 
-/// See [_cef_task_runner_t] for more documentation.
+/// See [`_cef_task_runner_t`] for more documentation.
 #[derive(Clone)]
 pub struct TaskRunner {
     pub base: BaseRefCounted,
@@ -9850,7 +9850,7 @@ impl Default for TaskRunner {
     }
 }
 
-/// See [_cef_v8_context_t] for more documentation.
+/// See [`_cef_v8_context_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8Context {
     pub base: BaseRefCounted,
@@ -9930,7 +9930,7 @@ impl Default for V8Context {
     }
 }
 
-/// See [_cef_v8_handler_t] for more documentation.
+/// See [`_cef_v8_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8Handler {
     pub base: BaseRefCounted,
@@ -9968,7 +9968,7 @@ impl Default for V8Handler {
     }
 }
 
-/// See [_cef_v8_accessor_t] for more documentation.
+/// See [`_cef_v8_accessor_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8Accessor {
     pub base: BaseRefCounted,
@@ -10015,7 +10015,7 @@ impl Default for V8Accessor {
     }
 }
 
-/// See [_cef_v8_interceptor_t] for more documentation.
+/// See [`_cef_v8_interceptor_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8Interceptor {
     pub base: BaseRefCounted,
@@ -10084,7 +10084,7 @@ impl Default for V8Interceptor {
     }
 }
 
-/// See [_cef_v8_exception_t] for more documentation.
+/// See [`_cef_v8_exception_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8Exception {
     pub base: BaseRefCounted,
@@ -10149,7 +10149,7 @@ impl Default for V8Exception {
     }
 }
 
-/// See [_cef_v8_array_buffer_release_callback_t] for more documentation.
+/// See [`_cef_v8_array_buffer_release_callback_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8ArrayBufferReleaseCallback {
     pub base: BaseRefCounted,
@@ -10182,7 +10182,7 @@ impl Default for V8ArrayBufferReleaseCallback {
     }
 }
 
-/// See [_cef_v8_value_t] for more documentation.
+/// See [`_cef_v8_value_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8Value {
     pub base: BaseRefCounted,
@@ -10528,7 +10528,7 @@ impl Default for V8Value {
     }
 }
 
-/// See [_cef_v8_stack_trace_t] for more documentation.
+/// See [`_cef_v8_stack_trace_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8StackTrace {
     pub base: BaseRefCounted,
@@ -10571,7 +10571,7 @@ impl Default for V8StackTrace {
     }
 }
 
-/// See [_cef_v8_stack_frame_t] for more documentation.
+/// See [`_cef_v8_stack_frame_t`] for more documentation.
 #[derive(Clone)]
 pub struct V8StackFrame {
     pub base: BaseRefCounted,
@@ -10636,7 +10636,7 @@ impl Default for V8StackFrame {
     }
 }
 
-/// See [_cef_render_process_handler_t] for more documentation.
+/// See [`_cef_render_process_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct RenderProcessHandler {
     pub base: BaseRefCounted,
@@ -10743,7 +10743,7 @@ impl Default for RenderProcessHandler {
     }
 }
 
-/// See [_cef_resource_bundle_handler_t] for more documentation.
+/// See [`_cef_resource_bundle_handler_t`] for more documentation.
 #[derive(Clone)]
 pub struct ResourceBundleHandler {
     pub base: BaseRefCounted,
@@ -10798,7 +10798,7 @@ impl Default for ResourceBundleHandler {
     }
 }
 
-/// See [_cef_scheme_registrar_t] for more documentation.
+/// See [`_cef_scheme_registrar_t`] for more documentation.
 #[derive(Clone)]
 pub struct SchemeRegistrar {
     pub base: BaseScoped,
@@ -10832,7 +10832,7 @@ impl Default for SchemeRegistrar {
     }
 }
 
-/// See [_cef_scheme_handler_factory_t] for more documentation.
+/// See [`_cef_scheme_handler_factory_t`] for more documentation.
 #[derive(Clone)]
 pub struct SchemeHandlerFactory {
     pub base: BaseRefCounted,
@@ -10868,7 +10868,7 @@ impl Default for SchemeHandlerFactory {
     }
 }
 
-/// See [_cef_app_t] for more documentation.
+/// See [`_cef_app_t`] for more documentation.
 #[derive(Clone)]
 pub struct App {
     pub base: BaseRefCounted,
@@ -10922,7 +10922,7 @@ impl Default for App {
     }
 }
 
-/// See [_cef_urlrequest_t] for more documentation.
+/// See [`_cef_urlrequest_t`] for more documentation.
 #[derive(Clone)]
 pub struct Urlrequest {
     pub base: BaseRefCounted,
@@ -10980,7 +10980,7 @@ impl Default for Urlrequest {
     }
 }
 
-/// See [_cef_urlrequest_client_t] for more documentation.
+/// See [`_cef_urlrequest_client_t`] for more documentation.
 #[derive(Clone)]
 pub struct UrlrequestClient {
     pub base: BaseRefCounted,
@@ -11056,7 +11056,7 @@ impl Default for UrlrequestClient {
     }
 }
 
-/// See [_cef_layout_t] for more documentation.
+/// See [`_cef_layout_t`] for more documentation.
 #[derive(Clone)]
 pub struct Layout {
     pub base: BaseRefCounted,
@@ -11096,7 +11096,7 @@ impl Default for Layout {
     }
 }
 
-/// See [_cef_box_layout_t] for more documentation.
+/// See [`_cef_box_layout_t`] for more documentation.
 #[derive(Clone)]
 pub struct BoxLayout {
     pub base: Layout,
@@ -11135,7 +11135,7 @@ impl Default for BoxLayout {
     }
 }
 
-/// See [_cef_fill_layout_t] for more documentation.
+/// See [`_cef_fill_layout_t`] for more documentation.
 #[derive(Clone)]
 pub struct FillLayout {
     pub base: Layout,
@@ -11160,7 +11160,7 @@ impl Default for FillLayout {
     }
 }
 
-/// See [_cef_view_delegate_t] for more documentation.
+/// See [`_cef_view_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct ViewDelegate {
     pub base: BaseRefCounted,
@@ -11271,7 +11271,7 @@ impl Default for ViewDelegate {
     }
 }
 
-/// See [_cef_view_t] for more documentation.
+/// See [`_cef_view_t`] for more documentation.
 #[derive(Clone)]
 pub struct View {
     pub base: BaseRefCounted,
@@ -11578,7 +11578,7 @@ impl Default for View {
     }
 }
 
-/// See [_cef_button_t] for more documentation.
+/// See [`_cef_button_t`] for more documentation.
 #[derive(Clone)]
 pub struct Button {
     pub base: View,
@@ -11633,7 +11633,7 @@ impl Default for Button {
     }
 }
 
-/// See [_cef_button_delegate_t] for more documentation.
+/// See [`_cef_button_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct ButtonDelegate {
     pub base: ViewDelegate,
@@ -11668,7 +11668,7 @@ impl Default for ButtonDelegate {
     }
 }
 
-/// See [_cef_label_button_t] for more documentation.
+/// See [`_cef_label_button_t`] for more documentation.
 #[derive(Clone)]
 pub struct LabelButton {
     pub base: Button,
@@ -11762,7 +11762,7 @@ impl Default for LabelButton {
     }
 }
 
-/// See [_cef_menu_button_pressed_lock_t] for more documentation.
+/// See [`_cef_menu_button_pressed_lock_t`] for more documentation.
 #[derive(Clone)]
 pub struct MenuButtonPressedLock(RefGuard<_cef_menu_button_pressed_lock_t>);
 pub trait ImplMenuButtonPressedLock: Clone + Sized + Rc {
@@ -11811,7 +11811,7 @@ impl Default for MenuButtonPressedLock {
     }
 }
 
-/// See [_cef_menu_button_delegate_t] for more documentation.
+/// See [`_cef_menu_button_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct MenuButtonDelegate {
     pub base: ButtonDelegate,
@@ -11846,7 +11846,7 @@ impl Default for MenuButtonDelegate {
     }
 }
 
-/// See [_cef_menu_button_t] for more documentation.
+/// See [`_cef_menu_button_t`] for more documentation.
 #[derive(Clone)]
 pub struct MenuButton {
     pub base: LabelButton,
@@ -11885,7 +11885,7 @@ impl Default for MenuButton {
     }
 }
 
-/// See [_cef_textfield_delegate_t] for more documentation.
+/// See [`_cef_textfield_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct TextfieldDelegate {
     pub base: ViewDelegate,
@@ -11927,7 +11927,7 @@ impl Default for TextfieldDelegate {
     }
 }
 
-/// See [_cef_textfield_t] for more documentation.
+/// See [`_cef_textfield_t`] for more documentation.
 #[derive(Clone)]
 pub struct Textfield {
     pub base: View,
@@ -12122,7 +12122,7 @@ impl Default for Textfield {
     }
 }
 
-/// See [_cef_browser_view_delegate_t] for more documentation.
+/// See [`_cef_browser_view_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct BrowserViewDelegate {
     pub base: ViewDelegate,
@@ -12218,7 +12218,7 @@ impl Default for BrowserViewDelegate {
     }
 }
 
-/// See [_cef_browser_view_t] for more documentation.
+/// See [`_cef_browser_view_t`] for more documentation.
 #[derive(Clone)]
 pub struct BrowserView {
     pub base: View,
@@ -12266,7 +12266,7 @@ impl Default for BrowserView {
     }
 }
 
-/// See [_cef_scroll_view_t] for more documentation.
+/// See [`_cef_scroll_view_t`] for more documentation.
 #[derive(Clone)]
 pub struct ScrollView {
     pub base: View,
@@ -12326,7 +12326,7 @@ impl Default for ScrollView {
     }
 }
 
-/// See [_cef_display_t] for more documentation.
+/// See [`_cef_display_t`] for more documentation.
 #[derive(Clone)]
 pub struct Display {
     pub base: BaseRefCounted,
@@ -12382,7 +12382,7 @@ impl Default for Display {
     }
 }
 
-/// See [_cef_overlay_controller_t] for more documentation.
+/// See [`_cef_overlay_controller_t`] for more documentation.
 #[derive(Clone)]
 pub struct OverlayController {
     pub base: BaseRefCounted,
@@ -12515,7 +12515,7 @@ impl Default for OverlayController {
     }
 }
 
-/// See [_cef_panel_delegate_t] for more documentation.
+/// See [`_cef_panel_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct PanelDelegate {
     pub base: ViewDelegate,
@@ -12540,7 +12540,7 @@ impl Default for PanelDelegate {
     }
 }
 
-/// See [_cef_panel_t] for more documentation.
+/// See [`_cef_panel_t`] for more documentation.
 #[derive(Clone)]
 pub struct Panel {
     pub base: View,
@@ -12635,7 +12635,7 @@ impl Default for Panel {
     }
 }
 
-/// See [_cef_window_delegate_t] for more documentation.
+/// See [`_cef_window_delegate_t`] for more documentation.
 #[derive(Clone)]
 pub struct WindowDelegate {
     pub base: PanelDelegate,
@@ -12842,7 +12842,7 @@ impl Default for WindowDelegate {
     }
 }
 
-/// See [_cef_window_t] for more documentation.
+/// See [`_cef_window_t`] for more documentation.
 #[derive(Clone)]
 pub struct Window {
     pub base: Panel,
@@ -13095,7 +13095,7 @@ impl Default for Window {
     }
 }
 
-/// See [cef_content_setting_types_t] for more documentation.
+/// See [`cef_content_setting_types_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ContentSettingTypes(cef_content_setting_types_t);
 impl AsRef<cef_content_setting_types_t> for ContentSettingTypes {
@@ -13124,7 +13124,7 @@ impl Default for ContentSettingTypes {
     }
 }
 
-/// See [cef_content_setting_values_t] for more documentation.
+/// See [`cef_content_setting_values_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ContentSettingValues(cef_content_setting_values_t);
 impl AsRef<cef_content_setting_values_t> for ContentSettingValues {
@@ -13153,7 +13153,7 @@ impl Default for ContentSettingValues {
     }
 }
 
-/// See [cef_color_type_t] for more documentation.
+/// See [`cef_color_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ColorType(cef_color_type_t);
 impl AsRef<cef_color_type_t> for ColorType {
@@ -13182,7 +13182,7 @@ impl Default for ColorType {
     }
 }
 
-/// See [cef_runtime_style_t] for more documentation.
+/// See [`cef_runtime_style_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct RuntimeStyle(cef_runtime_style_t);
 impl AsRef<cef_runtime_style_t> for RuntimeStyle {
@@ -13211,7 +13211,7 @@ impl Default for RuntimeStyle {
     }
 }
 
-/// See [cef_log_severity_t] for more documentation.
+/// See [`cef_log_severity_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct LogSeverity(cef_log_severity_t);
 impl AsRef<cef_log_severity_t> for LogSeverity {
@@ -13240,7 +13240,7 @@ impl Default for LogSeverity {
     }
 }
 
-/// See [cef_log_items_t] for more documentation.
+/// See [`cef_log_items_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct LogItems(cef_log_items_t);
 impl AsRef<cef_log_items_t> for LogItems {
@@ -13269,7 +13269,7 @@ impl Default for LogItems {
     }
 }
 
-/// See [cef_state_t] for more documentation.
+/// See [`cef_state_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct State(cef_state_t);
 impl AsRef<cef_state_t> for State {
@@ -13298,7 +13298,7 @@ impl Default for State {
     }
 }
 
-/// See [cef_return_value_t] for more documentation.
+/// See [`cef_return_value_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ReturnValue(cef_return_value_t);
 impl AsRef<cef_return_value_t> for ReturnValue {
@@ -13327,7 +13327,7 @@ impl Default for ReturnValue {
     }
 }
 
-/// See [cef_cookie_priority_t] for more documentation.
+/// See [`cef_cookie_priority_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct CookiePriority(cef_cookie_priority_t);
 impl AsRef<cef_cookie_priority_t> for CookiePriority {
@@ -13356,7 +13356,7 @@ impl Default for CookiePriority {
     }
 }
 
-/// See [cef_cookie_same_site_t] for more documentation.
+/// See [`cef_cookie_same_site_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct CookieSameSite(cef_cookie_same_site_t);
 impl AsRef<cef_cookie_same_site_t> for CookieSameSite {
@@ -13385,7 +13385,7 @@ impl Default for CookieSameSite {
     }
 }
 
-/// See [cef_termination_status_t] for more documentation.
+/// See [`cef_termination_status_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TerminationStatus(cef_termination_status_t);
 impl AsRef<cef_termination_status_t> for TerminationStatus {
@@ -13414,7 +13414,7 @@ impl Default for TerminationStatus {
     }
 }
 
-/// See [cef_path_key_t] for more documentation.
+/// See [`cef_path_key_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PathKey(cef_path_key_t);
 impl AsRef<cef_path_key_t> for PathKey {
@@ -13443,7 +13443,7 @@ impl Default for PathKey {
     }
 }
 
-/// See [cef_storage_type_t] for more documentation.
+/// See [`cef_storage_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct StorageType(cef_storage_type_t);
 impl AsRef<cef_storage_type_t> for StorageType {
@@ -13472,7 +13472,7 @@ impl Default for StorageType {
     }
 }
 
-/// See [cef_errorcode_t] for more documentation.
+/// See [`cef_errorcode_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct Errorcode(cef_errorcode_t);
 impl AsRef<cef_errorcode_t> for Errorcode {
@@ -13501,7 +13501,7 @@ impl Default for Errorcode {
     }
 }
 
-/// See [cef_cert_status_t] for more documentation.
+/// See [`cef_cert_status_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct CertStatus(cef_cert_status_t);
 impl AsRef<cef_cert_status_t> for CertStatus {
@@ -13530,7 +13530,7 @@ impl Default for CertStatus {
     }
 }
 
-/// See [cef_resultcode_t] for more documentation.
+/// See [`cef_resultcode_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct Resultcode(cef_resultcode_t);
 impl AsRef<cef_resultcode_t> for Resultcode {
@@ -13559,7 +13559,7 @@ impl Default for Resultcode {
     }
 }
 
-/// See [cef_window_open_disposition_t] for more documentation.
+/// See [`cef_window_open_disposition_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct WindowOpenDisposition(cef_window_open_disposition_t);
 impl AsRef<cef_window_open_disposition_t> for WindowOpenDisposition {
@@ -13588,7 +13588,7 @@ impl Default for WindowOpenDisposition {
     }
 }
 
-/// See [cef_drag_operations_mask_t] for more documentation.
+/// See [`cef_drag_operations_mask_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DragOperationsMask(cef_drag_operations_mask_t);
 impl AsRef<cef_drag_operations_mask_t> for DragOperationsMask {
@@ -13617,7 +13617,7 @@ impl Default for DragOperationsMask {
     }
 }
 
-/// See [cef_text_input_mode_t] for more documentation.
+/// See [`cef_text_input_mode_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TextInputMode(cef_text_input_mode_t);
 impl AsRef<cef_text_input_mode_t> for TextInputMode {
@@ -13646,7 +13646,7 @@ impl Default for TextInputMode {
     }
 }
 
-/// See [cef_v8_propertyattribute_t] for more documentation.
+/// See [`cef_v8_propertyattribute_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct V8Propertyattribute(cef_v8_propertyattribute_t);
 impl AsRef<cef_v8_propertyattribute_t> for V8Propertyattribute {
@@ -13675,7 +13675,7 @@ impl Default for V8Propertyattribute {
     }
 }
 
-/// See [cef_postdataelement_type_t] for more documentation.
+/// See [`cef_postdataelement_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PostdataelementType(cef_postdataelement_type_t);
 impl AsRef<cef_postdataelement_type_t> for PostdataelementType {
@@ -13704,7 +13704,7 @@ impl Default for PostdataelementType {
     }
 }
 
-/// See [cef_resource_type_t] for more documentation.
+/// See [`cef_resource_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ResourceType(cef_resource_type_t);
 impl AsRef<cef_resource_type_t> for ResourceType {
@@ -13733,7 +13733,7 @@ impl Default for ResourceType {
     }
 }
 
-/// See [cef_transition_type_t] for more documentation.
+/// See [`cef_transition_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TransitionType(cef_transition_type_t);
 impl AsRef<cef_transition_type_t> for TransitionType {
@@ -13762,7 +13762,7 @@ impl Default for TransitionType {
     }
 }
 
-/// See [cef_urlrequest_flags_t] for more documentation.
+/// See [`cef_urlrequest_flags_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct UrlrequestFlags(cef_urlrequest_flags_t);
 impl AsRef<cef_urlrequest_flags_t> for UrlrequestFlags {
@@ -13791,7 +13791,7 @@ impl Default for UrlrequestFlags {
     }
 }
 
-/// See [cef_urlrequest_status_t] for more documentation.
+/// See [`cef_urlrequest_status_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct UrlrequestStatus(cef_urlrequest_status_t);
 impl AsRef<cef_urlrequest_status_t> for UrlrequestStatus {
@@ -13820,7 +13820,7 @@ impl Default for UrlrequestStatus {
     }
 }
 
-/// See [cef_process_id_t] for more documentation.
+/// See [`cef_process_id_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ProcessId(cef_process_id_t);
 impl AsRef<cef_process_id_t> for ProcessId {
@@ -13849,7 +13849,7 @@ impl Default for ProcessId {
     }
 }
 
-/// See [cef_thread_id_t] for more documentation.
+/// See [`cef_thread_id_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ThreadId(cef_thread_id_t);
 impl AsRef<cef_thread_id_t> for ThreadId {
@@ -13878,7 +13878,7 @@ impl Default for ThreadId {
     }
 }
 
-/// See [cef_thread_priority_t] for more documentation.
+/// See [`cef_thread_priority_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ThreadPriority(cef_thread_priority_t);
 impl AsRef<cef_thread_priority_t> for ThreadPriority {
@@ -13907,7 +13907,7 @@ impl Default for ThreadPriority {
     }
 }
 
-/// See [cef_message_loop_type_t] for more documentation.
+/// See [`cef_message_loop_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MessageLoopType(cef_message_loop_type_t);
 impl AsRef<cef_message_loop_type_t> for MessageLoopType {
@@ -13936,7 +13936,7 @@ impl Default for MessageLoopType {
     }
 }
 
-/// See [cef_com_init_mode_t] for more documentation.
+/// See [`cef_com_init_mode_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ComInitMode(cef_com_init_mode_t);
 impl AsRef<cef_com_init_mode_t> for ComInitMode {
@@ -13965,7 +13965,7 @@ impl Default for ComInitMode {
     }
 }
 
-/// See [cef_value_type_t] for more documentation.
+/// See [`cef_value_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ValueType(cef_value_type_t);
 impl AsRef<cef_value_type_t> for ValueType {
@@ -13994,7 +13994,7 @@ impl Default for ValueType {
     }
 }
 
-/// See [cef_jsdialog_type_t] for more documentation.
+/// See [`cef_jsdialog_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct JsdialogType(cef_jsdialog_type_t);
 impl AsRef<cef_jsdialog_type_t> for JsdialogType {
@@ -14023,7 +14023,7 @@ impl Default for JsdialogType {
     }
 }
 
-/// See [cef_menu_id_t] for more documentation.
+/// See [`cef_menu_id_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MenuId(cef_menu_id_t);
 impl AsRef<cef_menu_id_t> for MenuId {
@@ -14052,7 +14052,7 @@ impl Default for MenuId {
     }
 }
 
-/// See [cef_mouse_button_type_t] for more documentation.
+/// See [`cef_mouse_button_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MouseButtonType(cef_mouse_button_type_t);
 impl AsRef<cef_mouse_button_type_t> for MouseButtonType {
@@ -14081,7 +14081,7 @@ impl Default for MouseButtonType {
     }
 }
 
-/// See [cef_touch_event_type_t] for more documentation.
+/// See [`cef_touch_event_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TouchEventType(cef_touch_event_type_t);
 impl AsRef<cef_touch_event_type_t> for TouchEventType {
@@ -14110,7 +14110,7 @@ impl Default for TouchEventType {
     }
 }
 
-/// See [cef_pointer_type_t] for more documentation.
+/// See [`cef_pointer_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PointerType(cef_pointer_type_t);
 impl AsRef<cef_pointer_type_t> for PointerType {
@@ -14139,7 +14139,7 @@ impl Default for PointerType {
     }
 }
 
-/// See [cef_paint_element_type_t] for more documentation.
+/// See [`cef_paint_element_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PaintElementType(cef_paint_element_type_t);
 impl AsRef<cef_paint_element_type_t> for PaintElementType {
@@ -14168,7 +14168,7 @@ impl Default for PaintElementType {
     }
 }
 
-/// See [cef_event_flags_t] for more documentation.
+/// See [`cef_event_flags_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct EventFlags(cef_event_flags_t);
 impl AsRef<cef_event_flags_t> for EventFlags {
@@ -14197,7 +14197,7 @@ impl Default for EventFlags {
     }
 }
 
-/// See [cef_menu_item_type_t] for more documentation.
+/// See [`cef_menu_item_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MenuItemType(cef_menu_item_type_t);
 impl AsRef<cef_menu_item_type_t> for MenuItemType {
@@ -14226,7 +14226,7 @@ impl Default for MenuItemType {
     }
 }
 
-/// See [cef_context_menu_type_flags_t] for more documentation.
+/// See [`cef_context_menu_type_flags_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ContextMenuTypeFlags(cef_context_menu_type_flags_t);
 impl AsRef<cef_context_menu_type_flags_t> for ContextMenuTypeFlags {
@@ -14255,7 +14255,7 @@ impl Default for ContextMenuTypeFlags {
     }
 }
 
-/// See [cef_context_menu_media_type_t] for more documentation.
+/// See [`cef_context_menu_media_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ContextMenuMediaType(cef_context_menu_media_type_t);
 impl AsRef<cef_context_menu_media_type_t> for ContextMenuMediaType {
@@ -14284,7 +14284,7 @@ impl Default for ContextMenuMediaType {
     }
 }
 
-/// See [cef_context_menu_media_state_flags_t] for more documentation.
+/// See [`cef_context_menu_media_state_flags_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ContextMenuMediaStateFlags(cef_context_menu_media_state_flags_t);
 impl AsRef<cef_context_menu_media_state_flags_t> for ContextMenuMediaStateFlags {
@@ -14313,7 +14313,7 @@ impl Default for ContextMenuMediaStateFlags {
     }
 }
 
-/// See [cef_context_menu_edit_state_flags_t] for more documentation.
+/// See [`cef_context_menu_edit_state_flags_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ContextMenuEditStateFlags(cef_context_menu_edit_state_flags_t);
 impl AsRef<cef_context_menu_edit_state_flags_t> for ContextMenuEditStateFlags {
@@ -14342,7 +14342,7 @@ impl Default for ContextMenuEditStateFlags {
     }
 }
 
-/// See [cef_quick_menu_edit_state_flags_t] for more documentation.
+/// See [`cef_quick_menu_edit_state_flags_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct QuickMenuEditStateFlags(cef_quick_menu_edit_state_flags_t);
 impl AsRef<cef_quick_menu_edit_state_flags_t> for QuickMenuEditStateFlags {
@@ -14371,7 +14371,7 @@ impl Default for QuickMenuEditStateFlags {
     }
 }
 
-/// See [cef_key_event_type_t] for more documentation.
+/// See [`cef_key_event_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct KeyEventType(cef_key_event_type_t);
 impl AsRef<cef_key_event_type_t> for KeyEventType {
@@ -14400,7 +14400,7 @@ impl Default for KeyEventType {
     }
 }
 
-/// See [cef_focus_source_t] for more documentation.
+/// See [`cef_focus_source_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct FocusSource(cef_focus_source_t);
 impl AsRef<cef_focus_source_t> for FocusSource {
@@ -14429,7 +14429,7 @@ impl Default for FocusSource {
     }
 }
 
-/// See [cef_navigation_type_t] for more documentation.
+/// See [`cef_navigation_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct NavigationType(cef_navigation_type_t);
 impl AsRef<cef_navigation_type_t> for NavigationType {
@@ -14458,7 +14458,7 @@ impl Default for NavigationType {
     }
 }
 
-/// See [cef_xml_encoding_type_t] for more documentation.
+/// See [`cef_xml_encoding_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct XmlEncodingType(cef_xml_encoding_type_t);
 impl AsRef<cef_xml_encoding_type_t> for XmlEncodingType {
@@ -14487,7 +14487,7 @@ impl Default for XmlEncodingType {
     }
 }
 
-/// See [cef_xml_node_type_t] for more documentation.
+/// See [`cef_xml_node_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct XmlNodeType(cef_xml_node_type_t);
 impl AsRef<cef_xml_node_type_t> for XmlNodeType {
@@ -14516,7 +14516,7 @@ impl Default for XmlNodeType {
     }
 }
 
-/// See [cef_dom_document_type_t] for more documentation.
+/// See [`cef_dom_document_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DomDocumentType(cef_dom_document_type_t);
 impl AsRef<cef_dom_document_type_t> for DomDocumentType {
@@ -14545,7 +14545,7 @@ impl Default for DomDocumentType {
     }
 }
 
-/// See [cef_dom_event_category_t] for more documentation.
+/// See [`cef_dom_event_category_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DomEventCategory(cef_dom_event_category_t);
 impl AsRef<cef_dom_event_category_t> for DomEventCategory {
@@ -14574,7 +14574,7 @@ impl Default for DomEventCategory {
     }
 }
 
-/// See [cef_dom_event_phase_t] for more documentation.
+/// See [`cef_dom_event_phase_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DomEventPhase(cef_dom_event_phase_t);
 impl AsRef<cef_dom_event_phase_t> for DomEventPhase {
@@ -14603,7 +14603,7 @@ impl Default for DomEventPhase {
     }
 }
 
-/// See [cef_dom_node_type_t] for more documentation.
+/// See [`cef_dom_node_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DomNodeType(cef_dom_node_type_t);
 impl AsRef<cef_dom_node_type_t> for DomNodeType {
@@ -14632,7 +14632,7 @@ impl Default for DomNodeType {
     }
 }
 
-/// See [cef_dom_form_control_type_t] for more documentation.
+/// See [`cef_dom_form_control_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DomFormControlType(cef_dom_form_control_type_t);
 impl AsRef<cef_dom_form_control_type_t> for DomFormControlType {
@@ -14661,7 +14661,7 @@ impl Default for DomFormControlType {
     }
 }
 
-/// See [cef_file_dialog_mode_t] for more documentation.
+/// See [`cef_file_dialog_mode_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct FileDialogMode(cef_file_dialog_mode_t);
 impl AsRef<cef_file_dialog_mode_t> for FileDialogMode {
@@ -14690,7 +14690,7 @@ impl Default for FileDialogMode {
     }
 }
 
-/// See [cef_color_model_t] for more documentation.
+/// See [`cef_color_model_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ColorModel(cef_color_model_t);
 impl AsRef<cef_color_model_t> for ColorModel {
@@ -14719,7 +14719,7 @@ impl Default for ColorModel {
     }
 }
 
-/// See [cef_duplex_mode_t] for more documentation.
+/// See [`cef_duplex_mode_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DuplexMode(cef_duplex_mode_t);
 impl AsRef<cef_duplex_mode_t> for DuplexMode {
@@ -14748,7 +14748,7 @@ impl Default for DuplexMode {
     }
 }
 
-/// See [cef_cursor_type_t] for more documentation.
+/// See [`cef_cursor_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct CursorType(cef_cursor_type_t);
 impl AsRef<cef_cursor_type_t> for CursorType {
@@ -14777,7 +14777,7 @@ impl Default for CursorType {
     }
 }
 
-/// See [cef_uri_unescape_rule_t] for more documentation.
+/// See [`cef_uri_unescape_rule_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct UriUnescapeRule(cef_uri_unescape_rule_t);
 impl AsRef<cef_uri_unescape_rule_t> for UriUnescapeRule {
@@ -14806,7 +14806,7 @@ impl Default for UriUnescapeRule {
     }
 }
 
-/// See [cef_json_parser_options_t] for more documentation.
+/// See [`cef_json_parser_options_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct JsonParserOptions(cef_json_parser_options_t);
 impl AsRef<cef_json_parser_options_t> for JsonParserOptions {
@@ -14835,7 +14835,7 @@ impl Default for JsonParserOptions {
     }
 }
 
-/// See [cef_json_writer_options_t] for more documentation.
+/// See [`cef_json_writer_options_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct JsonWriterOptions(cef_json_writer_options_t);
 impl AsRef<cef_json_writer_options_t> for JsonWriterOptions {
@@ -14864,7 +14864,7 @@ impl Default for JsonWriterOptions {
     }
 }
 
-/// See [cef_pdf_print_margin_type_t] for more documentation.
+/// See [`cef_pdf_print_margin_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PdfPrintMarginType(cef_pdf_print_margin_type_t);
 impl AsRef<cef_pdf_print_margin_type_t> for PdfPrintMarginType {
@@ -14893,7 +14893,7 @@ impl Default for PdfPrintMarginType {
     }
 }
 
-/// See [cef_scale_factor_t] for more documentation.
+/// See [`cef_scale_factor_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ScaleFactor(cef_scale_factor_t);
 impl AsRef<cef_scale_factor_t> for ScaleFactor {
@@ -14922,7 +14922,7 @@ impl Default for ScaleFactor {
     }
 }
 
-/// See [cef_referrer_policy_t] for more documentation.
+/// See [`cef_referrer_policy_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ReferrerPolicy(cef_referrer_policy_t);
 impl AsRef<cef_referrer_policy_t> for ReferrerPolicy {
@@ -14951,7 +14951,7 @@ impl Default for ReferrerPolicy {
     }
 }
 
-/// See [cef_response_filter_status_t] for more documentation.
+/// See [`cef_response_filter_status_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ResponseFilterStatus(cef_response_filter_status_t);
 impl AsRef<cef_response_filter_status_t> for ResponseFilterStatus {
@@ -14980,7 +14980,7 @@ impl Default for ResponseFilterStatus {
     }
 }
 
-/// See [cef_alpha_type_t] for more documentation.
+/// See [`cef_alpha_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct AlphaType(cef_alpha_type_t);
 impl AsRef<cef_alpha_type_t> for AlphaType {
@@ -15009,7 +15009,7 @@ impl Default for AlphaType {
     }
 }
 
-/// See [cef_text_style_t] for more documentation.
+/// See [`cef_text_style_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TextStyle(cef_text_style_t);
 impl AsRef<cef_text_style_t> for TextStyle {
@@ -15038,7 +15038,7 @@ impl Default for TextStyle {
     }
 }
 
-/// See [cef_axis_alignment_t] for more documentation.
+/// See [`cef_axis_alignment_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct AxisAlignment(cef_axis_alignment_t);
 impl AsRef<cef_axis_alignment_t> for AxisAlignment {
@@ -15067,7 +15067,7 @@ impl Default for AxisAlignment {
     }
 }
 
-/// See [cef_button_state_t] for more documentation.
+/// See [`cef_button_state_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ButtonState(cef_button_state_t);
 impl AsRef<cef_button_state_t> for ButtonState {
@@ -15096,7 +15096,7 @@ impl Default for ButtonState {
     }
 }
 
-/// See [cef_horizontal_alignment_t] for more documentation.
+/// See [`cef_horizontal_alignment_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct HorizontalAlignment(cef_horizontal_alignment_t);
 impl AsRef<cef_horizontal_alignment_t> for HorizontalAlignment {
@@ -15125,7 +15125,7 @@ impl Default for HorizontalAlignment {
     }
 }
 
-/// See [cef_menu_anchor_position_t] for more documentation.
+/// See [`cef_menu_anchor_position_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MenuAnchorPosition(cef_menu_anchor_position_t);
 impl AsRef<cef_menu_anchor_position_t> for MenuAnchorPosition {
@@ -15154,7 +15154,7 @@ impl Default for MenuAnchorPosition {
     }
 }
 
-/// See [cef_menu_color_type_t] for more documentation.
+/// See [`cef_menu_color_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MenuColorType(cef_menu_color_type_t);
 impl AsRef<cef_menu_color_type_t> for MenuColorType {
@@ -15183,7 +15183,7 @@ impl Default for MenuColorType {
     }
 }
 
-/// See [cef_ssl_version_t] for more documentation.
+/// See [`cef_ssl_version_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct SslVersion(cef_ssl_version_t);
 impl AsRef<cef_ssl_version_t> for SslVersion {
@@ -15212,7 +15212,7 @@ impl Default for SslVersion {
     }
 }
 
-/// See [cef_ssl_content_status_t] for more documentation.
+/// See [`cef_ssl_content_status_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct SslContentStatus(cef_ssl_content_status_t);
 impl AsRef<cef_ssl_content_status_t> for SslContentStatus {
@@ -15241,7 +15241,7 @@ impl Default for SslContentStatus {
     }
 }
 
-/// See [cef_scheme_options_t] for more documentation.
+/// See [`cef_scheme_options_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct SchemeOptions(cef_scheme_options_t);
 impl AsRef<cef_scheme_options_t> for SchemeOptions {
@@ -15270,7 +15270,7 @@ impl Default for SchemeOptions {
     }
 }
 
-/// See [cef_composition_underline_style_t] for more documentation.
+/// See [`cef_composition_underline_style_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct CompositionUnderlineStyle(cef_composition_underline_style_t);
 impl AsRef<cef_composition_underline_style_t> for CompositionUnderlineStyle {
@@ -15299,7 +15299,7 @@ impl Default for CompositionUnderlineStyle {
     }
 }
 
-/// See [cef_channel_layout_t] for more documentation.
+/// See [`cef_channel_layout_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ChannelLayout(cef_channel_layout_t);
 impl AsRef<cef_channel_layout_t> for ChannelLayout {
@@ -15328,7 +15328,7 @@ impl Default for ChannelLayout {
     }
 }
 
-/// See [cef_media_route_create_result_t] for more documentation.
+/// See [`cef_media_route_create_result_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MediaRouteCreateResult(cef_media_route_create_result_t);
 impl AsRef<cef_media_route_create_result_t> for MediaRouteCreateResult {
@@ -15357,7 +15357,7 @@ impl Default for MediaRouteCreateResult {
     }
 }
 
-/// See [cef_media_route_connection_state_t] for more documentation.
+/// See [`cef_media_route_connection_state_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MediaRouteConnectionState(cef_media_route_connection_state_t);
 impl AsRef<cef_media_route_connection_state_t> for MediaRouteConnectionState {
@@ -15386,7 +15386,7 @@ impl Default for MediaRouteConnectionState {
     }
 }
 
-/// See [cef_media_sink_icon_type_t] for more documentation.
+/// See [`cef_media_sink_icon_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MediaSinkIconType(cef_media_sink_icon_type_t);
 impl AsRef<cef_media_sink_icon_type_t> for MediaSinkIconType {
@@ -15415,7 +15415,7 @@ impl Default for MediaSinkIconType {
     }
 }
 
-/// See [cef_text_field_commands_t] for more documentation.
+/// See [`cef_text_field_commands_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TextFieldCommands(cef_text_field_commands_t);
 impl AsRef<cef_text_field_commands_t> for TextFieldCommands {
@@ -15444,7 +15444,7 @@ impl Default for TextFieldCommands {
     }
 }
 
-/// See [cef_chrome_toolbar_type_t] for more documentation.
+/// See [`cef_chrome_toolbar_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ChromeToolbarType(cef_chrome_toolbar_type_t);
 impl AsRef<cef_chrome_toolbar_type_t> for ChromeToolbarType {
@@ -15473,7 +15473,7 @@ impl Default for ChromeToolbarType {
     }
 }
 
-/// See [cef_chrome_page_action_icon_type_t] for more documentation.
+/// See [`cef_chrome_page_action_icon_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ChromePageActionIconType(cef_chrome_page_action_icon_type_t);
 impl AsRef<cef_chrome_page_action_icon_type_t> for ChromePageActionIconType {
@@ -15502,7 +15502,7 @@ impl Default for ChromePageActionIconType {
     }
 }
 
-/// See [cef_chrome_toolbar_button_type_t] for more documentation.
+/// See [`cef_chrome_toolbar_button_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ChromeToolbarButtonType(cef_chrome_toolbar_button_type_t);
 impl AsRef<cef_chrome_toolbar_button_type_t> for ChromeToolbarButtonType {
@@ -15531,7 +15531,7 @@ impl Default for ChromeToolbarButtonType {
     }
 }
 
-/// See [cef_docking_mode_t] for more documentation.
+/// See [`cef_docking_mode_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DockingMode(cef_docking_mode_t);
 impl AsRef<cef_docking_mode_t> for DockingMode {
@@ -15560,7 +15560,7 @@ impl Default for DockingMode {
     }
 }
 
-/// See [cef_show_state_t] for more documentation.
+/// See [`cef_show_state_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ShowState(cef_show_state_t);
 impl AsRef<cef_show_state_t> for ShowState {
@@ -15589,7 +15589,7 @@ impl Default for ShowState {
     }
 }
 
-/// See [cef_touch_handle_state_flags_t] for more documentation.
+/// See [`cef_touch_handle_state_flags_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TouchHandleStateFlags(cef_touch_handle_state_flags_t);
 impl AsRef<cef_touch_handle_state_flags_t> for TouchHandleStateFlags {
@@ -15618,7 +15618,7 @@ impl Default for TouchHandleStateFlags {
     }
 }
 
-/// See [cef_media_access_permission_types_t] for more documentation.
+/// See [`cef_media_access_permission_types_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct MediaAccessPermissionTypes(cef_media_access_permission_types_t);
 impl AsRef<cef_media_access_permission_types_t> for MediaAccessPermissionTypes {
@@ -15647,7 +15647,7 @@ impl Default for MediaAccessPermissionTypes {
     }
 }
 
-/// See [cef_permission_request_types_t] for more documentation.
+/// See [`cef_permission_request_types_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PermissionRequestTypes(cef_permission_request_types_t);
 impl AsRef<cef_permission_request_types_t> for PermissionRequestTypes {
@@ -15676,7 +15676,7 @@ impl Default for PermissionRequestTypes {
     }
 }
 
-/// See [cef_permission_request_result_t] for more documentation.
+/// See [`cef_permission_request_result_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PermissionRequestResult(cef_permission_request_result_t);
 impl AsRef<cef_permission_request_result_t> for PermissionRequestResult {
@@ -15705,7 +15705,7 @@ impl Default for PermissionRequestResult {
     }
 }
 
-/// See [cef_test_cert_type_t] for more documentation.
+/// See [`cef_test_cert_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TestCertType(cef_test_cert_type_t);
 impl AsRef<cef_test_cert_type_t> for TestCertType {
@@ -15734,7 +15734,7 @@ impl Default for TestCertType {
     }
 }
 
-/// See [cef_preferences_type_t] for more documentation.
+/// See [`cef_preferences_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct PreferencesType(cef_preferences_type_t);
 impl AsRef<cef_preferences_type_t> for PreferencesType {
@@ -15763,7 +15763,7 @@ impl Default for PreferencesType {
     }
 }
 
-/// See [cef_download_interrupt_reason_t] for more documentation.
+/// See [`cef_download_interrupt_reason_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct DownloadInterruptReason(cef_download_interrupt_reason_t);
 impl AsRef<cef_download_interrupt_reason_t> for DownloadInterruptReason {
@@ -15792,7 +15792,7 @@ impl Default for DownloadInterruptReason {
     }
 }
 
-/// See [cef_gesture_command_t] for more documentation.
+/// See [`cef_gesture_command_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct GestureCommand(cef_gesture_command_t);
 impl AsRef<cef_gesture_command_t> for GestureCommand {
@@ -15821,7 +15821,7 @@ impl Default for GestureCommand {
     }
 }
 
-/// See [cef_zoom_command_t] for more documentation.
+/// See [`cef_zoom_command_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ZoomCommand(cef_zoom_command_t);
 impl AsRef<cef_zoom_command_t> for ZoomCommand {
@@ -15850,7 +15850,7 @@ impl Default for ZoomCommand {
     }
 }
 
-/// See [cef_color_variant_t] for more documentation.
+/// See [`cef_color_variant_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct ColorVariant(cef_color_variant_t);
 impl AsRef<cef_color_variant_t> for ColorVariant {
@@ -15879,7 +15879,7 @@ impl Default for ColorVariant {
     }
 }
 
-/// See [cef_task_type_t] for more documentation.
+/// See [`cef_task_type_t`] for more documentation.
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub struct TaskType(cef_task_type_t);
 impl AsRef<cef_task_type_t> for TaskType {
@@ -15908,7 +15908,7 @@ impl Default for TaskType {
     }
 }
 
-/// See [cef_sandbox_info_create] for more documentation.
+/// See [`cef_sandbox_info_create`] for more documentation.
 pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
     unsafe {
         let result = cef_sandbox_info_create();
@@ -15916,7 +15916,7 @@ pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
     }
 }
 
-/// See [cef_sandbox_info_destroy] for more documentation.
+/// See [`cef_sandbox_info_destroy`] for more documentation.
 pub fn sandbox_info_destroy(sandbox_info: *mut u8) {
     unsafe {
         let arg_sandbox_info = sandbox_info;
@@ -15925,7 +15925,7 @@ pub fn sandbox_info_destroy(sandbox_info: *mut u8) {
     }
 }
 
-/// See [cef_api_hash] for more documentation.
+/// See [`cef_api_hash`] for more documentation.
 pub fn api_hash(
     version: ::std::os::raw::c_int,
     entry: ::std::os::raw::c_int,
@@ -15937,7 +15937,7 @@ pub fn api_hash(
     }
 }
 
-/// See [cef_api_version] for more documentation.
+/// See [`cef_api_version`] for more documentation.
 pub fn api_version() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_api_version();
@@ -15945,7 +15945,7 @@ pub fn api_version() -> ::std::os::raw::c_int {
     }
 }
 
-/// See [cef_string_wide_set] for more documentation.
+/// See [`cef_string_wide_set`] for more documentation.
 pub fn string_wide_set(
     src: Option<&[wchar_t]>,
     output: Option<&mut CefStringWide>,
@@ -15971,7 +15971,7 @@ pub fn string_wide_set(
     }
 }
 
-/// See [cef_string_utf8_set] for more documentation.
+/// See [`cef_string_utf8_set`] for more documentation.
 pub fn string_utf8_set(
     src: Option<&[::std::os::raw::c_char]>,
     output: Option<&mut CefStringUtf8>,
@@ -15997,7 +15997,7 @@ pub fn string_utf8_set(
     }
 }
 
-/// See [cef_string_utf16_set] for more documentation.
+/// See [`cef_string_utf16_set`] for more documentation.
 pub fn string_utf16_set(
     src: Option<&[char16_t]>,
     output: Option<&mut CefStringUtf16>,
@@ -16023,7 +16023,7 @@ pub fn string_utf16_set(
     }
 }
 
-/// See [cef_string_wide_clear] for more documentation.
+/// See [`cef_string_wide_clear`] for more documentation.
 pub fn string_wide_clear(str_: Option<&mut CefStringWide>) {
     unsafe {
         let arg_str_ = str_;
@@ -16034,7 +16034,7 @@ pub fn string_wide_clear(str_: Option<&mut CefStringWide>) {
     }
 }
 
-/// See [cef_string_utf8_clear] for more documentation.
+/// See [`cef_string_utf8_clear`] for more documentation.
 pub fn string_utf8_clear(str_: Option<&mut CefStringUtf8>) {
     unsafe {
         let arg_str_ = str_;
@@ -16045,7 +16045,7 @@ pub fn string_utf8_clear(str_: Option<&mut CefStringUtf8>) {
     }
 }
 
-/// See [cef_string_utf16_clear] for more documentation.
+/// See [`cef_string_utf16_clear`] for more documentation.
 pub fn string_utf16_clear(str_: Option<&mut CefStringUtf16>) {
     unsafe {
         let arg_str_ = str_;
@@ -16056,7 +16056,7 @@ pub fn string_utf16_clear(str_: Option<&mut CefStringUtf16>) {
     }
 }
 
-/// See [cef_string_wide_cmp] for more documentation.
+/// See [`cef_string_wide_cmp`] for more documentation.
 pub fn string_wide_cmp(
     str_1: Option<&CefStringWide>,
     str_2: Option<&CefStringWide>,
@@ -16074,7 +16074,7 @@ pub fn string_wide_cmp(
     }
 }
 
-/// See [cef_string_utf8_cmp] for more documentation.
+/// See [`cef_string_utf8_cmp`] for more documentation.
 pub fn string_utf8_cmp(
     str_1: Option<&CefStringUtf8>,
     str_2: Option<&CefStringUtf8>,
@@ -16092,7 +16092,7 @@ pub fn string_utf8_cmp(
     }
 }
 
-/// See [cef_string_utf16_cmp] for more documentation.
+/// See [`cef_string_utf16_cmp`] for more documentation.
 pub fn string_utf16_cmp(
     str_1: Option<&CefStringUtf16>,
     str_2: Option<&CefStringUtf16>,
@@ -16110,7 +16110,7 @@ pub fn string_utf16_cmp(
     }
 }
 
-/// See [cef_string_wide_to_utf8] for more documentation.
+/// See [`cef_string_wide_to_utf8`] for more documentation.
 pub fn string_wide_to_utf8(
     src: Option<&[wchar_t]>,
     output: Option<&mut CefStringUtf8>,
@@ -16135,7 +16135,7 @@ pub fn string_wide_to_utf8(
     }
 }
 
-/// See [cef_string_utf8_to_wide] for more documentation.
+/// See [`cef_string_utf8_to_wide`] for more documentation.
 pub fn string_utf8_to_wide(
     src: Option<&[::std::os::raw::c_char]>,
     output: Option<&mut CefStringWide>,
@@ -16160,7 +16160,7 @@ pub fn string_utf8_to_wide(
     }
 }
 
-/// See [cef_string_wide_to_utf16] for more documentation.
+/// See [`cef_string_wide_to_utf16`] for more documentation.
 pub fn string_wide_to_utf16(
     src: Option<&[wchar_t]>,
     output: Option<&mut CefStringUtf16>,
@@ -16185,7 +16185,7 @@ pub fn string_wide_to_utf16(
     }
 }
 
-/// See [cef_string_utf16_to_wide] for more documentation.
+/// See [`cef_string_utf16_to_wide`] for more documentation.
 pub fn string_utf16_to_wide(
     src: Option<&[char16_t]>,
     output: Option<&mut CefStringWide>,
@@ -16210,7 +16210,7 @@ pub fn string_utf16_to_wide(
     }
 }
 
-/// See [cef_string_utf8_to_utf16] for more documentation.
+/// See [`cef_string_utf8_to_utf16`] for more documentation.
 pub fn string_utf8_to_utf16(
     src: Option<&[::std::os::raw::c_char]>,
     output: Option<&mut CefStringUtf16>,
@@ -16235,7 +16235,7 @@ pub fn string_utf8_to_utf16(
     }
 }
 
-/// See [cef_string_utf16_to_utf8] for more documentation.
+/// See [`cef_string_utf16_to_utf8`] for more documentation.
 pub fn string_utf16_to_utf8(
     src: Option<&[char16_t]>,
     output: Option<&mut CefStringUtf8>,
@@ -16260,7 +16260,7 @@ pub fn string_utf16_to_utf8(
     }
 }
 
-/// See [cef_string_ascii_to_wide] for more documentation.
+/// See [`cef_string_ascii_to_wide`] for more documentation.
 pub fn string_ascii_to_wide(
     src: Option<&[::std::os::raw::c_char]>,
     output: Option<&mut CefStringWide>,
@@ -16285,7 +16285,7 @@ pub fn string_ascii_to_wide(
     }
 }
 
-/// See [cef_string_ascii_to_utf16] for more documentation.
+/// See [`cef_string_ascii_to_utf16`] for more documentation.
 pub fn string_ascii_to_utf16(
     src: Option<&[::std::os::raw::c_char]>,
     output: Option<&mut CefStringUtf16>,
@@ -16310,7 +16310,7 @@ pub fn string_ascii_to_utf16(
     }
 }
 
-/// See [cef_string_userfree_wide_alloc] for more documentation.
+/// See [`cef_string_userfree_wide_alloc`] for more documentation.
 pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
     unsafe {
         let result = cef_string_userfree_wide_alloc();
@@ -16318,7 +16318,7 @@ pub fn string_userfree_wide_alloc() -> CefStringUserfreeWide {
     }
 }
 
-/// See [cef_string_userfree_utf8_alloc] for more documentation.
+/// See [`cef_string_userfree_utf8_alloc`] for more documentation.
 pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
     unsafe {
         let result = cef_string_userfree_utf8_alloc();
@@ -16326,7 +16326,7 @@ pub fn string_userfree_utf8_alloc() -> CefStringUserfreeUtf8 {
     }
 }
 
-/// See [cef_string_userfree_utf16_alloc] for more documentation.
+/// See [`cef_string_userfree_utf16_alloc`] for more documentation.
 pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
     unsafe {
         let result = cef_string_userfree_utf16_alloc();
@@ -16334,7 +16334,7 @@ pub fn string_userfree_utf16_alloc() -> CefStringUserfreeUtf16 {
     }
 }
 
-/// See [cef_string_userfree_wide_free] for more documentation.
+/// See [`cef_string_userfree_wide_free`] for more documentation.
 pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
     unsafe {
         let arg_str_ = str_;
@@ -16343,7 +16343,7 @@ pub fn string_userfree_wide_free(str_: CefStringUserfreeWide) {
     }
 }
 
-/// See [cef_string_userfree_utf8_free] for more documentation.
+/// See [`cef_string_userfree_utf8_free`] for more documentation.
 pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
     unsafe {
         let arg_str_ = str_;
@@ -16352,7 +16352,7 @@ pub fn string_userfree_utf8_free(str_: CefStringUserfreeUtf8) {
     }
 }
 
-/// See [cef_string_userfree_utf16_free] for more documentation.
+/// See [`cef_string_userfree_utf16_free`] for more documentation.
 pub fn string_userfree_utf16_free(str_: CefStringUserfreeUtf16) {
     unsafe {
         let arg_str_ = str_;
@@ -16361,7 +16361,7 @@ pub fn string_userfree_utf16_free(str_: CefStringUserfreeUtf16) {
     }
 }
 
-/// See [cef_string_utf16_to_lower] for more documentation.
+/// See [`cef_string_utf16_to_lower`] for more documentation.
 pub fn string_utf16_to_lower(
     src: Option<&[char16_t]>,
     output: Option<&mut CefStringUtf16>,
@@ -16386,7 +16386,7 @@ pub fn string_utf16_to_lower(
     }
 }
 
-/// See [cef_string_utf16_to_upper] for more documentation.
+/// See [`cef_string_utf16_to_upper`] for more documentation.
 pub fn string_utf16_to_upper(
     src: Option<&[char16_t]>,
     output: Option<&mut CefStringUtf16>,
@@ -16411,7 +16411,7 @@ pub fn string_utf16_to_upper(
     }
 }
 
-/// See [cef_string_list_alloc] for more documentation.
+/// See [`cef_string_list_alloc`] for more documentation.
 pub fn string_list_alloc() -> Option<CefStringList> {
     unsafe {
         let result = cef_string_list_alloc();
@@ -16423,7 +16423,7 @@ pub fn string_list_alloc() -> Option<CefStringList> {
     }
 }
 
-/// See [cef_string_list_size] for more documentation.
+/// See [`cef_string_list_size`] for more documentation.
 pub fn string_list_size(list: Option<&mut CefStringList>) -> usize {
     unsafe {
         let arg_list = list;
@@ -16435,7 +16435,7 @@ pub fn string_list_size(list: Option<&mut CefStringList>) -> usize {
     }
 }
 
-/// See [cef_string_list_value] for more documentation.
+/// See [`cef_string_list_value`] for more documentation.
 pub fn string_list_value(
     list: Option<&mut CefStringList>,
     index: usize,
@@ -16454,7 +16454,7 @@ pub fn string_list_value(
     }
 }
 
-/// See [cef_string_list_append] for more documentation.
+/// See [`cef_string_list_append`] for more documentation.
 pub fn string_list_append(list: Option<&mut CefStringList>, value: Option<&CefString>) {
     unsafe {
         let (arg_list, arg_value) = (list, value);
@@ -16468,7 +16468,7 @@ pub fn string_list_append(list: Option<&mut CefStringList>, value: Option<&CefSt
     }
 }
 
-/// See [cef_string_list_clear] for more documentation.
+/// See [`cef_string_list_clear`] for more documentation.
 pub fn string_list_clear(list: Option<&mut CefStringList>) {
     unsafe {
         let arg_list = list;
@@ -16479,7 +16479,7 @@ pub fn string_list_clear(list: Option<&mut CefStringList>) {
     }
 }
 
-/// See [cef_string_list_free] for more documentation.
+/// See [`cef_string_list_free`] for more documentation.
 pub fn string_list_free(list: Option<&mut CefStringList>) {
     unsafe {
         let arg_list = list;
@@ -16490,7 +16490,7 @@ pub fn string_list_free(list: Option<&mut CefStringList>) {
     }
 }
 
-/// See [cef_string_list_copy] for more documentation.
+/// See [`cef_string_list_copy`] for more documentation.
 pub fn string_list_copy(list: Option<&mut CefStringList>) -> Option<CefStringList> {
     unsafe {
         let arg_list = list;
@@ -16506,7 +16506,7 @@ pub fn string_list_copy(list: Option<&mut CefStringList>) -> Option<CefStringLis
     }
 }
 
-/// See [cef_string_map_alloc] for more documentation.
+/// See [`cef_string_map_alloc`] for more documentation.
 pub fn string_map_alloc() -> Option<CefStringMap> {
     unsafe {
         let result = cef_string_map_alloc();
@@ -16518,7 +16518,7 @@ pub fn string_map_alloc() -> Option<CefStringMap> {
     }
 }
 
-/// See [cef_string_map_size] for more documentation.
+/// See [`cef_string_map_size`] for more documentation.
 pub fn string_map_size(map: Option<&mut CefStringMap>) -> usize {
     unsafe {
         let arg_map = map;
@@ -16530,7 +16530,7 @@ pub fn string_map_size(map: Option<&mut CefStringMap>) -> usize {
     }
 }
 
-/// See [cef_string_map_find] for more documentation.
+/// See [`cef_string_map_find`] for more documentation.
 pub fn string_map_find(
     map: Option<&mut CefStringMap>,
     key: Option<&CefString>,
@@ -16552,7 +16552,7 @@ pub fn string_map_find(
     }
 }
 
-/// See [cef_string_map_key] for more documentation.
+/// See [`cef_string_map_key`] for more documentation.
 pub fn string_map_key(
     map: Option<&mut CefStringMap>,
     index: usize,
@@ -16571,7 +16571,7 @@ pub fn string_map_key(
     }
 }
 
-/// See [cef_string_map_value] for more documentation.
+/// See [`cef_string_map_value`] for more documentation.
 pub fn string_map_value(
     map: Option<&mut CefStringMap>,
     index: usize,
@@ -16590,7 +16590,7 @@ pub fn string_map_value(
     }
 }
 
-/// See [cef_string_map_append] for more documentation.
+/// See [`cef_string_map_append`] for more documentation.
 pub fn string_map_append(
     map: Option<&mut CefStringMap>,
     key: Option<&CefString>,
@@ -16612,7 +16612,7 @@ pub fn string_map_append(
     }
 }
 
-/// See [cef_string_map_clear] for more documentation.
+/// See [`cef_string_map_clear`] for more documentation.
 pub fn string_map_clear(map: Option<&mut CefStringMap>) {
     unsafe {
         let arg_map = map;
@@ -16623,7 +16623,7 @@ pub fn string_map_clear(map: Option<&mut CefStringMap>) {
     }
 }
 
-/// See [cef_string_map_free] for more documentation.
+/// See [`cef_string_map_free`] for more documentation.
 pub fn string_map_free(map: Option<&mut CefStringMap>) {
     unsafe {
         let arg_map = map;
@@ -16634,7 +16634,7 @@ pub fn string_map_free(map: Option<&mut CefStringMap>) {
     }
 }
 
-/// See [cef_string_multimap_alloc] for more documentation.
+/// See [`cef_string_multimap_alloc`] for more documentation.
 pub fn string_multimap_alloc() -> Option<CefStringMultimap> {
     unsafe {
         let result = cef_string_multimap_alloc();
@@ -16646,7 +16646,7 @@ pub fn string_multimap_alloc() -> Option<CefStringMultimap> {
     }
 }
 
-/// See [cef_string_multimap_size] for more documentation.
+/// See [`cef_string_multimap_size`] for more documentation.
 pub fn string_multimap_size(map: Option<&mut CefStringMultimap>) -> usize {
     unsafe {
         let arg_map = map;
@@ -16658,7 +16658,7 @@ pub fn string_multimap_size(map: Option<&mut CefStringMultimap>) -> usize {
     }
 }
 
-/// See [cef_string_multimap_find_count] for more documentation.
+/// See [`cef_string_multimap_find_count`] for more documentation.
 pub fn string_multimap_find_count(
     map: Option<&mut CefStringMultimap>,
     key: Option<&CefString>,
@@ -16676,7 +16676,7 @@ pub fn string_multimap_find_count(
     }
 }
 
-/// See [cef_string_multimap_enumerate] for more documentation.
+/// See [`cef_string_multimap_enumerate`] for more documentation.
 pub fn string_multimap_enumerate(
     map: Option<&mut CefStringMultimap>,
     key: Option<&CefString>,
@@ -16699,7 +16699,7 @@ pub fn string_multimap_enumerate(
     }
 }
 
-/// See [cef_string_multimap_key] for more documentation.
+/// See [`cef_string_multimap_key`] for more documentation.
 pub fn string_multimap_key(
     map: Option<&mut CefStringMultimap>,
     index: usize,
@@ -16718,7 +16718,7 @@ pub fn string_multimap_key(
     }
 }
 
-/// See [cef_string_multimap_value] for more documentation.
+/// See [`cef_string_multimap_value`] for more documentation.
 pub fn string_multimap_value(
     map: Option<&mut CefStringMultimap>,
     index: usize,
@@ -16737,7 +16737,7 @@ pub fn string_multimap_value(
     }
 }
 
-/// See [cef_string_multimap_append] for more documentation.
+/// See [`cef_string_multimap_append`] for more documentation.
 pub fn string_multimap_append(
     map: Option<&mut CefStringMultimap>,
     key: Option<&CefString>,
@@ -16759,7 +16759,7 @@ pub fn string_multimap_append(
     }
 }
 
-/// See [cef_string_multimap_clear] for more documentation.
+/// See [`cef_string_multimap_clear`] for more documentation.
 pub fn string_multimap_clear(map: Option<&mut CefStringMultimap>) {
     unsafe {
         let arg_map = map;
@@ -16770,7 +16770,7 @@ pub fn string_multimap_clear(map: Option<&mut CefStringMultimap>) {
     }
 }
 
-/// See [cef_string_multimap_free] for more documentation.
+/// See [`cef_string_multimap_free`] for more documentation.
 pub fn string_multimap_free(map: Option<&mut CefStringMultimap>) {
     unsafe {
         let arg_map = map;
@@ -16781,7 +16781,7 @@ pub fn string_multimap_free(map: Option<&mut CefStringMultimap>) {
     }
 }
 
-/// See [cef_time_to_timet] for more documentation.
+/// See [`cef_time_to_timet`] for more documentation.
 pub fn time_to_timet(cef_time: Option<&Time>, time: Option<&mut time_t>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_cef_time, arg_time) = (cef_time, time);
@@ -16798,7 +16798,7 @@ pub fn time_to_timet(cef_time: Option<&Time>, time: Option<&mut time_t>) -> ::st
     }
 }
 
-/// See [cef_time_from_timet] for more documentation.
+/// See [`cef_time_from_timet`] for more documentation.
 pub fn time_from_timet(time: time_t, cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_time, arg_cef_time) = (time, cef_time);
@@ -16812,7 +16812,7 @@ pub fn time_from_timet(time: time_t, cef_time: Option<&mut Time>) -> ::std::os::
     }
 }
 
-/// See [cef_time_to_doublet] for more documentation.
+/// See [`cef_time_to_doublet`] for more documentation.
 pub fn time_to_doublet(cef_time: Option<&Time>, time: Option<&mut f64>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_cef_time, arg_time) = (cef_time, time);
@@ -16829,7 +16829,7 @@ pub fn time_to_doublet(cef_time: Option<&Time>, time: Option<&mut f64>) -> ::std
     }
 }
 
-/// See [cef_time_from_doublet] for more documentation.
+/// See [`cef_time_from_doublet`] for more documentation.
 pub fn time_from_doublet(time: f64, cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_time, arg_cef_time) = (time, cef_time);
@@ -16843,7 +16843,7 @@ pub fn time_from_doublet(time: f64, cef_time: Option<&mut Time>) -> ::std::os::r
     }
 }
 
-/// See [cef_time_now] for more documentation.
+/// See [`cef_time_now`] for more documentation.
 pub fn time_now(cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
     unsafe {
         let arg_cef_time = cef_time;
@@ -16857,7 +16857,7 @@ pub fn time_now(cef_time: Option<&mut Time>) -> ::std::os::raw::c_int {
     }
 }
 
-/// See [cef_basetime_now] for more documentation.
+/// See [`cef_basetime_now`] for more documentation.
 pub fn basetime_now() -> Basetime {
     unsafe {
         let result = cef_basetime_now();
@@ -16865,7 +16865,7 @@ pub fn basetime_now() -> Basetime {
     }
 }
 
-/// See [cef_time_delta] for more documentation.
+/// See [`cef_time_delta`] for more documentation.
 pub fn time_delta(
     cef_time_1: Option<&Time>,
     cef_time_2: Option<&Time>,
@@ -16891,7 +16891,7 @@ pub fn time_delta(
     }
 }
 
-/// See [cef_time_to_basetime] for more documentation.
+/// See [`cef_time_to_basetime`] for more documentation.
 pub fn time_to_basetime(from: Option<&Time>, to: Option<&mut Basetime>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_from, arg_to) = (from, to);
@@ -16910,7 +16910,7 @@ pub fn time_to_basetime(from: Option<&Time>, to: Option<&mut Basetime>) -> ::std
     }
 }
 
-/// See [cef_time_from_basetime] for more documentation.
+/// See [`cef_time_from_basetime`] for more documentation.
 pub fn time_from_basetime(from: _cef_basetime_t, to: Option<&mut Time>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_from, arg_to) = (from, to);
@@ -16924,7 +16924,7 @@ pub fn time_from_basetime(from: _cef_basetime_t, to: Option<&mut Time>) -> ::std
     }
 }
 
-/// See [cef_value_create] for more documentation.
+/// See [`cef_value_create`] for more documentation.
 pub fn value_create() -> Option<Value> {
     unsafe {
         let result = cef_value_create();
@@ -16936,7 +16936,7 @@ pub fn value_create() -> Option<Value> {
     }
 }
 
-/// See [cef_binary_value_create] for more documentation.
+/// See [`cef_binary_value_create`] for more documentation.
 pub fn binary_value_create(data: Option<&[u8]>) -> Option<BinaryValue> {
     unsafe {
         let arg_data = data;
@@ -16959,7 +16959,7 @@ pub fn binary_value_create(data: Option<&[u8]>) -> Option<BinaryValue> {
     }
 }
 
-/// See [cef_dictionary_value_create] for more documentation.
+/// See [`cef_dictionary_value_create`] for more documentation.
 pub fn dictionary_value_create() -> Option<DictionaryValue> {
     unsafe {
         let result = cef_dictionary_value_create();
@@ -16971,7 +16971,7 @@ pub fn dictionary_value_create() -> Option<DictionaryValue> {
     }
 }
 
-/// See [cef_list_value_create] for more documentation.
+/// See [`cef_list_value_create`] for more documentation.
 pub fn list_value_create() -> Option<ListValue> {
     unsafe {
         let result = cef_list_value_create();
@@ -16983,7 +16983,7 @@ pub fn list_value_create() -> Option<ListValue> {
     }
 }
 
-/// See [cef_image_create] for more documentation.
+/// See [`cef_image_create`] for more documentation.
 pub fn image_create() -> Option<Image> {
     unsafe {
         let result = cef_image_create();
@@ -16995,7 +16995,7 @@ pub fn image_create() -> Option<Image> {
     }
 }
 
-/// See [cef_stream_reader_create_for_file] for more documentation.
+/// See [`cef_stream_reader_create_for_file`] for more documentation.
 pub fn stream_reader_create_for_file(file_name: Option<&CefString>) -> Option<StreamReader> {
     unsafe {
         let arg_file_name = file_name;
@@ -17011,7 +17011,7 @@ pub fn stream_reader_create_for_file(file_name: Option<&CefString>) -> Option<St
     }
 }
 
-/// See [cef_stream_reader_create_for_data] for more documentation.
+/// See [`cef_stream_reader_create_for_data`] for more documentation.
 pub fn stream_reader_create_for_data(data: *mut u8, size: usize) -> Option<StreamReader> {
     unsafe {
         let (arg_data, arg_size) = (data, size);
@@ -17025,7 +17025,7 @@ pub fn stream_reader_create_for_data(data: *mut u8, size: usize) -> Option<Strea
     }
 }
 
-/// See [cef_stream_reader_create_for_handler] for more documentation.
+/// See [`cef_stream_reader_create_for_handler`] for more documentation.
 pub fn stream_reader_create_for_handler(handler: Option<&mut ReadHandler>) -> Option<StreamReader> {
     unsafe {
         let arg_handler = handler;
@@ -17043,7 +17043,7 @@ pub fn stream_reader_create_for_handler(handler: Option<&mut ReadHandler>) -> Op
     }
 }
 
-/// See [cef_stream_writer_create_for_file] for more documentation.
+/// See [`cef_stream_writer_create_for_file`] for more documentation.
 pub fn stream_writer_create_for_file(file_name: Option<&CefString>) -> Option<StreamWriter> {
     unsafe {
         let arg_file_name = file_name;
@@ -17059,7 +17059,7 @@ pub fn stream_writer_create_for_file(file_name: Option<&CefString>) -> Option<St
     }
 }
 
-/// See [cef_stream_writer_create_for_handler] for more documentation.
+/// See [`cef_stream_writer_create_for_handler`] for more documentation.
 pub fn stream_writer_create_for_handler(
     handler: Option<&mut WriteHandler>,
 ) -> Option<StreamWriter> {
@@ -17079,7 +17079,7 @@ pub fn stream_writer_create_for_handler(
     }
 }
 
-/// See [cef_drag_data_create] for more documentation.
+/// See [`cef_drag_data_create`] for more documentation.
 pub fn drag_data_create() -> Option<DragData> {
     unsafe {
         let result = cef_drag_data_create();
@@ -17091,7 +17091,7 @@ pub fn drag_data_create() -> Option<DragData> {
     }
 }
 
-/// See [cef_process_message_create] for more documentation.
+/// See [`cef_process_message_create`] for more documentation.
 pub fn process_message_create(name: Option<&CefString>) -> Option<ProcessMessage> {
     unsafe {
         let arg_name = name;
@@ -17107,7 +17107,7 @@ pub fn process_message_create(name: Option<&CefString>) -> Option<ProcessMessage
     }
 }
 
-/// See [cef_request_create] for more documentation.
+/// See [`cef_request_create`] for more documentation.
 pub fn request_create() -> Option<Request> {
     unsafe {
         let result = cef_request_create();
@@ -17119,7 +17119,7 @@ pub fn request_create() -> Option<Request> {
     }
 }
 
-/// See [cef_post_data_create] for more documentation.
+/// See [`cef_post_data_create`] for more documentation.
 pub fn post_data_create() -> Option<PostData> {
     unsafe {
         let result = cef_post_data_create();
@@ -17131,7 +17131,7 @@ pub fn post_data_create() -> Option<PostData> {
     }
 }
 
-/// See [cef_post_data_element_create] for more documentation.
+/// See [`cef_post_data_element_create`] for more documentation.
 pub fn post_data_element_create() -> Option<PostDataElement> {
     unsafe {
         let result = cef_post_data_element_create();
@@ -17143,7 +17143,7 @@ pub fn post_data_element_create() -> Option<PostDataElement> {
     }
 }
 
-/// See [cef_cookie_manager_get_global_manager] for more documentation.
+/// See [`cef_cookie_manager_get_global_manager`] for more documentation.
 pub fn cookie_manager_get_global_manager(
     callback: Option<&mut CompletionCallback>,
 ) -> Option<CookieManager> {
@@ -17163,7 +17163,7 @@ pub fn cookie_manager_get_global_manager(
     }
 }
 
-/// See [cef_media_router_get_global] for more documentation.
+/// See [`cef_media_router_get_global`] for more documentation.
 pub fn media_router_get_global(callback: Option<&mut CompletionCallback>) -> Option<MediaRouter> {
     unsafe {
         let arg_callback = callback;
@@ -17181,7 +17181,7 @@ pub fn media_router_get_global(callback: Option<&mut CompletionCallback>) -> Opt
     }
 }
 
-/// See [cef_preference_manager_get_chrome_variations_as_switches] for more documentation.
+/// See [`cef_preference_manager_get_chrome_variations_as_switches`] for more documentation.
 pub fn preference_manager_get_chrome_variations_as_switches(switches: Option<&mut CefStringList>) {
     unsafe {
         let arg_switches = switches;
@@ -17192,7 +17192,7 @@ pub fn preference_manager_get_chrome_variations_as_switches(switches: Option<&mu
     }
 }
 
-/// See [cef_preference_manager_get_chrome_variations_as_strings] for more documentation.
+/// See [`cef_preference_manager_get_chrome_variations_as_strings`] for more documentation.
 pub fn preference_manager_get_chrome_variations_as_strings(strings: Option<&mut CefStringList>) {
     unsafe {
         let arg_strings = strings;
@@ -17203,7 +17203,7 @@ pub fn preference_manager_get_chrome_variations_as_strings(strings: Option<&mut 
     }
 }
 
-/// See [cef_preference_manager_get_global] for more documentation.
+/// See [`cef_preference_manager_get_global`] for more documentation.
 pub fn preference_manager_get_global() -> Option<PreferenceManager> {
     unsafe {
         let result = cef_preference_manager_get_global();
@@ -17215,7 +17215,7 @@ pub fn preference_manager_get_global() -> Option<PreferenceManager> {
     }
 }
 
-/// See [cef_request_context_get_global_context] for more documentation.
+/// See [`cef_request_context_get_global_context`] for more documentation.
 pub fn request_context_get_global_context() -> Option<RequestContext> {
     unsafe {
         let result = cef_request_context_get_global_context();
@@ -17227,7 +17227,7 @@ pub fn request_context_get_global_context() -> Option<RequestContext> {
     }
 }
 
-/// See [cef_request_context_create_context] for more documentation.
+/// See [`cef_request_context_create_context`] for more documentation.
 pub fn request_context_create_context(
     settings: Option<&RequestContextSettings>,
     handler: Option<&mut RequestContextHandler>,
@@ -17253,7 +17253,7 @@ pub fn request_context_create_context(
     }
 }
 
-/// See [cef_request_context_cef_create_context_shared] for more documentation.
+/// See [`cef_request_context_cef_create_context_shared`] for more documentation.
 pub fn request_context_cef_create_context_shared(
     other: Option<&mut RequestContext>,
     handler: Option<&mut RequestContextHandler>,
@@ -17279,7 +17279,7 @@ pub fn request_context_cef_create_context_shared(
     }
 }
 
-/// See [cef_browser_host_create_browser] for more documentation.
+/// See [`cef_browser_host_create_browser`] for more documentation.
 pub fn browser_host_create_browser(
     window_info: Option<&WindowInfo>,
     client: Option<&mut Client>,
@@ -17344,7 +17344,7 @@ pub fn browser_host_create_browser(
     }
 }
 
-/// See [cef_browser_host_create_browser_sync] for more documentation.
+/// See [`cef_browser_host_create_browser_sync`] for more documentation.
 pub fn browser_host_create_browser_sync(
     window_info: Option<&WindowInfo>,
     client: Option<&mut Client>,
@@ -17413,7 +17413,7 @@ pub fn browser_host_create_browser_sync(
     }
 }
 
-/// See [cef_browser_host_get_browser_by_identifier] for more documentation.
+/// See [`cef_browser_host_get_browser_by_identifier`] for more documentation.
 pub fn browser_host_get_browser_by_identifier(
     browser_id: ::std::os::raw::c_int,
 ) -> Option<Browser> {
@@ -17428,7 +17428,7 @@ pub fn browser_host_get_browser_by_identifier(
     }
 }
 
-/// See [cef_menu_model_create] for more documentation.
+/// See [`cef_menu_model_create`] for more documentation.
 pub fn menu_model_create(delegate: Option<&mut MenuModelDelegate>) -> Option<MenuModel> {
     unsafe {
         let arg_delegate = delegate;
@@ -17446,7 +17446,7 @@ pub fn menu_model_create(delegate: Option<&mut MenuModelDelegate>) -> Option<Men
     }
 }
 
-/// See [cef_print_settings_create] for more documentation.
+/// See [`cef_print_settings_create`] for more documentation.
 pub fn print_settings_create() -> Option<PrintSettings> {
     unsafe {
         let result = cef_print_settings_create();
@@ -17458,7 +17458,7 @@ pub fn print_settings_create() -> Option<PrintSettings> {
     }
 }
 
-/// See [cef_response_create] for more documentation.
+/// See [`cef_response_create`] for more documentation.
 pub fn response_create() -> Option<Response> {
     unsafe {
         let result = cef_response_create();
@@ -17470,7 +17470,7 @@ pub fn response_create() -> Option<Response> {
     }
 }
 
-/// See [cef_is_cert_status_error] for more documentation.
+/// See [`cef_is_cert_status_error`] for more documentation.
 pub fn is_cert_status_error(status: CertStatus) -> ::std::os::raw::c_int {
     unsafe {
         let arg_status = status;
@@ -17480,7 +17480,7 @@ pub fn is_cert_status_error(status: CertStatus) -> ::std::os::raw::c_int {
     }
 }
 
-/// See [cef_command_line_create] for more documentation.
+/// See [`cef_command_line_create`] for more documentation.
 pub fn command_line_create() -> Option<CommandLine> {
     unsafe {
         let result = cef_command_line_create();
@@ -17492,7 +17492,7 @@ pub fn command_line_create() -> Option<CommandLine> {
     }
 }
 
-/// See [cef_command_line_get_global] for more documentation.
+/// See [`cef_command_line_get_global`] for more documentation.
 pub fn command_line_get_global() -> Option<CommandLine> {
     unsafe {
         let result = cef_command_line_get_global();
@@ -17504,7 +17504,7 @@ pub fn command_line_get_global() -> Option<CommandLine> {
     }
 }
 
-/// See [cef_task_runner_get_for_current_thread] for more documentation.
+/// See [`cef_task_runner_get_for_current_thread`] for more documentation.
 pub fn task_runner_get_for_current_thread() -> Option<TaskRunner> {
     unsafe {
         let result = cef_task_runner_get_for_current_thread();
@@ -17516,7 +17516,7 @@ pub fn task_runner_get_for_current_thread() -> Option<TaskRunner> {
     }
 }
 
-/// See [cef_task_runner_get_for_thread] for more documentation.
+/// See [`cef_task_runner_get_for_thread`] for more documentation.
 pub fn task_runner_get_for_thread(thread_id: ThreadId) -> Option<TaskRunner> {
     unsafe {
         let arg_thread_id = thread_id;
@@ -17530,7 +17530,7 @@ pub fn task_runner_get_for_thread(thread_id: ThreadId) -> Option<TaskRunner> {
     }
 }
 
-/// See [cef_currently_on] for more documentation.
+/// See [`cef_currently_on`] for more documentation.
 pub fn currently_on(thread_id: ThreadId) -> ::std::os::raw::c_int {
     unsafe {
         let arg_thread_id = thread_id;
@@ -17540,7 +17540,7 @@ pub fn currently_on(thread_id: ThreadId) -> ::std::os::raw::c_int {
     }
 }
 
-/// See [cef_post_task] for more documentation.
+/// See [`cef_post_task`] for more documentation.
 pub fn post_task(thread_id: ThreadId, task: Option<&mut Task>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_thread_id, arg_task) = (thread_id, task);
@@ -17555,7 +17555,7 @@ pub fn post_task(thread_id: ThreadId, task: Option<&mut Task>) -> ::std::os::raw
     }
 }
 
-/// See [cef_post_delayed_task] for more documentation.
+/// See [`cef_post_delayed_task`] for more documentation.
 pub fn post_delayed_task(
     thread_id: ThreadId,
     task: Option<&mut Task>,
@@ -17574,7 +17574,7 @@ pub fn post_delayed_task(
     }
 }
 
-/// See [cef_v8_context_get_current_context] for more documentation.
+/// See [`cef_v8_context_get_current_context`] for more documentation.
 pub fn v8_context_get_current_context() -> Option<V8Context> {
     unsafe {
         let result = cef_v8_context_get_current_context();
@@ -17586,7 +17586,7 @@ pub fn v8_context_get_current_context() -> Option<V8Context> {
     }
 }
 
-/// See [cef_v8_context_get_entered_context] for more documentation.
+/// See [`cef_v8_context_get_entered_context`] for more documentation.
 pub fn v8_context_get_entered_context() -> Option<V8Context> {
     unsafe {
         let result = cef_v8_context_get_entered_context();
@@ -17598,7 +17598,7 @@ pub fn v8_context_get_entered_context() -> Option<V8Context> {
     }
 }
 
-/// See [cef_v8_context_in_context] for more documentation.
+/// See [`cef_v8_context_in_context`] for more documentation.
 pub fn v8_context_in_context() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_v8_context_in_context();
@@ -17606,7 +17606,7 @@ pub fn v8_context_in_context() -> ::std::os::raw::c_int {
     }
 }
 
-/// See [cef_v8_value_create_undefined] for more documentation.
+/// See [`cef_v8_value_create_undefined`] for more documentation.
 pub fn v8_value_create_undefined() -> Option<V8Value> {
     unsafe {
         let result = cef_v8_value_create_undefined();
@@ -17618,7 +17618,7 @@ pub fn v8_value_create_undefined() -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_null] for more documentation.
+/// See [`cef_v8_value_create_null`] for more documentation.
 pub fn v8_value_create_null() -> Option<V8Value> {
     unsafe {
         let result = cef_v8_value_create_null();
@@ -17630,7 +17630,7 @@ pub fn v8_value_create_null() -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_bool] for more documentation.
+/// See [`cef_v8_value_create_bool`] for more documentation.
 pub fn v8_value_create_bool(value: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
@@ -17643,7 +17643,7 @@ pub fn v8_value_create_bool(value: ::std::os::raw::c_int) -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_int] for more documentation.
+/// See [`cef_v8_value_create_int`] for more documentation.
 pub fn v8_value_create_int(value: i32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
@@ -17656,7 +17656,7 @@ pub fn v8_value_create_int(value: i32) -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_uint] for more documentation.
+/// See [`cef_v8_value_create_uint`] for more documentation.
 pub fn v8_value_create_uint(value: u32) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
@@ -17669,7 +17669,7 @@ pub fn v8_value_create_uint(value: u32) -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_double] for more documentation.
+/// See [`cef_v8_value_create_double`] for more documentation.
 pub fn v8_value_create_double(value: f64) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
@@ -17682,7 +17682,7 @@ pub fn v8_value_create_double(value: f64) -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_date] for more documentation.
+/// See [`cef_v8_value_create_date`] for more documentation.
 pub fn v8_value_create_date(date: _cef_basetime_t) -> Option<V8Value> {
     unsafe {
         let arg_date = date;
@@ -17695,7 +17695,7 @@ pub fn v8_value_create_date(date: _cef_basetime_t) -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_string] for more documentation.
+/// See [`cef_v8_value_create_string`] for more documentation.
 pub fn v8_value_create_string(value: Option<&CefString>) -> Option<V8Value> {
     unsafe {
         let arg_value = value;
@@ -17711,7 +17711,7 @@ pub fn v8_value_create_string(value: Option<&CefString>) -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_object] for more documentation.
+/// See [`cef_v8_value_create_object`] for more documentation.
 pub fn v8_value_create_object(
     accessor: Option<&mut V8Accessor>,
     interceptor: Option<&mut V8Interceptor>,
@@ -17737,7 +17737,7 @@ pub fn v8_value_create_object(
     }
 }
 
-/// See [cef_v8_value_create_array] for more documentation.
+/// See [`cef_v8_value_create_array`] for more documentation.
 pub fn v8_value_create_array(length: ::std::os::raw::c_int) -> Option<V8Value> {
     unsafe {
         let arg_length = length;
@@ -17750,7 +17750,7 @@ pub fn v8_value_create_array(length: ::std::os::raw::c_int) -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_value_create_array_buffer] for more documentation.
+/// See [`cef_v8_value_create_array_buffer`] for more documentation.
 pub fn v8_value_create_array_buffer(
     buffer: *mut u8,
     length: usize,
@@ -17773,7 +17773,7 @@ pub fn v8_value_create_array_buffer(
     }
 }
 
-/// See [cef_v8_value_create_array_buffer_with_copy] for more documentation.
+/// See [`cef_v8_value_create_array_buffer_with_copy`] for more documentation.
 pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length) = (buffer, length);
@@ -17787,7 +17787,7 @@ pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) ->
     }
 }
 
-/// See [cef_v8_value_create_function] for more documentation.
+/// See [`cef_v8_value_create_function`] for more documentation.
 pub fn v8_value_create_function(
     name: Option<&CefString>,
     handler: Option<&mut V8Handler>,
@@ -17811,7 +17811,7 @@ pub fn v8_value_create_function(
     }
 }
 
-/// See [cef_v8_value_create_promise] for more documentation.
+/// See [`cef_v8_value_create_promise`] for more documentation.
 pub fn v8_value_create_promise() -> Option<V8Value> {
     unsafe {
         let result = cef_v8_value_create_promise();
@@ -17823,7 +17823,7 @@ pub fn v8_value_create_promise() -> Option<V8Value> {
     }
 }
 
-/// See [cef_v8_stack_trace_get_current] for more documentation.
+/// See [`cef_v8_stack_trace_get_current`] for more documentation.
 pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<V8StackTrace> {
     unsafe {
         let arg_frame_limit = frame_limit;
@@ -17836,7 +17836,7 @@ pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<
     }
 }
 
-/// See [cef_register_extension] for more documentation.
+/// See [`cef_register_extension`] for more documentation.
 pub fn register_extension(
     extension_name: Option<&CefString>,
     javascript_code: Option<&CefString>,
@@ -17861,7 +17861,7 @@ pub fn register_extension(
     }
 }
 
-/// See [cef_register_scheme_handler_factory] for more documentation.
+/// See [`cef_register_scheme_handler_factory`] for more documentation.
 pub fn register_scheme_handler_factory(
     scheme_name: Option<&CefString>,
     domain_name: Option<&CefString>,
@@ -17886,7 +17886,7 @@ pub fn register_scheme_handler_factory(
     }
 }
 
-/// See [cef_clear_scheme_handler_factories] for more documentation.
+/// See [`cef_clear_scheme_handler_factories`] for more documentation.
 pub fn clear_scheme_handler_factories() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_clear_scheme_handler_factories();
@@ -17894,7 +17894,7 @@ pub fn clear_scheme_handler_factories() -> ::std::os::raw::c_int {
     }
 }
 
-/// See [cef_execute_process] for more documentation.
+/// See [`cef_execute_process`] for more documentation.
 pub fn execute_process(
     args: Option<&MainArgs>,
     application: Option<&mut App>,
@@ -17919,7 +17919,7 @@ pub fn execute_process(
     }
 }
 
-/// See [cef_initialize] for more documentation.
+/// See [`cef_initialize`] for more documentation.
 pub fn initialize(
     args: Option<&MainArgs>,
     settings: Option<&Settings>,
@@ -17955,7 +17955,7 @@ pub fn initialize(
     }
 }
 
-/// See [cef_get_exit_code] for more documentation.
+/// See [`cef_get_exit_code`] for more documentation.
 pub fn get_exit_code() -> ::std::os::raw::c_int {
     unsafe {
         let result = cef_get_exit_code();
@@ -17963,35 +17963,35 @@ pub fn get_exit_code() -> ::std::os::raw::c_int {
     }
 }
 
-/// See [cef_shutdown] for more documentation.
+/// See [`cef_shutdown`] for more documentation.
 pub fn shutdown() {
     unsafe {
         cef_shutdown();
     }
 }
 
-/// See [cef_do_message_loop_work] for more documentation.
+/// See [`cef_do_message_loop_work`] for more documentation.
 pub fn do_message_loop_work() {
     unsafe {
         cef_do_message_loop_work();
     }
 }
 
-/// See [cef_run_message_loop] for more documentation.
+/// See [`cef_run_message_loop`] for more documentation.
 pub fn run_message_loop() {
     unsafe {
         cef_run_message_loop();
     }
 }
 
-/// See [cef_quit_message_loop] for more documentation.
+/// See [`cef_quit_message_loop`] for more documentation.
 pub fn quit_message_loop() {
     unsafe {
         cef_quit_message_loop();
     }
 }
 
-/// See [cef_urlrequest_create] for more documentation.
+/// See [`cef_urlrequest_create`] for more documentation.
 pub fn urlrequest_create(
     request: Option<&mut Request>,
     client: Option<&mut UrlrequestClient>,
@@ -18023,7 +18023,7 @@ pub fn urlrequest_create(
     }
 }
 
-/// See [cef_label_button_create] for more documentation.
+/// See [`cef_label_button_create`] for more documentation.
 pub fn label_button_create(
     delegate: Option<&mut ButtonDelegate>,
     text: Option<&CefString>,
@@ -18047,7 +18047,7 @@ pub fn label_button_create(
     }
 }
 
-/// See [cef_menu_button_create] for more documentation.
+/// See [`cef_menu_button_create`] for more documentation.
 pub fn menu_button_create(
     delegate: Option<&mut MenuButtonDelegate>,
     text: Option<&CefString>,
@@ -18071,7 +18071,7 @@ pub fn menu_button_create(
     }
 }
 
-/// See [cef_textfield_create] for more documentation.
+/// See [`cef_textfield_create`] for more documentation.
 pub fn textfield_create(delegate: Option<&mut TextfieldDelegate>) -> Option<Textfield> {
     unsafe {
         let arg_delegate = delegate;
@@ -18089,7 +18089,7 @@ pub fn textfield_create(delegate: Option<&mut TextfieldDelegate>) -> Option<Text
     }
 }
 
-/// See [cef_browser_view_create] for more documentation.
+/// See [`cef_browser_view_create`] for more documentation.
 pub fn browser_view_create(
     client: Option<&mut Client>,
     url: Option<&CefString>,
@@ -18145,7 +18145,7 @@ pub fn browser_view_create(
     }
 }
 
-/// See [cef_browser_view_get_for_browser] for more documentation.
+/// See [`cef_browser_view_get_for_browser`] for more documentation.
 pub fn browser_view_get_for_browser(browser: Option<&mut Browser>) -> Option<BrowserView> {
     unsafe {
         let arg_browser = browser;
@@ -18163,7 +18163,7 @@ pub fn browser_view_get_for_browser(browser: Option<&mut Browser>) -> Option<Bro
     }
 }
 
-/// See [cef_scroll_view_create] for more documentation.
+/// See [`cef_scroll_view_create`] for more documentation.
 pub fn scroll_view_create(delegate: Option<&mut ViewDelegate>) -> Option<ScrollView> {
     unsafe {
         let arg_delegate = delegate;
@@ -18181,7 +18181,7 @@ pub fn scroll_view_create(delegate: Option<&mut ViewDelegate>) -> Option<ScrollV
     }
 }
 
-/// See [cef_display_get_primary] for more documentation.
+/// See [`cef_display_get_primary`] for more documentation.
 pub fn display_get_primary() -> Option<Display> {
     unsafe {
         let result = cef_display_get_primary();
@@ -18193,7 +18193,7 @@ pub fn display_get_primary() -> Option<Display> {
     }
 }
 
-/// See [cef_display_get_nearest_point] for more documentation.
+/// See [`cef_display_get_nearest_point`] for more documentation.
 pub fn display_get_nearest_point(
     point: Option<&Point>,
     input_pixel_coords: ::std::os::raw::c_int,
@@ -18214,7 +18214,7 @@ pub fn display_get_nearest_point(
     }
 }
 
-/// See [cef_display_get_matching_bounds] for more documentation.
+/// See [`cef_display_get_matching_bounds`] for more documentation.
 pub fn display_get_matching_bounds(
     bounds: Option<&Rect>,
     input_pixel_coords: ::std::os::raw::c_int,
@@ -18235,7 +18235,7 @@ pub fn display_get_matching_bounds(
     }
 }
 
-/// See [cef_display_get_count] for more documentation.
+/// See [`cef_display_get_count`] for more documentation.
 pub fn display_get_count() -> usize {
     unsafe {
         let result = cef_display_get_count();
@@ -18243,7 +18243,7 @@ pub fn display_get_count() -> usize {
     }
 }
 
-/// See [cef_display_get_alls] for more documentation.
+/// See [`cef_display_get_alls`] for more documentation.
 pub fn display_get_alls(displays: Option<&mut Vec<Option<Display>>>) {
     unsafe {
         let arg_displays = displays;
@@ -18287,7 +18287,7 @@ pub fn display_get_alls(displays: Option<&mut Vec<Option<Display>>>) {
     }
 }
 
-/// See [cef_display_convert_screen_point_to_pixels] for more documentation.
+/// See [`cef_display_convert_screen_point_to_pixels`] for more documentation.
 pub fn display_convert_screen_point_to_pixels(point: Option<&Point>) -> Point {
     unsafe {
         let arg_point = point;
@@ -18301,7 +18301,7 @@ pub fn display_convert_screen_point_to_pixels(point: Option<&Point>) -> Point {
     }
 }
 
-/// See [cef_display_convert_screen_point_from_pixels] for more documentation.
+/// See [`cef_display_convert_screen_point_from_pixels`] for more documentation.
 pub fn display_convert_screen_point_from_pixels(point: Option<&Point>) -> Point {
     unsafe {
         let arg_point = point;
@@ -18315,7 +18315,7 @@ pub fn display_convert_screen_point_from_pixels(point: Option<&Point>) -> Point 
     }
 }
 
-/// See [cef_display_convert_screen_rect_to_pixels] for more documentation.
+/// See [`cef_display_convert_screen_rect_to_pixels`] for more documentation.
 pub fn display_convert_screen_rect_to_pixels(rect: Option<&Rect>) -> Rect {
     unsafe {
         let arg_rect = rect;
@@ -18329,7 +18329,7 @@ pub fn display_convert_screen_rect_to_pixels(rect: Option<&Rect>) -> Rect {
     }
 }
 
-/// See [cef_display_convert_screen_rect_from_pixels] for more documentation.
+/// See [`cef_display_convert_screen_rect_from_pixels`] for more documentation.
 pub fn display_convert_screen_rect_from_pixels(rect: Option<&Rect>) -> Rect {
     unsafe {
         let arg_rect = rect;
@@ -18343,7 +18343,7 @@ pub fn display_convert_screen_rect_from_pixels(rect: Option<&Rect>) -> Rect {
     }
 }
 
-/// See [cef_panel_create] for more documentation.
+/// See [`cef_panel_create`] for more documentation.
 pub fn panel_create(delegate: Option<&mut PanelDelegate>) -> Option<Panel> {
     unsafe {
         let arg_delegate = delegate;
@@ -18361,7 +18361,7 @@ pub fn panel_create(delegate: Option<&mut PanelDelegate>) -> Option<Panel> {
     }
 }
 
-/// See [cef_window_create_top_level] for more documentation.
+/// See [`cef_window_create_top_level`] for more documentation.
 pub fn window_create_top_level(delegate: Option<&mut WindowDelegate>) -> Option<Window> {
     unsafe {
         let arg_delegate = delegate;

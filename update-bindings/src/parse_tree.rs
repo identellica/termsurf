@@ -1156,7 +1156,7 @@ impl SignatureRef<'_> {
     }
 
     fn get_signature(&self, tree: &ParseTree) -> proc_macro2::TokenStream {
-        let name = &self.name;
+        let name = make_rust_method_name(&self.name);
         let name = format_ident!("{name}");
         let args = self.get_rust_args(tree);
         let output = self.get_rust_output(tree);
@@ -1695,7 +1695,7 @@ impl ParseTree<'_> {
                 .split_whitespace()
                 .flat_map(|word| word.chars())
                 .collect();
-            let comment = format!("See [{comment_ty}] for more documentation.");
+            let comment = format!("See [`{comment_ty}`] for more documentation.");
             let (Some(rust_name), Some(arg_ty)) = (
                 make_rust_type_name(name.as_str()),
                 self.resolve_modified_type(ty),
@@ -1881,7 +1881,12 @@ impl ParseTree<'_> {
         let impl_base_name = impl_base_name.unwrap_or(quote! { Clone + Sized + Rc });
         let impl_methods = s.methods.iter().map(|m| {
             let sig = m.get_signature(self);
-            quote! { #sig; }
+            let method_name = &m.name;
+            let comment = format!("See [`{name}::{method_name}`] for more documentation.");
+            quote! {
+                #[doc = #comment]
+                #sig;
+            }
         });
 
         let mut base_name = base_name;
@@ -1906,7 +1911,7 @@ impl ParseTree<'_> {
                     let base = format_ident!("{base}");
                     let base_methods = base_struct.methods.iter().map(|m| {
                         let sig = m.get_signature(self);
-                        let name = &m.name;
+                        let name = make_rust_method_name(&m.name);
                         let name = format_ident!("{name}");
                         let args = m.merge_params(self).filter_map(|arg| match arg {
                             MergedParam::Single { name, .. } => {
@@ -2185,6 +2190,8 @@ impl ParseTree<'_> {
         let impl_base_name = impl_base_name.unwrap_or(quote! { Clone + Sized + Rc });
         let impl_methods = s.methods.iter().map(|m| {
             let sig = m.get_signature(self);
+            let method_name = &m.name;
+            let comment = format!("See [`{name}::{method_name}`] for more documentation.");
             let impl_default =
                 m.output.map(
                     |ty| match syn::parse2::<ModifiedType>(ty.to_token_stream()) {
@@ -2198,6 +2205,7 @@ impl ParseTree<'_> {
                     },
                 );
             quote! {
+                #[doc = #comment]
                 #sig {
                     #impl_default
                 }
@@ -2242,7 +2250,7 @@ impl ParseTree<'_> {
                     let base = format_ident!("{base}");
                     let base_methods = base_struct.methods.iter().map(|m| {
                         let sig = m.get_signature(self);
-                        let name = &m.name;
+                        let name = make_rust_method_name(&m.name);
                         let name = format_ident!("{name}");
                         let args = m.merge_params(self).filter_map(|arg| match arg {
                             MergedParam::Single { name, .. } => {
@@ -2292,78 +2300,80 @@ impl ParseTree<'_> {
         });
 
         let wrapped_methods = s.methods.iter().map(|m| {
-                let name = &m.name;
+            let name = &m.name;
+            let rust_method_name = make_rust_method_name(name);
+            let name = format_ident!("{name}");
+            let rust_method_name = format_ident!("{rust_method_name}");
+            let args = m.inputs.iter().map(|arg| {
+                let name = make_snake_case_value_name(&arg.name);
                 let name = format_ident!("{name}");
-                let args = m.inputs.iter().map(|arg| {
-                    let name = make_snake_case_value_name(&arg.name);
-                    let name = format_ident!("{name}");
-                    let ty = self.resolve_type_aliases(arg.ty);
-                    quote! { #name: #ty }
-                });
-                let wrapped_args = m.wrap_cef_args(self);
-                let unwrapped_args = m.unwrap_cef_args(self);
-                let forward_args = m.merge_params(self).filter_map(|arg| match arg {
-                    MergedParam::Single { name, .. } => {
-                        let name = format_ident!("arg_{name}");
-                        Some(quote! { #name })
-                    }
-                    MergedParam::Bounded { slice_name, .. }
-                    | MergedParam::Buffer { slice_name, .. } => {
-                        let name = format_ident!("arg_{slice_name}");
-                        Some(quote! { #name })
-                    }
-                    _ => None,
-                });
-                let original_output = m.output.map(|ty| self.resolve_type_aliases(ty));
-                let output = original_output.as_ref().map(|output| {
-                    quote! { -> #output }
-                });
-                let forward_output = original_output.and_then(|output| {
-                    match syn::parse2::<ModifiedType>(output) {
-                        Ok(ModifiedType { ty, modifiers }) => {
-                            self.cef_name_map
-                                .get(&ty.to_token_stream().to_string())
-                                .and_then(|entry| match entry {
-                                    NameMapEntry {
-                                        ty: NameMapType::StructDeclaration,
-                                        ..
-                                    } => match modifiers.as_slice() {
-                                        [TypeModifier::ConstPtr] => {
-                                            Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) })
-                                        }
-                                        [TypeModifier::MutPtr] => {
-                                            Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
-                                        }
-                                        _ => Some(quote! { result.into() }),
+                let ty = self.resolve_type_aliases(arg.ty);
+                quote! { #name: #ty }
+            });
+            let wrapped_args = m.wrap_cef_args(self);
+            let unwrapped_args = m.unwrap_cef_args(self);
+            let forward_args = m.merge_params(self).filter_map(|arg| match arg {
+                MergedParam::Single { name, .. } => {
+                    let name = format_ident!("arg_{name}");
+                    Some(quote! { #name })
+                }
+                MergedParam::Bounded { slice_name, .. }
+                | MergedParam::Buffer { slice_name, .. } => {
+                    let name = format_ident!("arg_{slice_name}");
+                    Some(quote! { #name })
+                }
+                _ => None,
+            });
+            let original_output = m.output.map(|ty| self.resolve_type_aliases(ty));
+            let output = original_output.as_ref().map(|output| {
+                quote! { -> #output }
+            });
+            let forward_output = original_output.and_then(|output| {
+                match syn::parse2::<ModifiedType>(output) {
+                    Ok(ModifiedType { ty, modifiers }) => {
+                        self.cef_name_map
+                            .get(&ty.to_token_stream().to_string())
+                            .and_then(|entry| match entry {
+                                NameMapEntry {
+                                    ty: NameMapType::StructDeclaration,
+                                    ..
+                                } => match modifiers.as_slice() {
+                                    [TypeModifier::ConstPtr] => {
+                                        Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) })
+                                    }
+                                    [TypeModifier::MutPtr] => {
+                                        Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
                                     }
                                     _ => Some(quote! { result.into() }),
-                                })
-                                .or_else(|| {
-                                    if unwrapped_args.is_empty() {
-                                        None
-                                    } else {
-                                        Some(quote! { result })
-                                    }
-                                })
-                        }
-                        _ => None,
+                                }
+                                _ => Some(quote! { result.into() }),
+                            })
+                            .or_else(|| {
+                                if unwrapped_args.is_empty() {
+                                    None
+                                } else {
+                                    Some(quote! { result })
+                                }
+                            })
                     }
-                });
-                let mut call_impl =
-                    quote! { #impl_trait::#name(&arg_self_.interface, #(#forward_args),*) };
-                if forward_output.is_some() || !unwrapped_args.is_empty() {
-                    call_impl = quote! { let result = #call_impl; };
-                }
-
-                quote! {
-                    extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
-                        #wrapped_args
-                        #call_impl
-                        #unwrapped_args
-                        #forward_output
-                    }
+                    _ => None,
                 }
             });
+            let mut call_impl =
+                quote! { #impl_trait::#rust_method_name(&arg_self_.interface, #(#forward_args),*) };
+            if forward_output.is_some() || !unwrapped_args.is_empty() {
+                call_impl = quote! { let result = #call_impl; };
+            }
+
+            quote! {
+                extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
+                    #wrapped_args
+                    #call_impl
+                    #unwrapped_args
+                    #forward_output
+                }
+            }
+        });
 
         let base_ident = format_ident!("{BASE_REF_COUNTED}");
 
@@ -2631,7 +2641,10 @@ impl ParseTree<'_> {
         let impl_base_name = impl_base_name.unwrap_or(quote! { Sized });
         let impl_methods = s.methods.iter().map(|m| {
             let sig = m.get_signature(self);
+            let method_name = &m.name;
+            let comment = format!("See [`{name}::{method_name}`] for more documentation.");
             quote! {
+                #[doc = #comment]
                 #sig;
             }
         });
@@ -2722,7 +2735,9 @@ impl ParseTree<'_> {
 
         let wrapped_methods = s.methods.iter().map(|m| {
                 let name = &m.name;
+                let rust_method_name = make_rust_method_name(name);
                 let name = format_ident!("{name}");
+                let rust_method_name = format_ident!("{rust_method_name}");
                 let args = m.inputs.iter().map(|arg| {
                     let name = make_snake_case_value_name(&arg.name);
                     let name = format_ident!("{name}");
@@ -2779,7 +2794,7 @@ impl ParseTree<'_> {
                     }
                 });
                 let mut call_impl =
-                    quote! { #impl_trait::#name(&arg_self_.interface, #(#forward_args),*) };
+                    quote! { #impl_trait::#rust_method_name(&arg_self_.interface, #(#forward_args),*) };
                 if forward_output.is_some() || !unwrapped_args.is_empty() {
                     call_impl = quote! { let result = #call_impl; };
                 }
@@ -2876,7 +2891,7 @@ impl ParseTree<'_> {
             let rust_name = format_ident!("{rust_name}");
 
             let name = s.name.as_str();
-            writeln!(f, "\n/// See [{name}] for more documentation.")?;
+            writeln!(f, "\n/// See [`{name}`] for more documentation.")?;
 
             if CUSTOM_STRING_TYPES.contains(&name) {
                 self.write_custom_string_type(f, &rust_name)?;
@@ -3074,7 +3089,7 @@ impl ParseTree<'_> {
             .filter_map(|e| make_rust_type_name(&e.name).map(|rust_name| (rust_name, e)));
         for (rust_name, e) in enum_names {
             let name = &e.name;
-            writeln!(f, "\n/// See [{name}] for more documentation.")?;
+            writeln!(f, "\n/// See [`{name}`] for more documentation.")?;
             let name = format_ident!("{name}");
             let rust_name = format_ident!("{rust_name}");
             let impl_default =
@@ -3129,7 +3144,7 @@ impl ParseTree<'_> {
 
         for global_fn in self.global_function_declarations.iter() {
             let original_name = global_fn.name.as_str();
-            writeln!(f, "\n/// See [{original_name}] for more documentation.")?;
+            writeln!(f, "\n/// See [`{original_name}`] for more documentation.")?;
             let name = pattern
                 .captures(original_name)
                 .and_then(|captures| captures.get(1))
@@ -3488,4 +3503,14 @@ fn make_rust_type_name(name: &str) -> Option<String> {
 
 fn make_snake_case_value_name(name: &str) -> String {
     name.from_case(Case::Camel).to_case(Case::Snake)
+}
+
+const RUST_METHOD_EXCEPTIONS: &[&str] = &["get_type", "get_layout"];
+
+fn make_rust_method_name(name: &str) -> &str {
+    if RUST_METHOD_EXCEPTIONS.contains(&name) {
+        name
+    } else {
+        name.trim_start_matches("get_")
+    }
 }
