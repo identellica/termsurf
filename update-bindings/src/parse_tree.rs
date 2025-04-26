@@ -1156,7 +1156,7 @@ impl SignatureRef<'_> {
     }
 
     fn get_signature(&self, tree: &ParseTree) -> proc_macro2::TokenStream {
-        let name = &self.name;
+        let name = make_rust_method_name(&self.name);
         let name = format_ident!("{name}");
         let args = self.get_rust_args(tree);
         let output = self.get_rust_output(tree);
@@ -1906,7 +1906,7 @@ impl ParseTree<'_> {
                     let base = format_ident!("{base}");
                     let base_methods = base_struct.methods.iter().map(|m| {
                         let sig = m.get_signature(self);
-                        let name = &m.name;
+                        let name = make_rust_method_name(&m.name);
                         let name = format_ident!("{name}");
                         let args = m.merge_params(self).filter_map(|arg| match arg {
                             MergedParam::Single { name, .. } => {
@@ -2242,7 +2242,7 @@ impl ParseTree<'_> {
                     let base = format_ident!("{base}");
                     let base_methods = base_struct.methods.iter().map(|m| {
                         let sig = m.get_signature(self);
-                        let name = &m.name;
+                        let name = make_rust_method_name(&m.name);
                         let name = format_ident!("{name}");
                         let args = m.merge_params(self).filter_map(|arg| match arg {
                             MergedParam::Single { name, .. } => {
@@ -2292,78 +2292,80 @@ impl ParseTree<'_> {
         });
 
         let wrapped_methods = s.methods.iter().map(|m| {
-                let name = &m.name;
+            let name = &m.name;
+            let rust_method_name = make_rust_method_name(name);
+            let name = format_ident!("{name}");
+            let rust_method_name = format_ident!("{rust_method_name}");
+            let args = m.inputs.iter().map(|arg| {
+                let name = make_snake_case_value_name(&arg.name);
                 let name = format_ident!("{name}");
-                let args = m.inputs.iter().map(|arg| {
-                    let name = make_snake_case_value_name(&arg.name);
-                    let name = format_ident!("{name}");
-                    let ty = self.resolve_type_aliases(arg.ty);
-                    quote! { #name: #ty }
-                });
-                let wrapped_args = m.wrap_cef_args(self);
-                let unwrapped_args = m.unwrap_cef_args(self);
-                let forward_args = m.merge_params(self).filter_map(|arg| match arg {
-                    MergedParam::Single { name, .. } => {
-                        let name = format_ident!("arg_{name}");
-                        Some(quote! { #name })
-                    }
-                    MergedParam::Bounded { slice_name, .. }
-                    | MergedParam::Buffer { slice_name, .. } => {
-                        let name = format_ident!("arg_{slice_name}");
-                        Some(quote! { #name })
-                    }
-                    _ => None,
-                });
-                let original_output = m.output.map(|ty| self.resolve_type_aliases(ty));
-                let output = original_output.as_ref().map(|output| {
-                    quote! { -> #output }
-                });
-                let forward_output = original_output.and_then(|output| {
-                    match syn::parse2::<ModifiedType>(output) {
-                        Ok(ModifiedType { ty, modifiers }) => {
-                            self.cef_name_map
-                                .get(&ty.to_token_stream().to_string())
-                                .and_then(|entry| match entry {
-                                    NameMapEntry {
-                                        ty: NameMapType::StructDeclaration,
-                                        ..
-                                    } => match modifiers.as_slice() {
-                                        [TypeModifier::ConstPtr] => {
-                                            Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) })
-                                        }
-                                        [TypeModifier::MutPtr] => {
-                                            Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
-                                        }
-                                        _ => Some(quote! { result.into() }),
+                let ty = self.resolve_type_aliases(arg.ty);
+                quote! { #name: #ty }
+            });
+            let wrapped_args = m.wrap_cef_args(self);
+            let unwrapped_args = m.unwrap_cef_args(self);
+            let forward_args = m.merge_params(self).filter_map(|arg| match arg {
+                MergedParam::Single { name, .. } => {
+                    let name = format_ident!("arg_{name}");
+                    Some(quote! { #name })
+                }
+                MergedParam::Bounded { slice_name, .. }
+                | MergedParam::Buffer { slice_name, .. } => {
+                    let name = format_ident!("arg_{slice_name}");
+                    Some(quote! { #name })
+                }
+                _ => None,
+            });
+            let original_output = m.output.map(|ty| self.resolve_type_aliases(ty));
+            let output = original_output.as_ref().map(|output| {
+                quote! { -> #output }
+            });
+            let forward_output = original_output.and_then(|output| {
+                match syn::parse2::<ModifiedType>(output) {
+                    Ok(ModifiedType { ty, modifiers }) => {
+                        self.cef_name_map
+                            .get(&ty.to_token_stream().to_string())
+                            .and_then(|entry| match entry {
+                                NameMapEntry {
+                                    ty: NameMapType::StructDeclaration,
+                                    ..
+                                } => match modifiers.as_slice() {
+                                    [TypeModifier::ConstPtr] => {
+                                        Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) })
+                                    }
+                                    [TypeModifier::MutPtr] => {
+                                        Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
                                     }
                                     _ => Some(quote! { result.into() }),
-                                })
-                                .or_else(|| {
-                                    if unwrapped_args.is_empty() {
-                                        None
-                                    } else {
-                                        Some(quote! { result })
-                                    }
-                                })
-                        }
-                        _ => None,
+                                }
+                                _ => Some(quote! { result.into() }),
+                            })
+                            .or_else(|| {
+                                if unwrapped_args.is_empty() {
+                                    None
+                                } else {
+                                    Some(quote! { result })
+                                }
+                            })
                     }
-                });
-                let mut call_impl =
-                    quote! { #impl_trait::#name(&arg_self_.interface, #(#forward_args),*) };
-                if forward_output.is_some() || !unwrapped_args.is_empty() {
-                    call_impl = quote! { let result = #call_impl; };
-                }
-
-                quote! {
-                    extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
-                        #wrapped_args
-                        #call_impl
-                        #unwrapped_args
-                        #forward_output
-                    }
+                    _ => None,
                 }
             });
+            let mut call_impl =
+                quote! { #impl_trait::#rust_method_name(&arg_self_.interface, #(#forward_args),*) };
+            if forward_output.is_some() || !unwrapped_args.is_empty() {
+                call_impl = quote! { let result = #call_impl; };
+            }
+
+            quote! {
+                extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
+                    #wrapped_args
+                    #call_impl
+                    #unwrapped_args
+                    #forward_output
+                }
+            }
+        });
 
         let base_ident = format_ident!("{BASE_REF_COUNTED}");
 
@@ -2722,7 +2724,9 @@ impl ParseTree<'_> {
 
         let wrapped_methods = s.methods.iter().map(|m| {
                 let name = &m.name;
+                let rust_method_name = make_rust_method_name(name);
                 let name = format_ident!("{name}");
+                let rust_method_name = format_ident!("{rust_method_name}");
                 let args = m.inputs.iter().map(|arg| {
                     let name = make_snake_case_value_name(&arg.name);
                     let name = format_ident!("{name}");
@@ -2779,7 +2783,7 @@ impl ParseTree<'_> {
                     }
                 });
                 let mut call_impl =
-                    quote! { #impl_trait::#name(&arg_self_.interface, #(#forward_args),*) };
+                    quote! { #impl_trait::#rust_method_name(&arg_self_.interface, #(#forward_args),*) };
                 if forward_output.is_some() || !unwrapped_args.is_empty() {
                     call_impl = quote! { let result = #call_impl; };
                 }
@@ -3488,4 +3492,14 @@ fn make_rust_type_name(name: &str) -> Option<String> {
 
 fn make_snake_case_value_name(name: &str) -> String {
     name.from_case(Case::Camel).to_case(Case::Snake)
+}
+
+const RUST_METHOD_EXCEPTIONS: &[&str] = &["get_type", "get_layout"];
+
+fn make_rust_method_name(name: &str) -> &str {
+    if RUST_METHOD_EXCEPTIONS.contains(&name) {
+        name
+    } else {
+        name.trim_start_matches("get_")
+    }
 }
