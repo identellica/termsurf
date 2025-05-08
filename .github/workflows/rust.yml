@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4.1.3
+      - uses: actions/checkout@v4.2.2
 
       - name: Check fmt
         run: cargo fmt --check
@@ -34,7 +34,7 @@ jobs:
 
       - name: Cache CEF
         id: cache-cef
-        uses: actions/cache@v4.2.0
+        uses: actions/cache@v4.2.3
         with:
           path: ~/.local/share/cef
           key: cef-${{ matrix.os }}-${{ hashFiles('Cargo.toml') }}
