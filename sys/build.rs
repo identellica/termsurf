@@ -65,6 +65,11 @@ fn main() -> anyhow::Result<()> {
         .profile("RelWithDebInfo")
         .no_build_target(true);
 
+    let project_arch = match os_arch.arch {
+        "aarch64" => "arm64",
+        arch => arch,
+    };
+
     match os_arch.os {
         "linux" => {
             println!("cargo::rustc-link-lib=dylib=cef");
@@ -92,6 +97,7 @@ fn main() -> anyhow::Result<()> {
                 .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded")
                 .define("CMAKE_OBJECT_PATH_MAX", "500")
                 .define("CMAKE_STATIC_LINKER_FLAGS", &sdk_libs)
+                .define("PROJECT_ARCH", project_arch)
                 .build()
                 .display()
                 .to_string();
@@ -108,6 +114,7 @@ fn main() -> anyhow::Result<()> {
 
             let build_dir = cef_dll_wrapper
                 .no_default_flags(true)
+                .define("PROJECT_ARCH", project_arch)
                 .build()
                 .display()
                 .to_string();
