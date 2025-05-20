@@ -171,7 +171,7 @@ impl SignatureRef<'_> {
                             let elem_ty_string = elem_tokens.to_string();
                             match tree.cef_name_map.get(&elem_ty_string) {
                                 Some(NameMapEntry {
-                                    ty: NameMapType::StructDeclaration,
+                                    ty: NameMapType::StructDeclaration(_),
                                     ..
                                 }) => {
                                     let modifiers = match (
@@ -481,7 +481,7 @@ impl SignatureRef<'_> {
                     .or_else(|| {
                         match entry {
                             Some(NameMapEntry {
-                                ty: NameMapType::StructDeclaration,
+                                ty: NameMapType::StructDeclaration(_),
                                 ..
                             }) if tree.lookup_struct_declaration
                                     .get(&ty_string)
@@ -508,7 +508,7 @@ impl SignatureRef<'_> {
                                 }
                             }
                             Some(NameMapEntry {
-                                ty: NameMapType::StructDeclaration,
+                                ty: NameMapType::StructDeclaration(_),
                                 ..
                             }) => {
                                 let impl_default = match modifiers {
@@ -809,7 +809,7 @@ impl SignatureRef<'_> {
                         match entry? {
                             NameMapEntry {
                                 name,
-                                ty: NameMapType::StructDeclaration,
+                                ty: NameMapType::StructDeclaration(_),
                             } => {
                                 let name = format_ident!("{name}");
 
@@ -845,7 +845,7 @@ impl SignatureRef<'_> {
                     .flatten()
                     .or_else(|| {
                         if root == BASE_SCOPED {
-                            let Some(NameMapEntry { name, ty: NameMapType::StructDeclaration }) = entry else {
+                            let Some(NameMapEntry { name, ty: NameMapType::StructDeclaration(_) }) = entry else {
                                 return None;
                             };
                             let name = format_ident!("{name}");
@@ -937,7 +937,7 @@ impl SignatureRef<'_> {
                         match entry? {
                             NameMapEntry {
                                 name,
-                                ty: NameMapType::StructDeclaration,
+                                ty: NameMapType::StructDeclaration(_),
                             } => {
                                 let name = format_ident!("{name}");
 
@@ -1298,7 +1298,7 @@ struct StructDeclarationRef<'a> {
 enum NameMapType {
     TypeAlias,
     EnumName,
-    StructDeclaration,
+    StructDeclaration(bool /* is_sealed */),
 }
 
 struct NameMapEntry {
@@ -1330,22 +1330,35 @@ impl ModifiedType {
         match tree.cef_name_map.get(&elem_string) {
             Some(NameMapEntry {
                 name,
-                ty: NameMapType::StructDeclaration,
+                ty: NameMapType::StructDeclaration(is_sealed),
             }) => {
+                let is_sealed = *is_sealed;
                 let root = tree.root(&elem_string);
                 if BASE_REF_COUNTED == root && root != elem_string.as_str() {
                     let impl_trait = format_ident!("Impl{name}");
                     let name = format_ident!("{name}");
 
                     match self.modifiers.as_slice() {
-                        [TypeModifier::ConstPtr] => Some(quote! { Option<&impl #impl_trait> }),
-                        [TypeModifier::MutPtr] => Some(quote! { Option<&mut impl #impl_trait> }),
-                        [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
-                            Some(quote! { Option<&mut Option<impl #impl_trait>> })
-                        }
-                        [TypeModifier::Slice] => {
-                            Some(quote! { Option<&[Option<impl #impl_trait>]> })
-                        }
+                        [TypeModifier::ConstPtr] => Some(if is_sealed {
+                            quote! { Option<&#name> }
+                        } else {
+                            quote! { Option<&impl #impl_trait> }
+                        }),
+                        [TypeModifier::MutPtr] => Some(if is_sealed {
+                            quote! { Option<&mut #name> }
+                        } else {
+                            quote! { Option<&mut impl #impl_trait> }
+                        }),
+                        [TypeModifier::MutPtr, TypeModifier::MutPtr] => Some(if is_sealed {
+                            quote! { Option<&mut Option<#name>> }
+                        } else {
+                            quote! { Option<&mut Option<impl #impl_trait>> }
+                        }),
+                        [TypeModifier::Slice] => Some(if is_sealed {
+                            quote! { Option<&[Option<#name>]> }
+                        } else {
+                            quote! { Option<&[Option<impl #impl_trait>]> }
+                        }),
                         [TypeModifier::MutSlice] => {
                             Some(quote! { Option<&mut Vec<Option<#name>>> })
                         }
@@ -1456,7 +1469,7 @@ impl ModifiedType {
             .and_then(|entry| match entry {
                 NameMapEntry {
                     name,
-                    ty: NameMapType::StructDeclaration,
+                    ty: NameMapType::StructDeclaration(_),
                 } => {
                     let name = format_ident!("{name}");
 
@@ -1806,7 +1819,7 @@ impl ParseTree<'_> {
                         {
                             match self.cef_name_map.get(&ty) {
                                 Some(NameMapEntry {
-                                    ty: NameMapType::StructDeclaration,
+                                    ty: NameMapType::StructDeclaration(_),
                                     ..
                                 }) => Some(quote! {
                                     if result.is_null() {
@@ -1927,10 +1940,7 @@ impl ParseTree<'_> {
                         });
                         quote! {
                             #sig {
-                                #base(unsafe {
-                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast())
-                                })
-                                .#name(#(#args),*)
+                                #base::from(self).#name(#(#args),*)
                             }
                         }
                     });
@@ -1941,6 +1951,14 @@ impl ParseTree<'_> {
 
                             fn get_raw(&self) -> *mut #base_ident {
                                 unsafe { RefGuard::into_raw(&self.0).cast() }
+                            }
+                        }
+
+                        impl std::convert::From<&#rust_name> for #base {
+                            fn from(from: &#rust_name) -> Self {
+                                #base(unsafe {
+                                    RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast())
+                                })
                             }
                         }
                     }
@@ -2114,7 +2132,7 @@ impl ParseTree<'_> {
                         {
                             match self.cef_name_map.get(&ty) {
                                 Some(NameMapEntry {
-                                    ty: NameMapType::StructDeclaration,
+                                    ty: NameMapType::StructDeclaration(_),
                                     ..
                                 }) => Some(quote! {
                                     if result.is_null() {
@@ -2335,7 +2353,7 @@ impl ParseTree<'_> {
                             .get(&ty.to_token_stream().to_string())
                             .and_then(|entry| match entry {
                                 NameMapEntry {
-                                    ty: NameMapType::StructDeclaration,
+                                    ty: NameMapType::StructDeclaration(_),
                                     ..
                                 } => match modifiers.as_slice() {
                                     [TypeModifier::ConstPtr] => {
@@ -2566,7 +2584,7 @@ impl ParseTree<'_> {
                         {
                             match self.cef_name_map.get(&ty) {
                                 Some(NameMapEntry {
-                                    ty: NameMapType::StructDeclaration,
+                                    ty: NameMapType::StructDeclaration(_),
                                     ..
                                 }) => Some(quote! {
                                     if result.is_null() {
@@ -2769,7 +2787,7 @@ impl ParseTree<'_> {
                                 .get(&ty.to_token_stream().to_string())
                                 .and_then(|entry| match entry {
                                     NameMapEntry {
-                                        ty: NameMapType::StructDeclaration,
+                                        ty: NameMapType::StructDeclaration(_),
                                         ..
                                     } => match modifiers.as_slice() {
                                         [TypeModifier::ConstPtr] => {
@@ -2883,7 +2901,7 @@ impl ParseTree<'_> {
         for s in self.struct_declarations.iter() {
             let Some(NameMapEntry {
                 name: rust_name,
-                ty: NameMapType::StructDeclaration,
+                ty: NameMapType::StructDeclaration(_),
             }) = self.cef_name_map.get(&s.name)
             else {
                 continue;
@@ -3184,7 +3202,7 @@ impl ParseTree<'_> {
                         {
                             match self.cef_name_map.get(&ty) {
                                 Some(NameMapEntry {
-                                    ty: NameMapType::StructDeclaration,
+                                    ty: NameMapType::StructDeclaration(_),
                                     ..
                                 }) => Some(quote! {
                                     if result.is_null() {
@@ -3401,8 +3419,10 @@ impl<'a> From<&'a syn::File> for ParseTree<'a> {
             .chain(
                 tree.struct_declarations
                     .iter()
-                    .map(|s| s.name.as_str())
-                    .map(|cef_name| (cef_name, NameMapType::StructDeclaration)),
+                    .map(|s| (s.name.as_str(), s.is_sealed))
+                    .map(|(cef_name, is_sealed)| {
+                        (cef_name, NameMapType::StructDeclaration(is_sealed))
+                    }),
             )
             .filter_map(|(cef_name, ty)| {
                 make_rust_type_name(cef_name).map(|rust_name| (cef_name, (rust_name, ty)))
