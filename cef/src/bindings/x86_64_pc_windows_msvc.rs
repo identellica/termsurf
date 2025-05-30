@@ -1664,7 +1664,7 @@ pub trait ImplDevToolsMessageObserver: Clone + Sized + Rc {
     #[doc = "See [`_cef_dev_tools_message_observer_t::on_dev_tools_message`] for more documentation."]
     fn on_dev_tools_message(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         message: Option<&[u8]>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -1672,7 +1672,7 @@ pub trait ImplDevToolsMessageObserver: Clone + Sized + Rc {
     #[doc = "See [`_cef_dev_tools_message_observer_t::on_dev_tools_method_result`] for more documentation."]
     fn on_dev_tools_method_result(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         message_id: ::std::os::raw::c_int,
         success: ::std::os::raw::c_int,
         result: Option<&[u8]>,
@@ -1681,15 +1681,15 @@ pub trait ImplDevToolsMessageObserver: Clone + Sized + Rc {
     #[doc = "See [`_cef_dev_tools_message_observer_t::on_dev_tools_event`] for more documentation."]
     fn on_dev_tools_event(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         method: Option<&CefString>,
         params: Option<&[u8]>,
     ) {
     }
     #[doc = "See [`_cef_dev_tools_message_observer_t::on_dev_tools_agent_attached`] for more documentation."]
-    fn on_dev_tools_agent_attached(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_dev_tools_agent_attached(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_dev_tools_message_observer_t::on_dev_tools_agent_detached`] for more documentation."]
-    fn on_dev_tools_agent_detached(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_dev_tools_agent_detached(&self, browser: Option<&mut Browser>) {}
     fn init_methods(object: &mut _cef_dev_tools_message_observer_t) {
         impl_cef_dev_tools_message_observer_t::init_methods::<Self>(object);
     }
@@ -1806,7 +1806,7 @@ mod impl_cef_dev_tools_message_observer_t {
 impl ImplDevToolsMessageObserver for DevToolsMessageObserver {
     fn on_dev_tools_message(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         message: Option<&[u8]>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -1842,7 +1842,7 @@ impl ImplDevToolsMessageObserver for DevToolsMessageObserver {
     }
     fn on_dev_tools_method_result(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         message_id: ::std::os::raw::c_int,
         success: ::std::os::raw::c_int,
         result: Option<&[u8]>,
@@ -1881,7 +1881,7 @@ impl ImplDevToolsMessageObserver for DevToolsMessageObserver {
     }
     fn on_dev_tools_event(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         method: Option<&CefString>,
         params: Option<&[u8]>,
     ) {
@@ -1918,7 +1918,7 @@ impl ImplDevToolsMessageObserver for DevToolsMessageObserver {
             }
         }
     }
-    fn on_dev_tools_agent_attached(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_dev_tools_agent_attached(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_dev_tools_agent_attached {
                 let arg_browser = browser;
@@ -1933,7 +1933,7 @@ impl ImplDevToolsMessageObserver for DevToolsMessageObserver {
             }
         }
     }
-    fn on_dev_tools_agent_detached(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_dev_tools_agent_detached(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_dev_tools_agent_detached {
                 let arg_browser = browser;
@@ -2001,9 +2001,9 @@ pub trait ImplValue: Clone + Sized + Rc {
     #[doc = "See [`_cef_value_t::is_read_only`] for more documentation."]
     fn is_read_only(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_value_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut Value>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_value_t::is_equal`] for more documentation."]
-    fn is_equal(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut Value>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_value_t::copy`] for more documentation."]
     fn copy(&self) -> Option<Value>;
     #[doc = "See [`_cef_value_t::get_type`] for more documentation."]
@@ -2033,12 +2033,11 @@ pub trait ImplValue: Clone + Sized + Rc {
     #[doc = "See [`_cef_value_t::set_string`] for more documentation."]
     fn set_string(&self, value: Option<&CefString>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_value_t::set_binary`] for more documentation."]
-    fn set_binary(&self, value: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int;
+    fn set_binary(&self, value: Option<&mut BinaryValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_value_t::set_dictionary`] for more documentation."]
-    fn set_dictionary(&self, value: Option<&mut impl ImplDictionaryValue>)
-        -> ::std::os::raw::c_int;
+    fn set_dictionary(&self, value: Option<&mut DictionaryValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_value_t::set_list`] for more documentation."]
-    fn set_list(&self, value: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int;
+    fn set_list(&self, value: Option<&mut ListValue>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_value_t;
 }
 impl ImplValue for Value {
@@ -2078,7 +2077,7 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut Value>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -2097,7 +2096,7 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn is_equal(&self, that: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int {
+    fn is_equal(&self, that: Option<&mut Value>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_equal
@@ -2307,7 +2306,7 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn set_binary(&self, value: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int {
+    fn set_binary(&self, value: Option<&mut BinaryValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_binary
@@ -2326,10 +2325,7 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn set_dictionary(
-        &self,
-        value: Option<&mut impl ImplDictionaryValue>,
-    ) -> ::std::os::raw::c_int {
+    fn set_dictionary(&self, value: Option<&mut DictionaryValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_dictionary
@@ -2348,7 +2344,7 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn set_list(&self, value: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int {
+    fn set_list(&self, value: Option<&mut ListValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_list
@@ -2418,9 +2414,9 @@ pub trait ImplBinaryValue: Clone + Sized + Rc {
     #[doc = "See [`_cef_binary_value_t::is_owned`] for more documentation."]
     fn is_owned(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_binary_value_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut BinaryValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_binary_value_t::is_equal`] for more documentation."]
-    fn is_equal(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut BinaryValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_binary_value_t::copy`] for more documentation."]
     fn copy(&self) -> Option<BinaryValue>;
     #[doc = "See [`_cef_binary_value_t::get_raw_data`] for more documentation."]
@@ -2456,7 +2452,7 @@ impl ImplBinaryValue for BinaryValue {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut BinaryValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -2475,7 +2471,7 @@ impl ImplBinaryValue for BinaryValue {
                 .unwrap_or_default()
         }
     }
-    fn is_equal(&self, that: Option<&mut impl ImplBinaryValue>) -> ::std::os::raw::c_int {
+    fn is_equal(&self, that: Option<&mut BinaryValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_equal
@@ -2613,9 +2609,9 @@ pub trait ImplDictionaryValue: Clone + Sized + Rc {
     #[doc = "See [`_cef_dictionary_value_t::is_read_only`] for more documentation."]
     fn is_read_only(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_dictionary_value_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut DictionaryValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_dictionary_value_t::is_equal`] for more documentation."]
-    fn is_equal(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut DictionaryValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_dictionary_value_t::copy`] for more documentation."]
     fn copy(&self, exclude_empty_children: ::std::os::raw::c_int) -> Option<DictionaryValue>;
     #[doc = "See [`_cef_dictionary_value_t::get_size`] for more documentation."]
@@ -2650,7 +2646,7 @@ pub trait ImplDictionaryValue: Clone + Sized + Rc {
     fn set_value(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplValue>,
+        value: Option<&mut Value>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_dictionary_value_t::set_null`] for more documentation."]
     fn set_null(&self, key: Option<&CefString>) -> ::std::os::raw::c_int;
@@ -2678,19 +2674,19 @@ pub trait ImplDictionaryValue: Clone + Sized + Rc {
     fn set_binary(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplBinaryValue>,
+        value: Option<&mut BinaryValue>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_dictionary_value_t::set_dictionary`] for more documentation."]
     fn set_dictionary(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplDictionaryValue>,
+        value: Option<&mut DictionaryValue>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_dictionary_value_t::set_list`] for more documentation."]
     fn set_list(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplListValue>,
+        value: Option<&mut ListValue>,
     ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_dictionary_value_t;
 }
@@ -2731,7 +2727,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut DictionaryValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -2750,7 +2746,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn is_equal(&self, that: Option<&mut impl ImplDictionaryValue>) -> ::std::os::raw::c_int {
+    fn is_equal(&self, that: Option<&mut DictionaryValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_equal
@@ -3021,7 +3017,7 @@ impl ImplDictionaryValue for DictionaryValue {
     fn set_value(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplValue>,
+        value: Option<&mut Value>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -3142,7 +3138,7 @@ impl ImplDictionaryValue for DictionaryValue {
     fn set_binary(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplBinaryValue>,
+        value: Option<&mut BinaryValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -3168,7 +3164,7 @@ impl ImplDictionaryValue for DictionaryValue {
     fn set_dictionary(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplDictionaryValue>,
+        value: Option<&mut DictionaryValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -3194,7 +3190,7 @@ impl ImplDictionaryValue for DictionaryValue {
     fn set_list(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplListValue>,
+        value: Option<&mut ListValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -3270,9 +3266,9 @@ pub trait ImplListValue: Clone + Sized + Rc {
     #[doc = "See [`_cef_list_value_t::is_read_only`] for more documentation."]
     fn is_read_only(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut ListValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::is_equal`] for more documentation."]
-    fn is_equal(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int;
+    fn is_equal(&self, that: Option<&mut ListValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::copy`] for more documentation."]
     fn copy(&self) -> Option<ListValue>;
     #[doc = "See [`_cef_list_value_t::set_size`] for more documentation."]
@@ -3302,7 +3298,7 @@ pub trait ImplListValue: Clone + Sized + Rc {
     #[doc = "See [`_cef_list_value_t::get_list`] for more documentation."]
     fn list(&self, index: usize) -> Option<ListValue>;
     #[doc = "See [`_cef_list_value_t::set_value`] for more documentation."]
-    fn set_value(&self, index: usize, value: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int;
+    fn set_value(&self, index: usize, value: Option<&mut Value>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::set_null`] for more documentation."]
     fn set_null(&self, index: usize) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::set_bool`] for more documentation."]
@@ -3314,23 +3310,15 @@ pub trait ImplListValue: Clone + Sized + Rc {
     #[doc = "See [`_cef_list_value_t::set_string`] for more documentation."]
     fn set_string(&self, index: usize, value: Option<&CefString>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::set_binary`] for more documentation."]
-    fn set_binary(
-        &self,
-        index: usize,
-        value: Option<&mut impl ImplBinaryValue>,
-    ) -> ::std::os::raw::c_int;
+    fn set_binary(&self, index: usize, value: Option<&mut BinaryValue>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::set_dictionary`] for more documentation."]
     fn set_dictionary(
         &self,
         index: usize,
-        value: Option<&mut impl ImplDictionaryValue>,
+        value: Option<&mut DictionaryValue>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_list_value_t::set_list`] for more documentation."]
-    fn set_list(
-        &self,
-        index: usize,
-        value: Option<&mut impl ImplListValue>,
-    ) -> ::std::os::raw::c_int;
+    fn set_list(&self, index: usize, value: Option<&mut ListValue>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_list_value_t;
 }
 impl ImplListValue for ListValue {
@@ -3370,7 +3358,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut ListValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -3389,7 +3377,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn is_equal(&self, that: Option<&mut impl ImplListValue>) -> ::std::os::raw::c_int {
+    fn is_equal(&self, that: Option<&mut ListValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_equal
@@ -3607,7 +3595,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn set_value(&self, index: usize, value: Option<&mut impl ImplValue>) -> ::std::os::raw::c_int {
+    fn set_value(&self, index: usize, value: Option<&mut Value>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_value
@@ -3694,11 +3682,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn set_binary(
-        &self,
-        index: usize,
-        value: Option<&mut impl ImplBinaryValue>,
-    ) -> ::std::os::raw::c_int {
+    fn set_binary(&self, index: usize, value: Option<&mut BinaryValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_binary
@@ -3720,7 +3704,7 @@ impl ImplListValue for ListValue {
     fn set_dictionary(
         &self,
         index: usize,
-        value: Option<&mut impl ImplDictionaryValue>,
+        value: Option<&mut DictionaryValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -3740,11 +3724,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn set_list(
-        &self,
-        index: usize,
-        value: Option<&mut impl ImplListValue>,
-    ) -> ::std::os::raw::c_int {
+    fn set_list(&self, index: usize, value: Option<&mut ListValue>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .set_list
@@ -3812,7 +3792,7 @@ pub trait ImplImage: Clone + Sized + Rc {
     #[doc = "See [`_cef_image_t::is_empty`] for more documentation."]
     fn is_empty(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_image_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplImage>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut Image>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_image_t::add_bitmap`] for more documentation."]
     fn add_bitmap(
         &self,
@@ -3883,7 +3863,7 @@ impl ImplImage for Image {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplImage>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut Image>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -4961,7 +4941,7 @@ pub trait ImplDragData: Clone + Sized + Rc {
     #[doc = "See [`_cef_drag_data_t::get_file_name`] for more documentation."]
     fn file_name(&self) -> CefStringUserfree;
     #[doc = "See [`_cef_drag_data_t::get_file_contents`] for more documentation."]
-    fn file_contents(&self, writer: Option<&mut impl ImplStreamWriter>) -> usize;
+    fn file_contents(&self, writer: Option<&mut StreamWriter>) -> usize;
     #[doc = "See [`_cef_drag_data_t::get_file_names`] for more documentation."]
     fn file_names(&self, names: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_drag_data_t::get_file_paths`] for more documentation."]
@@ -5141,7 +5121,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn file_contents(&self, writer: Option<&mut impl ImplStreamWriter>) -> usize {
+    fn file_contents(&self, writer: Option<&mut StreamWriter>) -> usize {
         unsafe {
             self.0
                 .get_file_contents
@@ -5400,7 +5380,7 @@ pub trait WrapDomvisitor: ImplDomvisitor {
 }
 pub trait ImplDomvisitor: Clone + Sized + Rc {
     #[doc = "See [`_cef_domvisitor_t::visit`] for more documentation."]
-    fn visit(&self, document: Option<&mut impl ImplDomdocument>) {}
+    fn visit(&self, document: Option<&mut Domdocument>) {}
     fn init_methods(object: &mut _cef_domvisitor_t) {
         impl_cef_domvisitor_t::init_methods::<Self>(object);
     }
@@ -5424,7 +5404,7 @@ mod impl_cef_domvisitor_t {
     }
 }
 impl ImplDomvisitor for Domvisitor {
-    fn visit(&self, document: Option<&mut impl ImplDomdocument>) {
+    fn visit(&self, document: Option<&mut Domdocument>) {
         unsafe {
             if let Some(f) = self.0.visit {
                 let arg_document = document;
@@ -5769,7 +5749,7 @@ pub trait ImplDomnode: Clone + Sized + Rc {
     #[doc = "See [`_cef_domnode_t::get_form_control_element_type`] for more documentation."]
     fn form_control_element_type(&self) -> DomFormControlType;
     #[doc = "See [`_cef_domnode_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplDomnode>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut Domnode>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_domnode_t::get_name`] for more documentation."]
     fn name(&self) -> CefStringUserfree;
     #[doc = "See [`_cef_domnode_t::get_value`] for more documentation."]
@@ -5887,7 +5867,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplDomnode>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut Domnode>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -6482,7 +6462,7 @@ pub trait ImplRequest: Clone + Sized + Rc {
     #[doc = "See [`_cef_request_t::get_post_data`] for more documentation."]
     fn post_data(&self) -> Option<PostData>;
     #[doc = "See [`_cef_request_t::set_post_data`] for more documentation."]
-    fn set_post_data(&self, post_data: Option<&mut impl ImplPostData>);
+    fn set_post_data(&self, post_data: Option<&mut PostData>);
     #[doc = "See [`_cef_request_t::get_header_map`] for more documentation."]
     fn header_map(&self, header_map: Option<&mut CefStringMultimap>);
     #[doc = "See [`_cef_request_t::set_header_map`] for more documentation."]
@@ -6501,7 +6481,7 @@ pub trait ImplRequest: Clone + Sized + Rc {
         &self,
         url: Option<&CefString>,
         method: Option<&CefString>,
-        post_data: Option<&mut impl ImplPostData>,
+        post_data: Option<&mut PostData>,
         header_map: Option<&mut CefStringMultimap>,
     );
     #[doc = "See [`_cef_request_t::get_flags`] for more documentation."]
@@ -6634,7 +6614,7 @@ impl ImplRequest for Request {
                 .unwrap_or_default()
         }
     }
-    fn set_post_data(&self, post_data: Option<&mut impl ImplPostData>) {
+    fn set_post_data(&self, post_data: Option<&mut PostData>) {
         unsafe {
             if let Some(f) = self.0.set_post_data {
                 let arg_post_data = post_data;
@@ -6713,7 +6693,7 @@ impl ImplRequest for Request {
         &self,
         url: Option<&CefString>,
         method: Option<&CefString>,
-        post_data: Option<&mut impl ImplPostData>,
+        post_data: Option<&mut PostData>,
         header_map: Option<&mut CefStringMultimap>,
     ) {
         unsafe {
@@ -6882,12 +6862,9 @@ pub trait ImplPostData: Clone + Sized + Rc {
     #[doc = "See [`_cef_post_data_t::get_elements`] for more documentation."]
     fn elements(&self, elements: Option<&mut Vec<Option<PostDataElement>>>);
     #[doc = "See [`_cef_post_data_t::remove_element`] for more documentation."]
-    fn remove_element(
-        &self,
-        element: Option<&mut impl ImplPostDataElement>,
-    ) -> ::std::os::raw::c_int;
+    fn remove_element(&self, element: Option<&mut PostDataElement>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_post_data_t::add_element`] for more documentation."]
-    fn add_element(&self, element: Option<&mut impl ImplPostDataElement>) -> ::std::os::raw::c_int;
+    fn add_element(&self, element: Option<&mut PostDataElement>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_post_data_t::remove_elements`] for more documentation."]
     fn remove_elements(&self);
     fn get_raw(&self) -> *mut _cef_post_data_t;
@@ -6977,10 +6954,7 @@ impl ImplPostData for PostData {
             }
         }
     }
-    fn remove_element(
-        &self,
-        element: Option<&mut impl ImplPostDataElement>,
-    ) -> ::std::os::raw::c_int {
+    fn remove_element(&self, element: Option<&mut PostDataElement>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .remove_element
@@ -6999,7 +6973,7 @@ impl ImplPostData for PostData {
                 .unwrap_or_default()
         }
     }
-    fn add_element(&self, element: Option<&mut impl ImplPostDataElement>) -> ::std::os::raw::c_int {
+    fn add_element(&self, element: Option<&mut PostDataElement>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .add_element
@@ -7358,7 +7332,7 @@ pub trait ImplFrame: Clone + Sized + Rc {
     #[doc = "See [`_cef_frame_t::get_text`] for more documentation."]
     fn text(&self, visitor: Option<&mut impl ImplCefStringVisitor>);
     #[doc = "See [`_cef_frame_t::load_request`] for more documentation."]
-    fn load_request(&self, request: Option<&mut impl ImplRequest>);
+    fn load_request(&self, request: Option<&mut Request>);
     #[doc = "See [`_cef_frame_t::load_url`] for more documentation."]
     fn load_url(&self, url: Option<&CefString>);
     #[doc = "See [`_cef_frame_t::execute_java_script`] for more documentation."]
@@ -7389,15 +7363,11 @@ pub trait ImplFrame: Clone + Sized + Rc {
     #[doc = "See [`_cef_frame_t::create_urlrequest`] for more documentation."]
     fn create_urlrequest(
         &self,
-        request: Option<&mut impl ImplRequest>,
+        request: Option<&mut Request>,
         client: Option<&mut impl ImplUrlrequestClient>,
     ) -> Option<Urlrequest>;
     #[doc = "See [`_cef_frame_t::send_process_message`] for more documentation."]
-    fn send_process_message(
-        &self,
-        target_process: ProcessId,
-        message: Option<&mut impl ImplProcessMessage>,
-    );
+    fn send_process_message(&self, target_process: ProcessId, message: Option<&mut ProcessMessage>);
     fn get_raw(&self) -> *mut _cef_frame_t;
 }
 impl ImplFrame for Frame {
@@ -7515,7 +7485,7 @@ impl ImplFrame for Frame {
             }
         }
     }
-    fn load_request(&self, request: Option<&mut impl ImplRequest>) {
+    fn load_request(&self, request: Option<&mut Request>) {
         unsafe {
             if let Some(f) = self.0.load_request {
                 let arg_request = request;
@@ -7687,7 +7657,7 @@ impl ImplFrame for Frame {
     }
     fn create_urlrequest(
         &self,
-        request: Option<&mut impl ImplRequest>,
+        request: Option<&mut Request>,
         client: Option<&mut impl ImplUrlrequestClient>,
     ) -> Option<Urlrequest> {
         unsafe {
@@ -7721,7 +7691,7 @@ impl ImplFrame for Frame {
     fn send_process_message(
         &self,
         target_process: ProcessId,
-        message: Option<&mut impl ImplProcessMessage>,
+        message: Option<&mut ProcessMessage>,
     ) {
         unsafe {
             if let Some(f) = self.0.send_process_message {
@@ -9302,8 +9272,8 @@ pub trait ImplMediaRouter: Clone + Sized + Rc {
     #[doc = "See [`_cef_media_router_t::create_route`] for more documentation."]
     fn create_route(
         &self,
-        source: Option<&mut impl ImplMediaSource>,
-        sink: Option<&mut impl ImplMediaSink>,
+        source: Option<&mut MediaSource>,
+        sink: Option<&mut MediaSink>,
         callback: Option<&mut impl ImplMediaRouteCreateCallback>,
     );
     #[doc = "See [`_cef_media_router_t::notify_current_routes`] for more documentation."]
@@ -9364,8 +9334,8 @@ impl ImplMediaRouter for MediaRouter {
     }
     fn create_route(
         &self,
-        source: Option<&mut impl ImplMediaSource>,
-        sink: Option<&mut impl ImplMediaSink>,
+        source: Option<&mut MediaSource>,
+        sink: Option<&mut MediaSink>,
         callback: Option<&mut impl ImplMediaRouteCreateCallback>,
     ) {
         unsafe {
@@ -9467,23 +9437,18 @@ pub trait WrapMediaObserver: ImplMediaObserver {
 }
 pub trait ImplMediaObserver: Clone + Sized + Rc {
     #[doc = "See [`_cef_media_observer_t::on_sinks`] for more documentation."]
-    fn on_sinks(&self, sinks: Option<&[Option<impl ImplMediaSink>]>) {}
+    fn on_sinks(&self, sinks: Option<&[Option<MediaSink>]>) {}
     #[doc = "See [`_cef_media_observer_t::on_routes`] for more documentation."]
-    fn on_routes(&self, routes: Option<&[Option<impl ImplMediaRoute>]>) {}
+    fn on_routes(&self, routes: Option<&[Option<MediaRoute>]>) {}
     #[doc = "See [`_cef_media_observer_t::on_route_state_changed`] for more documentation."]
     fn on_route_state_changed(
         &self,
-        route: Option<&mut impl ImplMediaRoute>,
+        route: Option<&mut MediaRoute>,
         state: MediaRouteConnectionState,
     ) {
     }
     #[doc = "See [`_cef_media_observer_t::on_route_message_received`] for more documentation."]
-    fn on_route_message_received(
-        &self,
-        route: Option<&mut impl ImplMediaRoute>,
-        message: Option<&[u8]>,
-    ) {
-    }
+    fn on_route_message_received(&self, route: Option<&mut MediaRoute>, message: Option<&[u8]>) {}
     fn init_methods(object: &mut _cef_media_observer_t) {
         impl_cef_media_observer_t::init_methods::<Self>(object);
     }
@@ -9574,7 +9539,7 @@ mod impl_cef_media_observer_t {
     }
 }
 impl ImplMediaObserver for MediaObserver {
-    fn on_sinks(&self, sinks: Option<&[Option<impl ImplMediaSink>]>) {
+    fn on_sinks(&self, sinks: Option<&[Option<MediaSink>]>) {
         unsafe {
             if let Some(f) = self.0.on_sinks {
                 let arg_sinks = sinks;
@@ -9604,7 +9569,7 @@ impl ImplMediaObserver for MediaObserver {
             }
         }
     }
-    fn on_routes(&self, routes: Option<&[Option<impl ImplMediaRoute>]>) {
+    fn on_routes(&self, routes: Option<&[Option<MediaRoute>]>) {
         unsafe {
             if let Some(f) = self.0.on_routes {
                 let arg_routes = routes;
@@ -9636,7 +9601,7 @@ impl ImplMediaObserver for MediaObserver {
     }
     fn on_route_state_changed(
         &self,
-        route: Option<&mut impl ImplMediaRoute>,
+        route: Option<&mut MediaRoute>,
         state: MediaRouteConnectionState,
     ) {
         unsafe {
@@ -9654,11 +9619,7 @@ impl ImplMediaObserver for MediaObserver {
             }
         }
     }
-    fn on_route_message_received(
-        &self,
-        route: Option<&mut impl ImplMediaRoute>,
-        message: Option<&[u8]>,
-    ) {
+    fn on_route_message_received(&self, route: Option<&mut MediaRoute>, message: Option<&[u8]>) {
         unsafe {
             if let Some(f) = self.0.on_route_message_received {
                 let (arg_route, arg_message) = (route, message);
@@ -9888,7 +9849,7 @@ pub trait ImplMediaRouteCreateCallback: Clone + Sized + Rc {
         &self,
         result: MediaRouteCreateResult,
         error: Option<&CefString>,
-        route: Option<&mut impl ImplMediaRoute>,
+        route: Option<&mut MediaRoute>,
     ) {
     }
     fn init_methods(object: &mut _cef_media_route_create_callback_t) {
@@ -9934,7 +9895,7 @@ impl ImplMediaRouteCreateCallback for MediaRouteCreateCallback {
         &self,
         result: MediaRouteCreateResult,
         error: Option<&CefString>,
-        route: Option<&mut impl ImplMediaRoute>,
+        route: Option<&mut MediaRoute>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_media_route_create_finished {
@@ -10013,10 +9974,7 @@ pub trait ImplMediaSink: Clone + Sized + Rc {
     #[doc = "See [`_cef_media_sink_t::is_dial_sink`] for more documentation."]
     fn is_dial_sink(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_media_sink_t::is_compatible_with`] for more documentation."]
-    fn is_compatible_with(
-        &self,
-        source: Option<&mut impl ImplMediaSource>,
-    ) -> ::std::os::raw::c_int;
+    fn is_compatible_with(&self, source: Option<&mut MediaSource>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_media_sink_t;
 }
 impl ImplMediaSink for MediaSink {
@@ -10095,10 +10053,7 @@ impl ImplMediaSink for MediaSink {
                 .unwrap_or_default()
         }
     }
-    fn is_compatible_with(
-        &self,
-        source: Option<&mut impl ImplMediaSource>,
-    ) -> ::std::os::raw::c_int {
+    fn is_compatible_with(&self, source: Option<&mut MediaSource>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_compatible_with
@@ -10375,7 +10330,7 @@ pub trait ImplPreferenceRegistrar: Sized {
     fn add_preference(
         &self,
         name: Option<&CefString>,
-        default_value: Option<&mut impl ImplValue>,
+        default_value: Option<&mut Value>,
     ) -> ::std::os::raw::c_int;
     fn init_methods(object: &mut _cef_preference_registrar_t) {
         impl_cef_preference_registrar_t::init_methods::<Self>(object);
@@ -10410,7 +10365,7 @@ impl ImplPreferenceRegistrar for PreferenceRegistrar {
     fn add_preference(
         &self,
         name: Option<&CefString>,
-        default_value: Option<&mut impl ImplValue>,
+        default_value: Option<&mut Value>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -10584,7 +10539,7 @@ pub trait ImplPreferenceManager: Clone + Sized + Rc {
     fn set_preference(
         &self,
         name: Option<&CefString>,
-        value: Option<&mut impl ImplValue>,
+        value: Option<&mut Value>,
         error: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_preference_manager_t::add_preference_observer`] for more documentation."]
@@ -10668,7 +10623,7 @@ impl ImplPreferenceManager for PreferenceManager {
     fn set_preference(
         &self,
         name: Option<&CefString>,
-        value: Option<&mut impl ImplValue>,
+        value: Option<&mut Value>,
         error: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -11023,10 +10978,9 @@ impl Default for SettingObserver {
 pub struct RequestContext(RefGuard<_cef_request_context_t>);
 pub trait ImplRequestContext: ImplPreferenceManager {
     #[doc = "See [`_cef_request_context_t::is_same`] for more documentation."]
-    fn is_same(&self, other: Option<&mut impl ImplRequestContext>) -> ::std::os::raw::c_int;
+    fn is_same(&self, other: Option<&mut RequestContext>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_request_context_t::is_sharing_with`] for more documentation."]
-    fn is_sharing_with(&self, other: Option<&mut impl ImplRequestContext>)
-        -> ::std::os::raw::c_int;
+    fn is_sharing_with(&self, other: Option<&mut RequestContext>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_request_context_t::is_global`] for more documentation."]
     fn is_global(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_request_context_t::get_handler`] for more documentation."]
@@ -11077,7 +11031,7 @@ pub trait ImplRequestContext: ImplPreferenceManager {
         requesting_url: Option<&CefString>,
         top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
-        value: Option<&mut impl ImplValue>,
+        value: Option<&mut Value>,
     );
     #[doc = "See [`_cef_request_context_t::get_content_setting`] for more documentation."]
     fn content_setting(
@@ -11113,44 +11067,43 @@ pub trait ImplRequestContext: ImplPreferenceManager {
 }
 impl ImplPreferenceManager for RequestContext {
     fn has_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int {
-        PreferenceManager(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .has_preference(name)
+        PreferenceManager::from(self).has_preference(name)
     }
     fn preference(&self, name: Option<&CefString>) -> Option<Value> {
-        PreferenceManager(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preference(name)
+        PreferenceManager::from(self).preference(name)
     }
     fn all_preferences(&self, include_defaults: ::std::os::raw::c_int) -> Option<DictionaryValue> {
-        PreferenceManager(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .all_preferences(include_defaults)
+        PreferenceManager::from(self).all_preferences(include_defaults)
     }
     fn can_set_preference(&self, name: Option<&CefString>) -> ::std::os::raw::c_int {
-        PreferenceManager(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .can_set_preference(name)
+        PreferenceManager::from(self).can_set_preference(name)
     }
     fn set_preference(
         &self,
         name: Option<&CefString>,
-        value: Option<&mut impl ImplValue>,
+        value: Option<&mut Value>,
         error: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
-        PreferenceManager(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_preference(name, value, error)
+        PreferenceManager::from(self).set_preference(name, value, error)
     }
     fn add_preference_observer(
         &self,
         name: Option<&CefString>,
         observer: Option<&mut impl ImplPreferenceObserver>,
     ) -> Option<Registration> {
-        PreferenceManager(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .add_preference_observer(name, observer)
+        PreferenceManager::from(self).add_preference_observer(name, observer)
     }
     fn get_raw(&self) -> *mut _cef_preference_manager_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&RequestContext> for PreferenceManager {
+    fn from(from: &RequestContext) -> Self {
+        PreferenceManager(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplRequestContext for RequestContext {
-    fn is_same(&self, other: Option<&mut impl ImplRequestContext>) -> ::std::os::raw::c_int {
+    fn is_same(&self, other: Option<&mut RequestContext>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -11169,10 +11122,7 @@ impl ImplRequestContext for RequestContext {
                 .unwrap_or_default()
         }
     }
-    fn is_sharing_with(
-        &self,
-        other: Option<&mut impl ImplRequestContext>,
-    ) -> ::std::os::raw::c_int {
+    fn is_sharing_with(&self, other: Option<&mut RequestContext>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_sharing_with
@@ -11433,7 +11383,7 @@ impl ImplRequestContext for RequestContext {
         requesting_url: Option<&CefString>,
         top_level_url: Option<&CefString>,
         content_type: ContentSettingTypes,
-        value: Option<&mut impl ImplValue>,
+        value: Option<&mut Value>,
     ) {
         unsafe {
             if let Some(f) = self.0.set_website_setting {
@@ -11665,7 +11615,7 @@ pub trait ImplBrowser: Clone + Sized + Rc {
     #[doc = "See [`_cef_browser_t::get_identifier`] for more documentation."]
     fn identifier(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_browser_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplBrowser>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut Browser>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_browser_t::is_popup`] for more documentation."]
     fn is_popup(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_browser_t::has_document`] for more documentation."]
@@ -11803,7 +11753,7 @@ impl ImplBrowser for Browser {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplBrowser>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut Browser>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -12127,7 +12077,7 @@ pub trait ImplNavigationEntryVisitor: Clone + Sized + Rc {
     #[doc = "See [`_cef_navigation_entry_visitor_t::visit`] for more documentation."]
     fn visit(
         &self,
-        entry: Option<&mut impl ImplNavigationEntry>,
+        entry: Option<&mut NavigationEntry>,
         current: ::std::os::raw::c_int,
         index: ::std::os::raw::c_int,
         total: ::std::os::raw::c_int,
@@ -12174,7 +12124,7 @@ mod impl_cef_navigation_entry_visitor_t {
 impl ImplNavigationEntryVisitor for NavigationEntryVisitor {
     fn visit(
         &self,
-        entry: Option<&mut impl ImplNavigationEntry>,
+        entry: Option<&mut NavigationEntry>,
         current: ::std::os::raw::c_int,
         index: ::std::os::raw::c_int,
         total: ::std::os::raw::c_int,
@@ -12373,7 +12323,7 @@ pub trait ImplDownloadImageCallback: Clone + Sized + Rc {
         &self,
         image_url: Option<&CefString>,
         http_status_code: ::std::os::raw::c_int,
-        image: Option<&mut impl ImplImage>,
+        image: Option<&mut Image>,
     ) {
     }
     fn init_methods(object: &mut _cef_download_image_callback_t) {
@@ -12418,7 +12368,7 @@ impl ImplDownloadImageCallback for DownloadImageCallback {
         &self,
         image_url: Option<&CefString>,
         http_status_code: ::std::os::raw::c_int,
-        image: Option<&mut impl ImplImage>,
+        image: Option<&mut Image>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_download_image_finished {
@@ -12574,7 +12524,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         &self,
         message_id: ::std::os::raw::c_int,
         method: Option<&CefString>,
-        params: Option<&mut impl ImplDictionaryValue>,
+        params: Option<&mut DictionaryValue>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_browser_host_t::add_dev_tools_message_observer`] for more documentation."]
     fn add_dev_tools_message_observer(
@@ -12655,7 +12605,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     #[doc = "See [`_cef_browser_host_t::drag_target_drag_enter`] for more documentation."]
     fn drag_target_drag_enter(
         &self,
-        drag_data: Option<&mut impl ImplDragData>,
+        drag_data: Option<&mut DragData>,
         event: Option<&MouseEvent>,
         allowed_ops: DragOperationsMask,
     );
@@ -13165,7 +13115,7 @@ impl ImplBrowserHost for BrowserHost {
         &self,
         message_id: ::std::os::raw::c_int,
         method: Option<&CefString>,
-        params: Option<&mut impl ImplDictionaryValue>,
+        params: Option<&mut DictionaryValue>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -13542,7 +13492,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn drag_target_drag_enter(
         &self,
-        drag_data: Option<&mut impl ImplDragData>,
+        drag_data: Option<&mut DragData>,
         event: Option<&MouseEvent>,
         allowed_ops: DragOperationsMask,
     ) {
@@ -13839,7 +13789,7 @@ pub trait ImplAudioHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_audio_handler_t::get_audio_parameters`] for more documentation."]
     fn audio_parameters(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         params: Option<&mut AudioParameters>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -13847,7 +13797,7 @@ pub trait ImplAudioHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_audio_handler_t::on_audio_stream_started`] for more documentation."]
     fn on_audio_stream_started(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         params: Option<&AudioParameters>,
         channels: ::std::os::raw::c_int,
     ) {
@@ -13855,21 +13805,16 @@ pub trait ImplAudioHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_audio_handler_t::on_audio_stream_packet`] for more documentation."]
     fn on_audio_stream_packet(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         data: *mut *const f32,
         frames: ::std::os::raw::c_int,
         pts: i64,
     ) {
     }
     #[doc = "See [`_cef_audio_handler_t::on_audio_stream_stopped`] for more documentation."]
-    fn on_audio_stream_stopped(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_audio_stream_stopped(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_audio_handler_t::on_audio_stream_error`] for more documentation."]
-    fn on_audio_stream_error(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        message: Option<&CefString>,
-    ) {
-    }
+    fn on_audio_stream_error(&self, browser: Option<&mut Browser>, message: Option<&CefString>) {}
     fn init_methods(object: &mut _cef_audio_handler_t) {
         impl_cef_audio_handler_t::init_methods::<Self>(object);
     }
@@ -13984,7 +13929,7 @@ mod impl_cef_audio_handler_t {
 impl ImplAudioHandler for AudioHandler {
     fn audio_parameters(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         params: Option<&mut AudioParameters>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -14012,7 +13957,7 @@ impl ImplAudioHandler for AudioHandler {
     }
     fn on_audio_stream_started(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         params: Option<&AudioParameters>,
         channels: ::std::os::raw::c_int,
     ) {
@@ -14037,7 +13982,7 @@ impl ImplAudioHandler for AudioHandler {
     }
     fn on_audio_stream_packet(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         data: *mut *const f32,
         frames: ::std::os::raw::c_int,
         pts: i64,
@@ -14057,7 +14002,7 @@ impl ImplAudioHandler for AudioHandler {
             }
         }
     }
-    fn on_audio_stream_stopped(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_audio_stream_stopped(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_audio_stream_stopped {
                 let arg_browser = browser;
@@ -14072,11 +14017,7 @@ impl ImplAudioHandler for AudioHandler {
             }
         }
     }
-    fn on_audio_stream_error(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        message: Option<&CefString>,
-    ) {
+    fn on_audio_stream_error(&self, browser: Option<&mut Browser>, message: Option<&CefString>) {
         unsafe {
             if let Some(f) = self.0.on_audio_stream_error {
                 let (arg_browser, arg_message) = (browser, message);
@@ -14161,7 +14102,7 @@ pub trait ImplCommandHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_command_handler_t::on_chrome_command`] for more documentation."]
     fn on_chrome_command(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         command_id: ::std::os::raw::c_int,
         disposition: WindowOpenDisposition,
     ) -> ::std::os::raw::c_int {
@@ -14170,7 +14111,7 @@ pub trait ImplCommandHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_command_handler_t::is_chrome_app_menu_item_visible`] for more documentation."]
     fn is_chrome_app_menu_item_visible(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -14178,7 +14119,7 @@ pub trait ImplCommandHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_command_handler_t::is_chrome_app_menu_item_enabled`] for more documentation."]
     fn is_chrome_app_menu_item_enabled(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -14288,7 +14229,7 @@ mod impl_cef_command_handler_t {
 impl ImplCommandHandler for CommandHandler {
     fn on_chrome_command(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         command_id: ::std::os::raw::c_int,
         disposition: WindowOpenDisposition,
     ) -> ::std::os::raw::c_int {
@@ -14314,7 +14255,7 @@ impl ImplCommandHandler for CommandHandler {
     }
     fn is_chrome_app_menu_item_visible(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -14337,7 +14278,7 @@ impl ImplCommandHandler for CommandHandler {
     }
     fn is_chrome_app_menu_item_enabled(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -14459,40 +14400,36 @@ pub trait ImplMenuModelDelegate: Clone + Sized + Rc {
     #[doc = "See [`_cef_menu_model_delegate_t::execute_command`] for more documentation."]
     fn execute_command(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         command_id: ::std::os::raw::c_int,
         event_flags: EventFlags,
     ) {
     }
     #[doc = "See [`_cef_menu_model_delegate_t::mouse_outside_menu`] for more documentation."]
-    fn mouse_outside_menu(
-        &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
-        screen_point: Option<&Point>,
-    ) {
+    fn mouse_outside_menu(&self, menu_model: Option<&mut MenuModel>, screen_point: Option<&Point>) {
     }
     #[doc = "See [`_cef_menu_model_delegate_t::unhandled_open_submenu`] for more documentation."]
     fn unhandled_open_submenu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         is_rtl: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_menu_model_delegate_t::unhandled_close_submenu`] for more documentation."]
     fn unhandled_close_submenu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         is_rtl: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_menu_model_delegate_t::menu_will_show`] for more documentation."]
-    fn menu_will_show(&self, menu_model: Option<&mut impl ImplMenuModel>) {}
+    fn menu_will_show(&self, menu_model: Option<&mut MenuModel>) {}
     #[doc = "See [`_cef_menu_model_delegate_t::menu_closed`] for more documentation."]
-    fn menu_closed(&self, menu_model: Option<&mut impl ImplMenuModel>) {}
+    fn menu_closed(&self, menu_model: Option<&mut MenuModel>) {}
     #[doc = "See [`_cef_menu_model_delegate_t::format_label`] for more documentation."]
     fn format_label(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         label: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -14634,7 +14571,7 @@ mod impl_cef_menu_model_delegate_t {
 impl ImplMenuModelDelegate for MenuModelDelegate {
     fn execute_command(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         command_id: ::std::os::raw::c_int,
         event_flags: EventFlags,
     ) {
@@ -14654,11 +14591,7 @@ impl ImplMenuModelDelegate for MenuModelDelegate {
             }
         }
     }
-    fn mouse_outside_menu(
-        &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
-        screen_point: Option<&Point>,
-    ) {
+    fn mouse_outside_menu(&self, menu_model: Option<&mut MenuModel>, screen_point: Option<&Point>) {
         unsafe {
             if let Some(f) = self.0.mouse_outside_menu {
                 let (arg_menu_model, arg_screen_point) = (menu_model, screen_point);
@@ -14680,7 +14613,7 @@ impl ImplMenuModelDelegate for MenuModelDelegate {
     }
     fn unhandled_open_submenu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         is_rtl: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -14699,7 +14632,7 @@ impl ImplMenuModelDelegate for MenuModelDelegate {
     }
     fn unhandled_close_submenu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         is_rtl: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -14716,7 +14649,7 @@ impl ImplMenuModelDelegate for MenuModelDelegate {
             }
         }
     }
-    fn menu_will_show(&self, menu_model: Option<&mut impl ImplMenuModel>) {
+    fn menu_will_show(&self, menu_model: Option<&mut MenuModel>) {
         unsafe {
             if let Some(f) = self.0.menu_will_show {
                 let arg_menu_model = menu_model;
@@ -14731,7 +14664,7 @@ impl ImplMenuModelDelegate for MenuModelDelegate {
             }
         }
     }
-    fn menu_closed(&self, menu_model: Option<&mut impl ImplMenuModel>) {
+    fn menu_closed(&self, menu_model: Option<&mut MenuModel>) {
         unsafe {
             if let Some(f) = self.0.menu_closed {
                 let arg_menu_model = menu_model;
@@ -14748,7 +14681,7 @@ impl ImplMenuModelDelegate for MenuModelDelegate {
     }
     fn format_label(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         label: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -16284,70 +16217,60 @@ pub trait ImplContextMenuHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_context_menu_handler_t::on_before_context_menu`] for more documentation."]
     fn on_before_context_menu(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        params: Option<&mut impl ImplContextMenuParams>,
-        model: Option<&mut impl ImplMenuModel>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        params: Option<&mut ContextMenuParams>,
+        model: Option<&mut MenuModel>,
     ) {
     }
     #[doc = "See [`_cef_context_menu_handler_t::run_context_menu`] for more documentation."]
     fn run_context_menu(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        params: Option<&mut impl ImplContextMenuParams>,
-        model: Option<&mut impl ImplMenuModel>,
-        callback: Option<&mut impl ImplRunContextMenuCallback>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        params: Option<&mut ContextMenuParams>,
+        model: Option<&mut MenuModel>,
+        callback: Option<&mut RunContextMenuCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_context_menu_handler_t::on_context_menu_command`] for more documentation."]
     fn on_context_menu_command(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        params: Option<&mut impl ImplContextMenuParams>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        params: Option<&mut ContextMenuParams>,
         command_id: ::std::os::raw::c_int,
         event_flags: EventFlags,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_context_menu_handler_t::on_context_menu_dismissed`] for more documentation."]
-    fn on_context_menu_dismissed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
-    }
+    fn on_context_menu_dismissed(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {}
     #[doc = "See [`_cef_context_menu_handler_t::run_quick_menu`] for more documentation."]
     fn run_quick_menu(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         location: Option<&Point>,
         size: Option<&Size>,
         edit_state_flags: QuickMenuEditStateFlags,
-        callback: Option<&mut impl ImplRunQuickMenuCallback>,
+        callback: Option<&mut RunQuickMenuCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_context_menu_handler_t::on_quick_menu_command`] for more documentation."]
     fn on_quick_menu_command(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         command_id: ::std::os::raw::c_int,
         event_flags: EventFlags,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_context_menu_handler_t::on_quick_menu_dismissed`] for more documentation."]
-    fn on_quick_menu_dismissed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
-    }
+    fn on_quick_menu_dismissed(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {}
     fn init_methods(object: &mut _cef_context_menu_handler_t) {
         impl_cef_context_menu_handler_t::init_methods::<Self>(object);
     }
@@ -16587,10 +16510,10 @@ mod impl_cef_context_menu_handler_t {
 impl ImplContextMenuHandler for ContextMenuHandler {
     fn on_before_context_menu(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        params: Option<&mut impl ImplContextMenuParams>,
-        model: Option<&mut impl ImplMenuModel>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        params: Option<&mut ContextMenuParams>,
+        model: Option<&mut MenuModel>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_before_context_menu {
@@ -16627,11 +16550,11 @@ impl ImplContextMenuHandler for ContextMenuHandler {
     }
     fn run_context_menu(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        params: Option<&mut impl ImplContextMenuParams>,
-        model: Option<&mut impl ImplMenuModel>,
-        callback: Option<&mut impl ImplRunContextMenuCallback>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        params: Option<&mut ContextMenuParams>,
+        model: Option<&mut MenuModel>,
+        callback: Option<&mut RunContextMenuCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -16685,9 +16608,9 @@ impl ImplContextMenuHandler for ContextMenuHandler {
     }
     fn on_context_menu_command(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        params: Option<&mut impl ImplContextMenuParams>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        params: Option<&mut ContextMenuParams>,
         command_id: ::std::os::raw::c_int,
         event_flags: EventFlags,
     ) -> ::std::os::raw::c_int {
@@ -16730,11 +16653,7 @@ impl ImplContextMenuHandler for ContextMenuHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_context_menu_dismissed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
+    fn on_context_menu_dismissed(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {
         unsafe {
             if let Some(f) = self.0.on_context_menu_dismissed {
                 let (arg_browser, arg_frame) = (browser, frame);
@@ -16757,12 +16676,12 @@ impl ImplContextMenuHandler for ContextMenuHandler {
     }
     fn run_quick_menu(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         location: Option<&Point>,
         size: Option<&Size>,
         edit_state_flags: QuickMenuEditStateFlags,
-        callback: Option<&mut impl ImplRunQuickMenuCallback>,
+        callback: Option<&mut RunQuickMenuCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -16822,8 +16741,8 @@ impl ImplContextMenuHandler for ContextMenuHandler {
     }
     fn on_quick_menu_command(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         command_id: ::std::os::raw::c_int,
         event_flags: EventFlags,
     ) -> ::std::os::raw::c_int {
@@ -16859,11 +16778,7 @@ impl ImplContextMenuHandler for ContextMenuHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_quick_menu_dismissed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
+    fn on_quick_menu_dismissed(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {
         unsafe {
             if let Some(f) = self.0.on_quick_menu_dismissed {
                 let (arg_browser, arg_frame) = (browser, frame);
@@ -17363,14 +17278,14 @@ pub trait ImplDialogHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_dialog_handler_t::on_file_dialog`] for more documentation."]
     fn on_file_dialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         mode: FileDialogMode,
         title: Option<&CefString>,
         default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
         accept_extensions: Option<&mut CefStringList>,
         accept_descriptions: Option<&mut CefStringList>,
-        callback: Option<&mut impl ImplFileDialogCallback>,
+        callback: Option<&mut FileDialogCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -17470,14 +17385,14 @@ mod impl_cef_dialog_handler_t {
 impl ImplDialogHandler for DialogHandler {
     fn on_file_dialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         mode: FileDialogMode,
         title: Option<&CefString>,
         default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
         accept_extensions: Option<&mut CefStringList>,
         accept_descriptions: Option<&mut CefStringList>,
-        callback: Option<&mut impl ImplFileDialogCallback>,
+        callback: Option<&mut FileDialogCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -17614,42 +17529,41 @@ pub trait ImplDisplayHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_display_handler_t::on_address_change`] for more documentation."]
     fn on_address_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         url: Option<&CefString>,
     ) {
     }
     #[doc = "See [`_cef_display_handler_t::on_title_change`] for more documentation."]
-    fn on_title_change(&self, browser: Option<&mut impl ImplBrowser>, title: Option<&CefString>) {}
+    fn on_title_change(&self, browser: Option<&mut Browser>, title: Option<&CefString>) {}
     #[doc = "See [`_cef_display_handler_t::on_favicon_urlchange`] for more documentation."]
     fn on_favicon_urlchange(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         icon_urls: Option<&mut CefStringList>,
     ) {
     }
     #[doc = "See [`_cef_display_handler_t::on_fullscreen_mode_change`] for more documentation."]
     fn on_fullscreen_mode_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         fullscreen: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_display_handler_t::on_tooltip`] for more documentation."]
     fn on_tooltip(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         text: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_display_handler_t::on_status_message`] for more documentation."]
-    fn on_status_message(&self, browser: Option<&mut impl ImplBrowser>, value: Option<&CefString>) {
-    }
+    fn on_status_message(&self, browser: Option<&mut Browser>, value: Option<&CefString>) {}
     #[doc = "See [`_cef_display_handler_t::on_console_message`] for more documentation."]
     fn on_console_message(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         level: LogSeverity,
         message: Option<&CefString>,
         source: Option<&CefString>,
@@ -17660,17 +17574,17 @@ pub trait ImplDisplayHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_display_handler_t::on_auto_resize`] for more documentation."]
     fn on_auto_resize(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         new_size: Option<&Size>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_display_handler_t::on_loading_progress_change`] for more documentation."]
-    fn on_loading_progress_change(&self, browser: Option<&mut impl ImplBrowser>, progress: f64) {}
+    fn on_loading_progress_change(&self, browser: Option<&mut Browser>, progress: f64) {}
     #[doc = "See [`_cef_display_handler_t::on_cursor_change`] for more documentation."]
     fn on_cursor_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         cursor: HCURSOR,
         type_: CursorType,
         custom_cursor_info: Option<&CursorInfo>,
@@ -17680,7 +17594,7 @@ pub trait ImplDisplayHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_display_handler_t::on_media_access_change`] for more documentation."]
     fn on_media_access_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         has_video_access: ::std::os::raw::c_int,
         has_audio_access: ::std::os::raw::c_int,
     ) {
@@ -17942,8 +17856,8 @@ mod impl_cef_display_handler_t {
 impl ImplDisplayHandler for DisplayHandler {
     fn on_address_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         url: Option<&CefString>,
     ) {
         unsafe {
@@ -17969,7 +17883,7 @@ impl ImplDisplayHandler for DisplayHandler {
             }
         }
     }
-    fn on_title_change(&self, browser: Option<&mut impl ImplBrowser>, title: Option<&CefString>) {
+    fn on_title_change(&self, browser: Option<&mut Browser>, title: Option<&CefString>) {
         unsafe {
             if let Some(f) = self.0.on_title_change {
                 let (arg_browser, arg_title) = (browser, title);
@@ -17989,7 +17903,7 @@ impl ImplDisplayHandler for DisplayHandler {
     }
     fn on_favicon_urlchange(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         icon_urls: Option<&mut CefStringList>,
     ) {
         unsafe {
@@ -18011,7 +17925,7 @@ impl ImplDisplayHandler for DisplayHandler {
     }
     fn on_fullscreen_mode_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         fullscreen: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -18030,7 +17944,7 @@ impl ImplDisplayHandler for DisplayHandler {
     }
     fn on_tooltip(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         text: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -18054,7 +17968,7 @@ impl ImplDisplayHandler for DisplayHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_status_message(&self, browser: Option<&mut impl ImplBrowser>, value: Option<&CefString>) {
+    fn on_status_message(&self, browser: Option<&mut Browser>, value: Option<&CefString>) {
         unsafe {
             if let Some(f) = self.0.on_status_message {
                 let (arg_browser, arg_value) = (browser, value);
@@ -18074,7 +17988,7 @@ impl ImplDisplayHandler for DisplayHandler {
     }
     fn on_console_message(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         level: LogSeverity,
         message: Option<&CefString>,
         source: Option<&CefString>,
@@ -18115,7 +18029,7 @@ impl ImplDisplayHandler for DisplayHandler {
     }
     fn on_auto_resize(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         new_size: Option<&Size>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -18141,7 +18055,7 @@ impl ImplDisplayHandler for DisplayHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_loading_progress_change(&self, browser: Option<&mut impl ImplBrowser>, progress: f64) {
+    fn on_loading_progress_change(&self, browser: Option<&mut Browser>, progress: f64) {
         unsafe {
             if let Some(f) = self.0.on_loading_progress_change {
                 let (arg_browser, arg_progress) = (browser, progress);
@@ -18158,7 +18072,7 @@ impl ImplDisplayHandler for DisplayHandler {
     }
     fn on_cursor_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         cursor: HCURSOR,
         type_: CursorType,
         custom_cursor_info: Option<&CursorInfo>,
@@ -18197,7 +18111,7 @@ impl ImplDisplayHandler for DisplayHandler {
     }
     fn on_media_access_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         has_video_access: ::std::os::raw::c_int,
         has_audio_access: ::std::os::raw::c_int,
     ) {
@@ -18745,7 +18659,7 @@ pub trait ImplDownloadHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_download_handler_t::can_download`] for more documentation."]
     fn can_download(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         url: Option<&CefString>,
         request_method: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
@@ -18754,19 +18668,19 @@ pub trait ImplDownloadHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_download_handler_t::on_before_download`] for more documentation."]
     fn on_before_download(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        download_item: Option<&mut impl ImplDownloadItem>,
+        browser: Option<&mut Browser>,
+        download_item: Option<&mut DownloadItem>,
         suggested_name: Option<&CefString>,
-        callback: Option<&mut impl ImplBeforeDownloadCallback>,
+        callback: Option<&mut BeforeDownloadCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_download_handler_t::on_download_updated`] for more documentation."]
     fn on_download_updated(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        download_item: Option<&mut impl ImplDownloadItem>,
-        callback: Option<&mut impl ImplDownloadItemCallback>,
+        browser: Option<&mut Browser>,
+        download_item: Option<&mut DownloadItem>,
+        callback: Option<&mut DownloadItemCallback>,
     ) {
     }
     fn init_methods(object: &mut _cef_download_handler_t) {
@@ -18874,7 +18788,7 @@ mod impl_cef_download_handler_t {
 impl ImplDownloadHandler for DownloadHandler {
     fn can_download(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         url: Option<&CefString>,
         request_method: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
@@ -18904,10 +18818,10 @@ impl ImplDownloadHandler for DownloadHandler {
     }
     fn on_before_download(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        download_item: Option<&mut impl ImplDownloadItem>,
+        browser: Option<&mut Browser>,
+        download_item: Option<&mut DownloadItem>,
         suggested_name: Option<&CefString>,
-        callback: Option<&mut impl ImplBeforeDownloadCallback>,
+        callback: Option<&mut BeforeDownloadCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -18951,9 +18865,9 @@ impl ImplDownloadHandler for DownloadHandler {
     }
     fn on_download_updated(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        download_item: Option<&mut impl ImplDownloadItem>,
-        callback: Option<&mut impl ImplDownloadItemCallback>,
+        browser: Option<&mut Browser>,
+        download_item: Option<&mut DownloadItem>,
+        callback: Option<&mut DownloadItemCallback>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_download_updated {
@@ -19049,8 +18963,8 @@ pub trait ImplDragHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_drag_handler_t::on_drag_enter`] for more documentation."]
     fn on_drag_enter(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        drag_data: Option<&mut impl ImplDragData>,
+        browser: Option<&mut Browser>,
+        drag_data: Option<&mut DragData>,
         mask: DragOperationsMask,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -19058,8 +18972,8 @@ pub trait ImplDragHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_drag_handler_t::on_draggable_regions_changed`] for more documentation."]
     fn on_draggable_regions_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         regions_count: usize,
         regions: Option<&DraggableRegion>,
     ) {
@@ -19127,8 +19041,8 @@ mod impl_cef_drag_handler_t {
 impl ImplDragHandler for DragHandler {
     fn on_drag_enter(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        drag_data: Option<&mut impl ImplDragData>,
+        browser: Option<&mut Browser>,
+        drag_data: Option<&mut DragData>,
         mask: DragOperationsMask,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -19158,8 +19072,8 @@ impl ImplDragHandler for DragHandler {
     }
     fn on_draggable_regions_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         regions_count: usize,
         regions: Option<&DraggableRegion>,
     ) {
@@ -19262,7 +19176,7 @@ pub trait ImplFindHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_find_handler_t::on_find_result`] for more documentation."]
     fn on_find_result(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         identifier: ::std::os::raw::c_int,
         count: ::std::os::raw::c_int,
         selection_rect: Option<&Rect>,
@@ -19334,7 +19248,7 @@ mod impl_cef_find_handler_t {
 impl ImplFindHandler for FindHandler {
     fn on_find_result(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         identifier: ::std::os::raw::c_int,
         count: ::std::os::raw::c_int,
         selection_rect: Option<&Rect>,
@@ -19447,17 +19361,17 @@ pub trait WrapFocusHandler: ImplFocusHandler {
 }
 pub trait ImplFocusHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_focus_handler_t::on_take_focus`] for more documentation."]
-    fn on_take_focus(&self, browser: Option<&mut impl ImplBrowser>, next: ::std::os::raw::c_int) {}
+    fn on_take_focus(&self, browser: Option<&mut Browser>, next: ::std::os::raw::c_int) {}
     #[doc = "See [`_cef_focus_handler_t::on_set_focus`] for more documentation."]
     fn on_set_focus(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         source: FocusSource,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_focus_handler_t::on_got_focus`] for more documentation."]
-    fn on_got_focus(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_got_focus(&self, browser: Option<&mut Browser>) {}
     fn init_methods(object: &mut _cef_focus_handler_t) {
         impl_cef_focus_handler_t::init_methods::<Self>(object);
     }
@@ -19509,7 +19423,7 @@ mod impl_cef_focus_handler_t {
     }
 }
 impl ImplFocusHandler for FocusHandler {
-    fn on_take_focus(&self, browser: Option<&mut impl ImplBrowser>, next: ::std::os::raw::c_int) {
+    fn on_take_focus(&self, browser: Option<&mut Browser>, next: ::std::os::raw::c_int) {
         unsafe {
             if let Some(f) = self.0.on_take_focus {
                 let (arg_browser, arg_next) = (browser, next);
@@ -19526,7 +19440,7 @@ impl ImplFocusHandler for FocusHandler {
     }
     fn on_set_focus(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         source: FocusSource,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -19548,7 +19462,7 @@ impl ImplFocusHandler for FocusHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_got_focus(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_got_focus(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_got_focus {
                 let arg_browser = browser;
@@ -19628,40 +19542,25 @@ pub trait WrapFrameHandler: ImplFrameHandler {
 }
 pub trait ImplFrameHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_frame_handler_t::on_frame_created`] for more documentation."]
-    fn on_frame_created(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
-    }
+    fn on_frame_created(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {}
     #[doc = "See [`_cef_frame_handler_t::on_frame_destroyed`] for more documentation."]
-    fn on_frame_destroyed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
-    }
+    fn on_frame_destroyed(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {}
     #[doc = "See [`_cef_frame_handler_t::on_frame_attached`] for more documentation."]
     fn on_frame_attached(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         reattached: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_frame_handler_t::on_frame_detached`] for more documentation."]
-    fn on_frame_detached(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
-    }
+    fn on_frame_detached(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {}
     #[doc = "See [`_cef_frame_handler_t::on_main_frame_changed`] for more documentation."]
     fn on_main_frame_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        old_frame: Option<&mut impl ImplFrame>,
-        new_frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        old_frame: Option<&mut Frame>,
+        new_frame: Option<&mut Frame>,
     ) {
     }
     fn init_methods(object: &mut _cef_frame_handler_t) {
@@ -19773,11 +19672,7 @@ mod impl_cef_frame_handler_t {
     }
 }
 impl ImplFrameHandler for FrameHandler {
-    fn on_frame_created(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
+    fn on_frame_created(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {
         unsafe {
             if let Some(f) = self.0.on_frame_created {
                 let (arg_browser, arg_frame) = (browser, frame);
@@ -19798,11 +19693,7 @@ impl ImplFrameHandler for FrameHandler {
             }
         }
     }
-    fn on_frame_destroyed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
+    fn on_frame_destroyed(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {
         unsafe {
             if let Some(f) = self.0.on_frame_destroyed {
                 let (arg_browser, arg_frame) = (browser, frame);
@@ -19825,8 +19716,8 @@ impl ImplFrameHandler for FrameHandler {
     }
     fn on_frame_attached(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         reattached: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -19849,11 +19740,7 @@ impl ImplFrameHandler for FrameHandler {
             }
         }
     }
-    fn on_frame_detached(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
+    fn on_frame_detached(&self, browser: Option<&mut Browser>, frame: Option<&mut Frame>) {
         unsafe {
             if let Some(f) = self.0.on_frame_detached {
                 let (arg_browser, arg_frame) = (browser, frame);
@@ -19876,9 +19763,9 @@ impl ImplFrameHandler for FrameHandler {
     }
     fn on_main_frame_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        old_frame: Option<&mut impl ImplFrame>,
-        new_frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        old_frame: Option<&mut Frame>,
+        new_frame: Option<&mut Frame>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_main_frame_changed {
@@ -20036,12 +19923,12 @@ pub trait ImplJsdialogHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_jsdialog_handler_t::on_jsdialog`] for more documentation."]
     fn on_jsdialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         origin_url: Option<&CefString>,
         dialog_type: JsdialogType,
         message_text: Option<&CefString>,
         default_prompt_text: Option<&CefString>,
-        callback: Option<&mut impl ImplJsdialogCallback>,
+        callback: Option<&mut JsdialogCallback>,
         suppress_message: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -20049,17 +19936,17 @@ pub trait ImplJsdialogHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_jsdialog_handler_t::on_before_unload_dialog`] for more documentation."]
     fn on_before_unload_dialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         message_text: Option<&CefString>,
         is_reload: ::std::os::raw::c_int,
-        callback: Option<&mut impl ImplJsdialogCallback>,
+        callback: Option<&mut JsdialogCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_jsdialog_handler_t::on_reset_dialog_state`] for more documentation."]
-    fn on_reset_dialog_state(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_reset_dialog_state(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_jsdialog_handler_t::on_dialog_closed`] for more documentation."]
-    fn on_dialog_closed(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_dialog_closed(&self, browser: Option<&mut Browser>) {}
     fn init_methods(object: &mut _cef_jsdialog_handler_t) {
         impl_cef_jsdialog_handler_t::init_methods::<Self>(object);
     }
@@ -20204,12 +20091,12 @@ mod impl_cef_jsdialog_handler_t {
 impl ImplJsdialogHandler for JsdialogHandler {
     fn on_jsdialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         origin_url: Option<&CefString>,
         dialog_type: JsdialogType,
         message_text: Option<&CefString>,
         default_prompt_text: Option<&CefString>,
-        callback: Option<&mut impl ImplJsdialogCallback>,
+        callback: Option<&mut JsdialogCallback>,
         suppress_message: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -20276,10 +20163,10 @@ impl ImplJsdialogHandler for JsdialogHandler {
     }
     fn on_before_unload_dialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         message_text: Option<&CefString>,
         is_reload: ::std::os::raw::c_int,
-        callback: Option<&mut impl ImplJsdialogCallback>,
+        callback: Option<&mut JsdialogCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -20315,7 +20202,7 @@ impl ImplJsdialogHandler for JsdialogHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_reset_dialog_state(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_reset_dialog_state(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_reset_dialog_state {
                 let arg_browser = browser;
@@ -20330,7 +20217,7 @@ impl ImplJsdialogHandler for JsdialogHandler {
             }
         }
     }
-    fn on_dialog_closed(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_dialog_closed(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_dialog_closed {
                 let arg_browser = browser;
@@ -20412,7 +20299,7 @@ pub trait ImplKeyboardHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_keyboard_handler_t::on_pre_key_event`] for more documentation."]
     fn on_pre_key_event(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         event: Option<&KeyEvent>,
         os_event: Option<&mut MSG>,
         is_keyboard_shortcut: Option<&mut ::std::os::raw::c_int>,
@@ -20422,7 +20309,7 @@ pub trait ImplKeyboardHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_keyboard_handler_t::on_key_event`] for more documentation."]
     fn on_key_event(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         event: Option<&KeyEvent>,
         os_event: Option<&mut MSG>,
     ) -> ::std::os::raw::c_int {
@@ -20514,7 +20401,7 @@ mod impl_cef_keyboard_handler_t {
 impl ImplKeyboardHandler for KeyboardHandler {
     fn on_pre_key_event(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         event: Option<&KeyEvent>,
         os_event: Option<&mut MSG>,
         is_keyboard_shortcut: Option<&mut ::std::os::raw::c_int>,
@@ -20557,7 +20444,7 @@ impl ImplKeyboardHandler for KeyboardHandler {
     }
     fn on_key_event(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         event: Option<&KeyEvent>,
         os_event: Option<&mut MSG>,
     ) -> ::std::os::raw::c_int {
@@ -20654,8 +20541,8 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_life_span_handler_t::on_before_popup`] for more documentation."]
     fn on_before_popup(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         popup_id: ::std::os::raw::c_int,
         target_url: Option<&CefString>,
         target_frame_name: Option<&CefString>,
@@ -20665,7 +20552,7 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         window_info: Option<&mut WindowInfo>,
         client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
+        extra_info: Option<&mut Option<DictionaryValue>>,
         no_javascript_access: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -20673,29 +20560,29 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_life_span_handler_t::on_before_popup_aborted`] for more documentation."]
     fn on_before_popup_aborted(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         popup_id: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_life_span_handler_t::on_before_dev_tools_popup`] for more documentation."]
     fn on_before_dev_tools_popup(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         window_info: Option<&mut WindowInfo>,
         client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
+        extra_info: Option<&mut Option<DictionaryValue>>,
         use_default_window: Option<&mut ::std::os::raw::c_int>,
     ) {
     }
     #[doc = "See [`_cef_life_span_handler_t::on_after_created`] for more documentation."]
-    fn on_after_created(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_after_created(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_life_span_handler_t::do_close`] for more documentation."]
-    fn do_close(&self, browser: Option<&mut impl ImplBrowser>) -> ::std::os::raw::c_int {
+    fn do_close(&self, browser: Option<&mut Browser>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_life_span_handler_t::on_before_close`] for more documentation."]
-    fn on_before_close(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_before_close(&self, browser: Option<&mut Browser>) {}
     fn init_methods(object: &mut _cef_life_span_handler_t) {
         impl_cef_life_span_handler_t::init_methods::<Self>(object);
     }
@@ -20969,8 +20856,8 @@ mod impl_cef_life_span_handler_t {
 impl ImplLifeSpanHandler for LifeSpanHandler {
     fn on_before_popup(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         popup_id: ::std::os::raw::c_int,
         target_url: Option<&CefString>,
         target_frame_name: Option<&CefString>,
@@ -20980,7 +20867,7 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
         window_info: Option<&mut WindowInfo>,
         client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
+        extra_info: Option<&mut Option<DictionaryValue>>,
         no_javascript_access: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -21097,7 +20984,7 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
     }
     fn on_before_popup_aborted(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         popup_id: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -21116,11 +21003,11 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
     }
     fn on_before_dev_tools_popup(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         window_info: Option<&mut WindowInfo>,
         client: Option<&mut Option<impl ImplClient>>,
         settings: Option<&mut BrowserSettings>,
-        extra_info: Option<&mut Option<impl ImplDictionaryValue>>,
+        extra_info: Option<&mut Option<DictionaryValue>>,
         use_default_window: Option<&mut ::std::os::raw::c_int>,
     ) {
         unsafe {
@@ -21192,7 +21079,7 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
             }
         }
     }
-    fn on_after_created(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_after_created(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_after_created {
                 let arg_browser = browser;
@@ -21207,7 +21094,7 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
             }
         }
     }
-    fn do_close(&self, browser: Option<&mut impl ImplBrowser>) -> ::std::os::raw::c_int {
+    fn do_close(&self, browser: Option<&mut Browser>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .do_close
@@ -21226,7 +21113,7 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_before_close(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_before_close(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_before_close {
                 let arg_browser = browser;
@@ -21308,7 +21195,7 @@ pub trait ImplLoadHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_load_handler_t::on_loading_state_change`] for more documentation."]
     fn on_loading_state_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         is_loading: ::std::os::raw::c_int,
         can_go_back: ::std::os::raw::c_int,
         can_go_forward: ::std::os::raw::c_int,
@@ -21317,24 +21204,24 @@ pub trait ImplLoadHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_load_handler_t::on_load_start`] for more documentation."]
     fn on_load_start(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         transition_type: TransitionType,
     ) {
     }
     #[doc = "See [`_cef_load_handler_t::on_load_end`] for more documentation."]
     fn on_load_end(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         http_status_code: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_load_handler_t::on_load_error`] for more documentation."]
     fn on_load_error(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         error_code: Errorcode,
         error_text: Option<&CefString>,
         failed_url: Option<&CefString>,
@@ -21466,7 +21353,7 @@ mod impl_cef_load_handler_t {
 impl ImplLoadHandler for LoadHandler {
     fn on_loading_state_change(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         is_loading: ::std::os::raw::c_int,
         can_go_back: ::std::os::raw::c_int,
         can_go_forward: ::std::os::raw::c_int,
@@ -21494,8 +21381,8 @@ impl ImplLoadHandler for LoadHandler {
     }
     fn on_load_start(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         transition_type: TransitionType,
     ) {
         unsafe {
@@ -21522,8 +21409,8 @@ impl ImplLoadHandler for LoadHandler {
     }
     fn on_load_end(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         http_status_code: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -21549,8 +21436,8 @@ impl ImplLoadHandler for LoadHandler {
     }
     fn on_load_error(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         error_code: Errorcode,
         error_text: Option<&CefString>,
         failed_url: Option<&CefString>,
@@ -21788,29 +21675,29 @@ pub trait ImplPermissionHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_permission_handler_t::on_request_media_access_permission`] for more documentation."]
     fn on_request_media_access_permission(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         requesting_origin: Option<&CefString>,
         requested_permissions: u32,
-        callback: Option<&mut impl ImplMediaAccessCallback>,
+        callback: Option<&mut MediaAccessCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_permission_handler_t::on_show_permission_prompt`] for more documentation."]
     fn on_show_permission_prompt(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         prompt_id: u64,
         requesting_origin: Option<&CefString>,
         requested_permissions: u32,
-        callback: Option<&mut impl ImplPermissionPromptCallback>,
+        callback: Option<&mut PermissionPromptCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_permission_handler_t::on_dismiss_permission_prompt`] for more documentation."]
     fn on_dismiss_permission_prompt(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         prompt_id: u64,
         result: PermissionRequestResult,
     ) {
@@ -21948,11 +21835,11 @@ mod impl_cef_permission_handler_t {
 impl ImplPermissionHandler for PermissionHandler {
     fn on_request_media_access_permission(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         requesting_origin: Option<&CefString>,
         requested_permissions: u32,
-        callback: Option<&mut impl ImplMediaAccessCallback>,
+        callback: Option<&mut MediaAccessCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -22008,11 +21895,11 @@ impl ImplPermissionHandler for PermissionHandler {
     }
     fn on_show_permission_prompt(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         prompt_id: u64,
         requesting_origin: Option<&CefString>,
         requested_permissions: u32,
-        callback: Option<&mut impl ImplPermissionPromptCallback>,
+        callback: Option<&mut PermissionPromptCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -22062,7 +21949,7 @@ impl ImplPermissionHandler for PermissionHandler {
     }
     fn on_dismiss_permission_prompt(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         prompt_id: u64,
         result: PermissionRequestResult,
     ) {
@@ -22507,13 +22394,13 @@ impl Default for PrintSettings {
 pub struct PrintDialogCallback(RefGuard<_cef_print_dialog_callback_t>);
 pub trait ImplPrintDialogCallback: Clone + Sized + Rc {
     #[doc = "See [`_cef_print_dialog_callback_t::cont`] for more documentation."]
-    fn cont(&self, settings: Option<&mut impl ImplPrintSettings>);
+    fn cont(&self, settings: Option<&mut PrintSettings>);
     #[doc = "See [`_cef_print_dialog_callback_t::cancel`] for more documentation."]
     fn cancel(&self);
     fn get_raw(&self) -> *mut _cef_print_dialog_callback_t;
 }
 impl ImplPrintDialogCallback for PrintDialogCallback {
-    fn cont(&self, settings: Option<&mut impl ImplPrintSettings>) {
+    fn cont(&self, settings: Option<&mut PrintSettings>) {
         unsafe {
             if let Some(f) = self.0.cont {
                 let arg_settings = settings;
@@ -22660,40 +22547,40 @@ pub trait WrapPrintHandler: ImplPrintHandler {
 }
 pub trait ImplPrintHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_print_handler_t::on_print_start`] for more documentation."]
-    fn on_print_start(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_print_start(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_print_handler_t::on_print_settings`] for more documentation."]
     fn on_print_settings(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        settings: Option<&mut impl ImplPrintSettings>,
+        browser: Option<&mut Browser>,
+        settings: Option<&mut PrintSettings>,
         get_defaults: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_print_handler_t::on_print_dialog`] for more documentation."]
     fn on_print_dialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         has_selection: ::std::os::raw::c_int,
-        callback: Option<&mut impl ImplPrintDialogCallback>,
+        callback: Option<&mut PrintDialogCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_print_handler_t::on_print_job`] for more documentation."]
     fn on_print_job(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         document_name: Option<&CefString>,
         pdf_file_path: Option<&CefString>,
-        callback: Option<&mut impl ImplPrintJobCallback>,
+        callback: Option<&mut PrintJobCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_print_handler_t::on_print_reset`] for more documentation."]
-    fn on_print_reset(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_print_reset(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_print_handler_t::get_pdf_paper_size`] for more documentation."]
     fn pdf_paper_size(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         device_units_per_inch: ::std::os::raw::c_int,
     ) -> Size {
         Default::default()
@@ -22838,7 +22725,7 @@ mod impl_cef_print_handler_t {
     }
 }
 impl ImplPrintHandler for PrintHandler {
-    fn on_print_start(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_print_start(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_print_start {
                 let arg_browser = browser;
@@ -22855,8 +22742,8 @@ impl ImplPrintHandler for PrintHandler {
     }
     fn on_print_settings(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        settings: Option<&mut impl ImplPrintSettings>,
+        browser: Option<&mut Browser>,
+        settings: Option<&mut PrintSettings>,
         get_defaults: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -22882,9 +22769,9 @@ impl ImplPrintHandler for PrintHandler {
     }
     fn on_print_dialog(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         has_selection: ::std::os::raw::c_int,
-        callback: Option<&mut impl ImplPrintDialogCallback>,
+        callback: Option<&mut PrintDialogCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -22913,10 +22800,10 @@ impl ImplPrintHandler for PrintHandler {
     }
     fn on_print_job(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         document_name: Option<&CefString>,
         pdf_file_path: Option<&CefString>,
-        callback: Option<&mut impl ImplPrintJobCallback>,
+        callback: Option<&mut PrintJobCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -22955,7 +22842,7 @@ impl ImplPrintHandler for PrintHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_print_reset(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_print_reset(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_print_reset {
                 let arg_browser = browser;
@@ -22972,7 +22859,7 @@ impl ImplPrintHandler for PrintHandler {
     }
     fn pdf_paper_size(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         device_units_per_inch: ::std::os::raw::c_int,
     ) -> Size {
         unsafe {
@@ -23058,9 +22945,9 @@ pub trait WrapAccessibilityHandler: ImplAccessibilityHandler {
 }
 pub trait ImplAccessibilityHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_accessibility_handler_t::on_accessibility_tree_change`] for more documentation."]
-    fn on_accessibility_tree_change(&self, value: Option<&mut impl ImplValue>) {}
+    fn on_accessibility_tree_change(&self, value: Option<&mut Value>) {}
     #[doc = "See [`_cef_accessibility_handler_t::on_accessibility_location_change`] for more documentation."]
-    fn on_accessibility_location_change(&self, value: Option<&mut impl ImplValue>) {}
+    fn on_accessibility_location_change(&self, value: Option<&mut Value>) {}
     fn init_methods(object: &mut _cef_accessibility_handler_t) {
         impl_cef_accessibility_handler_t::init_methods::<Self>(object);
     }
@@ -23096,7 +22983,7 @@ mod impl_cef_accessibility_handler_t {
     }
 }
 impl ImplAccessibilityHandler for AccessibilityHandler {
-    fn on_accessibility_tree_change(&self, value: Option<&mut impl ImplValue>) {
+    fn on_accessibility_tree_change(&self, value: Option<&mut Value>) {
         unsafe {
             if let Some(f) = self.0.on_accessibility_tree_change {
                 let arg_value = value;
@@ -23111,7 +22998,7 @@ impl ImplAccessibilityHandler for AccessibilityHandler {
             }
         }
     }
-    fn on_accessibility_location_change(&self, value: Option<&mut impl ImplValue>) {
+    fn on_accessibility_location_change(&self, value: Option<&mut Value>) {
         unsafe {
             if let Some(f) = self.0.on_accessibility_location_change {
                 let arg_value = value;
@@ -23197,17 +23084,17 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_handler_t::get_root_screen_rect`] for more documentation."]
     fn root_screen_rect(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         rect: Option<&mut Rect>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_render_handler_t::get_view_rect`] for more documentation."]
-    fn view_rect(&self, browser: Option<&mut impl ImplBrowser>, rect: Option<&mut Rect>) {}
+    fn view_rect(&self, browser: Option<&mut Browser>, rect: Option<&mut Rect>) {}
     #[doc = "See [`_cef_render_handler_t::get_screen_point`] for more documentation."]
     fn screen_point(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         view_x: ::std::os::raw::c_int,
         view_y: ::std::os::raw::c_int,
         screen_x: Option<&mut ::std::os::raw::c_int>,
@@ -23218,19 +23105,19 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_handler_t::get_screen_info`] for more documentation."]
     fn screen_info(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         screen_info: Option<&mut ScreenInfo>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_render_handler_t::on_popup_show`] for more documentation."]
-    fn on_popup_show(&self, browser: Option<&mut impl ImplBrowser>, show: ::std::os::raw::c_int) {}
+    fn on_popup_show(&self, browser: Option<&mut Browser>, show: ::std::os::raw::c_int) {}
     #[doc = "See [`_cef_render_handler_t::on_popup_size`] for more documentation."]
-    fn on_popup_size(&self, browser: Option<&mut impl ImplBrowser>, rect: Option<&Rect>) {}
+    fn on_popup_size(&self, browser: Option<&mut Browser>, rect: Option<&Rect>) {}
     #[doc = "See [`_cef_render_handler_t::on_paint`] for more documentation."]
     fn on_paint(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         type_: PaintElementType,
         dirty_rects_count: usize,
         dirty_rects: Option<&Rect>,
@@ -23242,7 +23129,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_handler_t::on_accelerated_paint`] for more documentation."]
     fn on_accelerated_paint(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         type_: PaintElementType,
         dirty_rects_count: usize,
         dirty_rects: Option<&Rect>,
@@ -23252,7 +23139,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_handler_t::get_touch_handle_size`] for more documentation."]
     fn touch_handle_size(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         orientation: HorizontalAlignment,
         size: Option<&mut Size>,
     ) {
@@ -23260,15 +23147,15 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_handler_t::on_touch_handle_state_changed`] for more documentation."]
     fn on_touch_handle_state_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         state: Option<&TouchHandleState>,
     ) {
     }
     #[doc = "See [`_cef_render_handler_t::start_dragging`] for more documentation."]
     fn start_dragging(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        drag_data: Option<&mut impl ImplDragData>,
+        browser: Option<&mut Browser>,
+        drag_data: Option<&mut DragData>,
         allowed_ops: DragOperationsMask,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
@@ -23276,18 +23163,13 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
         Default::default()
     }
     #[doc = "See [`_cef_render_handler_t::update_drag_cursor`] for more documentation."]
-    fn update_drag_cursor(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        operation: DragOperationsMask,
-    ) {
-    }
+    fn update_drag_cursor(&self, browser: Option<&mut Browser>, operation: DragOperationsMask) {}
     #[doc = "See [`_cef_render_handler_t::on_scroll_offset_changed`] for more documentation."]
-    fn on_scroll_offset_changed(&self, browser: Option<&mut impl ImplBrowser>, x: f64, y: f64) {}
+    fn on_scroll_offset_changed(&self, browser: Option<&mut Browser>, x: f64, y: f64) {}
     #[doc = "See [`_cef_render_handler_t::on_ime_composition_range_changed`] for more documentation."]
     fn on_ime_composition_range_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         selected_range: Option<&Range>,
         character_bounds_count: usize,
         character_bounds: Option<&Rect>,
@@ -23296,7 +23178,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_handler_t::on_text_selection_changed`] for more documentation."]
     fn on_text_selection_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         selected_text: Option<&CefString>,
         selected_range: Option<&Range>,
     ) {
@@ -23304,7 +23186,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_handler_t::on_virtual_keyboard_requested`] for more documentation."]
     fn on_virtual_keyboard_requested(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         input_mode: TextInputMode,
     ) {
     }
@@ -23776,7 +23658,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn root_screen_rect(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         rect: Option<&mut Rect>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -23802,7 +23684,7 @@ impl ImplRenderHandler for RenderHandler {
                 .unwrap_or_default()
         }
     }
-    fn view_rect(&self, browser: Option<&mut impl ImplBrowser>, rect: Option<&mut Rect>) {
+    fn view_rect(&self, browser: Option<&mut Browser>, rect: Option<&mut Rect>) {
         unsafe {
             if let Some(f) = self.0.get_view_rect {
                 let (arg_browser, arg_rect) = (browser, rect);
@@ -23824,7 +23706,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn screen_point(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         view_x: ::std::os::raw::c_int,
         view_y: ::std::os::raw::c_int,
         screen_x: Option<&mut ::std::os::raw::c_int>,
@@ -23864,7 +23746,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn screen_info(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         screen_info: Option<&mut ScreenInfo>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -23890,7 +23772,7 @@ impl ImplRenderHandler for RenderHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_popup_show(&self, browser: Option<&mut impl ImplBrowser>, show: ::std::os::raw::c_int) {
+    fn on_popup_show(&self, browser: Option<&mut Browser>, show: ::std::os::raw::c_int) {
         unsafe {
             if let Some(f) = self.0.on_popup_show {
                 let (arg_browser, arg_show) = (browser, show);
@@ -23905,7 +23787,7 @@ impl ImplRenderHandler for RenderHandler {
             }
         }
     }
-    fn on_popup_size(&self, browser: Option<&mut impl ImplBrowser>, rect: Option<&Rect>) {
+    fn on_popup_size(&self, browser: Option<&mut Browser>, rect: Option<&Rect>) {
         unsafe {
             if let Some(f) = self.0.on_popup_size {
                 let (arg_browser, arg_rect) = (browser, rect);
@@ -23927,7 +23809,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn on_paint(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         type_: PaintElementType,
         dirty_rects_count: usize,
         dirty_rects: Option<&Rect>,
@@ -23983,7 +23865,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn on_accelerated_paint(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         type_: PaintElementType,
         dirty_rects_count: usize,
         dirty_rects: Option<&Rect>,
@@ -24024,7 +23906,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn touch_handle_size(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         orientation: HorizontalAlignment,
         size: Option<&mut Size>,
     ) {
@@ -24050,7 +23932,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn on_touch_handle_state_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         state: Option<&TouchHandleState>,
     ) {
         unsafe {
@@ -24074,8 +23956,8 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn start_dragging(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        drag_data: Option<&mut impl ImplDragData>,
+        browser: Option<&mut Browser>,
+        drag_data: Option<&mut DragData>,
         allowed_ops: DragOperationsMask,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
@@ -24113,11 +23995,7 @@ impl ImplRenderHandler for RenderHandler {
                 .unwrap_or_default()
         }
     }
-    fn update_drag_cursor(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        operation: DragOperationsMask,
-    ) {
+    fn update_drag_cursor(&self, browser: Option<&mut Browser>, operation: DragOperationsMask) {
         unsafe {
             if let Some(f) = self.0.update_drag_cursor {
                 let (arg_browser, arg_operation) = (browser, operation);
@@ -24133,7 +24011,7 @@ impl ImplRenderHandler for RenderHandler {
             }
         }
     }
-    fn on_scroll_offset_changed(&self, browser: Option<&mut impl ImplBrowser>, x: f64, y: f64) {
+    fn on_scroll_offset_changed(&self, browser: Option<&mut Browser>, x: f64, y: f64) {
         unsafe {
             if let Some(f) = self.0.on_scroll_offset_changed {
                 let (arg_browser, arg_x, arg_y) = (browser, x, y);
@@ -24150,7 +24028,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn on_ime_composition_range_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         selected_range: Option<&Range>,
         character_bounds_count: usize,
         character_bounds: Option<&Rect>,
@@ -24197,7 +24075,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn on_text_selection_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         selected_text: Option<&CefString>,
         selected_range: Option<&Range>,
     ) {
@@ -24231,7 +24109,7 @@ impl ImplRenderHandler for RenderHandler {
     }
     fn on_virtual_keyboard_requested(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         input_mode: TextInputMode,
     ) {
         unsafe {
@@ -24811,24 +24689,24 @@ pub trait ImplResourceHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_resource_handler_t::open`] for more documentation."]
     fn open(
         &self,
-        request: Option<&mut impl ImplRequest>,
+        request: Option<&mut Request>,
         handle_request: Option<&mut ::std::os::raw::c_int>,
-        callback: Option<&mut impl ImplCallback>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_resource_handler_t::process_request`] for more documentation."]
     fn process_request(
         &self,
-        request: Option<&mut impl ImplRequest>,
-        callback: Option<&mut impl ImplCallback>,
+        request: Option<&mut Request>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_resource_handler_t::get_response_headers`] for more documentation."]
     fn response_headers(
         &self,
-        response: Option<&mut impl ImplResponse>,
+        response: Option<&mut Response>,
         response_length: Option<&mut i64>,
         redirect_url: Option<&mut CefString>,
     ) {
@@ -24838,7 +24716,7 @@ pub trait ImplResourceHandler: Clone + Sized + Rc {
         &self,
         bytes_to_skip: i64,
         bytes_skipped: Option<&mut i64>,
-        callback: Option<&mut impl ImplResourceSkipCallback>,
+        callback: Option<&mut ResourceSkipCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -24848,7 +24726,7 @@ pub trait ImplResourceHandler: Clone + Sized + Rc {
         data_out: *mut u8,
         bytes_to_read: ::std::os::raw::c_int,
         bytes_read: Option<&mut ::std::os::raw::c_int>,
-        callback: Option<&mut impl ImplResourceReadCallback>,
+        callback: Option<&mut ResourceReadCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -24858,7 +24736,7 @@ pub trait ImplResourceHandler: Clone + Sized + Rc {
         data_out: *mut u8,
         bytes_to_read: ::std::os::raw::c_int,
         bytes_read: Option<&mut ::std::os::raw::c_int>,
-        callback: Option<&mut impl ImplCallback>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -25053,9 +24931,9 @@ mod impl_cef_resource_handler_t {
 impl ImplResourceHandler for ResourceHandler {
     fn open(
         &self,
-        request: Option<&mut impl ImplRequest>,
+        request: Option<&mut Request>,
         handle_request: Option<&mut ::std::os::raw::c_int>,
-        callback: Option<&mut impl ImplCallback>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -25087,8 +24965,8 @@ impl ImplResourceHandler for ResourceHandler {
     }
     fn process_request(
         &self,
-        request: Option<&mut impl ImplRequest>,
-        callback: Option<&mut impl ImplCallback>,
+        request: Option<&mut Request>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -25116,7 +24994,7 @@ impl ImplResourceHandler for ResourceHandler {
     }
     fn response_headers(
         &self,
-        response: Option<&mut impl ImplResponse>,
+        response: Option<&mut Response>,
         response_length: Option<&mut i64>,
         redirect_url: Option<&mut CefString>,
     ) {
@@ -25150,7 +25028,7 @@ impl ImplResourceHandler for ResourceHandler {
         &self,
         bytes_to_skip: i64,
         bytes_skipped: Option<&mut i64>,
-        callback: Option<&mut impl ImplResourceSkipCallback>,
+        callback: Option<&mut ResourceSkipCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -25184,7 +25062,7 @@ impl ImplResourceHandler for ResourceHandler {
         data_out: *mut u8,
         bytes_to_read: ::std::os::raw::c_int,
         bytes_read: Option<&mut ::std::os::raw::c_int>,
-        callback: Option<&mut impl ImplResourceReadCallback>,
+        callback: Option<&mut ResourceReadCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -25220,7 +25098,7 @@ impl ImplResourceHandler for ResourceHandler {
         data_out: *mut u8,
         bytes_to_read: ::std::os::raw::c_int,
         bytes_read: Option<&mut ::std::os::raw::c_int>,
-        callback: Option<&mut impl ImplCallback>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -25566,68 +25444,68 @@ pub trait ImplResourceRequestHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_resource_request_handler_t::get_cookie_access_filter`] for more documentation."]
     fn cookie_access_filter(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
     ) -> Option<CookieAccessFilter> {
         Default::default()
     }
     #[doc = "See [`_cef_resource_request_handler_t::on_before_resource_load`] for more documentation."]
     fn on_before_resource_load(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        callback: Option<&mut impl ImplCallback>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        callback: Option<&mut Callback>,
     ) -> ReturnValue {
         Default::default()
     }
     #[doc = "See [`_cef_resource_request_handler_t::get_resource_handler`] for more documentation."]
     fn resource_handler(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
     ) -> Option<ResourceHandler> {
         Default::default()
     }
     #[doc = "See [`_cef_resource_request_handler_t::on_resource_redirect`] for more documentation."]
     fn on_resource_redirect(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
         new_url: Option<&mut CefString>,
     ) {
     }
     #[doc = "See [`_cef_resource_request_handler_t::on_resource_response`] for more documentation."]
     fn on_resource_response(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_resource_request_handler_t::get_resource_response_filter`] for more documentation."]
     fn resource_response_filter(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
     ) -> Option<ResponseFilter> {
         Default::default()
     }
     #[doc = "See [`_cef_resource_request_handler_t::on_resource_load_complete`] for more documentation."]
     fn on_resource_load_complete(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
         status: UrlrequestStatus,
         received_content_length: i64,
     ) {
@@ -25635,9 +25513,9 @@ pub trait ImplResourceRequestHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_resource_request_handler_t::on_protocol_execution`] for more documentation."]
     fn on_protocol_execution(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         allow_os_execution: Option<&mut ::std::os::raw::c_int>,
     ) {
     }
@@ -25936,9 +25814,9 @@ mod impl_cef_resource_request_handler_t {
 impl ImplResourceRequestHandler for ResourceRequestHandler {
     fn cookie_access_filter(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
     ) -> Option<CookieAccessFilter> {
         unsafe {
             self.0
@@ -25976,10 +25854,10 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
     }
     fn on_before_resource_load(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        callback: Option<&mut impl ImplCallback>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        callback: Option<&mut Callback>,
     ) -> ReturnValue {
         unsafe {
             self.0
@@ -26020,9 +25898,9 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
     }
     fn resource_handler(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
     ) -> Option<ResourceHandler> {
         unsafe {
             self.0
@@ -26060,10 +25938,10 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
     }
     fn on_resource_redirect(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
         new_url: Option<&mut CefString>,
     ) {
         unsafe {
@@ -26111,10 +25989,10 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
     }
     fn on_resource_response(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -26155,10 +26033,10 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
     }
     fn resource_response_filter(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
     ) -> Option<ResponseFilter> {
         unsafe {
             self.0
@@ -26203,10 +26081,10 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
     }
     fn on_resource_load_complete(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
         status: UrlrequestStatus,
         received_content_length: i64,
     ) {
@@ -26267,9 +26145,9 @@ impl ImplResourceRequestHandler for ResourceRequestHandler {
     }
     fn on_protocol_execution(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         allow_os_execution: Option<&mut ::std::os::raw::c_int>,
     ) {
         unsafe {
@@ -26375,9 +26253,9 @@ pub trait ImplCookieAccessFilter: Clone + Sized + Rc {
     #[doc = "See [`_cef_cookie_access_filter_t::can_send_cookie`] for more documentation."]
     fn can_send_cookie(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         cookie: Option<&Cookie>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -26385,10 +26263,10 @@ pub trait ImplCookieAccessFilter: Clone + Sized + Rc {
     #[doc = "See [`_cef_cookie_access_filter_t::can_save_cookie`] for more documentation."]
     fn can_save_cookie(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
         cookie: Option<&Cookie>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -26479,9 +26357,9 @@ mod impl_cef_cookie_access_filter_t {
 impl ImplCookieAccessFilter for CookieAccessFilter {
     fn can_send_cookie(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         cookie: Option<&Cookie>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -26522,10 +26400,10 @@ impl ImplCookieAccessFilter for CookieAccessFilter {
     }
     fn can_save_cookie(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
-        response: Option<&mut impl ImplResponse>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
+        response: Option<&mut Response>,
         cookie: Option<&Cookie>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -26774,11 +26652,11 @@ impl Default for UnresponsiveProcessCallback {
 pub struct SelectClientCertificateCallback(RefGuard<_cef_select_client_certificate_callback_t>);
 pub trait ImplSelectClientCertificateCallback: Clone + Sized + Rc {
     #[doc = "See [`_cef_select_client_certificate_callback_t::select`] for more documentation."]
-    fn select(&self, cert: Option<&mut impl ImplX509Certificate>);
+    fn select(&self, cert: Option<&mut X509Certificate>);
     fn get_raw(&self) -> *mut _cef_select_client_certificate_callback_t;
 }
 impl ImplSelectClientCertificateCallback for SelectClientCertificateCallback {
-    fn select(&self, cert: Option<&mut impl ImplX509Certificate>) {
+    fn select(&self, cert: Option<&mut X509Certificate>) {
         unsafe {
             if let Some(f) = self.0.select {
                 let arg_cert = cert;
@@ -26866,9 +26744,9 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_request_handler_t::on_before_browse`] for more documentation."]
     fn on_before_browse(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         user_gesture: ::std::os::raw::c_int,
         is_redirect: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
@@ -26877,8 +26755,8 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_request_handler_t::on_open_urlfrom_tab`] for more documentation."]
     fn on_open_urlfrom_tab(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         target_url: Option<&CefString>,
         target_disposition: WindowOpenDisposition,
         user_gesture: ::std::os::raw::c_int,
@@ -26888,9 +26766,9 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_request_handler_t::get_resource_request_handler`] for more documentation."]
     fn resource_request_handler(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
         request_initiator: Option<&CefString>,
@@ -26901,63 +26779,63 @@ pub trait ImplRequestHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_request_handler_t::get_auth_credentials`] for more documentation."]
     fn auth_credentials(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         origin_url: Option<&CefString>,
         is_proxy: ::std::os::raw::c_int,
         host: Option<&CefString>,
         port: ::std::os::raw::c_int,
         realm: Option<&CefString>,
         scheme: Option<&CefString>,
-        callback: Option<&mut impl ImplAuthCallback>,
+        callback: Option<&mut AuthCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_request_handler_t::on_certificate_error`] for more documentation."]
     fn on_certificate_error(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         cert_error: Errorcode,
         request_url: Option<&CefString>,
-        ssl_info: Option<&mut impl ImplSslinfo>,
-        callback: Option<&mut impl ImplCallback>,
+        ssl_info: Option<&mut Sslinfo>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_request_handler_t::on_select_client_certificate`] for more documentation."]
     fn on_select_client_certificate(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         is_proxy: ::std::os::raw::c_int,
         host: Option<&CefString>,
         port: ::std::os::raw::c_int,
-        certificates: Option<&[Option<impl ImplX509Certificate>]>,
-        callback: Option<&mut impl ImplSelectClientCertificateCallback>,
+        certificates: Option<&[Option<X509Certificate>]>,
+        callback: Option<&mut SelectClientCertificateCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_request_handler_t::on_render_view_ready`] for more documentation."]
-    fn on_render_view_ready(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_render_view_ready(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_request_handler_t::on_render_process_unresponsive`] for more documentation."]
     fn on_render_process_unresponsive(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        callback: Option<&mut impl ImplUnresponsiveProcessCallback>,
+        browser: Option<&mut Browser>,
+        callback: Option<&mut UnresponsiveProcessCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_request_handler_t::on_render_process_responsive`] for more documentation."]
-    fn on_render_process_responsive(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_render_process_responsive(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_request_handler_t::on_render_process_terminated`] for more documentation."]
     fn on_render_process_terminated(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         status: TerminationStatus,
         error_code: ::std::os::raw::c_int,
         error_string: Option<&CefString>,
     ) {
     }
     #[doc = "See [`_cef_request_handler_t::on_document_available_in_main_frame`] for more documentation."]
-    fn on_document_available_in_main_frame(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_document_available_in_main_frame(&self, browser: Option<&mut Browser>) {}
     fn init_methods(object: &mut _cef_request_handler_t) {
         impl_cef_request_handler_t::init_methods::<Self>(object);
     }
@@ -27386,9 +27264,9 @@ mod impl_cef_request_handler_t {
 impl ImplRequestHandler for RequestHandler {
     fn on_before_browse(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         user_gesture: ::std::os::raw::c_int,
         is_redirect: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
@@ -27432,8 +27310,8 @@ impl ImplRequestHandler for RequestHandler {
     }
     fn on_open_urlfrom_tab(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         target_url: Option<&CefString>,
         target_disposition: WindowOpenDisposition,
         user_gesture: ::std::os::raw::c_int,
@@ -27481,9 +27359,9 @@ impl ImplRequestHandler for RequestHandler {
     }
     fn resource_request_handler(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
         request_initiator: Option<&CefString>,
@@ -27556,14 +27434,14 @@ impl ImplRequestHandler for RequestHandler {
     }
     fn auth_credentials(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         origin_url: Option<&CefString>,
         is_proxy: ::std::os::raw::c_int,
         host: Option<&CefString>,
         port: ::std::os::raw::c_int,
         realm: Option<&CefString>,
         scheme: Option<&CefString>,
-        callback: Option<&mut impl ImplAuthCallback>,
+        callback: Option<&mut AuthCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -27624,11 +27502,11 @@ impl ImplRequestHandler for RequestHandler {
     }
     fn on_certificate_error(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         cert_error: Errorcode,
         request_url: Option<&CefString>,
-        ssl_info: Option<&mut impl ImplSslinfo>,
-        callback: Option<&mut impl ImplCallback>,
+        ssl_info: Option<&mut Sslinfo>,
+        callback: Option<&mut Callback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -27674,12 +27552,12 @@ impl ImplRequestHandler for RequestHandler {
     }
     fn on_select_client_certificate(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         is_proxy: ::std::os::raw::c_int,
         host: Option<&CefString>,
         port: ::std::os::raw::c_int,
-        certificates: Option<&[Option<impl ImplX509Certificate>]>,
-        callback: Option<&mut impl ImplSelectClientCertificateCallback>,
+        certificates: Option<&[Option<X509Certificate>]>,
+        callback: Option<&mut SelectClientCertificateCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -27748,7 +27626,7 @@ impl ImplRequestHandler for RequestHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_render_view_ready(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_render_view_ready(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_render_view_ready {
                 let arg_browser = browser;
@@ -27765,8 +27643,8 @@ impl ImplRequestHandler for RequestHandler {
     }
     fn on_render_process_unresponsive(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        callback: Option<&mut impl ImplUnresponsiveProcessCallback>,
+        browser: Option<&mut Browser>,
+        callback: Option<&mut UnresponsiveProcessCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -27792,7 +27670,7 @@ impl ImplRequestHandler for RequestHandler {
                 .unwrap_or_default()
         }
     }
-    fn on_render_process_responsive(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_render_process_responsive(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_render_process_responsive {
                 let arg_browser = browser;
@@ -27809,7 +27687,7 @@ impl ImplRequestHandler for RequestHandler {
     }
     fn on_render_process_terminated(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
+        browser: Option<&mut Browser>,
         status: TerminationStatus,
         error_code: ::std::os::raw::c_int,
         error_string: Option<&CefString>,
@@ -27839,7 +27717,7 @@ impl ImplRequestHandler for RequestHandler {
             }
         }
     }
-    fn on_document_available_in_main_frame(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_document_available_in_main_frame(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_document_available_in_main_frame {
                 let arg_browser = browser;
@@ -27993,10 +27871,10 @@ pub trait ImplClient: Clone + Sized + Rc {
     #[doc = "See [`_cef_client_t::on_process_message_received`] for more documentation."]
     fn on_process_message_received(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         source_process: ProcessId,
-        message: Option<&mut impl ImplProcessMessage>,
+        message: Option<&mut ProcessMessage>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -28528,10 +28406,10 @@ impl ImplClient for Client {
     }
     fn on_process_message_received(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         source_process: ProcessId,
-        message: Option<&mut impl ImplProcessMessage>,
+        message: Option<&mut ProcessMessage>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -28982,17 +28860,13 @@ pub trait WrapRequestContextHandler: ImplRequestContextHandler {
 }
 pub trait ImplRequestContextHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_request_context_handler_t::on_request_context_initialized`] for more documentation."]
-    fn on_request_context_initialized(
-        &self,
-        request_context: Option<&mut impl ImplRequestContext>,
-    ) {
-    }
+    fn on_request_context_initialized(&self, request_context: Option<&mut RequestContext>) {}
     #[doc = "See [`_cef_request_context_handler_t::get_resource_request_handler`] for more documentation."]
     fn resource_request_handler(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
         request_initiator: Option<&CefString>,
@@ -29098,10 +28972,7 @@ mod impl_cef_request_context_handler_t {
     }
 }
 impl ImplRequestContextHandler for RequestContextHandler {
-    fn on_request_context_initialized(
-        &self,
-        request_context: Option<&mut impl ImplRequestContext>,
-    ) {
+    fn on_request_context_initialized(&self, request_context: Option<&mut RequestContext>) {
         unsafe {
             if let Some(f) = self.0.on_request_context_initialized {
                 let arg_request_context = request_context;
@@ -29118,9 +28989,9 @@ impl ImplRequestContextHandler for RequestContextHandler {
     }
     fn resource_request_handler(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        request: Option<&mut impl ImplRequest>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        request: Option<&mut Request>,
         is_navigation: ::std::os::raw::c_int,
         is_download: ::std::os::raw::c_int,
         request_initiator: Option<&CefString>,
@@ -29265,11 +29136,11 @@ pub trait ImplBrowserProcessHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_browser_process_handler_t::on_context_initialized`] for more documentation."]
     fn on_context_initialized(&self) {}
     #[doc = "See [`_cef_browser_process_handler_t::on_before_child_process_launch`] for more documentation."]
-    fn on_before_child_process_launch(&self, command_line: Option<&mut impl ImplCommandLine>) {}
+    fn on_before_child_process_launch(&self, command_line: Option<&mut CommandLine>) {}
     #[doc = "See [`_cef_browser_process_handler_t::on_already_running_app_relaunch`] for more documentation."]
     fn on_already_running_app_relaunch(
         &self,
-        command_line: Option<&mut impl ImplCommandLine>,
+        command_line: Option<&mut CommandLine>,
         current_directory: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -29421,7 +29292,7 @@ impl ImplBrowserProcessHandler for BrowserProcessHandler {
             }
         }
     }
-    fn on_before_child_process_launch(&self, command_line: Option<&mut impl ImplCommandLine>) {
+    fn on_before_child_process_launch(&self, command_line: Option<&mut CommandLine>) {
         unsafe {
             if let Some(f) = self.0.on_before_child_process_launch {
                 let arg_command_line = command_line;
@@ -29438,7 +29309,7 @@ impl ImplBrowserProcessHandler for BrowserProcessHandler {
     }
     fn on_already_running_app_relaunch(
         &self,
-        command_line: Option<&mut impl ImplCommandLine>,
+        command_line: Option<&mut CommandLine>,
         current_directory: Option<&CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -29642,7 +29513,7 @@ impl Default for Task {
 pub struct TaskRunner(RefGuard<_cef_task_runner_t>);
 pub trait ImplTaskRunner: Clone + Sized + Rc {
     #[doc = "See [`_cef_task_runner_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplTaskRunner>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut TaskRunner>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_task_runner_t::belongs_to_current_thread`] for more documentation."]
     fn belongs_to_current_thread(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_task_runner_t::belongs_to_thread`] for more documentation."]
@@ -29658,7 +29529,7 @@ pub trait ImplTaskRunner: Clone + Sized + Rc {
     fn get_raw(&self) -> *mut _cef_task_runner_t;
 }
 impl ImplTaskRunner for TaskRunner {
-    fn is_same(&self, that: Option<&mut impl ImplTaskRunner>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut TaskRunner>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -29806,15 +29677,15 @@ pub trait ImplV8Context: Clone + Sized + Rc {
     #[doc = "See [`_cef_v8_context_t::exit`] for more documentation."]
     fn exit(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_context_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplV8Context>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut V8Context>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_context_t::eval`] for more documentation."]
     fn eval(
         &self,
         code: Option<&CefString>,
         script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
-        retval: Option<&mut Option<impl ImplV8Value>>,
-        exception: Option<&mut Option<impl ImplV8Exception>>,
+        retval: Option<&mut Option<V8Value>>,
+        exception: Option<&mut Option<V8Exception>>,
     ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_context_t;
 }
@@ -29919,7 +29790,7 @@ impl ImplV8Context for V8Context {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplV8Context>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut V8Context>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -29943,8 +29814,8 @@ impl ImplV8Context for V8Context {
         code: Option<&CefString>,
         script_url: Option<&CefString>,
         start_line: ::std::os::raw::c_int,
-        retval: Option<&mut Option<impl ImplV8Value>>,
-        exception: Option<&mut Option<impl ImplV8Exception>>,
+        retval: Option<&mut Option<V8Value>>,
+        exception: Option<&mut Option<V8Exception>>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -30060,9 +29931,9 @@ pub trait ImplV8Handler: Clone + Sized + Rc {
     fn execute(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        arguments: Option<&[Option<impl ImplV8Value>]>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        arguments: Option<&[Option<V8Value>]>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30155,9 +30026,9 @@ impl ImplV8Handler for V8Handler {
     fn execute(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        arguments: Option<&[Option<impl ImplV8Value>]>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        arguments: Option<&[Option<V8Value>]>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30295,8 +30166,8 @@ pub trait ImplV8Accessor: Clone + Sized + Rc {
     fn get(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30305,8 +30176,8 @@ pub trait ImplV8Accessor: Clone + Sized + Rc {
     fn set(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        value: Option<&mut impl ImplV8Value>,
+        object: Option<&mut V8Value>,
+        value: Option<&mut V8Value>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30404,8 +30275,8 @@ impl ImplV8Accessor for V8Accessor {
     fn get(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30446,8 +30317,8 @@ impl ImplV8Accessor for V8Accessor {
     fn set(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        value: Option<&mut impl ImplV8Value>,
+        object: Option<&mut V8Value>,
+        value: Option<&mut V8Value>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30549,8 +30420,8 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
     fn byname(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30559,8 +30430,8 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
     fn byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30569,8 +30440,8 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
     fn set_byname(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        value: Option<&mut impl ImplV8Value>,
+        object: Option<&mut V8Value>,
+        value: Option<&mut V8Value>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30579,8 +30450,8 @@ pub trait ImplV8Interceptor: Clone + Sized + Rc {
     fn set_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8Value>,
-        value: Option<&mut impl ImplV8Value>,
+        object: Option<&mut V8Value>,
+        value: Option<&mut V8Value>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -30747,8 +30618,8 @@ impl ImplV8Interceptor for V8Interceptor {
     fn byname(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30789,8 +30660,8 @@ impl ImplV8Interceptor for V8Interceptor {
     fn byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8Value>,
-        retval: Option<&mut Option<impl ImplV8Value>>,
+        object: Option<&mut V8Value>,
+        retval: Option<&mut Option<V8Value>>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30828,8 +30699,8 @@ impl ImplV8Interceptor for V8Interceptor {
     fn set_byname(
         &self,
         name: Option<&CefString>,
-        object: Option<&mut impl ImplV8Value>,
-        value: Option<&mut impl ImplV8Value>,
+        object: Option<&mut V8Value>,
+        value: Option<&mut V8Value>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -30866,8 +30737,8 @@ impl ImplV8Interceptor for V8Interceptor {
     fn set_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        object: Option<&mut impl ImplV8Value>,
-        value: Option<&mut impl ImplV8Value>,
+        object: Option<&mut V8Value>,
+        value: Option<&mut V8Value>,
         exception: Option<&mut CefString>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -31237,7 +31108,7 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     #[doc = "See [`_cef_v8_value_t::is_promise`] for more documentation."]
     fn is_promise(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_value_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut V8Value>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_value_t::get_bool_value`] for more documentation."]
     fn bool_value(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_value_t::get_int_value`] for more documentation."]
@@ -31278,14 +31149,14 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     fn set_value_bykey(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplV8Value>,
+        value: Option<&mut V8Value>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_value_t::set_value_byindex`] for more documentation."]
     fn set_value_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        value: Option<&mut impl ImplV8Value>,
+        value: Option<&mut V8Value>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_value_t::set_value_byaccessor`] for more documentation."]
     fn set_value_byaccessor(
@@ -31323,18 +31194,18 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     #[doc = "See [`_cef_v8_value_t::execute_function`] for more documentation."]
     fn execute_function(
         &self,
-        object: Option<&mut impl ImplV8Value>,
-        arguments: Option<&[Option<impl ImplV8Value>]>,
+        object: Option<&mut V8Value>,
+        arguments: Option<&[Option<V8Value>]>,
     ) -> Option<V8Value>;
     #[doc = "See [`_cef_v8_value_t::execute_function_with_context`] for more documentation."]
     fn execute_function_with_context(
         &self,
-        context: Option<&mut impl ImplV8Context>,
-        object: Option<&mut impl ImplV8Value>,
-        arguments: Option<&[Option<impl ImplV8Value>]>,
+        context: Option<&mut V8Context>,
+        object: Option<&mut V8Value>,
+        arguments: Option<&[Option<V8Value>]>,
     ) -> Option<V8Value>;
     #[doc = "See [`_cef_v8_value_t::resolve_promise`] for more documentation."]
-    fn resolve_promise(&self, arg: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int;
+    fn resolve_promise(&self, arg: Option<&mut V8Value>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_v8_value_t::reject_promise`] for more documentation."]
     fn reject_promise(&self, error_msg: Option<&CefString>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_v8_value_t;
@@ -31508,7 +31379,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut V8Value>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -31774,7 +31645,7 @@ impl ImplV8Value for V8Value {
     fn set_value_bykey(
         &self,
         key: Option<&CefString>,
-        value: Option<&mut impl ImplV8Value>,
+        value: Option<&mut V8Value>,
         attribute: V8Propertyattribute,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -31802,7 +31673,7 @@ impl ImplV8Value for V8Value {
     fn set_value_byindex(
         &self,
         index: ::std::os::raw::c_int,
-        value: Option<&mut impl ImplV8Value>,
+        value: Option<&mut V8Value>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -32016,8 +31887,8 @@ impl ImplV8Value for V8Value {
     }
     fn execute_function(
         &self,
-        object: Option<&mut impl ImplV8Value>,
-        arguments: Option<&[Option<impl ImplV8Value>]>,
+        object: Option<&mut V8Value>,
+        arguments: Option<&[Option<V8Value>]>,
     ) -> Option<V8Value> {
         unsafe {
             self.0
@@ -32067,9 +31938,9 @@ impl ImplV8Value for V8Value {
     }
     fn execute_function_with_context(
         &self,
-        context: Option<&mut impl ImplV8Context>,
-        object: Option<&mut impl ImplV8Value>,
-        arguments: Option<&[Option<impl ImplV8Value>]>,
+        context: Option<&mut V8Context>,
+        object: Option<&mut V8Value>,
+        arguments: Option<&[Option<V8Value>]>,
     ) -> Option<V8Value> {
         unsafe {
             self.0
@@ -32129,7 +32000,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn resolve_promise(&self, arg: Option<&mut impl ImplV8Value>) -> ::std::os::raw::c_int {
+    fn resolve_promise(&self, arg: Option<&mut V8Value>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .resolve_promise
@@ -32490,12 +32361,12 @@ pub trait ImplRenderProcessHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_process_handler_t::on_browser_created`] for more documentation."]
     fn on_browser_created(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        extra_info: Option<&mut impl ImplDictionaryValue>,
+        browser: Option<&mut Browser>,
+        extra_info: Option<&mut DictionaryValue>,
     ) {
     }
     #[doc = "See [`_cef_render_process_handler_t::on_browser_destroyed`] for more documentation."]
-    fn on_browser_destroyed(&self, browser: Option<&mut impl ImplBrowser>) {}
+    fn on_browser_destroyed(&self, browser: Option<&mut Browser>) {}
     #[doc = "See [`_cef_render_process_handler_t::get_load_handler`] for more documentation."]
     fn load_handler(&self) -> Option<LoadHandler> {
         Default::default()
@@ -32503,44 +32374,44 @@ pub trait ImplRenderProcessHandler: Clone + Sized + Rc {
     #[doc = "See [`_cef_render_process_handler_t::on_context_created`] for more documentation."]
     fn on_context_created(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8Context>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        context: Option<&mut V8Context>,
     ) {
     }
     #[doc = "See [`_cef_render_process_handler_t::on_context_released`] for more documentation."]
     fn on_context_released(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8Context>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        context: Option<&mut V8Context>,
     ) {
     }
     #[doc = "See [`_cef_render_process_handler_t::on_uncaught_exception`] for more documentation."]
     fn on_uncaught_exception(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8Context>,
-        exception: Option<&mut impl ImplV8Exception>,
-        stack_trace: Option<&mut impl ImplV8StackTrace>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        context: Option<&mut V8Context>,
+        exception: Option<&mut V8Exception>,
+        stack_trace: Option<&mut V8StackTrace>,
     ) {
     }
     #[doc = "See [`_cef_render_process_handler_t::on_focused_node_changed`] for more documentation."]
     fn on_focused_node_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        node: Option<&mut impl ImplDomnode>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        node: Option<&mut Domnode>,
     ) {
     }
     #[doc = "See [`_cef_render_process_handler_t::on_process_message_received`] for more documentation."]
     fn on_process_message_received(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         source_process: ProcessId,
-        message: Option<&mut impl ImplProcessMessage>,
+        message: Option<&mut ProcessMessage>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -32756,8 +32627,8 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
     }
     fn on_browser_created(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        extra_info: Option<&mut impl ImplDictionaryValue>,
+        browser: Option<&mut Browser>,
+        extra_info: Option<&mut DictionaryValue>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_browser_created {
@@ -32779,7 +32650,7 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
             }
         }
     }
-    fn on_browser_destroyed(&self, browser: Option<&mut impl ImplBrowser>) {
+    fn on_browser_destroyed(&self, browser: Option<&mut Browser>) {
         unsafe {
             if let Some(f) = self.0.on_browser_destroyed {
                 let arg_browser = browser;
@@ -32812,9 +32683,9 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
     }
     fn on_context_created(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8Context>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        context: Option<&mut V8Context>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_context_created {
@@ -32844,9 +32715,9 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
     }
     fn on_context_released(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8Context>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        context: Option<&mut V8Context>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_context_released {
@@ -32876,11 +32747,11 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
     }
     fn on_uncaught_exception(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        context: Option<&mut impl ImplV8Context>,
-        exception: Option<&mut impl ImplV8Exception>,
-        stack_trace: Option<&mut impl ImplV8StackTrace>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        context: Option<&mut V8Context>,
+        exception: Option<&mut V8Exception>,
+        stack_trace: Option<&mut V8StackTrace>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_uncaught_exception {
@@ -32930,9 +32801,9 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
     }
     fn on_focused_node_changed(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-        node: Option<&mut impl ImplDomnode>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
+        node: Option<&mut Domnode>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_focused_node_changed {
@@ -32962,10 +32833,10 @@ impl ImplRenderProcessHandler for RenderProcessHandler {
     }
     fn on_process_message_received(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         source_process: ProcessId,
-        message: Option<&mut impl ImplProcessMessage>,
+        message: Option<&mut ProcessMessage>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -33444,10 +33315,10 @@ pub trait ImplSchemeHandlerFactory: Clone + Sized + Rc {
     #[doc = "See [`_cef_scheme_handler_factory_t::create`] for more documentation."]
     fn create(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         scheme_name: Option<&CefString>,
-        request: Option<&mut impl ImplRequest>,
+        request: Option<&mut Request>,
     ) -> Option<ResourceHandler> {
         Default::default()
     }
@@ -33501,10 +33372,10 @@ mod impl_cef_scheme_handler_factory_t {
 impl ImplSchemeHandlerFactory for SchemeHandlerFactory {
     fn create(
         &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
+        browser: Option<&mut Browser>,
+        frame: Option<&mut Frame>,
         scheme_name: Option<&CefString>,
-        request: Option<&mut impl ImplRequest>,
+        request: Option<&mut Request>,
     ) -> Option<ResourceHandler> {
         unsafe {
             self.0
@@ -33618,7 +33489,7 @@ pub trait ImplApp: Clone + Sized + Rc {
     fn on_before_command_line_processing(
         &self,
         process_type: Option<&CefString>,
-        command_line: Option<&mut impl ImplCommandLine>,
+        command_line: Option<&mut CommandLine>,
     ) {
     }
     #[doc = "See [`_cef_app_t::on_register_custom_schemes`] for more documentation."]
@@ -33720,7 +33591,7 @@ impl ImplApp for App {
     fn on_before_command_line_processing(
         &self,
         process_type: Option<&CefString>,
-        command_line: Option<&mut impl ImplCommandLine>,
+        command_line: Option<&mut CommandLine>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_before_command_line_processing {
@@ -34019,27 +33890,15 @@ pub trait WrapUrlrequestClient: ImplUrlrequestClient {
 }
 pub trait ImplUrlrequestClient: Clone + Sized + Rc {
     #[doc = "See [`_cef_urlrequest_client_t::on_request_complete`] for more documentation."]
-    fn on_request_complete(&self, request: Option<&mut impl ImplUrlrequest>) {}
+    fn on_request_complete(&self, request: Option<&mut Urlrequest>) {}
     #[doc = "See [`_cef_urlrequest_client_t::on_upload_progress`] for more documentation."]
-    fn on_upload_progress(
-        &self,
-        request: Option<&mut impl ImplUrlrequest>,
-        current: i64,
-        total: i64,
-    ) {
-    }
+    fn on_upload_progress(&self, request: Option<&mut Urlrequest>, current: i64, total: i64) {}
     #[doc = "See [`_cef_urlrequest_client_t::on_download_progress`] for more documentation."]
-    fn on_download_progress(
-        &self,
-        request: Option<&mut impl ImplUrlrequest>,
-        current: i64,
-        total: i64,
-    ) {
-    }
+    fn on_download_progress(&self, request: Option<&mut Urlrequest>, current: i64, total: i64) {}
     #[doc = "See [`_cef_urlrequest_client_t::on_download_data`] for more documentation."]
     fn on_download_data(
         &self,
-        request: Option<&mut impl ImplUrlrequest>,
+        request: Option<&mut Urlrequest>,
         data: *const u8,
         data_length: usize,
     ) {
@@ -34052,7 +33911,7 @@ pub trait ImplUrlrequestClient: Clone + Sized + Rc {
         port: ::std::os::raw::c_int,
         realm: Option<&CefString>,
         scheme: Option<&CefString>,
-        callback: Option<&mut impl ImplAuthCallback>,
+        callback: Option<&mut AuthCallback>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
@@ -34189,7 +34048,7 @@ mod impl_cef_urlrequest_client_t {
     }
 }
 impl ImplUrlrequestClient for UrlrequestClient {
-    fn on_request_complete(&self, request: Option<&mut impl ImplUrlrequest>) {
+    fn on_request_complete(&self, request: Option<&mut Urlrequest>) {
         unsafe {
             if let Some(f) = self.0.on_request_complete {
                 let arg_request = request;
@@ -34204,12 +34063,7 @@ impl ImplUrlrequestClient for UrlrequestClient {
             }
         }
     }
-    fn on_upload_progress(
-        &self,
-        request: Option<&mut impl ImplUrlrequest>,
-        current: i64,
-        total: i64,
-    ) {
+    fn on_upload_progress(&self, request: Option<&mut Urlrequest>, current: i64, total: i64) {
         unsafe {
             if let Some(f) = self.0.on_upload_progress {
                 let (arg_request, arg_current, arg_total) = (request, current, total);
@@ -34224,12 +34078,7 @@ impl ImplUrlrequestClient for UrlrequestClient {
             }
         }
     }
-    fn on_download_progress(
-        &self,
-        request: Option<&mut impl ImplUrlrequest>,
-        current: i64,
-        total: i64,
-    ) {
+    fn on_download_progress(&self, request: Option<&mut Urlrequest>, current: i64, total: i64) {
         unsafe {
             if let Some(f) = self.0.on_download_progress {
                 let (arg_request, arg_current, arg_total) = (request, current, total);
@@ -34246,7 +34095,7 @@ impl ImplUrlrequestClient for UrlrequestClient {
     }
     fn on_download_data(
         &self,
-        request: Option<&mut impl ImplUrlrequest>,
+        request: Option<&mut Urlrequest>,
         data: *const u8,
         data_length: usize,
     ) {
@@ -34272,7 +34121,7 @@ impl ImplUrlrequestClient for UrlrequestClient {
         port: ::std::os::raw::c_int,
         realm: Option<&CefString>,
         scheme: Option<&CefString>,
-        callback: Option<&mut impl ImplAuthCallback>,
+        callback: Option<&mut AuthCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -34456,31 +34305,34 @@ impl Default for Layout {
 pub struct BoxLayout(RefGuard<_cef_box_layout_t>);
 pub trait ImplBoxLayout: ImplLayout {
     #[doc = "See [`_cef_box_layout_t::set_flex_for_view`] for more documentation."]
-    fn set_flex_for_view(&self, view: Option<&mut impl ImplView>, flex: ::std::os::raw::c_int);
+    fn set_flex_for_view(&self, view: Option<&mut View>, flex: ::std::os::raw::c_int);
     #[doc = "See [`_cef_box_layout_t::clear_flex_for_view`] for more documentation."]
-    fn clear_flex_for_view(&self, view: Option<&mut impl ImplView>);
+    fn clear_flex_for_view(&self, view: Option<&mut View>);
     fn get_raw(&self) -> *mut _cef_box_layout_t {
         <Self as ImplLayout>::get_raw(self).cast()
     }
 }
 impl ImplLayout for BoxLayout {
     fn as_box_layout(&self) -> Option<BoxLayout> {
-        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_box_layout()
+        Layout::from(self).as_box_layout()
     }
     fn as_fill_layout(&self) -> Option<FillLayout> {
-        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_fill_layout()
+        Layout::from(self).as_fill_layout()
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        Layout::from(self).is_valid()
     }
     fn get_raw(&self) -> *mut _cef_layout_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&BoxLayout> for Layout {
+    fn from(from: &BoxLayout) -> Self {
+        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplBoxLayout for BoxLayout {
-    fn set_flex_for_view(&self, view: Option<&mut impl ImplView>, flex: ::std::os::raw::c_int) {
+    fn set_flex_for_view(&self, view: Option<&mut View>, flex: ::std::os::raw::c_int) {
         unsafe {
             if let Some(f) = self.0.set_flex_for_view {
                 let (arg_view, arg_flex) = (view, flex);
@@ -34495,7 +34347,7 @@ impl ImplBoxLayout for BoxLayout {
             }
         }
     }
-    fn clear_flex_for_view(&self, view: Option<&mut impl ImplView>) {
+    fn clear_flex_for_view(&self, view: Option<&mut View>) {
         unsafe {
             if let Some(f) = self.0.clear_flex_for_view {
                 let arg_view = view;
@@ -34562,18 +34414,21 @@ pub trait ImplFillLayout: ImplLayout {
 }
 impl ImplLayout for FillLayout {
     fn as_box_layout(&self) -> Option<BoxLayout> {
-        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_box_layout()
+        Layout::from(self).as_box_layout()
     }
     fn as_fill_layout(&self) -> Option<FillLayout> {
-        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_fill_layout()
+        Layout::from(self).as_fill_layout()
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        Layout::from(self).is_valid()
     }
     fn get_raw(&self) -> *mut _cef_layout_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
+    }
+}
+impl std::convert::From<&FillLayout> for Layout {
+    fn from(from: &FillLayout) -> Self {
+        Layout(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
     }
 }
 impl ImplFillLayout for FillLayout {
@@ -34642,21 +34497,21 @@ pub trait WrapViewDelegate: ImplViewDelegate {
 }
 pub trait ImplViewDelegate: Clone + Sized + Rc {
     #[doc = "See [`_cef_view_delegate_t::get_preferred_size`] for more documentation."]
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         Default::default()
     }
     #[doc = "See [`_cef_view_delegate_t::get_minimum_size`] for more documentation."]
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         Default::default()
     }
     #[doc = "See [`_cef_view_delegate_t::get_maximum_size`] for more documentation."]
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         Default::default()
     }
     #[doc = "See [`_cef_view_delegate_t::get_height_for_width`] for more documentation."]
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -34664,29 +34519,29 @@ pub trait ImplViewDelegate: Clone + Sized + Rc {
     #[doc = "See [`_cef_view_delegate_t::on_parent_view_changed`] for more documentation."]
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
     }
     #[doc = "See [`_cef_view_delegate_t::on_child_view_changed`] for more documentation."]
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
     }
     #[doc = "See [`_cef_view_delegate_t::on_window_changed`] for more documentation."]
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {}
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {}
     #[doc = "See [`_cef_view_delegate_t::on_layout_changed`] for more documentation."]
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {}
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {}
     #[doc = "See [`_cef_view_delegate_t::on_focus`] for more documentation."]
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {}
+    fn on_focus(&self, view: Option<&mut View>) {}
     #[doc = "See [`_cef_view_delegate_t::on_blur`] for more documentation."]
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {}
+    fn on_blur(&self, view: Option<&mut View>) {}
     #[doc = "See [`_cef_view_delegate_t::on_theme_changed`] for more documentation."]
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {}
+    fn on_theme_changed(&self, view: Option<&mut View>) {}
     fn init_methods(object: &mut _cef_view_delegate_t) {
         impl_cef_view_delegate_t::init_methods::<Self>(object);
     }
@@ -34866,7 +34721,7 @@ mod impl_cef_view_delegate_t {
     }
 }
 impl ImplViewDelegate for ViewDelegate {
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         unsafe {
             self.0
                 .get_preferred_size
@@ -34885,7 +34740,7 @@ impl ImplViewDelegate for ViewDelegate {
                 .unwrap_or_default()
         }
     }
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         unsafe {
             self.0
                 .get_minimum_size
@@ -34904,7 +34759,7 @@ impl ImplViewDelegate for ViewDelegate {
                 .unwrap_or_default()
         }
     }
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         unsafe {
             self.0
                 .get_maximum_size
@@ -34925,7 +34780,7 @@ impl ImplViewDelegate for ViewDelegate {
     }
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -34948,9 +34803,9 @@ impl ImplViewDelegate for ViewDelegate {
     }
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_parent_view_changed {
@@ -34974,9 +34829,9 @@ impl ImplViewDelegate for ViewDelegate {
     }
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_child_view_changed {
@@ -34998,7 +34853,7 @@ impl ImplViewDelegate for ViewDelegate {
             }
         }
     }
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {
         unsafe {
             if let Some(f) = self.0.on_window_changed {
                 let (arg_view, arg_added) = (view, added);
@@ -35013,7 +34868,7 @@ impl ImplViewDelegate for ViewDelegate {
             }
         }
     }
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {
         unsafe {
             if let Some(f) = self.0.on_layout_changed {
                 let (arg_view, arg_new_bounds) = (view, new_bounds);
@@ -35033,7 +34888,7 @@ impl ImplViewDelegate for ViewDelegate {
             }
         }
     }
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {
+    fn on_focus(&self, view: Option<&mut View>) {
         unsafe {
             if let Some(f) = self.0.on_focus {
                 let arg_view = view;
@@ -35048,7 +34903,7 @@ impl ImplViewDelegate for ViewDelegate {
             }
         }
     }
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {
+    fn on_blur(&self, view: Option<&mut View>) {
         unsafe {
             if let Some(f) = self.0.on_blur {
                 let arg_view = view;
@@ -35063,7 +34918,7 @@ impl ImplViewDelegate for ViewDelegate {
             }
         }
     }
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {
+    fn on_theme_changed(&self, view: Option<&mut View>) {
         unsafe {
             if let Some(f) = self.0.on_theme_changed {
                 let arg_view = view;
@@ -35143,7 +34998,7 @@ pub trait ImplView: Clone + Sized + Rc {
     #[doc = "See [`_cef_view_t::is_attached`] for more documentation."]
     fn is_attached(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_view_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_view_t::get_delegate`] for more documentation."]
     fn delegate(&self) -> Option<ViewDelegate>;
     #[doc = "See [`_cef_view_t::get_window`] for more documentation."]
@@ -35227,13 +35082,13 @@ pub trait ImplView: Clone + Sized + Rc {
     #[doc = "See [`_cef_view_t::convert_point_to_view`] for more documentation."]
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_view_t::convert_point_from_view`] for more documentation."]
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_view_t;
@@ -35368,7 +35223,7 @@ impl ImplView for View {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -35890,7 +35745,7 @@ impl ImplView for View {
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -35918,7 +35773,7 @@ impl ImplView for View {
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -36008,207 +35863,176 @@ pub trait ImplButton: ImplView {
 }
 impl ImplView for Button {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
+    }
+}
+impl std::convert::From<&Button> for View {
+    fn from(from: &Button) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
     }
 }
 impl ImplButton for Button {
@@ -36348,9 +36172,9 @@ pub trait WrapButtonDelegate: ImplButtonDelegate {
 }
 pub trait ImplButtonDelegate: ImplViewDelegate {
     #[doc = "See [`_cef_button_delegate_t::on_button_pressed`] for more documentation."]
-    fn on_button_pressed(&self, button: Option<&mut impl ImplButton>) {}
+    fn on_button_pressed(&self, button: Option<&mut Button>) {}
     #[doc = "See [`_cef_button_delegate_t::on_button_state_changed`] for more documentation."]
-    fn on_button_state_changed(&self, button: Option<&mut impl ImplButton>) {}
+    fn on_button_state_changed(&self, button: Option<&mut Button>) {}
     fn init_methods(object: &mut _cef_button_delegate_t) {
         impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base);
         impl_cef_button_delegate_t::init_methods::<Self>(object);
@@ -36389,21 +36213,21 @@ mod impl_cef_button_delegate_t {
     }
 }
 impl ImplViewDelegate for ButtonDelegate {
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .preferred_size(view)
     }
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .minimum_size(view)
     }
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .maximum_size(view)
     }
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
@@ -36411,39 +36235,39 @@ impl ImplViewDelegate for ButtonDelegate {
     }
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_parent_view_changed(view, added, parent)
     }
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_child_view_changed(view, added, child)
     }
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_window_changed(view, added)
     }
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_layout_changed(view, new_bounds)
     }
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {
+    fn on_focus(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_focus(view)
     }
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {
+    fn on_blur(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_blur(view)
     }
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {
+    fn on_theme_changed(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_theme_changed(view)
     }
@@ -36452,7 +36276,7 @@ impl ImplViewDelegate for ButtonDelegate {
     }
 }
 impl ImplButtonDelegate for ButtonDelegate {
-    fn on_button_pressed(&self, button: Option<&mut impl ImplButton>) {
+    fn on_button_pressed(&self, button: Option<&mut Button>) {
         unsafe {
             if let Some(f) = self.0.on_button_pressed {
                 let arg_button = button;
@@ -36467,7 +36291,7 @@ impl ImplButtonDelegate for ButtonDelegate {
             }
         }
     }
-    fn on_button_state_changed(&self, button: Option<&mut impl ImplButton>) {
+    fn on_button_state_changed(&self, button: Option<&mut Button>) {
         unsafe {
             if let Some(f) = self.0.on_button_state_changed {
                 let arg_button = button;
@@ -36535,7 +36359,7 @@ pub trait ImplLabelButton: ImplButton {
     #[doc = "See [`_cef_label_button_t::get_text`] for more documentation."]
     fn text(&self) -> CefStringUserfree;
     #[doc = "See [`_cef_label_button_t::set_image`] for more documentation."]
-    fn set_image(&self, button_state: ButtonState, image: Option<&mut impl ImplImage>);
+    fn set_image(&self, button_state: ButtonState, image: Option<&mut Image>);
     #[doc = "See [`_cef_label_button_t::get_image`] for more documentation."]
     fn image(&self, button_state: ButtonState) -> Option<Image>;
     #[doc = "See [`_cef_label_button_t::set_text_color`] for more documentation."]
@@ -36556,235 +36380,204 @@ pub trait ImplLabelButton: ImplButton {
 }
 impl ImplView for LabelButton {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&LabelButton> for View {
+    fn from(from: &LabelButton) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplButton for LabelButton {
     fn as_label_button(&self) -> Option<LabelButton> {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_label_button()
+        Button::from(self).as_label_button()
     }
     fn set_state(&self, state: ButtonState) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_state(state)
+        Button::from(self).set_state(state)
     }
     fn state(&self) -> ButtonState {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).state()
+        Button::from(self).state()
     }
     fn set_ink_drop_enabled(&self, enabled: ::std::os::raw::c_int) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_ink_drop_enabled(enabled)
+        Button::from(self).set_ink_drop_enabled(enabled)
     }
     fn set_tooltip_text(&self, tooltip_text: Option<&CefString>) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_tooltip_text(tooltip_text)
+        Button::from(self).set_tooltip_text(tooltip_text)
     }
     fn set_accessible_name(&self, name: Option<&CefString>) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_accessible_name(name)
+        Button::from(self).set_accessible_name(name)
     }
     fn get_raw(&self) -> *mut _cef_button_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
+    }
+}
+impl std::convert::From<&LabelButton> for Button {
+    fn from(from: &LabelButton) -> Self {
+        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
     }
 }
 impl ImplLabelButton for LabelButton {
@@ -36828,7 +36621,7 @@ impl ImplLabelButton for LabelButton {
                 .unwrap_or_default()
         }
     }
-    fn set_image(&self, button_state: ButtonState, image: Option<&mut impl ImplImage>) {
+    fn set_image(&self, button_state: ButtonState, image: Option<&mut Image>) {
         unsafe {
             if let Some(f) = self.0.set_image {
                 let (arg_button_state, arg_image) = (button_state, image);
@@ -37047,9 +36840,9 @@ pub trait ImplMenuButtonDelegate: ImplButtonDelegate {
     #[doc = "See [`_cef_menu_button_delegate_t::on_menu_button_pressed`] for more documentation."]
     fn on_menu_button_pressed(
         &self,
-        menu_button: Option<&mut impl ImplMenuButton>,
+        menu_button: Option<&mut MenuButton>,
         screen_point: Option<&Point>,
-        button_pressed_lock: Option<&mut impl ImplMenuButtonPressedLock>,
+        button_pressed_lock: Option<&mut MenuButtonPressedLock>,
     ) {
     }
     fn init_methods(object: &mut _cef_menu_button_delegate_t) {
@@ -37096,21 +36889,21 @@ mod impl_cef_menu_button_delegate_t {
     }
 }
 impl ImplViewDelegate for MenuButtonDelegate {
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .preferred_size(view)
     }
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .minimum_size(view)
     }
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .maximum_size(view)
     }
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
@@ -37118,39 +36911,39 @@ impl ImplViewDelegate for MenuButtonDelegate {
     }
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_parent_view_changed(view, added, parent)
     }
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_child_view_changed(view, added, child)
     }
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_window_changed(view, added)
     }
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_layout_changed(view, new_bounds)
     }
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {
+    fn on_focus(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_focus(view)
     }
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {
+    fn on_blur(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_blur(view)
     }
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {
+    fn on_theme_changed(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_theme_changed(view)
     }
@@ -37159,11 +36952,11 @@ impl ImplViewDelegate for MenuButtonDelegate {
     }
 }
 impl ImplButtonDelegate for MenuButtonDelegate {
-    fn on_button_pressed(&self, button: Option<&mut impl ImplButton>) {
+    fn on_button_pressed(&self, button: Option<&mut Button>) {
         ButtonDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_button_pressed(button)
     }
-    fn on_button_state_changed(&self, button: Option<&mut impl ImplButton>) {
+    fn on_button_state_changed(&self, button: Option<&mut Button>) {
         ButtonDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_button_state_changed(button)
     }
@@ -37174,9 +36967,9 @@ impl ImplButtonDelegate for MenuButtonDelegate {
 impl ImplMenuButtonDelegate for MenuButtonDelegate {
     fn on_menu_button_pressed(
         &self,
-        menu_button: Option<&mut impl ImplMenuButton>,
+        menu_button: Option<&mut MenuButton>,
         screen_point: Option<&Point>,
-        button_pressed_lock: Option<&mut impl ImplMenuButtonPressedLock>,
+        button_pressed_lock: Option<&mut MenuButtonPressedLock>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_menu_button_pressed {
@@ -37258,7 +37051,7 @@ pub trait ImplMenuButton: ImplLabelButton {
     #[doc = "See [`_cef_menu_button_t::show_menu`] for more documentation."]
     fn show_menu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         screen_point: Option<&Point>,
         anchor_position: MenuAnchorPosition,
     );
@@ -37270,290 +37063,253 @@ pub trait ImplMenuButton: ImplLabelButton {
 }
 impl ImplView for MenuButton {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&MenuButton> for View {
+    fn from(from: &MenuButton) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplButton for MenuButton {
     fn as_label_button(&self) -> Option<LabelButton> {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_label_button()
+        Button::from(self).as_label_button()
     }
     fn set_state(&self, state: ButtonState) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_state(state)
+        Button::from(self).set_state(state)
     }
     fn state(&self) -> ButtonState {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).state()
+        Button::from(self).state()
     }
     fn set_ink_drop_enabled(&self, enabled: ::std::os::raw::c_int) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_ink_drop_enabled(enabled)
+        Button::from(self).set_ink_drop_enabled(enabled)
     }
     fn set_tooltip_text(&self, tooltip_text: Option<&CefString>) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_tooltip_text(tooltip_text)
+        Button::from(self).set_tooltip_text(tooltip_text)
     }
     fn set_accessible_name(&self, name: Option<&CefString>) {
-        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_accessible_name(name)
+        Button::from(self).set_accessible_name(name)
     }
     fn get_raw(&self) -> *mut _cef_button_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&MenuButton> for Button {
+    fn from(from: &MenuButton) -> Self {
+        Button(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplLabelButton for MenuButton {
     fn as_menu_button(&self) -> Option<MenuButton> {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_menu_button()
+        LabelButton::from(self).as_menu_button()
     }
     fn set_text(&self, text: Option<&CefString>) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_text(text)
+        LabelButton::from(self).set_text(text)
     }
     fn text(&self) -> CefStringUserfree {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .text()
+        LabelButton::from(self).text()
     }
-    fn set_image(&self, button_state: ButtonState, image: Option<&mut impl ImplImage>) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_image(button_state, image)
+    fn set_image(&self, button_state: ButtonState, image: Option<&mut Image>) {
+        LabelButton::from(self).set_image(button_state, image)
     }
     fn image(&self, button_state: ButtonState) -> Option<Image> {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .image(button_state)
+        LabelButton::from(self).image(button_state)
     }
     fn set_text_color(&self, for_state: ButtonState, color: u32) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_text_color(for_state, color)
+        LabelButton::from(self).set_text_color(for_state, color)
     }
     fn set_enabled_text_colors(&self, color: u32) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled_text_colors(color)
+        LabelButton::from(self).set_enabled_text_colors(color)
     }
     fn set_font_list(&self, font_list: Option<&CefString>) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_font_list(font_list)
+        LabelButton::from(self).set_font_list(font_list)
     }
     fn set_horizontal_alignment(&self, alignment: HorizontalAlignment) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_horizontal_alignment(alignment)
+        LabelButton::from(self).set_horizontal_alignment(alignment)
     }
     fn set_minimum_size(&self, size: Option<&Size>) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_minimum_size(size)
+        LabelButton::from(self).set_minimum_size(size)
     }
     fn set_maximum_size(&self, size: Option<&Size>) {
-        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_maximum_size(size)
+        LabelButton::from(self).set_maximum_size(size)
     }
     fn get_raw(&self) -> *mut _cef_label_button_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&MenuButton> for LabelButton {
+    fn from(from: &MenuButton) -> Self {
+        LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplMenuButton for MenuButton {
     fn show_menu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         screen_point: Option<&Point>,
         anchor_position: MenuAnchorPosition,
     ) {
@@ -37658,13 +37414,13 @@ pub trait ImplTextfieldDelegate: ImplViewDelegate {
     #[doc = "See [`_cef_textfield_delegate_t::on_key_event`] for more documentation."]
     fn on_key_event(
         &self,
-        textfield: Option<&mut impl ImplTextfield>,
+        textfield: Option<&mut Textfield>,
         event: Option<&KeyEvent>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_textfield_delegate_t::on_after_user_action`] for more documentation."]
-    fn on_after_user_action(&self, textfield: Option<&mut impl ImplTextfield>) {}
+    fn on_after_user_action(&self, textfield: Option<&mut Textfield>) {}
     fn init_methods(object: &mut _cef_textfield_delegate_t) {
         impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base);
         impl_cef_textfield_delegate_t::init_methods::<Self>(object);
@@ -37710,21 +37466,21 @@ mod impl_cef_textfield_delegate_t {
     }
 }
 impl ImplViewDelegate for TextfieldDelegate {
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .preferred_size(view)
     }
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .minimum_size(view)
     }
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .maximum_size(view)
     }
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
@@ -37732,39 +37488,39 @@ impl ImplViewDelegate for TextfieldDelegate {
     }
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_parent_view_changed(view, added, parent)
     }
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_child_view_changed(view, added, child)
     }
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_window_changed(view, added)
     }
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_layout_changed(view, new_bounds)
     }
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {
+    fn on_focus(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_focus(view)
     }
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {
+    fn on_blur(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_blur(view)
     }
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {
+    fn on_theme_changed(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_theme_changed(view)
     }
@@ -37775,7 +37531,7 @@ impl ImplViewDelegate for TextfieldDelegate {
 impl ImplTextfieldDelegate for TextfieldDelegate {
     fn on_key_event(
         &self,
-        textfield: Option<&mut impl ImplTextfield>,
+        textfield: Option<&mut Textfield>,
         event: Option<&KeyEvent>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -37801,7 +37557,7 @@ impl ImplTextfieldDelegate for TextfieldDelegate {
                 .unwrap_or_default()
         }
     }
-    fn on_after_user_action(&self, textfield: Option<&mut impl ImplTextfield>) {
+    fn on_after_user_action(&self, textfield: Option<&mut Textfield>) {
         unsafe {
             if let Some(f) = self.0.on_after_user_action {
                 let arg_textfield = textfield;
@@ -37930,207 +37686,176 @@ pub trait ImplTextfield: ImplView {
 }
 impl ImplView for Textfield {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
+    }
+}
+impl std::convert::From<&Textfield> for View {
+    fn from(from: &Textfield) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
     }
 }
 impl ImplTextfield for Textfield {
@@ -38556,21 +38281,21 @@ pub trait ImplBrowserViewDelegate: ImplViewDelegate {
     #[doc = "See [`_cef_browser_view_delegate_t::on_browser_created`] for more documentation."]
     fn on_browser_created(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-        browser: Option<&mut impl ImplBrowser>,
+        browser_view: Option<&mut BrowserView>,
+        browser: Option<&mut Browser>,
     ) {
     }
     #[doc = "See [`_cef_browser_view_delegate_t::on_browser_destroyed`] for more documentation."]
     fn on_browser_destroyed(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-        browser: Option<&mut impl ImplBrowser>,
+        browser_view: Option<&mut BrowserView>,
+        browser: Option<&mut Browser>,
     ) {
     }
     #[doc = "See [`_cef_browser_view_delegate_t::get_delegate_for_popup_browser_view`] for more documentation."]
     fn delegate_for_popup_browser_view(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
         settings: Option<&BrowserSettings>,
         client: Option<&mut impl ImplClient>,
         is_devtools: ::std::os::raw::c_int,
@@ -38580,30 +38305,27 @@ pub trait ImplBrowserViewDelegate: ImplViewDelegate {
     #[doc = "See [`_cef_browser_view_delegate_t::on_popup_browser_view_created`] for more documentation."]
     fn on_popup_browser_view_created(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-        popup_browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
+        popup_browser_view: Option<&mut BrowserView>,
         is_devtools: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_browser_view_delegate_t::get_chrome_toolbar_type`] for more documentation."]
-    fn chrome_toolbar_type(
-        &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-    ) -> ChromeToolbarType {
+    fn chrome_toolbar_type(&self, browser_view: Option<&mut BrowserView>) -> ChromeToolbarType {
         Default::default()
     }
     #[doc = "See [`_cef_browser_view_delegate_t::use_frameless_window_for_picture_in_picture`] for more documentation."]
     fn use_frameless_window_for_picture_in_picture(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_browser_view_delegate_t::on_gesture_command`] for more documentation."]
     fn on_gesture_command(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
         gesture_command: GestureCommand,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -38783,21 +38505,21 @@ mod impl_cef_browser_view_delegate_t {
     }
 }
 impl ImplViewDelegate for BrowserViewDelegate {
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .preferred_size(view)
     }
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .minimum_size(view)
     }
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .maximum_size(view)
     }
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
@@ -38805,39 +38527,39 @@ impl ImplViewDelegate for BrowserViewDelegate {
     }
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_parent_view_changed(view, added, parent)
     }
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_child_view_changed(view, added, child)
     }
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_window_changed(view, added)
     }
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_layout_changed(view, new_bounds)
     }
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {
+    fn on_focus(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_focus(view)
     }
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {
+    fn on_blur(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_blur(view)
     }
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {
+    fn on_theme_changed(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_theme_changed(view)
     }
@@ -38848,8 +38570,8 @@ impl ImplViewDelegate for BrowserViewDelegate {
 impl ImplBrowserViewDelegate for BrowserViewDelegate {
     fn on_browser_created(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-        browser: Option<&mut impl ImplBrowser>,
+        browser_view: Option<&mut BrowserView>,
+        browser: Option<&mut Browser>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_browser_created {
@@ -38873,8 +38595,8 @@ impl ImplBrowserViewDelegate for BrowserViewDelegate {
     }
     fn on_browser_destroyed(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-        browser: Option<&mut impl ImplBrowser>,
+        browser_view: Option<&mut BrowserView>,
+        browser: Option<&mut Browser>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_browser_destroyed {
@@ -38898,7 +38620,7 @@ impl ImplBrowserViewDelegate for BrowserViewDelegate {
     }
     fn delegate_for_popup_browser_view(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
         settings: Option<&BrowserSettings>,
         client: Option<&mut impl ImplClient>,
         is_devtools: ::std::os::raw::c_int,
@@ -38945,8 +38667,8 @@ impl ImplBrowserViewDelegate for BrowserViewDelegate {
     }
     fn on_popup_browser_view_created(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-        popup_browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
+        popup_browser_view: Option<&mut BrowserView>,
         is_devtools: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -38979,10 +38701,7 @@ impl ImplBrowserViewDelegate for BrowserViewDelegate {
                 .unwrap_or_default()
         }
     }
-    fn chrome_toolbar_type(
-        &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
-    ) -> ChromeToolbarType {
+    fn chrome_toolbar_type(&self, browser_view: Option<&mut BrowserView>) -> ChromeToolbarType {
         unsafe {
             self.0
                 .get_chrome_toolbar_type
@@ -39003,7 +38722,7 @@ impl ImplBrowserViewDelegate for BrowserViewDelegate {
     }
     fn use_frameless_window_for_picture_in_picture(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -39025,7 +38744,7 @@ impl ImplBrowserViewDelegate for BrowserViewDelegate {
     }
     fn on_gesture_command(
         &self,
-        browser_view: Option<&mut impl ImplBrowserView>,
+        browser_view: Option<&mut BrowserView>,
         gesture_command: GestureCommand,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -39119,207 +38838,176 @@ pub trait ImplBrowserView: ImplView {
 }
 impl ImplView for BrowserView {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
+    }
+}
+impl std::convert::From<&BrowserView> for View {
+    fn from(from: &BrowserView) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
     }
 }
 impl ImplBrowserView for BrowserView {
@@ -39423,7 +39111,7 @@ impl Default for BrowserView {
 pub struct ScrollView(RefGuard<_cef_scroll_view_t>);
 pub trait ImplScrollView: ImplView {
     #[doc = "See [`_cef_scroll_view_t::set_content_view`] for more documentation."]
-    fn set_content_view(&self, view: Option<&mut impl ImplView>);
+    fn set_content_view(&self, view: Option<&mut View>);
     #[doc = "See [`_cef_scroll_view_t::get_content_view`] for more documentation."]
     fn content_view(&self) -> Option<View>;
     #[doc = "See [`_cef_scroll_view_t::get_visible_content_rect`] for more documentation."]
@@ -39442,211 +39130,180 @@ pub trait ImplScrollView: ImplView {
 }
 impl ImplView for ScrollView {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&ScrollView> for View {
+    fn from(from: &ScrollView) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplScrollView for ScrollView {
-    fn set_content_view(&self, view: Option<&mut impl ImplView>) {
+    fn set_content_view(&self, view: Option<&mut View>) {
         unsafe {
             if let Some(f) = self.0.set_content_view {
                 let arg_view = view;
@@ -39937,7 +39594,7 @@ pub trait ImplOverlayController: Clone + Sized + Rc {
     #[doc = "See [`_cef_overlay_controller_t::is_valid`] for more documentation."]
     fn is_valid(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_overlay_controller_t::is_same`] for more documentation."]
-    fn is_same(&self, that: Option<&mut impl ImplOverlayController>) -> ::std::os::raw::c_int;
+    fn is_same(&self, that: Option<&mut OverlayController>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_overlay_controller_t::get_contents_view`] for more documentation."]
     fn contents_view(&self) -> Option<View>;
     #[doc = "See [`_cef_overlay_controller_t::get_window`] for more documentation."]
@@ -39987,7 +39644,7 @@ impl ImplOverlayController for OverlayController {
                 .unwrap_or_default()
         }
     }
-    fn is_same(&self, that: Option<&mut impl ImplOverlayController>) -> ::std::os::raw::c_int {
+    fn is_same(&self, that: Option<&mut OverlayController>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_same
@@ -40292,21 +39949,21 @@ mod impl_cef_panel_delegate_t {
     pub fn init_methods<I: ImplPanelDelegate>(object: &mut _cef_panel_delegate_t) {}
 }
 impl ImplViewDelegate for PanelDelegate {
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .preferred_size(view)
     }
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .minimum_size(view)
     }
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .maximum_size(view)
     }
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
@@ -40314,39 +39971,39 @@ impl ImplViewDelegate for PanelDelegate {
     }
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_parent_view_changed(view, added, parent)
     }
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_child_view_changed(view, added, child)
     }
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_window_changed(view, added)
     }
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_layout_changed(view, new_bounds)
     }
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {
+    fn on_focus(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_focus(view)
     }
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {
+    fn on_blur(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_blur(view)
     }
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {
+    fn on_theme_changed(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_theme_changed(view)
     }
@@ -40412,13 +40069,13 @@ pub trait ImplPanel: ImplView {
     #[doc = "See [`_cef_panel_t::layout`] for more documentation."]
     fn layout(&self);
     #[doc = "See [`_cef_panel_t::add_child_view`] for more documentation."]
-    fn add_child_view(&self, view: Option<&mut impl ImplView>);
+    fn add_child_view(&self, view: Option<&mut View>);
     #[doc = "See [`_cef_panel_t::add_child_view_at`] for more documentation."]
-    fn add_child_view_at(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int);
+    fn add_child_view_at(&self, view: Option<&mut View>, index: ::std::os::raw::c_int);
     #[doc = "See [`_cef_panel_t::reorder_child_view`] for more documentation."]
-    fn reorder_child_view(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int);
+    fn reorder_child_view(&self, view: Option<&mut View>, index: ::std::os::raw::c_int);
     #[doc = "See [`_cef_panel_t::remove_child_view`] for more documentation."]
-    fn remove_child_view(&self, view: Option<&mut impl ImplView>);
+    fn remove_child_view(&self, view: Option<&mut View>);
     #[doc = "See [`_cef_panel_t::remove_all_child_views`] for more documentation."]
     fn remove_all_child_views(&self);
     #[doc = "See [`_cef_panel_t::get_child_view_count`] for more documentation."]
@@ -40431,207 +40088,176 @@ pub trait ImplPanel: ImplView {
 }
 impl ImplView for Panel {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
+    }
+}
+impl std::convert::From<&Panel> for View {
+    fn from(from: &Panel) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
     }
 }
 impl ImplPanel for Panel {
@@ -40713,7 +40339,7 @@ impl ImplPanel for Panel {
             }
         }
     }
-    fn add_child_view(&self, view: Option<&mut impl ImplView>) {
+    fn add_child_view(&self, view: Option<&mut View>) {
         unsafe {
             if let Some(f) = self.0.add_child_view {
                 let arg_view = view;
@@ -40728,7 +40354,7 @@ impl ImplPanel for Panel {
             }
         }
     }
-    fn add_child_view_at(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int) {
+    fn add_child_view_at(&self, view: Option<&mut View>, index: ::std::os::raw::c_int) {
         unsafe {
             if let Some(f) = self.0.add_child_view_at {
                 let (arg_view, arg_index) = (view, index);
@@ -40743,7 +40369,7 @@ impl ImplPanel for Panel {
             }
         }
     }
-    fn reorder_child_view(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int) {
+    fn reorder_child_view(&self, view: Option<&mut View>, index: ::std::os::raw::c_int) {
         unsafe {
             if let Some(f) = self.0.reorder_child_view {
                 let (arg_view, arg_index) = (view, index);
@@ -40758,7 +40384,7 @@ impl ImplPanel for Panel {
             }
         }
     }
-    fn remove_child_view(&self, view: Option<&mut impl ImplView>) {
+    fn remove_child_view(&self, view: Option<&mut View>) {
         unsafe {
             if let Some(f) = self.0.remove_child_view {
                 let arg_view = view;
@@ -40875,99 +40501,88 @@ pub trait WrapWindowDelegate: ImplWindowDelegate {
 }
 pub trait ImplWindowDelegate: ImplPanelDelegate {
     #[doc = "See [`_cef_window_delegate_t::on_window_created`] for more documentation."]
-    fn on_window_created(&self, window: Option<&mut impl ImplWindow>) {}
+    fn on_window_created(&self, window: Option<&mut Window>) {}
     #[doc = "See [`_cef_window_delegate_t::on_window_closing`] for more documentation."]
-    fn on_window_closing(&self, window: Option<&mut impl ImplWindow>) {}
+    fn on_window_closing(&self, window: Option<&mut Window>) {}
     #[doc = "See [`_cef_window_delegate_t::on_window_destroyed`] for more documentation."]
-    fn on_window_destroyed(&self, window: Option<&mut impl ImplWindow>) {}
+    fn on_window_destroyed(&self, window: Option<&mut Window>) {}
     #[doc = "See [`_cef_window_delegate_t::on_window_activation_changed`] for more documentation."]
     fn on_window_activation_changed(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         active: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_window_delegate_t::on_window_bounds_changed`] for more documentation."]
-    fn on_window_bounds_changed(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-        new_bounds: Option<&Rect>,
-    ) {
-    }
+    fn on_window_bounds_changed(&self, window: Option<&mut Window>, new_bounds: Option<&Rect>) {}
     #[doc = "See [`_cef_window_delegate_t::on_window_fullscreen_transition`] for more documentation."]
     fn on_window_fullscreen_transition(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         is_completed: ::std::os::raw::c_int,
     ) {
     }
     #[doc = "See [`_cef_window_delegate_t::get_parent_window`] for more documentation."]
     fn parent_window(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         is_menu: Option<&mut ::std::os::raw::c_int>,
         can_activate_menu: Option<&mut ::std::os::raw::c_int>,
     ) -> Option<Window> {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::is_window_modal_dialog`] for more documentation."]
-    fn is_window_modal_dialog(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-    ) -> ::std::os::raw::c_int {
+    fn is_window_modal_dialog(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::get_initial_bounds`] for more documentation."]
-    fn initial_bounds(&self, window: Option<&mut impl ImplWindow>) -> Rect {
+    fn initial_bounds(&self, window: Option<&mut Window>) -> Rect {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::get_initial_show_state`] for more documentation."]
-    fn initial_show_state(&self, window: Option<&mut impl ImplWindow>) -> ShowState {
+    fn initial_show_state(&self, window: Option<&mut Window>) -> ShowState {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::is_frameless`] for more documentation."]
-    fn is_frameless(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn is_frameless(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::with_standard_window_buttons`] for more documentation."]
-    fn with_standard_window_buttons(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-    ) -> ::std::os::raw::c_int {
+    fn with_standard_window_buttons(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::get_titlebar_height`] for more documentation."]
     fn titlebar_height(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         titlebar_height: Option<&mut f32>,
     ) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::accepts_first_mouse`] for more documentation."]
-    fn accepts_first_mouse(&self, window: Option<&mut impl ImplWindow>) -> State {
+    fn accepts_first_mouse(&self, window: Option<&mut Window>) -> State {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::can_resize`] for more documentation."]
-    fn can_resize(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_resize(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::can_maximize`] for more documentation."]
-    fn can_maximize(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_maximize(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::can_minimize`] for more documentation."]
-    fn can_minimize(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_minimize(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::can_close`] for more documentation."]
-    fn can_close(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_close(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         Default::default()
     }
     #[doc = "See [`_cef_window_delegate_t::on_accelerator`] for more documentation."]
     fn on_accelerator(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -40975,7 +40590,7 @@ pub trait ImplWindowDelegate: ImplPanelDelegate {
     #[doc = "See [`_cef_window_delegate_t::on_key_event`] for more documentation."]
     fn on_key_event(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         event: Option<&KeyEvent>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -40983,7 +40598,7 @@ pub trait ImplWindowDelegate: ImplPanelDelegate {
     #[doc = "See [`_cef_window_delegate_t::on_theme_colors_changed`] for more documentation."]
     fn on_theme_colors_changed(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         chrome_theme: ::std::os::raw::c_int,
     ) {
     }
@@ -40994,7 +40609,7 @@ pub trait ImplWindowDelegate: ImplPanelDelegate {
     #[doc = "See [`_cef_window_delegate_t::get_linux_window_properties`] for more documentation."]
     fn linux_window_properties(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         properties: Option<&mut LinuxWindowProperties>,
     ) -> ::std::os::raw::c_int {
         Default::default()
@@ -41373,21 +40988,21 @@ mod impl_cef_window_delegate_t {
     }
 }
 impl ImplViewDelegate for WindowDelegate {
-    fn preferred_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn preferred_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .preferred_size(view)
     }
-    fn minimum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn minimum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .minimum_size(view)
     }
-    fn maximum_size(&self, view: Option<&mut impl ImplView>) -> Size {
+    fn maximum_size(&self, view: Option<&mut View>) -> Size {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .maximum_size(view)
     }
     fn height_for_width(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         width: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
@@ -41395,39 +41010,39 @@ impl ImplViewDelegate for WindowDelegate {
     }
     fn on_parent_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        parent: Option<&mut impl ImplView>,
+        parent: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_parent_view_changed(view, added, parent)
     }
     fn on_child_view_changed(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         added: ::std::os::raw::c_int,
-        child: Option<&mut impl ImplView>,
+        child: Option<&mut View>,
     ) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_child_view_changed(view, added, child)
     }
-    fn on_window_changed(&self, view: Option<&mut impl ImplView>, added: ::std::os::raw::c_int) {
+    fn on_window_changed(&self, view: Option<&mut View>, added: ::std::os::raw::c_int) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_window_changed(view, added)
     }
-    fn on_layout_changed(&self, view: Option<&mut impl ImplView>, new_bounds: Option<&Rect>) {
+    fn on_layout_changed(&self, view: Option<&mut View>, new_bounds: Option<&Rect>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_layout_changed(view, new_bounds)
     }
-    fn on_focus(&self, view: Option<&mut impl ImplView>) {
+    fn on_focus(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_focus(view)
     }
-    fn on_blur(&self, view: Option<&mut impl ImplView>) {
+    fn on_blur(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_blur(view)
     }
-    fn on_theme_changed(&self, view: Option<&mut impl ImplView>) {
+    fn on_theme_changed(&self, view: Option<&mut View>) {
         ViewDelegate(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
             .on_theme_changed(view)
     }
@@ -41441,7 +41056,7 @@ impl ImplPanelDelegate for WindowDelegate {
     }
 }
 impl ImplWindowDelegate for WindowDelegate {
-    fn on_window_created(&self, window: Option<&mut impl ImplWindow>) {
+    fn on_window_created(&self, window: Option<&mut Window>) {
         unsafe {
             if let Some(f) = self.0.on_window_created {
                 let arg_window = window;
@@ -41456,7 +41071,7 @@ impl ImplWindowDelegate for WindowDelegate {
             }
         }
     }
-    fn on_window_closing(&self, window: Option<&mut impl ImplWindow>) {
+    fn on_window_closing(&self, window: Option<&mut Window>) {
         unsafe {
             if let Some(f) = self.0.on_window_closing {
                 let arg_window = window;
@@ -41471,7 +41086,7 @@ impl ImplWindowDelegate for WindowDelegate {
             }
         }
     }
-    fn on_window_destroyed(&self, window: Option<&mut impl ImplWindow>) {
+    fn on_window_destroyed(&self, window: Option<&mut Window>) {
         unsafe {
             if let Some(f) = self.0.on_window_destroyed {
                 let arg_window = window;
@@ -41488,7 +41103,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn on_window_activation_changed(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         active: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -41505,11 +41120,7 @@ impl ImplWindowDelegate for WindowDelegate {
             }
         }
     }
-    fn on_window_bounds_changed(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-        new_bounds: Option<&Rect>,
-    ) {
+    fn on_window_bounds_changed(&self, window: Option<&mut Window>, new_bounds: Option<&Rect>) {
         unsafe {
             if let Some(f) = self.0.on_window_bounds_changed {
                 let (arg_window, arg_new_bounds) = (window, new_bounds);
@@ -41531,7 +41142,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn on_window_fullscreen_transition(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         is_completed: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -41550,7 +41161,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn parent_window(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         is_menu: Option<&mut ::std::os::raw::c_int>,
         can_activate_menu: Option<&mut ::std::os::raw::c_int>,
     ) -> Option<Window> {
@@ -41583,10 +41194,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn is_window_modal_dialog(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-    ) -> ::std::os::raw::c_int {
+    fn is_window_modal_dialog(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_window_modal_dialog
@@ -41605,7 +41213,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn initial_bounds(&self, window: Option<&mut impl ImplWindow>) -> Rect {
+    fn initial_bounds(&self, window: Option<&mut Window>) -> Rect {
         unsafe {
             self.0
                 .get_initial_bounds
@@ -41624,7 +41232,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn initial_show_state(&self, window: Option<&mut impl ImplWindow>) -> ShowState {
+    fn initial_show_state(&self, window: Option<&mut Window>) -> ShowState {
         unsafe {
             self.0
                 .get_initial_show_state
@@ -41643,7 +41251,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn is_frameless(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn is_frameless(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .is_frameless
@@ -41662,10 +41270,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn with_standard_window_buttons(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-    ) -> ::std::os::raw::c_int {
+    fn with_standard_window_buttons(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .with_standard_window_buttons
@@ -41686,7 +41291,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn titlebar_height(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         titlebar_height: Option<&mut f32>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41710,7 +41315,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn accepts_first_mouse(&self, window: Option<&mut impl ImplWindow>) -> State {
+    fn accepts_first_mouse(&self, window: Option<&mut Window>) -> State {
         unsafe {
             self.0
                 .accepts_first_mouse
@@ -41729,7 +41334,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn can_resize(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_resize(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .can_resize
@@ -41748,7 +41353,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn can_maximize(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_maximize(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .can_maximize
@@ -41767,7 +41372,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn can_minimize(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_minimize(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .can_minimize
@@ -41786,7 +41391,7 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn can_close(&self, window: Option<&mut impl ImplWindow>) -> ::std::os::raw::c_int {
+    fn can_close(&self, window: Option<&mut Window>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .can_close
@@ -41807,7 +41412,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn on_accelerator(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41830,7 +41435,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn on_key_event(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         event: Option<&KeyEvent>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41858,7 +41463,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn on_theme_colors_changed(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         chrome_theme: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -41889,7 +41494,7 @@ impl ImplWindowDelegate for WindowDelegate {
     }
     fn linux_window_properties(
         &self,
-        window: Option<&mut impl ImplWindow>,
+        window: Option<&mut Window>,
         properties: Option<&mut LinuxWindowProperties>,
     ) -> ::std::os::raw::c_int {
         unsafe {
@@ -41964,7 +41569,7 @@ pub trait ImplWindow: ImplPanel {
     #[doc = "See [`_cef_window_t::show`] for more documentation."]
     fn show(&self);
     #[doc = "See [`_cef_window_t::show_as_browser_modal_dialog`] for more documentation."]
-    fn show_as_browser_modal_dialog(&self, browser_view: Option<&mut impl ImplBrowserView>);
+    fn show_as_browser_modal_dialog(&self, browser_view: Option<&mut BrowserView>);
     #[doc = "See [`_cef_window_t::hide`] for more documentation."]
     fn hide(&self);
     #[doc = "See [`_cef_window_t::center_window`] for more documentation."]
@@ -42006,24 +41611,24 @@ pub trait ImplWindow: ImplPanel {
     #[doc = "See [`_cef_window_t::get_title`] for more documentation."]
     fn title(&self) -> CefStringUserfree;
     #[doc = "See [`_cef_window_t::set_window_icon`] for more documentation."]
-    fn set_window_icon(&self, image: Option<&mut impl ImplImage>);
+    fn set_window_icon(&self, image: Option<&mut Image>);
     #[doc = "See [`_cef_window_t::get_window_icon`] for more documentation."]
     fn window_icon(&self) -> Option<Image>;
     #[doc = "See [`_cef_window_t::set_window_app_icon`] for more documentation."]
-    fn set_window_app_icon(&self, image: Option<&mut impl ImplImage>);
+    fn set_window_app_icon(&self, image: Option<&mut Image>);
     #[doc = "See [`_cef_window_t::get_window_app_icon`] for more documentation."]
     fn window_app_icon(&self) -> Option<Image>;
     #[doc = "See [`_cef_window_t::add_overlay_view`] for more documentation."]
     fn add_overlay_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         docking_mode: DockingMode,
         can_activate: ::std::os::raw::c_int,
     ) -> Option<OverlayController>;
     #[doc = "See [`_cef_window_t::show_menu`] for more documentation."]
     fn show_menu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         screen_point: Option<&Point>,
         anchor_position: MenuAnchorPosition,
     );
@@ -42074,258 +41679,222 @@ pub trait ImplWindow: ImplPanel {
 }
 impl ImplView for Window {
     fn as_browser_view(&self) -> Option<BrowserView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_browser_view()
+        View::from(self).as_browser_view()
     }
     fn as_button(&self) -> Option<Button> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_button()
+        View::from(self).as_button()
     }
     fn as_panel(&self) -> Option<Panel> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_panel()
+        View::from(self).as_panel()
     }
     fn as_scroll_view(&self) -> Option<ScrollView> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_scroll_view()
+        View::from(self).as_scroll_view()
     }
     fn as_textfield(&self) -> Option<Textfield> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .as_textfield()
+        View::from(self).as_textfield()
     }
     fn type_string(&self) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .type_string()
+        View::from(self).type_string()
     }
     fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .to_string(include_children)
+        View::from(self).to_string(include_children)
     }
     fn is_valid(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_valid()
+        View::from(self).is_valid()
     }
     fn is_attached(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_attached()
+        View::from(self).is_attached()
     }
-    fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_same(that)
+    fn is_same(&self, that: Option<&mut View>) -> ::std::os::raw::c_int {
+        View::from(self).is_same(that)
     }
     fn delegate(&self) -> Option<ViewDelegate> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).delegate()
+        View::from(self).delegate()
     }
     fn window(&self) -> Option<Window> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).window()
+        View::from(self).window()
     }
     fn id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).id()
+        View::from(self).id()
     }
     fn set_id(&self, id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).set_id(id)
+        View::from(self).set_id(id)
     }
     fn group_id(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).group_id()
+        View::from(self).group_id()
     }
     fn set_group_id(&self, group_id: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_group_id(group_id)
+        View::from(self).set_group_id(group_id)
     }
     fn parent_view(&self) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .parent_view()
+        View::from(self).parent_view()
     }
     fn view_for_id(&self, id: ::std::os::raw::c_int) -> Option<View> {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .view_for_id(id)
+        View::from(self).view_for_id(id)
     }
     fn set_bounds(&self, bounds: Option<&Rect>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_bounds(bounds)
+        View::from(self).set_bounds(bounds)
     }
     fn bounds(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).bounds()
+        View::from(self).bounds()
     }
     fn bounds_in_screen(&self) -> Rect {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .bounds_in_screen()
+        View::from(self).bounds_in_screen()
     }
     fn set_size(&self, size: Option<&Size>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_size(size)
+        View::from(self).set_size(size)
     }
     fn size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).size()
+        View::from(self).size()
     }
     fn set_position(&self, position: Option<&Point>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_position(position)
+        View::from(self).set_position(position)
     }
     fn position(&self) -> Point {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).position()
+        View::from(self).position()
     }
     fn set_insets(&self, insets: Option<&Insets>) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_insets(insets)
+        View::from(self).set_insets(insets)
     }
     fn insets(&self) -> Insets {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).insets()
+        View::from(self).insets()
     }
     fn preferred_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .preferred_size()
+        View::from(self).preferred_size()
     }
     fn size_to_preferred_size(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .size_to_preferred_size()
+        View::from(self).size_to_preferred_size()
     }
     fn minimum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .minimum_size()
+        View::from(self).minimum_size()
     }
     fn maximum_size(&self) -> Size {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .maximum_size()
+        View::from(self).maximum_size()
     }
     fn height_for_width(&self, width: ::std::os::raw::c_int) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .height_for_width(width)
+        View::from(self).height_for_width(width)
     }
     fn invalidate_layout(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .invalidate_layout()
+        View::from(self).invalidate_layout()
     }
     fn set_visible(&self, visible: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_visible(visible)
+        View::from(self).set_visible(visible)
     }
     fn is_visible(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_visible()
+        View::from(self).is_visible()
     }
     fn is_drawn(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_drawn()
+        View::from(self).is_drawn()
     }
     fn set_enabled(&self, enabled: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_enabled(enabled)
+        View::from(self).set_enabled(enabled)
     }
     fn is_enabled(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).is_enabled()
+        View::from(self).is_enabled()
     }
     fn set_focusable(&self, focusable: ::std::os::raw::c_int) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_focusable(focusable)
+        View::from(self).set_focusable(focusable)
     }
     fn is_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_focusable()
+        View::from(self).is_focusable()
     }
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .is_accessibility_focusable()
+        View::from(self).is_accessibility_focusable()
     }
     fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).has_focus()
+        View::from(self).has_focus()
     }
     fn request_focus(&self) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .request_focus()
+        View::from(self).request_focus()
     }
     fn set_background_color(&self, color: u32) {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_background_color(color)
+        View::from(self).set_background_color(color)
     }
     fn background_color(&self) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .background_color()
+        View::from(self).background_color()
     }
     fn theme_color(&self, color_id: ::std::os::raw::c_int) -> cef_color_t {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .theme_color(color_id)
+        View::from(self).theme_color(color_id)
     }
     fn convert_point_to_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_screen(point)
+        View::from(self).convert_point_to_screen(point)
     }
     fn convert_point_from_screen(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_screen(point)
+        View::from(self).convert_point_from_screen(point)
     }
     fn convert_point_to_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_window(point)
+        View::from(self).convert_point_to_window(point)
     }
     fn convert_point_from_window(&self, point: Option<&mut Point>) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_window(point)
+        View::from(self).convert_point_from_window(point)
     }
     fn convert_point_to_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_to_view(view, point)
+        View::from(self).convert_point_to_view(view, point)
     }
     fn convert_point_from_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         point: Option<&mut Point>,
     ) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .convert_point_from_view(view, point)
+        View::from(self).convert_point_from_view(view, point)
     }
     fn get_raw(&self) -> *mut _cef_view_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
     }
 }
+impl std::convert::From<&Window> for View {
+    fn from(from: &Window) -> Self {
+        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
+    }
+}
 impl ImplPanel for Window {
     fn as_window(&self) -> Option<Window> {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).as_window()
+        Panel::from(self).as_window()
     }
     fn set_to_fill_layout(&self) -> Option<FillLayout> {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_to_fill_layout()
+        Panel::from(self).set_to_fill_layout()
     }
     fn set_to_box_layout(&self, settings: Option<&BoxLayoutSettings>) -> Option<BoxLayout> {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .set_to_box_layout(settings)
+        Panel::from(self).set_to_box_layout(settings)
     }
     fn get_layout(&self) -> Option<Layout> {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .get_layout()
+        Panel::from(self).get_layout()
     }
     fn layout(&self) {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) }).layout()
+        Panel::from(self).layout()
     }
-    fn add_child_view(&self, view: Option<&mut impl ImplView>) {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .add_child_view(view)
+    fn add_child_view(&self, view: Option<&mut View>) {
+        Panel::from(self).add_child_view(view)
     }
-    fn add_child_view_at(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int) {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .add_child_view_at(view, index)
+    fn add_child_view_at(&self, view: Option<&mut View>, index: ::std::os::raw::c_int) {
+        Panel::from(self).add_child_view_at(view, index)
     }
-    fn reorder_child_view(&self, view: Option<&mut impl ImplView>, index: ::std::os::raw::c_int) {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .reorder_child_view(view, index)
+    fn reorder_child_view(&self, view: Option<&mut View>, index: ::std::os::raw::c_int) {
+        Panel::from(self).reorder_child_view(view, index)
     }
-    fn remove_child_view(&self, view: Option<&mut impl ImplView>) {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .remove_child_view(view)
+    fn remove_child_view(&self, view: Option<&mut View>) {
+        Panel::from(self).remove_child_view(view)
     }
     fn remove_all_child_views(&self) {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .remove_all_child_views()
+        Panel::from(self).remove_all_child_views()
     }
     fn child_view_count(&self) -> usize {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .child_view_count()
+        Panel::from(self).child_view_count()
     }
     fn child_view_at(&self, index: ::std::os::raw::c_int) -> Option<View> {
-        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&self.0).cast()) })
-            .child_view_at(index)
+        Panel::from(self).child_view_at(index)
     }
     fn get_raw(&self) -> *mut _cef_panel_t {
         unsafe { RefGuard::into_raw(&self.0).cast() }
+    }
+}
+impl std::convert::From<&Window> for Panel {
+    fn from(from: &Window) -> Self {
+        Panel(unsafe { RefGuard::from_raw_add_ref(RefGuard::into_raw(&from.0).cast()) })
     }
 }
 impl ImplWindow for Window {
@@ -42337,7 +41906,7 @@ impl ImplWindow for Window {
             }
         }
     }
-    fn show_as_browser_modal_dialog(&self, browser_view: Option<&mut impl ImplBrowserView>) {
+    fn show_as_browser_modal_dialog(&self, browser_view: Option<&mut BrowserView>) {
         unsafe {
             if let Some(f) = self.0.show_as_browser_modal_dialog {
                 let arg_browser_view = browser_view;
@@ -42560,7 +42129,7 @@ impl ImplWindow for Window {
                 .unwrap_or_default()
         }
     }
-    fn set_window_icon(&self, image: Option<&mut impl ImplImage>) {
+    fn set_window_icon(&self, image: Option<&mut Image>) {
         unsafe {
             if let Some(f) = self.0.set_window_icon {
                 let arg_image = image;
@@ -42591,7 +42160,7 @@ impl ImplWindow for Window {
                 .unwrap_or_default()
         }
     }
-    fn set_window_app_icon(&self, image: Option<&mut impl ImplImage>) {
+    fn set_window_app_icon(&self, image: Option<&mut Image>) {
         unsafe {
             if let Some(f) = self.0.set_window_app_icon {
                 let arg_image = image;
@@ -42624,7 +42193,7 @@ impl ImplWindow for Window {
     }
     fn add_overlay_view(
         &self,
-        view: Option<&mut impl ImplView>,
+        view: Option<&mut View>,
         docking_mode: DockingMode,
         can_activate: ::std::os::raw::c_int,
     ) -> Option<OverlayController> {
@@ -42654,7 +42223,7 @@ impl ImplWindow for Window {
     }
     fn show_menu(
         &self,
-        menu_model: Option<&mut impl ImplMenuModel>,
+        menu_model: Option<&mut MenuModel>,
         screen_point: Option<&Point>,
         anchor_position: MenuAnchorPosition,
     ) {
@@ -47075,7 +46644,7 @@ pub fn request_context_create_context(
 
 /// See [`cef_request_context_cef_create_context_shared`] for more documentation.
 pub fn request_context_cef_create_context_shared(
-    other: Option<&mut impl ImplRequestContext>,
+    other: Option<&mut RequestContext>,
     handler: Option<&mut impl ImplRequestContextHandler>,
 ) -> Option<RequestContext> {
     unsafe {
@@ -47107,8 +46676,8 @@ pub fn browser_host_create_browser(
     client: Option<&mut impl ImplClient>,
     url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
-    extra_info: Option<&mut impl ImplDictionaryValue>,
-    request_context: Option<&mut impl ImplRequestContext>,
+    extra_info: Option<&mut DictionaryValue>,
+    request_context: Option<&mut RequestContext>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (
@@ -47175,8 +46744,8 @@ pub fn browser_host_create_browser_sync(
     client: Option<&mut impl ImplClient>,
     url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
-    extra_info: Option<&mut impl ImplDictionaryValue>,
-    request_context: Option<&mut impl ImplRequestContext>,
+    extra_info: Option<&mut DictionaryValue>,
+    request_context: Option<&mut RequestContext>,
 ) -> Option<Browser> {
     unsafe {
         let (
@@ -47832,9 +47401,9 @@ pub fn quit_message_loop() {
 
 /// See [`cef_urlrequest_create`] for more documentation.
 pub fn urlrequest_create(
-    request: Option<&mut impl ImplRequest>,
+    request: Option<&mut Request>,
     client: Option<&mut impl ImplUrlrequestClient>,
-    request_context: Option<&mut impl ImplRequestContext>,
+    request_context: Option<&mut RequestContext>,
 ) -> Option<Urlrequest> {
     unsafe {
         let (arg_request, arg_client, arg_request_context) = (request, client, request_context);
@@ -47939,8 +47508,8 @@ pub fn browser_view_create(
     client: Option<&mut impl ImplClient>,
     url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
-    extra_info: Option<&mut impl ImplDictionaryValue>,
-    request_context: Option<&mut impl ImplRequestContext>,
+    extra_info: Option<&mut DictionaryValue>,
+    request_context: Option<&mut RequestContext>,
     delegate: Option<&mut impl ImplBrowserViewDelegate>,
 ) -> Option<BrowserView> {
     unsafe {
@@ -47995,7 +47564,7 @@ pub fn browser_view_create(
 }
 
 /// See [`cef_browser_view_get_for_browser`] for more documentation.
-pub fn browser_view_get_for_browser(browser: Option<&mut impl ImplBrowser>) -> Option<BrowserView> {
+pub fn browser_view_get_for_browser(browser: Option<&mut Browser>) -> Option<BrowserView> {
     unsafe {
         let arg_browser = browser;
         let arg_browser = arg_browser
