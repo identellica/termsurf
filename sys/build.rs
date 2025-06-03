@@ -63,7 +63,7 @@ fn main() -> anyhow::Result<()> {
     cef_dll_wrapper
         .generator("Ninja")
         .profile("RelWithDebInfo")
-        .no_build_target(true);
+        .build_target("libcef_dll_wrapper");
 
     let project_arch = match os_arch.arch {
         "aarch64" => "arm64",
