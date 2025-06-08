@@ -19,7 +19,7 @@ cef-dll-sys = { version = "135.0.22", path = "sys" }
 download-cef = { version = "1.3", path = "download-cef" }
 
 anyhow = "1"
-bindgen = "0.71"
+bindgen = "0.72"
 clap = { version = "4", features = ["derive"] }
 cmake = "0.1"
 convert_case = "0.8"
