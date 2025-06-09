@@ -5,7 +5,7 @@ extern crate thiserror;
 
 use clap::Parser;
 use download_cef::DEFAULT_TARGET;
-use std::{fs, io::Read, path::Path};
+use std::{fs, io::Read, path::Path, sync::OnceLock};
 
 #[derive(Debug, Error)]
 pub enum Error {
@@ -31,6 +31,13 @@ mod dirs;
 mod parse_tree;
 mod upgrade;
 
+fn default_version() -> &'static str {
+    static DEFAULT_VERSION: OnceLock<String> = OnceLock::new();
+    DEFAULT_VERSION
+        .get_or_init(|| download_cef::default_version(env!("CARGO_PKG_VERSION")))
+        .as_str()
+}
+
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
 struct Args {
@@ -38,16 +45,19 @@ struct Args {
     download: bool,
     #[arg(short, long)]
     bindgen: bool,
-    target: Option<String>,
+    #[arg(short, long, default_value = DEFAULT_TARGET)]
+    target: String,
+    #[arg(short, long, default_value = default_version())]
+    version: String,
 }
 
 fn main() -> Result<()> {
     let args = Args::parse();
-    let target = args.target.as_deref().unwrap_or(DEFAULT_TARGET);
+    let target = args.target.as_str();
 
     if args.bindgen {
         if args.download {
-            let _ = upgrade::download(target);
+            let _ = upgrade::download(target, args.version.as_str());
         }
 
         upgrade::sys_bindgen(target)?;

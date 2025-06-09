@@ -1,6 +1,5 @@
 use crate::dirs;
 use std::{
-    env,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -19,16 +18,11 @@ const TARGETS: &[&str] = &[
     "arm-unknown-linux-gnueabi",
 ];
 
-pub fn download(target: &str) -> PathBuf {
+pub fn download(target: &str, version: &str) -> PathBuf {
     assert!(TARGETS.contains(&target), "unsupported target {target}");
 
-    let archive = download_cef::download_target_archive(
-        target,
-        env!("CARGO_PKG_VERSION"),
-        dirs::get_out_dir(),
-        true,
-    )
-    .expect("download failed");
+    let archive = download_cef::download_target_archive(target, version, dirs::get_out_dir(), true)
+        .expect("download failed");
 
     download_cef::extract_target_archive(target, &archive, dirs::get_out_dir(), true)
         .expect("extraction failed")

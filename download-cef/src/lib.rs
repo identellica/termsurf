@@ -1,13 +1,16 @@
 #![doc = include_str!("../README.md")]
 
 use bzip2::bufread::BzDecoder;
+use semver::Version;
 use serde::{Deserialize, Serialize};
 use sha1_smol::Sha1;
 use std::{
+    collections::HashMap,
     fmt::{self, Display},
     fs::{self, File},
     io::{self, BufReader, IsTerminal},
     path::{Path, PathBuf},
+    sync::Mutex,
 };
 
 #[macro_use]
@@ -19,6 +22,8 @@ pub enum Error {
     UnsupportedTarget(String),
     #[error("HTTP request error: {0}")]
     Request(#[from] ureq::Error),
+    #[error("Invalid version: {0}")]
+    InvalidVersion(#[from] semver::Error),
     #[error("Version not found: {0}")]
     VersionNotFound(String),
     #[error("Missing Content-Length header")]
@@ -52,6 +57,29 @@ pub const WINDOWS_TARGETS: &[&str] = &[
     "aarch64-pc-windows-msvc",
     "i686-pc-windows-msvc",
 ];
+
+pub fn default_version(version: &'static str) -> String {
+    static VERSIONS: Mutex<Option<HashMap<&'static str, String>>> = Mutex::new(None);
+    let mut versions = VERSIONS.lock().expect("Lock error");
+    if versions.is_none() {
+        *versions = Some(HashMap::new());
+    };
+    let versions = versions.as_mut().unwrap();
+    versions
+        .entry(version)
+        .or_insert_with(|| {
+            Version::parse(version)
+                .map(|version| {
+                    if version.build.is_empty() {
+                        version.to_string()
+                    } else {
+                        version.build.to_string()
+                    }
+                })
+                .unwrap_or_else(|_| version.to_string())
+        })
+        .clone()
+}
 
 const URL: &str = "https://cef-builds.spotifycdn.com";
 
@@ -102,6 +130,13 @@ impl CefPlatform {
             .iter()
             .find(|v| v.cef_version.starts_with(&version_prefix))
             .ok_or_else(|| Error::VersionNotFound(cef_version.to_string()))
+    }
+
+    pub fn latest(&self) -> Result<&CefVersion> {
+        self.versions
+            .iter()
+            .max_by_key(|v| Version::parse(&v.cef_version).ok())
+            .ok_or_else(|| Error::VersionNotFound("latest".to_string()))
     }
 }
 

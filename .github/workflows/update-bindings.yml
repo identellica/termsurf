@@ -35,7 +35,7 @@ jobs:
 
       - name: Update Bindings
         run: |
-          cargo run -p update-bindings -- -b -d ${{ matrix.target }}
+          cargo run -p update-bindings -- -b -d -t ${{ matrix.target }}
 
       - name: Pack Changes
         id: pack-changes
@@ -75,7 +75,7 @@ jobs:
 
       - name: Update Bindings
         run: |
-          cargo run -p update-bindings -- -b -d ${{ matrix.target }}
+          cargo run -p update-bindings -- -b -d -t ${{ matrix.target }}
 
       - name: Pack Changes
         id: pack-changes
@@ -117,7 +117,7 @@ jobs:
 
       - name: Update Bindings
         run: |
-          cargo run -p update-bindings -- -b -d ${{ matrix.target }}
+          cargo run -p update-bindings -- -b -d -t ${{ matrix.target }}
 
       - name: Pack Changes
         id: pack-changes
