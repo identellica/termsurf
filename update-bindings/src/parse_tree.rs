@@ -2351,20 +2351,20 @@ impl ParseTree<'_> {
                     Ok(ModifiedType { ty, modifiers }) => {
                         self.cef_name_map
                             .get(&ty.to_token_stream().to_string())
-                            .and_then(|entry| match entry {
+                            .map(|entry| match entry {
                                 NameMapEntry {
                                     ty: NameMapType::StructDeclaration(_),
                                     ..
                                 } => match modifiers.as_slice() {
                                     [TypeModifier::ConstPtr] => {
-                                        Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) })
+                                        quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) }
                                     }
                                     [TypeModifier::MutPtr] => {
-                                        Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
+                                        quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) }
                                     }
-                                    _ => Some(quote! { result.into() }),
+                                    _ => quote! { result.into() },
                                 }
-                                _ => Some(quote! { result.into() }),
+                                _ => quote! { result.into() },
                             })
                             .or_else(|| {
                                 if unwrapped_args.is_empty() {
@@ -2785,20 +2785,20 @@ impl ParseTree<'_> {
                         Ok(ModifiedType { ty, modifiers }) => {
                             self.cef_name_map
                                 .get(&ty.to_token_stream().to_string())
-                                .and_then(|entry| match entry {
+                                .map(|entry| match entry {
                                     NameMapEntry {
                                         ty: NameMapType::StructDeclaration(_),
                                         ..
                                     } => match modifiers.as_slice() {
                                         [TypeModifier::ConstPtr] => {
-                                            Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) })
+                                            quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null()) }
                                         }
                                         [TypeModifier::MutPtr] => {
-                                            Some(quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) })
+                                            quote! { result.map(|result| result.into()).unwrap_or(std::ptr::null_mut()) }
                                         }
-                                        _ => Some(quote! { result.into() }),
+                                        _ => quote! { result.into() },
                                     }
-                                    _ => Some(quote! { result.into() }),
+                                    _ => quote! { result.into() },
                                 })
                                 .or_else(|| {
                                     if unwrapped_args.is_empty() {

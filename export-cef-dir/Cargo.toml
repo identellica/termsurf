@@ -12,4 +12,5 @@ repository.workspace = true
 anyhow.workspace = true
 clap.workspace = true
 download-cef.workspace = true
+semver.workspace = true
 serde_json.workspace = true

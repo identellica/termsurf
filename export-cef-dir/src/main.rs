@@ -6,7 +6,15 @@ use std::{
     fs::{self, File},
     io::Write,
     path::PathBuf,
+    sync::OnceLock,
 };
+
+fn default_version() -> &'static str {
+    static DEFAULT_VERSION: OnceLock<String> = OnceLock::new();
+    DEFAULT_VERSION
+        .get_or_init(|| download_cef::default_version(env!("CARGO_PKG_VERSION")))
+        .as_str()
+}
 
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
@@ -17,6 +25,8 @@ struct Args {
     save_archive: bool,
     #[arg(short, long, default_value = DEFAULT_TARGET)]
     target: String,
+    #[arg(short, long, default_value = default_version())]
+    version: String,
     output: String,
 }
 
@@ -63,7 +73,7 @@ fn main() -> anyhow::Result<()> {
         fs::remove_dir_all(old_cef_dir)?
     }
 
-    let cef_version = env!("CARGO_PKG_VERSION");
+    let cef_version = args.version.as_str();
     let index = CefIndex::download()?;
     let platform = index.platform(target)?;
     let version = platform.version(cef_version)?;
