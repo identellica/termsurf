@@ -7141,6 +7141,20 @@ pub struct DisplayHandler {
             has_audio_access: ::std::os::raw::c_int,
         ),
     >,
+    pub on_contents_bounds_change: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_display_handler_t,
+            browser: *mut _cef_browser_t,
+            new_bounds: *const cef_rect_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_root_window_screen_rect: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_display_handler_t,
+            browser: *mut _cef_browser_t,
+            rect: *mut cef_rect_t,
+        ) -> ::std::os::raw::c_int,
+    >,
 }
 impl From<_cef_display_handler_t> for DisplayHandler {
     fn from(value: _cef_display_handler_t) -> Self {
@@ -7157,6 +7171,8 @@ impl From<_cef_display_handler_t> for DisplayHandler {
             on_loading_progress_change: value.on_loading_progress_change,
             on_cursor_change: value.on_cursor_change,
             on_media_access_change: value.on_media_access_change,
+            on_contents_bounds_change: value.on_contents_bounds_change,
+            get_root_window_screen_rect: value.get_root_window_screen_rect,
         }
     }
 }
@@ -7175,6 +7191,8 @@ impl From<DisplayHandler> for _cef_display_handler_t {
             on_loading_progress_change: value.on_loading_progress_change,
             on_cursor_change: value.on_cursor_change,
             on_media_access_change: value.on_media_access_change,
+            on_contents_bounds_change: value.on_contents_bounds_change,
+            get_root_window_screen_rect: value.get_root_window_screen_rect,
         }
     }
 }
@@ -12179,6 +12197,12 @@ pub struct BrowserViewDelegate {
     pub get_browser_runtime_style: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_delegate_t) -> cef_runtime_style_t,
     >,
+    pub allow_move_for_picture_in_picture: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> ::std::os::raw::c_int,
+    >,
 }
 impl From<_cef_browser_view_delegate_t> for BrowserViewDelegate {
     fn from(value: _cef_browser_view_delegate_t) -> Self {
@@ -12193,6 +12217,7 @@ impl From<_cef_browser_view_delegate_t> for BrowserViewDelegate {
                 .use_frameless_window_for_picture_in_picture,
             on_gesture_command: value.on_gesture_command,
             get_browser_runtime_style: value.get_browser_runtime_style,
+            allow_move_for_picture_in_picture: value.allow_move_for_picture_in_picture,
         }
     }
 }
@@ -12209,6 +12234,7 @@ impl From<BrowserViewDelegate> for _cef_browser_view_delegate_t {
                 .use_frameless_window_for_picture_in_picture,
             on_gesture_command: value.on_gesture_command,
             get_browser_runtime_style: value.get_browser_runtime_style,
+            allow_move_for_picture_in_picture: value.allow_move_for_picture_in_picture,
         }
     }
 }

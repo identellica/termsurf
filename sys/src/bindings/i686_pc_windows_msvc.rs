@@ -8,10 +8,13 @@ pub const CEF_API_VERSION_13304: i32 = 13304;
 pub const CEF_API_VERSION_13400: i32 = 13400;
 pub const CEF_API_VERSION_13401: i32 = 13401;
 pub const CEF_API_VERSION_13500: i32 = 13500;
+pub const CEF_API_VERSION_13600: i32 = 13600;
+pub const CEF_API_VERSION_13601: i32 = 13601;
+pub const CEF_API_VERSION_13700: i32 = 13700;
 pub const CEF_API_VERSION_999998: i32 = 999998;
 pub const CEF_API_VERSION_999999: i32 = 999999;
 pub const CEF_API_VERSION_MIN: i32 = 13300;
-pub const CEF_API_VERSION_LAST: i32 = 13500;
+pub const CEF_API_VERSION_LAST: i32 = 13700;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
@@ -677,7 +680,7 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_CHOOSER_DATA = 78,
     #[doc = " Website setting which stores whether the browser has observed the user\n signing into an identity-provider based on observing the IdP-SignIn-Status\n HTTP header."]
     CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS = 79,
-    #[doc = " Website setting which is used for UnusedSitePermissionsService to\n store revoked permissions of unused sites from unused site permissions\n feature."]
+    #[doc = " Website setting which is used for RevokedPermissionsService to\n store revoked permissions of unused sites from unused site permissions\n feature."]
     CEF_CONTENT_SETTING_TYPE_REVOKED_UNUSED_SITE_PERMISSIONS = 80,
     #[doc = " Similar to STORAGE_ACCESS, but applicable at the page-level rather than\n being specific to a frame."]
     CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_STORAGE_ACCESS = 81,
@@ -703,8 +706,7 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_TPCD_TRIAL = 91,
     #[doc = " Content Setting for 3PC accesses granted via top-level 3PC deprecation\n trial. Similar to TPCD_TRIAL, but applicable at the page-level for the\n lifetime of the page that served the token, rather than being specific to\n a requesting-origin/top-level-site combination and persistent."]
     CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_TRIAL = 92,
-    #[doc = " Content Setting for a first-party origin trial that allows websites to\n enable third-party cookie deprecation.\n ALLOW (default): no effect (e.g. third-party cookies allowed, if not\n                  blocked otherwise).\n BLOCK: third-party cookies blocked, but 3PCD mitigations enabled."]
-    CEF_CONTENT_SETTING_TOP_LEVEL_TPCD_ORIGIN_TRIAL = 93,
+    CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL = 93,
     #[doc = " Content setting used to indicate whether entering picture-in-picture\n automatically should be enabled."]
     CEF_CONTENT_SETTING_TYPE_AUTO_PICTURE_IN_PICTURE = 94,
     #[doc = " Whether user has opted into keeping file/directory permissions persistent\n between visits for a given origin. When enabled, permission metadata\n stored under |FILE_SYSTEM_ACCESS_CHOOSER_DATA| can auto-grant incoming\n permission request."]
@@ -731,7 +733,7 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_KEYBOARD_LOCK = 105,
     #[doc = " Pointer Lock API allows a site to hide the cursor and have exclusive\n access to mouse inputs."]
     CEF_CONTENT_SETTING_TYPE_POINTER_LOCK = 106,
-    #[doc = " Website setting which is used for UnusedSitePermissionsService to store\n auto-revoked notification permissions from abusive sites."]
+    #[doc = " Website setting which is used for RevokedPermissionsService to store\n auto-revoked notification permissions from abusive sites."]
     CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS = 107,
     #[doc = " Content setting that controls tracking protection status per site.\n BLOCK: Protections enabled. This is the default state.\n ALLOW: Protections disabled."]
     CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION = 108,
@@ -753,9 +755,11 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_ARE_SUSPICIOUS_NOTIFICATIONS_ALLOWLISTED_BY_USER = 116,
     #[doc = " Content settings for access to the Controlled Frame API."]
     CEF_CONTENT_SETTING_TYPE_CONTROLLED_FRAME = 117,
-    #[doc = " Website setting which is used for UnusedSitePermissionsService to\n store revoked notification permissions of disruptive sites."]
+    #[doc = " Website setting which is used for RevokedPermissionsService to\n store revoked notification permissions of disruptive sites."]
     CEF_CONTENT_SETTING_TYPE_REVOKED_DISRUPTIVE_NOTIFICATION_PERMISSIONS = 118,
-    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 119,
+    #[doc = " Content setting for whether the site is allowed to make local network\n requests."]
+    CEF_CONTENT_SETTING_TYPE_LOCAL_NETWORK_ACCESS = 119,
+    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 120,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -1820,7 +1824,6 @@ pub enum cef_errorcode_t {
     ERR_CERT_NAME_CONSTRAINT_VIOLATION = -212,
     ERR_CERT_VALIDITY_TOO_LONG = -213,
     ERR_CERTIFICATE_TRANSPARENCY_REQUIRED = -214,
-    ERR_CERT_SYMANTEC_LEGACY = -215,
     ERR_CERT_KNOWN_INTERCEPTION_BLOCKED = -217,
     ERR_CERT_SELF_SIGNED_LOCAL_NETWORK = -219,
     ERR_CERT_END = -220,
@@ -2151,7 +2154,7 @@ pub enum cef_postdataelement_type_t {
     PDE_TYPE_EMPTY = 0,
     PDE_TYPE_BYTES = 1,
     PDE_TYPE_FILE = 2,
-    PDF_TYPE_NUM_VALUES = 3,
+    PDE_TYPE_NUM_VALUES = 3,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -3887,8 +3890,8 @@ pub enum cef_chrome_page_action_icon_type_t {
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum cef_chrome_toolbar_button_type_t {
     CEF_CTBT_CAST = 0,
-    CEF_CTBT_DOWNLOAD = 1,
-    CEF_CTBT_SEND_TAB_TO_SELF = 2,
+    CEF_CTBT_DOWNLOAD_DEPRECATED = 1,
+    CEF_CTBT_SEND_TAB_TO_SELF_DEPRECATED = 2,
     CEF_CTBT_SIDE_PANEL = 3,
     CEF_CTBT_NUM_VALUES = 4,
 }
@@ -4020,6 +4023,7 @@ pub enum cef_permission_request_types_t {
     CEF_PERMISSION_TYPE_WEB_APP_INSTALLATION = 4194304,
     CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT = 8388608,
     CEF_PERMISSION_TYPE_FILE_SYSTEM_ACCESS = 16777216,
+    CEF_PERMISSION_TYPE_LOCAL_NETWORK_ACCESS = 33554432,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -8390,7 +8394,7 @@ pub struct _cef_browser_host_t {
     pub was_hidden: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t, hidden: ::std::os::raw::c_int),
     >,
-    #[doc = "\n Send a notification to the browser that the screen info has changed. The\n browser will then call cef_render_handler_t::GetScreenInfo to update the\n screen information with the new values. This simulates moving the webview\n window from one display to another, or changing the properties of the\n current display. This function is only used when window rendering is\n disabled.\n"]
+    #[doc = "\n Notify the browser that screen information has changed. Updated\n information will be sent to the renderer process to configure screen size\n and position values used by CSS and JavaScript (window.deviceScaleFactor,\n window.screenX/Y, window.outerWidth/Height, etc.). For background see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage.md#markdown-\n header-coordinate-systems\n\n This function is used with (a) windowless rendering and (b) windowed\n rendering with external (client-provided) root window.\n\n With windowless rendering the browser will call\n cef_render_handler_t::GetScreenInfo,\n cef_render_handler_t::GetRootScreenRect and\n cef_render_handler_t::GetViewRect. This simulates moving or resizing the\n root window in the current display, moving the root window from one\n display to another, or changing the properties of the current display.\n\n With windowed rendering the browser will call\n cef_display_handler_t::GetRootWindowScreenRect and use the associated\n display properties.\n"]
     pub notify_screen_info_changed:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t)>,
     #[doc = "\n Invalidate the view. The browser will call cef_render_handler_t::OnPaint\n asynchronously. This function is only used when window rendering is\n disabled.\n"]
@@ -9999,7 +10003,7 @@ pub struct _cef_display_handler_t {
             line: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called when auto-resize is enabled via\n cef_browser_host_t::SetAutoResizeEnabled and the contents have auto-\n resized. |new_size| will be the desired size in view coordinates. Return\n true (1) if the resize was handled or false (0) for default handling.\n"]
+    #[doc = "\n Called when auto-resize is enabled via\n cef_browser_host_t::SetAutoResizeEnabled and the contents have auto-\n resized. |new_size| will be the desired size in DIP coordinates. Return\n true (1) if the resize was handled or false (0) for default handling.\n"]
     pub on_auto_resize: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_display_handler_t,
@@ -10034,10 +10038,26 @@ pub struct _cef_display_handler_t {
             has_audio_access: ::std::os::raw::c_int,
         ),
     >,
+    #[doc = "\n Called when JavaScript is requesting new bounds via window.moveTo/By() or\n window.resizeTo/By(). |new_bounds| are in DIP screen coordinates.\n\n With Views-hosted browsers |new_bounds| are the desired bounds for the\n containing cef_window_t and may be passed directly to\n cef_window_t::SetBounds. With external (client-provided) parent on macOS\n and Windows |new_bounds| are the desired frame bounds for the containing\n root window. With other non-Views browsers |new_bounds| are the desired\n bounds for the browser content only unless the client implements either\n cef_display_handler_t::GetRootWindowScreenRect for windowed browsers or\n cef_render_handler_t::GetWindowScreenRect for windowless browsers. Clients\n may expand browser content bounds to window bounds using OS-specific or\n cef_display_t functions.\n\n Return true (1) if this function was handled or false (0) for default\n handling. Default move/resize behavior is only provided with Views-hosted\n Chrome style browsers.\n"]
+    pub on_contents_bounds_change: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_display_handler_t,
+            browser: *mut _cef_browser_t,
+            new_bounds: *const cef_rect_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Called to retrieve the external (client-provided) root window rectangle in\n screen DIP coordinates. Only called for windowed browsers on Windows and\n Linux. Return true (1) if the rectangle was provided. Return false (0) to\n use the root window bounds on Windows or the browser content bounds on\n Linux. For additional usage details see\n cef_browser_host_t::NotifyScreenInfoChanged.\n"]
+    pub get_root_window_screen_rect: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_display_handler_t,
+            browser: *mut _cef_browser_t,
+            rect: *mut cef_rect_t,
+        ) -> ::std::os::raw::c_int,
+    >,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_display_handler_t"][::std::mem::size_of::<_cef_display_handler_t>() - 64usize];
+    ["Size of _cef_display_handler_t"][::std::mem::size_of::<_cef_display_handler_t>() - 72usize];
     ["Alignment of _cef_display_handler_t"]
         [::std::mem::align_of::<_cef_display_handler_t>() - 4usize];
     ["Offset of field: _cef_display_handler_t::base"]
@@ -10064,6 +10084,10 @@ const _: () = {
         [::std::mem::offset_of!(_cef_display_handler_t, on_cursor_change) - 56usize];
     ["Offset of field: _cef_display_handler_t::on_media_access_change"]
         [::std::mem::offset_of!(_cef_display_handler_t, on_media_access_change) - 60usize];
+    ["Offset of field: _cef_display_handler_t::on_contents_bounds_change"]
+        [::std::mem::offset_of!(_cef_display_handler_t, on_contents_bounds_change) - 64usize];
+    ["Offset of field: _cef_display_handler_t::get_root_window_screen_rect"]
+        [::std::mem::offset_of!(_cef_display_handler_t, get_root_window_screen_rect) - 68usize];
 };
 #[doc = "\n Implement this structure to handle events related to browser display state.\n The functions of this structure will be called on the UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_display_handler_t = _cef_display_handler_t;
@@ -13900,7 +13924,7 @@ unsafe extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 unsafe extern "C" {
-    #[doc = "\n This function should be called on the main application thread to initialize\n the CEF browser process. The |application| parameter may be NULL. Returns\n true (1) if initialization succeeds. Returns false (0) if initialization\n fails or if early exit is desired (for example, due to process singleton\n relaunch behavior). If this function returns false (0) then the application\n should exit immediately without calling any other CEF functions except,\n optionally, CefGetErrorCode. The |windows_sandbox_info| parameter is only\n used on Windows and may be NULL (see cef_sandbox_win.h for details).\n"]
+    #[doc = "\n This function should be called on the main application thread to initialize\n the CEF browser process. The |application| parameter may be NULL. Returns\n true (1) if initialization succeeds. Returns false (0) if initialization\n fails or if early exit is desired (for example, due to process singleton\n relaunch behavior). If this function returns false (0) then the application\n should exit immediately without calling any other CEF functions except,\n optionally, CefGetExitCode. The |windows_sandbox_info| parameter is only\n used on Windows and may be NULL (see cef_sandbox_win.h for details).\n"]
     pub fn cef_initialize(
         args: *const cef_main_args_t,
         settings: *const _cef_settings_t,
@@ -15201,11 +15225,18 @@ pub struct _cef_browser_view_delegate_t {
     pub get_browser_runtime_style: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_delegate_t) -> cef_runtime_style_t,
     >,
+    #[doc = "\n Return true (1) to allow the use of JavaScript moveTo/By() and\n resizeTo/By() (without user activation) with Document picture-in-picture\n popups.\n"]
+    pub allow_move_for_picture_in_picture: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> ::std::os::raw::c_int,
+    >,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of _cef_browser_view_delegate_t"]
-        [::std::mem::size_of::<_cef_browser_view_delegate_t>() - 96usize];
+        [::std::mem::size_of::<_cef_browser_view_delegate_t>() - 100usize];
     ["Alignment of _cef_browser_view_delegate_t"]
         [::std::mem::align_of::<_cef_browser_view_delegate_t>() - 4usize];
     ["Offset of field: _cef_browser_view_delegate_t::base"]
@@ -15230,6 +15261,11 @@ const _: () = {
         [::std::mem::offset_of!(_cef_browser_view_delegate_t, on_gesture_command) - 88usize];
     ["Offset of field: _cef_browser_view_delegate_t::get_browser_runtime_style"]
         [::std::mem::offset_of!(_cef_browser_view_delegate_t, get_browser_runtime_style) - 92usize];
+    ["Offset of field: _cef_browser_view_delegate_t::allow_move_for_picture_in_picture"][::std::mem::offset_of!(
+        _cef_browser_view_delegate_t,
+        allow_move_for_picture_in_picture
+    )
+        - 96usize];
 };
 #[doc = "\n Implement this structure to handle BrowserView events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_browser_view_delegate_t = _cef_browser_view_delegate_t;
@@ -15355,7 +15391,7 @@ unsafe extern "C" {
     #[doc = "\n Create a new ScrollView.\n"]
     pub fn cef_scroll_view_create(delegate: *mut _cef_view_delegate_t) -> *mut cef_scroll_view_t;
 }
-#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct _cef_display_t {
@@ -15364,7 +15400,7 @@ pub struct _cef_display_t {
     #[doc = "\n Returns the unique identifier for this Display.\n"]
     pub get_id:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> i64>,
-    #[doc = "\n Returns this Display's device pixel scale factor. This specifies how much\n the UI should be scaled when the actual output has more pixels than\n standard displays (which is around 100~120dpi). The potential return\n values differ by platform.\n"]
+    #[doc = "\n Returns this Display's device pixel scale factor. This specifies how much\n the UI should be scaled when the actual output has more pixels than\n standard displays (which is around 100~120dpi). The potential return\n values differ by platform. Windowed browsers with 1.0 zoom will have a\n JavaScript `window.devicePixelRatio` value matching the associated\n Display's get_device_scale_factor() value.\n"]
     pub get_device_scale_factor:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> f32>,
     #[doc = "\n Convert |point| from DIP coordinates to pixel coordinates using this\n Display's device scale factor.\n"]
@@ -15407,7 +15443,7 @@ const _: () = {
     ["Offset of field: _cef_display_t::get_rotation"]
         [::std::mem::offset_of!(_cef_display_t, get_rotation) - 44usize];
 };
-#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_display_t = _cef_display_t;
 unsafe extern "C" {
     #[doc = "\n Returns the primary Display.\n"]
