@@ -34,5 +34,5 @@ syn = { version = "2", features = ["full"] }
 thiserror = "2"
 
 [workspace.dependencies.windows-sys]
-version = "0.59"
+version = "0.60"
 features = ["Win32_System_Environment", "Win32_System_LibraryLoader"]
