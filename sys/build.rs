@@ -31,7 +31,7 @@ fn main() -> anyhow::Result<()> {
             let cef_dir = out_dir.join(&cef_dir);
 
             if !fs::exists(&cef_dir)? {
-                let cef_version = env::var("CARGO_PKG_VERSION")?;
+                let cef_version = download_cef::default_version(&env::var("CARGO_PKG_VERSION")?);
                 let index = CefIndex::download()?;
                 let platform = index.platform(&target)?;
                 let version = platform.version(&cef_version)?;
