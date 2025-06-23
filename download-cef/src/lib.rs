@@ -58,25 +58,20 @@ pub const WINDOWS_TARGETS: &[&str] = &[
     "i686-pc-windows-msvc",
 ];
 
-pub fn default_version(version: &'static str) -> String {
-    static VERSIONS: Mutex<Option<HashMap<&'static str, String>>> = Mutex::new(None);
+pub fn default_version(version: &str) -> String {
+    static VERSIONS: Mutex<Option<HashMap<String, String>>> = Mutex::new(None);
     let mut versions = VERSIONS.lock().expect("Lock error");
     if versions.is_none() {
         *versions = Some(HashMap::new());
     };
     let versions = versions.as_mut().unwrap();
     versions
-        .entry(version)
+        .entry(version.to_string())
         .or_insert_with(|| {
             Version::parse(version)
-                .map(|version| {
-                    if version.build.is_empty() {
-                        version.to_string()
-                    } else {
-                        version.build.to_string()
-                    }
-                })
-                .unwrap_or_else(|_| version.to_string())
+                .ok()
+                .and_then(|version| (!version.build.is_empty()).then(|| version.build.to_string()))
+                .unwrap_or_else(|| version.to_string())
         })
         .clone()
 }

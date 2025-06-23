@@ -4,7 +4,7 @@ resolver = "2"
 members = ["download-cef", "update-bindings", "export-cef-dir", "sys", "cef"]
 
 [workspace.package]
-version = "137.0.0+137.0.8"
+version = "137.0.1+137.0.8"
 edition = "2021"
 license = "Apache-2.0 OR MIT"
 authors = [
@@ -15,8 +15,8 @@ authors = [
 repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
-cef-dll-sys = { version = "137.0.0", path = "sys" }
-download-cef = { version = "1.4", path = "download-cef" }
+cef-dll-sys = { version = "137.0.1", path = "sys" }
+download-cef = { version = "1.4.1", path = "download-cef" }
 
 anyhow = "1"
 bindgen = "0.72"
