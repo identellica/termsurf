@@ -1,6 +1,7 @@
 #![doc = include_str!("../README.md")]
 
 use bzip2::bufread::BzDecoder;
+use regex::Regex;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 use sha1_smol::Sha1;
@@ -8,9 +9,9 @@ use std::{
     collections::HashMap,
     fmt::{self, Display},
     fs::{self, File},
-    io::{self, BufReader, IsTerminal},
+    io::{self, BufReader, IsTerminal, Write},
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{Mutex, OnceLock},
 };
 
 #[macro_use]
@@ -40,6 +41,18 @@ pub enum Error {
     CorruptedFile(String),
     #[error("Invalid archive file path: {0}")]
     InvalidArchiveFile(String),
+    #[error("JSON serialization error: {0}")]
+    Json(#[from] serde_json::Error),
+    #[error(
+        "Undexpected archive version: location: {location} archive {archive} expected {expected}"
+    )]
+    VersionMismatch {
+        location: String,
+        archive: String,
+        expected: String,
+    },
+    #[error("Invalid regex pattern: {0}")]
+    InvalidRegexPattern(#[from] regex::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -59,21 +72,55 @@ pub const WINDOWS_TARGETS: &[&str] = &[
 ];
 
 pub fn default_version(version: &str) -> String {
-    static VERSIONS: Mutex<Option<HashMap<String, String>>> = Mutex::new(None);
-    let mut versions = VERSIONS.lock().expect("Lock error");
-    if versions.is_none() {
-        *versions = Some(HashMap::new());
-    };
-    let versions = versions.as_mut().unwrap();
-    versions
-        .entry(version.to_string())
-        .or_insert_with(|| {
-            Version::parse(version)
-                .ok()
-                .and_then(|version| (!version.build.is_empty()).then(|| version.build.to_string()))
-                .unwrap_or_else(|| version.to_string())
+    unwrap_cef_version(version).unwrap_or_else(|_| version.to_string())
+}
+
+fn unwrap_cef_version(version: &str) -> Result<String> {
+    static VERSIONS: OnceLock<Mutex<HashMap<Version, String>>> = OnceLock::new();
+    let mut versions = VERSIONS
+        .get_or_init(Default::default)
+        .lock()
+        .expect("Lock error");
+    Ok(versions
+        .entry(Version::parse(version)?)
+        .or_insert_with_key(|v| {
+            if v.build.is_empty() {
+                version.to_string()
+            } else {
+                v.build.to_string()
+            }
         })
-        .clone()
+        .clone())
+}
+
+pub fn check_archive_json(version: &str, location: &str) -> Result<()> {
+    let expected = Version::parse(&unwrap_cef_version(version)?)?;
+
+    static PATTERN: OnceLock<core::result::Result<Regex, regex::Error>> = OnceLock::new();
+    let pattern = PATTERN
+        .get_or_init(|| Regex::new(r"^cef_binary_([^+]+)(:?\+.+)?$"))
+        .as_ref()
+        .map_err(Clone::clone)?;
+    let archive_json: CefFile = serde_json::from_reader(File::open(archive_json_path(location))?)?;
+    let archive_version = pattern.replace(&archive_json.name, "$1");
+    let archive = Version::parse(&archive_version)?;
+
+    if archive == expected {
+        Ok(())
+    } else {
+        Err(Error::VersionMismatch {
+            location: location.to_string(),
+            expected: expected.to_string(),
+            archive: archive.to_string(),
+        })
+    }
+}
+
+fn archive_json_path<P>(location: P) -> PathBuf
+where
+    P: AsRef<Path>,
+{
+    location.as_ref().join("archive.json")
 }
 
 const URL: &str = "https://cef-builds.spotifycdn.com";
@@ -230,6 +277,16 @@ impl CefVersion {
             .iter()
             .find(|f| f.file_type == "minimal")
             .ok_or_else(|| Error::VersionNotFound(self.cef_version.clone()))
+    }
+
+    pub fn write_archive_json<P>(&self, location: P) -> Result<()>
+    where
+        P: AsRef<Path>,
+    {
+        let archive_version = serde_json::to_string_pretty(self.minimal()?)?;
+        let mut archive_json = File::create(archive_json_path(location))?;
+        archive_json.write_all(archive_version.as_bytes())?;
+        Ok(())
     }
 }
 

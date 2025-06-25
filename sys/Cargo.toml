@@ -16,7 +16,7 @@ doctest = false
 dox = []
 
 [package.metadata.docs.rs]
-features = [ "dox" ]
+features = ["dox"]
 
 [build-dependencies]
 anyhow.workspace = true

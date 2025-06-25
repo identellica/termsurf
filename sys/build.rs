@@ -1,12 +1,7 @@
 #[cfg(not(feature = "dox"))]
 fn main() -> anyhow::Result<()> {
     use download_cef::{CefIndex, OsAndArch};
-    use std::{
-        env,
-        fs::{self, File},
-        io::Write,
-        path::PathBuf,
-    };
+    use std::{env, fs, path::PathBuf};
 
     println!("cargo::rerun-if-changed=build.rs");
 
@@ -23,6 +18,7 @@ fn main() -> anyhow::Result<()> {
         Ok(cef_path) => {
             // Allow overriding the CEF path with environment variables.
             println!("Using CEF path from environment: {cef_path}");
+            download_cef::check_archive_json(&env::var("CARGO_PKG_VERSION")?, &cef_path)?;
             PathBuf::from(cef_path)
         }
         Err(_) => {
@@ -45,9 +41,7 @@ fn main() -> anyhow::Result<()> {
                     ));
                 }
 
-                let archive_version = serde_json::to_string_pretty(version.minimal()?)?;
-                let mut archive_json = File::create(extracted_dir.join("archive.json"))?;
-                archive_json.write_all(archive_version.as_bytes())?;
+                version.write_archive_json(extracted_dir)?;
             }
 
             cef_dir
