@@ -290,7 +290,7 @@ impl CefVersion {
     }
 }
 
-#[derive(Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Deserialize, Serialize)]
 pub struct CefFile {
     #[serde(rename = "type")]
     pub file_type: String,
