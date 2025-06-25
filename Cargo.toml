@@ -16,7 +16,7 @@ repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
 cef-dll-sys = { version = "137.0.1", path = "sys" }
-download-cef = { version = "1.4.1", path = "download-cef" }
+download-cef = { version = "1.4.2", path = "download-cef" }
 
 anyhow = "1"
 bindgen = "0.72"

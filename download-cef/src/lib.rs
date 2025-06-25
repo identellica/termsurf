@@ -10,7 +10,7 @@ use std::{
     fs::{self, File},
     io::{self, BufReader, IsTerminal},
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{Mutex, OnceLock},
 };
 
 #[macro_use]
@@ -59,12 +59,11 @@ pub const WINDOWS_TARGETS: &[&str] = &[
 ];
 
 pub fn default_version(version: &str) -> String {
-    static VERSIONS: Mutex<Option<HashMap<String, String>>> = Mutex::new(None);
-    let mut versions = VERSIONS.lock().expect("Lock error");
-    if versions.is_none() {
-        *versions = Some(HashMap::new());
-    };
-    let versions = versions.as_mut().unwrap();
+    static VERSIONS: OnceLock<Mutex<HashMap<String, String>>> = OnceLock::new();
+    let mut versions = VERSIONS
+        .get_or_init(Default::default)
+        .lock()
+        .expect("Lock error");
     versions
         .entry(version.to_string())
         .or_insert_with(|| {
