@@ -2,12 +2,7 @@
 
 use clap::Parser;
 use download_cef::{CefIndex, OsAndArch, DEFAULT_TARGET};
-use std::{
-    fs::{self, File},
-    io::Write,
-    path::PathBuf,
-    sync::OnceLock,
-};
+use std::{fs, path::PathBuf, sync::OnceLock};
 
 fn default_version() -> &'static str {
     static DEFAULT_VERSION: OnceLock<String> = OnceLock::new();
@@ -91,11 +86,7 @@ fn main() -> anyhow::Result<()> {
         fs::remove_file(archive)?;
     }
 
-    {
-        let archive_version = serde_json::to_string_pretty(version.minimal()?)?;
-        let mut archive_json = File::create(extracted_dir.join("archive.json"))?;
-        archive_json.write_all(archive_version.as_bytes())?;
-    }
+    version.write_archive_json(extracted_dir)?;
 
     if output != cef_dir {
         println!("Renaming: {}", output.display());
