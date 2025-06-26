@@ -1,6 +1,7 @@
 #![doc = include_str!("../README.md")]
 
 use bzip2::bufread::BzDecoder;
+use clap::ValueEnum;
 use regex::Regex;
 use semver::Version;
 use serde::{Deserialize, Serialize};
@@ -125,6 +126,22 @@ where
 
 const URL: &str = "https://cef-builds.spotifycdn.com";
 
+#[derive(Clone, PartialEq, Eq, Deserialize, Serialize, ValueEnum)]
+#[serde(rename_all = "lowercase")]
+pub enum Channel {
+    Stable,
+    Beta,
+}
+
+impl Display for Channel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Channel::Stable => write!(f, "stable"),
+            Channel::Beta => write!(f, "beta"),
+        }
+    }
+}
+
 #[derive(Deserialize, Serialize, Default)]
 pub struct CefIndex {
     pub macosarm64: CefPlatform,
@@ -174,17 +191,32 @@ impl CefPlatform {
             .ok_or_else(|| Error::VersionNotFound(cef_version.to_string()))
     }
 
-    pub fn latest(&self) -> Result<&CefVersion> {
+    pub fn latest(&self, channel: Channel) -> Result<&CefVersion> {
+        static PATTERN: OnceLock<core::result::Result<Regex, regex::Error>> = OnceLock::new();
+        let pattern = PATTERN
+            .get_or_init(|| Regex::new(r"^([^+]+)(:?\+.+)?$"))
+            .as_ref()
+            .map_err(Clone::clone)?;
+
         self.versions
             .iter()
-            .max_by_key(|v| Version::parse(&v.cef_version).ok())
+            .filter_map(|value| {
+                if value.channel == channel {
+                    let key = Version::parse(&pattern.replace(&value.cef_version, "$1")).ok()?;
+                    Some((key, value))
+                } else {
+                    None
+                }
+            })
+            .max_by(|(a, _), (b, _)| a.cmp(b))
+            .map(|(_, v)| v)
             .ok_or_else(|| Error::VersionNotFound("latest".to_string()))
     }
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct CefVersion {
-    pub channel: String,
+    pub channel: Channel,
     pub cef_version: String,
     pub files: Vec<CefFile>,
 }
