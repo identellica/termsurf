@@ -1,0 +1,54 @@
+name: Get latest CEF version
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  get-latest:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ (steps.pack-changes.outputs.changed }}
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq gcc-14-aarch64-linux-gnu gcc-14-arm-linux-gnueabi
+
+      - name: Publish PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cargo run -p get-latest -- -u
+
+          git switch -c update-bindings
+          RESET_REV=$(git rev-parse HEAD)
+
+          git reset ${RESET_REV}
+          git add .
+
+          CHANGED=($(git diff --name-only --staged | xargs))
+          if [ ${#CHANGED[@]} -gt 0 ]; then
+            git push --force -u origin update-bindings
+
+            FILES=()
+            for VALUE in ${CHANGED[@]}; do
+              base64 -w0 "${VALUE}" > "${VALUE}.base64"
+              FILES+=("-F" "files[][path]=${VALUE}" "-F" "files[][contents]=@${VALUE}.base64")
+            done
+
+            gh api graphql \
+              -F githubRepository=${GITHUB_REPOSITORY} \
+              -F branchName=update-bindings \
+              -F expectedHeadOid=${RESET_REV} \
+              -F 'commitMessage=chore: update CEF version' \
+              -F query=@.github/api/createCommitOnBranch.graphql \
+              ${FILES[@]}
+
+            git pull
+
+            gh pr create -f
+          fi
