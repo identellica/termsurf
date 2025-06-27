@@ -22,7 +22,7 @@ jobs:
         run: |
           cargo run -p get-latest -- -u
 
-          git switch -c update-bindings
+          git switch -c get-latest
           RESET_REV=$(git rev-parse HEAD)
 
           git reset ${RESET_REV}
@@ -30,7 +30,7 @@ jobs:
 
           CHANGED=($(git diff --name-only --staged | xargs))
           if [ ${#CHANGED[@]} -gt 0 ]; then
-            git push --force -u origin update-bindings
+            git push --force -u origin get-latest
 
             FILES=()
             for VALUE in ${CHANGED[@]}; do
@@ -40,7 +40,7 @@ jobs:
 
             gh api graphql \
               -F githubRepository=${GITHUB_REPOSITORY} \
-              -F branchName=update-bindings \
+              -F branchName=get-latest \
               -F expectedHeadOid=${RESET_REV} \
               -F 'commitMessage=chore: update CEF version' \
               -F query=@.github/api/createCommitOnBranch.graphql \
