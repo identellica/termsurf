@@ -7,8 +7,6 @@ on:
 jobs:
   get-latest:
     runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ (steps.pack-changes.outputs.changed }}
 
     steps:
       - uses: actions/checkout@v4.2.2
