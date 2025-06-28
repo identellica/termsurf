@@ -40,7 +40,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CEF_PATH
 
 ```sh
 export CEF_PATH=$HOME/.local/share/cef
-export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$CEF_PATH
+export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$CEF_PATH:$CEF_PATH/Chromium\ Embedded\ Framework.framework/Libraries
 ```
 
 #### Windows (using PowerShell)

@@ -54,14 +54,10 @@ jobs:
             || ''
           }}GITHUB_ENV"
           echo "${{ matrix.os == 'macos-latest'
-            && 'DYLD_FALLBACK_LIBRARY_PATH'
+            && 'DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$HOME/.local/share/cef:$HOME/.local/share/cef/Chromium\ Embedded\ Framework.framework/Libraries'
             || (matrix.os == 'windows-latest'
-              && 'PATH'
-              || 'LD_LIBRARY_PATH') }}=${{ matrix.os == 'macos-latest'
-                && '$DYLD_FALLBACK_LIBRARY_PATH:$HOME/.local/share/cef'
-                || (matrix.os == 'windows-latest'
-                  && '$env:PATH;$env:USERPROFILE/.local/share/cef'
-                  || '$LD_LIBRARY_PATH:$HOME/.local/share/cef') }}" >> "$${{ matrix.os == 'windows-latest'
+              && 'PATH=$env:PATH;$env:USERPROFILE/.local/share/cef'
+              || 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/share/cef') }}" >> "$${{ matrix.os == 'windows-latest'
                     && 'env:'
                     || ''
                   }}GITHUB_ENV"
