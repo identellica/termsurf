@@ -635,7 +635,7 @@ pub struct BrowserSettings {
     pub text_area_resize: State,
     pub tab_to_links: State,
     pub local_storage: State,
-    pub databases: State,
+    pub databases_deprecated: State,
     pub webgl: State,
     pub background_color: u32,
     pub chrome_status_bubble: State,
@@ -667,7 +667,7 @@ impl From<_cef_browser_settings_t> for BrowserSettings {
             text_area_resize: value.text_area_resize.into(),
             tab_to_links: value.tab_to_links.into(),
             local_storage: value.local_storage.into(),
-            databases: value.databases.into(),
+            databases_deprecated: value.databases_deprecated.into(),
             webgl: value.webgl.into(),
             background_color: value.background_color,
             chrome_status_bubble: value.chrome_status_bubble.into(),
@@ -701,7 +701,7 @@ impl From<BrowserSettings> for _cef_browser_settings_t {
             text_area_resize: value.text_area_resize.into(),
             tab_to_links: value.tab_to_links.into(),
             local_storage: value.local_storage.into(),
-            databases: value.databases.into(),
+            databases_deprecated: value.databases_deprecated.into(),
             webgl: value.webgl.into(),
             background_color: value.background_color,
             chrome_status_bubble: value.chrome_status_bubble.into(),
@@ -45443,23 +45443,6 @@ impl From<TaskType> for cef_task_type_t {
 impl Default for TaskType {
     fn default() -> Self {
         Self(cef_task_type_t::CEF_TASK_TYPE_UNKNOWN)
-    }
-}
-
-/// See [`cef_sandbox_info_create`] for more documentation.
-pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
-    unsafe {
-        let result = cef_sandbox_info_create();
-        result.wrap_result()
-    }
-}
-
-/// See [`cef_sandbox_info_destroy`] for more documentation.
-pub fn sandbox_info_destroy(sandbox_info: *mut u8) {
-    unsafe {
-        let arg_sandbox_info = sandbox_info;
-        let arg_sandbox_info = arg_sandbox_info.cast();
-        cef_sandbox_info_destroy(arg_sandbox_info);
     }
 }
 
