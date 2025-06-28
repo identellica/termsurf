@@ -32,15 +32,15 @@ cargo run -p export-cef-dir -- --force $env:USERPROFILE/.local/share/cef
 #### Linux
 
 ```sh
-export CEF_PATH=$HOME/.local/share/cef
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CEF_PATH
+export CEF_PATH="$HOME/.local/share/cef"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CEF_PATH"
 ```
 
 #### macOS
 
 ```sh
-export CEF_PATH=$HOME/.local/share/cef
-export DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$CEF_PATH:$CEF_PATH/Chromium\ Embedded\ Framework.framework/Libraries
+export CEF_PATH="$HOME/.local/share/cef"
+export DYLD_FALLBACK_LIBRARY_PATH="$DYLD_FALLBACK_LIBRARY_PATH:$CEF_PATH:$CEF_PATH/Chromium Embedded Framework.framework/Libraries"
 ```
 
 #### Windows (using PowerShell)
