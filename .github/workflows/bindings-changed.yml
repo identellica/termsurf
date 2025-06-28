@@ -13,4 +13,4 @@ on:
 
 jobs:
   update-bindings:
-    uses: ./.github/workflows/update-bindings.yml@dev
+    uses: ./.github/workflows/update-bindings.yml

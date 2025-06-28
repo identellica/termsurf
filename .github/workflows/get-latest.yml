@@ -52,6 +52,6 @@ jobs:
   update-bindings:
     needs: get-latest
     if: needs.get-latest.outputs.updated == 'true'
-    uses: ./.github/workflows/update-bindings.yml@dev
+    uses: ./.github/workflows/update-bindings.yml
     with:
       branch: "get-latest"
