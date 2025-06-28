@@ -112,6 +112,8 @@ fn main() -> anyhow::Result<()> {
                 .to_string();
             println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
             println!("cargo::rustc-link-lib=static=cef_dll_wrapper");
+
+            println!("cargo::rustc-link-lib=sandbox");
         }
         os => unimplemented!("unknown target {os}"),
     }
