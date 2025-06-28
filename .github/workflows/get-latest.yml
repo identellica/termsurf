@@ -11,11 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4.2.2
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -yq gcc-14-aarch64-linux-gnu gcc-14-arm-linux-gnueabi
-
       - name: Publish PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

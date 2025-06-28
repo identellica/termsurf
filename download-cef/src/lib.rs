@@ -388,12 +388,7 @@ where
     const RELEASE_DIR: &str = "Release";
     fs::rename(extracted_dir.join(RELEASE_DIR), &cef_dir)?;
 
-    if os == "macos" {
-        fs::rename(
-            cef_dir.join("cef_sandbox.a"),
-            cef_dir.join("libcef_sandbox.a"),
-        )?;
-    } else {
+    if os != "macos" {
         let resources = extracted_dir.join("Resources");
 
         for entry in fs::read_dir(&resources)? {

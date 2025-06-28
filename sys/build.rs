@@ -100,8 +100,6 @@ fn main() -> anyhow::Result<()> {
             println!("cargo::rustc-link-lib=static=libcef_dll_wrapper");
 
             println!("cargo::rustc-link-lib=dylib=libcef");
-
-            println!("cargo::rustc-link-lib=static=cef_sandbox");
         }
         "macos" => {
             println!("cargo::rustc-link-lib=framework=AppKit");
@@ -114,9 +112,6 @@ fn main() -> anyhow::Result<()> {
                 .to_string();
             println!("cargo::rustc-link-search=native={build_dir}/build/libcef_dll_wrapper");
             println!("cargo::rustc-link-lib=static=cef_dll_wrapper");
-
-            println!("cargo::rustc-link-lib=static=cef_sandbox");
-            println!("cargo::rustc-link-lib=sandbox");
         }
         os => unimplemented!("unknown target {os}"),
     }

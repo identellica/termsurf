@@ -5,7 +5,11 @@ pub struct SandboxInfo(*mut u8);
 impl SandboxInfo {
     #[cfg(target_os = "windows")]
     pub fn new() -> Self {
-        Self(crate::sandbox_info_create().cast())
+        if option_env!("CARGO_BIN_NAME").is_none() {
+            Self(crate::sandbox_info_create().cast())
+        } else {
+            Default::default()
+        }
     }
 
     #[cfg(not(target_os = "windows"))]
