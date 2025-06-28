@@ -6,6 +6,7 @@ on:
       - dev
     paths:
       - Cargo.toml
+      - sys/wrapper.h
       - update-bindings/**
       - .github/workflows/update-bindings.yml
 

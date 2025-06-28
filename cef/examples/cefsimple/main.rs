@@ -1,4 +1,4 @@
-use cef::{args::Args, rc::*, sandbox_info::SandboxInfo, *};
+use cef::{args::Args, rc::*, *};
 use std::sync::{Arc, Mutex};
 
 struct DemoApp {
@@ -274,8 +274,6 @@ fn main() {
     let args = Args::new();
     let cmd = args.as_cmd_line().unwrap();
 
-    let sandbox = SandboxInfo::new();
-
     let switch = CefString::from("type");
     let is_browser_process = cmd.has_switch(Some(&switch)) != 1;
 
@@ -285,7 +283,7 @@ fn main() {
     let ret = execute_process(
         Some(args.as_main_args()),
         Some(&mut app),
-        sandbox.as_mut_ptr(),
+        std::ptr::null_mut(),
     );
 
     if is_browser_process {
@@ -304,7 +302,7 @@ fn main() {
             Some(args.as_main_args()),
             Some(&settings),
             Some(&mut app),
-            sandbox.as_mut_ptr()
+            std::ptr::null_mut(),
         ),
         1
     );

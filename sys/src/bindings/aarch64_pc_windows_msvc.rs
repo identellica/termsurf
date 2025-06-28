@@ -11,21 +11,14 @@ pub const CEF_API_VERSION_13500: i32 = 13500;
 pub const CEF_API_VERSION_13600: i32 = 13600;
 pub const CEF_API_VERSION_13601: i32 = 13601;
 pub const CEF_API_VERSION_13700: i32 = 13700;
+pub const CEF_API_VERSION_13800: i32 = 13800;
 pub const CEF_API_VERSION_999998: i32 = 999998;
 pub const CEF_API_VERSION_999999: i32 = 999999;
 pub const CEF_API_VERSION_MIN: i32 = 13300;
-pub const CEF_API_VERSION_LAST: i32 = 13700;
+pub const CEF_API_VERSION_LAST: i32 = 13800;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
-unsafe extern "C" {
-    #[doc = "\n Create the sandbox information object for this process. It is safe to create\n multiple of this object and to destroy the object immediately after passing\n into the CefExecuteProcess() and/or CefInitialize() functions.\n"]
-    pub fn cef_sandbox_info_create() -> *mut ::std::os::raw::c_void;
-}
-unsafe extern "C" {
-    #[doc = "\n Destroy the specified sandbox information object.\n"]
-    pub fn cef_sandbox_info_destroy(sandbox_info: *mut ::std::os::raw::c_void);
-}
 unsafe extern "C" {
     #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n"]
     pub fn cef_api_hash(
@@ -520,11 +513,11 @@ unsafe extern "C" {
 #[doc = "\n Supported content setting types. Some types are platform-specific or only\n supported with Chrome style. Should be kept in sync with Chromium's\n ContentSettingsType type.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum cef_content_setting_types_t {
-    #[doc = " provided context. However, it may be overridden by other settings. This\n enum should NOT be read directly to determine whether cookies are enabled;\n the client should instead rely on the CookieSettings API."]
+    #[doc = " This setting governs whether cookies are enabled by the user in the\n provided context. However, it may be overridden by other settings. This\n enum should NOT be read directly to determine whether cookies are enabled;\n the client should instead rely on the CookieSettings API."]
     CEF_CONTENT_SETTING_TYPE_COOKIES = 0,
-    #[doc = " provided context. However, it may be overridden by other settings. This\n enum should NOT be read directly to determine whether cookies are enabled;\n the client should instead rely on the CookieSettings API."]
+    #[doc = " This setting governs whether cookies are enabled by the user in the\n provided context. However, it may be overridden by other settings. This\n enum should NOT be read directly to determine whether cookies are enabled;\n the client should instead rely on the CookieSettings API."]
     CEF_CONTENT_SETTING_TYPE_IMAGES = 1,
-    #[doc = " provided context. However, it may be overridden by other settings. This\n enum should NOT be read directly to determine whether cookies are enabled;\n the client should instead rely on the CookieSettings API."]
+    #[doc = " This setting governs whether cookies are enabled by the user in the\n provided context. However, it may be overridden by other settings. This\n enum should NOT be read directly to determine whether cookies are enabled;\n the client should instead rely on the CookieSettings API."]
     CEF_CONTENT_SETTING_TYPE_JAVASCRIPT = 2,
     #[doc = " This setting governs both popups and unwanted redirects like tab-unders\n and framebusting."]
     CEF_CONTENT_SETTING_TYPE_POPUPS = 3,
@@ -640,8 +633,7 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_CAMERA_PAN_TILT_ZOOM = 58,
     #[doc = " Content setting for Screen Enumeration and Screen Detail functionality.\n Permits access to detailed multi-screen information, like size and\n position. Permits placing fullscreen and windowed content on specific\n screens. See also: https://w3c.github.io/window-placement"]
     CEF_CONTENT_SETTING_TYPE_WINDOW_MANAGEMENT = 59,
-    #[doc = " Stores whether to allow insecure websites to make private network\n requests.\n See also: https://wicg.github.io/cors-rfc1918\n Set through enterprise policies only."]
-    CEF_CONTENT_SETTING_TYPE_INSECURE_PRIVATE_NETWORK = 60,
+    CEF_CONTENT_SETTING_TYPE_INSECURE_PRIVATE_NETWORK_DEPRECATED = 60,
     #[doc = " Content setting which stores whether or not a site can access low-level\n locally installed font data using the Local Fonts Access API."]
     CEF_CONTENT_SETTING_TYPE_LOCAL_FONTS = 61,
     #[doc = " Stores per-origin state for permission auto-revocation (for all permission\n types)."]
@@ -759,7 +751,13 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_REVOKED_DISRUPTIVE_NOTIFICATION_PERMISSIONS = 118,
     #[doc = " Content setting for whether the site is allowed to make local network\n requests."]
     CEF_CONTENT_SETTING_TYPE_LOCAL_NETWORK_ACCESS = 119,
-    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 120,
+    #[doc = " Stores information on-device language packs for which a site has\n installed using the Web Speech API."]
+    CEF_CONTENT_SETTING_TYPE_ON_DEVICE_SPEECH_RECOGNITION_LANGUAGES_DOWNLOADED = 120,
+    #[doc = " Stores which Translator API language packs the site has initialized."]
+    CEF_CONTENT_SETTING_TYPE_INITIALIZED_TRANSLATIONS = 121,
+    #[doc = " Stores a list of notification ids where content detection found the\n notification to be suspicious and a warning has already been shown for the\n site. Used for recovering notification contents from the database if the\n user decides they would like to see all of these notifications."]
+    CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_NOTIFICATION_IDS = 122,
+    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 123,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -1420,8 +1418,7 @@ pub struct _cef_browser_settings_t {
     pub tab_to_links: cef_state_t,
     #[doc = "\n Controls whether local storage can be used. Also configurable using the\n \"disable-local-storage\" command-line switch.\n"]
     pub local_storage: cef_state_t,
-    #[doc = "\n Controls whether databases can be used. Also configurable using the\n \"disable-databases\" command-line switch.\n"]
-    pub databases: cef_state_t,
+    pub databases_deprecated: cef_state_t,
     #[doc = "\n Controls whether WebGL can be used. Note that WebGL requires hardware\n support and may not work on all systems even when enabled. Also\n configurable using the \"disable-webgl\" command-line switch.\n"]
     pub webgl: cef_state_t,
     #[doc = "\n Background color used for the browser before a document is loaded and when\n no document color is specified. The alpha component must be either fully\n opaque (0xFF) or fully transparent (0x00). If the alpha component is fully\n opaque then the RGB components will be used as the background color. If\n the alpha component is fully transparent for a windowed browser then the\n CefSettings.background_color value will be used. If the alpha component is\n fully transparent for a windowless (off-screen) browser then transparent\n painting will be enabled.\n"]
@@ -1485,8 +1482,8 @@ const _: () = {
         [::std::mem::offset_of!(_cef_browser_settings_t, tab_to_links) - 232usize];
     ["Offset of field: _cef_browser_settings_t::local_storage"]
         [::std::mem::offset_of!(_cef_browser_settings_t, local_storage) - 236usize];
-    ["Offset of field: _cef_browser_settings_t::databases"]
-        [::std::mem::offset_of!(_cef_browser_settings_t, databases) - 240usize];
+    ["Offset of field: _cef_browser_settings_t::databases_deprecated"]
+        [::std::mem::offset_of!(_cef_browser_settings_t, databases_deprecated) - 240usize];
     ["Offset of field: _cef_browser_settings_t::webgl"]
         [::std::mem::offset_of!(_cef_browser_settings_t, webgl) - 244usize];
     ["Offset of field: _cef_browser_settings_t::background_color"]
@@ -1941,6 +1938,13 @@ pub enum cef_errorcode_t {
     ERR_DNS_REQUEST_CANCELLED = -810,
     ERR_DNS_NO_MATCHING_SUPPORTED_ALPN = -811,
     ERR_DNS_SECURE_PROBE_RECORD_INVALID = -814,
+    ERR_BLOB_INVALID_CONSTRUCTION_ARGUMENTS = -900,
+    ERR_BLOB_OUT_OF_MEMORY = -901,
+    ERR_BLOB_FILE_WRITE_FAILED = -902,
+    ERR_BLOB_SOURCE_DIED_IN_TRANSIT = -903,
+    ERR_BLOB_DEREFERENCED_WHILE_BUILDING = -904,
+    ERR_BLOB_REFERENCED_BLOB_BROKEN = -905,
+    ERR_BLOB_REFERENCED_FILE_UNAVAILABLE = -906,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -1986,6 +1990,8 @@ pub enum cef_resultcode_t {
     CEF_RESULT_CODE_GPU_DEAD_ON_ARRIVAL = 4,
     #[doc = " The GPU process exited because initialization failed."]
     CEF_RESULT_CODE_CHROME_FIRST = 5,
+    #[doc = " The process is of an unknown type."]
+    CEF_RESULT_CODE_BAD_PROCESS_TYPE = 6,
     #[doc = " A critical chrome file is missing."]
     CEF_RESULT_CODE_MISSING_DATA = 7,
     #[doc = " Command line parameter is not supported."]
@@ -2006,9 +2012,9 @@ pub enum cef_resultcode_t {
     CEF_RESULT_CODE_NORMAL_EXIT_PACK_EXTENSION_SUCCESS = 36,
     #[doc = " The browser process exited because system resources are exhausted. The\n system state can't be recovered and will be unstable."]
     CEF_RESULT_CODE_SYSTEM_RESOURCE_EXHAUSTED = 37,
-    #[doc = " The browser process exited because system resources are exhausted. The\n system state can't be recovered and will be unstable."]
-    CEF_RESULT_CODE_CHROME_LAST = 38,
-    #[doc = " The browser process exited because system resources are exhausted. The\n system state can't be recovered and will be unstable."]
+    #[doc = " The browser process exited because it was re-launched without elevation."]
+    CEF_RESULT_CODE_NORMAL_EXIT_AUTO_DE_ELEVATED = 38,
+    CEF_RESULT_CODE_CHROME_LAST = 39,
     CEF_RESULT_CODE_SANDBOX_FATAL_FIRST = 7006,
     #[doc = " Windows sandbox could not lower the token."]
     CEF_RESULT_CODE_SANDBOX_FATAL_DROPTOKEN = 7007,
@@ -3868,7 +3874,8 @@ pub enum cef_chrome_page_action_icon_type_t {
     CEF_CPAIT_OPTIMIZATION_GUIDE = 31,
     CEF_CPAIT_COLLABORATION_MESSAGING = 32,
     CEF_CPAIT_CHANGE_PASSWORD = 33,
-    CEF_CPAIT_NUM_VALUES = 34,
+    CEF_CPAIT_LENS_OVERLAY_HOMEWORK = 34,
+    CEF_CPAIT_NUM_VALUES = 35,
 }
 #[repr(i32)]
 #[non_exhaustive]

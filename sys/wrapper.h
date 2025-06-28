@@ -6,10 +6,6 @@
 #include "include/cef_sandbox_mac.h"
 #endif
 
-#ifdef _WIN32
-#include "include/cef_sandbox_win.h"
-#endif
-
 #include "include/cef_api_hash.h"
 
 #include "include/capi/cef_base_capi.h"
