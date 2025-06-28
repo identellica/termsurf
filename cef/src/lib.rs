@@ -2,7 +2,6 @@
 
 pub mod args;
 pub mod rc;
-pub mod sandbox_info;
 pub mod string;
 
 #[cfg(target_os = "macos")]
