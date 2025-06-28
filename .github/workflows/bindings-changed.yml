@@ -1,0 +1,16 @@
+name: Bindings changed
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - Cargo.toml
+      - sys/wrapper.h
+      - update-bindings/**
+      - .github/workflows/bindings-changed.yml
+      - .github/workflows/update-bindings.yml
+
+jobs:
+  update-bindings:
+    uses: /.github/workflows/update-bindings.yml
