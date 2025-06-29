@@ -1,14 +1,13 @@
 name: Update bindings
 
 on:
-  push:
-    branches:
-      - dev
-    paths:
-      - Cargo.toml
-      - sys/wrapper.h
-      - update-bindings/**
-      - .github/workflows/update-bindings.yml
+  workflow_call:
+    inputs:
+      branch:
+        description: "Target branch"
+        default: "dev"
+        required: true
+        type: string
 
 jobs:
   update-linux:
@@ -28,6 +27,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Install Dependencies
         run: |
@@ -73,6 +74,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Update Bindings
         run: |
@@ -115,6 +118,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Update Bindings
         run: |
@@ -195,6 +200,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4.3.0
