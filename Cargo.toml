@@ -28,7 +28,7 @@ download-cef = { version = "1.6", path = "download-cef" }
 anyhow = "1"
 bindgen = "0.72"
 clap = { version = "4", features = ["derive"] }
-cmake = "0.1"
+cmake = "0.1.52"
 convert_case = "0.8"
 plist = "1"
 proc-macro2 = "1"
