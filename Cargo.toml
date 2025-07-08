@@ -39,7 +39,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 syn = { version = "2", features = ["full"] }
 thiserror = "2"
-toml_edit = "0.22"
+toml_edit = "0.23"
 
 [workspace.dependencies.windows-sys]
 version = "0.60"
