@@ -6,6 +6,7 @@ on:
 
 jobs:
   get-latest:
+    if: ${{ github.repository_owner == 'tauri-apps' }}
     runs-on: ubuntu-latest
     outputs:
       updated: ${{ steps.push-changes.outputs.updated }}
