@@ -1,0 +1,2 @@
+[workspace]
+repo_url = "https://github.com/tauri-apps/cef-rs"
