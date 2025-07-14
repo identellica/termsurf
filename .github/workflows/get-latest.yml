@@ -66,6 +66,7 @@ jobs:
       - uses: actions/checkout@v4.2.2
         with:
           ref: get-latest
+          fetch-depth: 0
 
       - name: Publish PR
         env:
