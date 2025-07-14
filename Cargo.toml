@@ -11,7 +11,7 @@ members = [
 ]
 
 [workspace.package]
-version = "138.2.0+138.0.21"
+version = "138.2.1+138.0.21"
 edition = "2021"
 license = "Apache-2.0 OR MIT"
 authors = [
@@ -22,8 +22,8 @@ authors = [
 repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
-cef-dll-sys = { version = "138.2.0", path = "sys" }
-download-cef = { version = "1.6", path = "download-cef" }
+cef-dll-sys = { version = "138.2.1", path = "sys" }
+download-cef = { version = "2.0", path = "download-cef" }
 
 anyhow = "1"
 bindgen = "0.72"
