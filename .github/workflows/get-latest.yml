@@ -14,13 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4.2.2
 
+      - name: Check for updates
+        id: check-updates
+        run: cargo run -p get-latest -- -u
+
       - name: Push changes
         id: push-changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_MESSAGE: ${{ steps.check-updates.outputs.commit-message }}
         run: |
-          cargo run -p get-latest -- -u
-
           git switch -c get-latest
           RESET_REV=$(git rev-parse HEAD)
 
@@ -41,7 +44,7 @@ jobs:
               -F githubRepository=${GITHUB_REPOSITORY} \
               -F branchName=get-latest \
               -F expectedHeadOid=${RESET_REV} \
-              -F 'commitMessage=chore: update CEF version' \
+              -F "commitMessage=${COMMIT_MESSAGE}" \
               -F query=@.github/api/createCommitOnBranch.graphql \
               ${FILES[@]}
 
