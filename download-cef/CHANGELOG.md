@@ -11,4 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 
-- seed CHANGELOG.md files
+- release
+
+## [2.0.0](https://github.com/tauri-apps/cef-rs/compare/download-cef-v1.6.0...download-cef-v2.0.0) - 2025-07-14
+
+### Fixed
+
+- bump major version of download-cef [#145](https://github.com/tauri-apps/cef-rs/issues/145)
+
+### Other
+
+- update CEF version
