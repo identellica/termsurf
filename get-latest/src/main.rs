@@ -70,6 +70,7 @@ fn main() -> Result<()> {
         let current_version =
             Version::parse(&download_cef::default_version(env!("CARGO_PKG_VERSION")))?;
         if current_version < latest_version {
+            let latest_build = BuildMetadata::new(&latest_version.to_string())?;
             let mut workspace_version = Version::parse(env!("CARGO_PKG_VERSION"))?;
             if workspace_version.major < latest_version.major {
                 workspace_version.major = latest_version.major;
@@ -78,7 +79,7 @@ fn main() -> Result<()> {
                 workspace_version.minor += 1;
             }
             workspace_version.patch = 0;
-            workspace_version.build = BuildMetadata::new(&latest_version.to_string())?;
+            workspace_version.build = latest_build.clone();
 
             let mut manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
             manifest.pop();
@@ -95,6 +96,22 @@ fn main() -> Result<()> {
                     .create(true)
                     .append(true)
                     .open(output)?;
+
+                let mut git_cliff_version = Version {
+                    build: latest_build,
+                    ..Version::parse(env!("CARGO_PKG_VERSION"))?
+                };
+
+                let git_cliff_bump = if git_cliff_version.major < latest_version.major {
+                    git_cliff_version.major = latest_version.major - 1;
+                    git_cliff_version.minor = 0;
+                    "major"
+                } else {
+                    "minor"
+                };
+
+                writeln!(output, "git-cliff-version={git_cliff_version}",)?;
+                writeln!(output, "git-cliff-bump={git_cliff_bump}",)?;
 
                 writeln!(
                     output,
