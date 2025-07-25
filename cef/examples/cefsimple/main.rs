@@ -296,7 +296,10 @@ fn main() {
         // non-browser process does not initialize cef
         return;
     }
-    let settings = Settings::default();
+    let settings = Settings {
+        no_sandbox: !cfg!(feature = "sandbox") as _,
+        ..Default::default()
+    };
     assert_eq!(
         initialize(
             Some(args.as_main_args()),

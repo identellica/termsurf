@@ -10,7 +10,7 @@ pub struct Sandbox {
 
 impl Sandbox {
     const LIBCEF_SANDBOX_PATH: &str =
-        "../../../Chromium Embedded Framework.framework/Libraries/libcef_sandbox.dylib";
+        "../../../../Chromium Embedded Framework.framework/Libraries/libcef_sandbox.dylib";
 
     pub fn new() -> Self {
         unsafe {

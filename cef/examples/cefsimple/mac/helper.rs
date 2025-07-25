@@ -1,11 +1,11 @@
 use cef::{args::Args, *};
 
 fn main() {
-    let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
     let args = Args::new();
 
-    #[cfg(target_os = "macos")]
+    #[cfg(all(target_os = "macos", feature = "sandbox"))]
     let mut sandbox = cef::sandbox::Sandbox::new();
+    #[cfg(all(target_os = "macos", feature = "sandbox"))]
     sandbox.initialize(args.as_main_args());
 
     #[cfg(target_os = "macos")]
