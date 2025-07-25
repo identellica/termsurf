@@ -5,13 +5,10 @@ use cef::{
     *,
 };
 use cef::{ImplRequestContextHandler, RequestContextHandler, WrapRequestContextHandler};
+use objc::msg_send;
 use std::cell::RefCell;
 use std::ptr::null_mut;
-#[cfg(target_os = "windows")]
-use wgpu::wgc::api::Dx12;
-use wgpu::{Extent3d, TextureDescriptor, TextureDimension, TextureUsages};
-#[cfg(target_os = "windows")]
-use windows::Win32::Graphics::Direct3D12;
+use wgpu::{Extent3d, TextureDescriptor, TextureDimension, TextureUsages, hal::Device};
 
 #[derive(Clone)]
 pub struct OsrApp {}
@@ -281,7 +278,6 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         false as _
     }
 
-    #[cfg(target_os = "windows")]
     fn on_accelerated_paint(
         &self,
         _browser: Option<&mut Browser>,
@@ -310,23 +306,28 @@ impl ImplRenderHandler for RenderHandlerBuilder {
             usage: TextureUsages::TEXTURE_BINDING | TextureUsages::COPY_SRC,
             view_formats: &[],
         };
-        let handle = windows::Win32::Foundation::HANDLE(info.shared_texture_handle.cast());
-        let resource = unsafe {
-            self.handler.device.as_hal::<Dx12, _, _>(|hdevice| {
-                hdevice.map(|hdevice| {
-                    let raw_device = hdevice.raw_device();
 
-                    let mut resource = None::<Direct3D12::ID3D12Resource>;
-                    match raw_device.OpenSharedHandle(handle, &mut resource) {
-                        Ok(_) => Ok(resource.unwrap()),
-                        Err(e) => Err(e),
-                    }
-                })
-            })
-        };
-        let resource = resource.unwrap().unwrap();
-
+        #[cfg(target_os = "windows")]
         let src_texture = unsafe {
+            let handle = windows::Win32::Foundation::HANDLE(info.shared_texture_handle.cast());
+            use wgpu::wgc::api::Dx12;
+            use windows::Win32::Graphics::Direct3D12;
+            let resource = self
+                .handler
+                .device
+                .as_hal::<Dx12, _, _>(|hdevice| {
+                    hdevice.map(|hdevice| {
+                        let raw_device = hdevice.raw_device();
+                        let mut resource = None::<Direct3D12::ID3D12Resource>;
+                        match raw_device.OpenSharedHandle(handle, &mut resource) {
+                            Ok(_) => Ok(resource.unwrap()),
+                            Err(e) => Err(e),
+                        }
+                    })
+                })
+                .unwrap()
+                .unwrap();
+
             let texture = <Dx12 as wgpu::hal::Api>::Device::texture_from_raw(
                 resource,
                 texture_desc.format,
@@ -339,6 +340,41 @@ impl ImplRenderHandler for RenderHandlerBuilder {
             self.handler
                 .device
                 .create_texture_from_hal::<Dx12>(texture, &texture_desc)
+        };
+
+        #[cfg(target_os = "macos")]
+        let src_texture = unsafe {
+            use io_surface::IOSurfaceRef;
+            let Some(io_surface) =
+                std::ptr::NonNull::new(info.shared_texture_io_surface.cast::<IOSurfaceRef>())
+            else {
+                return;
+            };
+            let desc = wgpu::hal::TextureDescriptor {
+                mip_level_count: texture_desc.mip_level_count,
+                view_formats: vec![],
+                sample_count: texture_desc.sample_count,
+                usage: wgpu::TextureUses::STORAGE_READ_ONLY,
+                label: Some("Cef Texture"),
+                dimension: texture_desc.dimension,
+                format: texture_desc.format,
+                size: texture_desc.size,
+                memory_flags: wgpu::hal::MemoryFlags::all(),
+            };
+            let texture =
+                self.handler
+                    .device
+                    .as_hal::<wgpu::wgc::api::Metal, _, _>(|hdevice| {
+                        hdevice.map(|hdevice|  {
+                            use objc::*;
+                            objc::msg_send![hdevice.raw_device().lock().as_ref(), newTextureWithDescriptor:desc
+                                                                       iosurface:io_surface
+                                                                           plane:0]
+                        })
+                    }).unwrap();
+            self.handler
+                .device
+                .create_texture_from_hal::<wgpu::wgc::api::Metal>(texture, &texture_desc)
         };
         //let dst_texture = self
         //    .handler
@@ -438,7 +474,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
 }
 
 thread_local! {
-    pub static TEXTURE: RefCell<Option<wgpu::BindGroup>> = const { RefCell::new(None) };
+    pub static TEXTURE: RefCell<Option<wgpu::BindGroup>> = RefCell::new(None);
 }
 
 pub(crate) struct ClientBuilder {

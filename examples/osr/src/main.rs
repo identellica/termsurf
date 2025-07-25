@@ -30,7 +30,10 @@ struct State {
 impl State {
     async fn new(window: Arc<Window>) -> State {
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+            #[cfg(target_os = "windows")]
             backends: Backends::from_comma_list("dx12"),
+            #[cfg(target_os = "macos")]
+            backends: Backends::from_comma_list("metal"),
             //flags: wgpu::InstanceFlags::debugging(),
             ..Default::default()
         });
@@ -316,14 +319,14 @@ fn main() -> std::process::ExitCode {
     #[cfg(all(target_os = "windows", debug_assertions))]
     pix::load_winpix_gpu_capturer().unwrap();
 
-    env_logger::init();
-
     #[cfg(target_os = "macos")]
     let _loader = {
         let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
         assert!(loader.load());
         loader
     };
+
+    env_logger::init();
 
     let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
 
@@ -348,11 +351,9 @@ fn main() -> std::process::ExitCode {
         // non-browser process does not initialize cef
         return 0.into();
     }
-    let settings = Settings {
-        windowless_rendering_enabled: true as _,
-        external_message_pump: true as _,
-        ..Default::default()
-    };
+    let mut settings = Settings::default();
+    settings.windowless_rendering_enabled = true as _;
+    settings.external_message_pump = true as _;
     assert_eq!(
         initialize(
             Some(args.as_main_args()),
@@ -492,9 +493,10 @@ mod pix {
 
                         Ok(())
                     }
-                    Err(e) => Err(Error::other(format!(
-                        "Failed to load WinPixGpuCapturer.dll: {e}"
-                    ))),
+                    Err(e) => Err(Error::new(
+                        ErrorKind::Other,
+                        format!("Failed to load WinPixGpuCapturer.dll: {}", e),
+                    )),
                 }
             } else {
                 Ok(())
