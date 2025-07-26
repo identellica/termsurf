@@ -70,16 +70,24 @@ fn main() -> Result<()> {
         let current_version =
             Version::parse(&download_cef::default_version(env!("CARGO_PKG_VERSION")))?;
         if current_version < latest_version {
-            let workspace_version = Version {
-                build: BuildMetadata::new(&latest_version.to_string())?,
-                ..Version::parse(env!("CARGO_PKG_VERSION"))?
-            };
+            let mut workspace_version = Version::parse(env!("CARGO_PKG_VERSION"))?;
+            if workspace_version.major < latest_version.major {
+                workspace_version.major = latest_version.major;
+                workspace_version.minor = 0;
+            } else {
+                workspace_version.minor += 1;
+            }
+            workspace_version.patch = 0;
+            workspace_version.build = BuildMetadata::new(&latest_version.to_string())?;
 
             let mut manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
             manifest.pop();
             let manifest = manifest.join("Cargo.toml");
             let mut doc = fs::read_to_string(&manifest)?.parse::<DocumentMut>()?;
             doc["workspace"]["package"]["version"] = value(workspace_version.to_string());
+            workspace_version.build = BuildMetadata::EMPTY;
+            doc["workspace"]["dependencies"]["cef-dll-sys"]["version"] =
+                value(workspace_version.to_string());
             fs::write(&manifest, doc.to_string().as_bytes())?;
 
             if let Ok(output) = env::var("GITHUB_OUTPUT") {
@@ -88,15 +96,9 @@ fn main() -> Result<()> {
                     .append(true)
                     .open(output)?;
 
-                let commit_type = if current_version.major < latest_version.major {
-                    "feat!"
-                } else {
-                    "feat"
-                };
-
                 writeln!(
                     output,
-                    "commit-message={commit_type}: update CEF version to {latest_version}",
+                    "commit-message=chore: update CEF version to {latest_version}",
                 )?;
             }
         }
