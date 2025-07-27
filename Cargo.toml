@@ -30,6 +30,8 @@ bindgen = "0.72"
 clap = { version = "4", features = ["derive"] }
 cmake = "0.1.52"
 convert_case = "0.8"
+git-cliff = "2"
+git-cliff-core = "2"
 plist = "1"
 proc-macro2 = "1"
 quote = "1"
