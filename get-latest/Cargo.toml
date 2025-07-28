@@ -12,6 +12,8 @@ repository.workspace = true
 download-cef.workspace = true
 
 clap.workspace = true
+git-cliff.workspace = true
+git-cliff-core.workspace = true
 regex.workspace = true
 semver.workspace = true
 serde.workspace = true
