@@ -18,59 +18,6 @@ jobs:
         id: check-updates
         run: cargo run -p get-latest -- -u
 
-      - name: Build git-cliff arguments
-        id: git-cliff-args
-        run: |
-          echo "git-cliff-args=\
-          --bump ${{ steps.check-updates.outputs.git-cliff-bump }} \
-          --with-commit \"${{ steps.check-updates.outputs.commit-message }}\" \
-          -s footer \
-          --include-path Cargo.toml\
-          " >> "$GITHUB_OUTPUT"
-
-      - name: Update export-cef-dir change log
-        uses: orhun/git-cliff-action@v3
-        with:
-          config: get-latest/cliff.toml
-          args: |
-            ${{ steps.git-cliff-args.outputs.git-cliff-args }}
-            --include-path export-cef-dir
-            --include-path Cargo.lock
-            --tag-pattern "^export-cef-dir-v"
-            -t export-cef-dir-v${{ steps.check-updates.outputs.git-cliff-version }}
-            -- export-cef-dir-v138.2.0+138.0.21..
-        env:
-          OUTPUT: export-cef-dir/CHANGELOG.md
-          GITHUB_REPO: ${{ github.repository }}
-
-      - name: Update cef-dll-sys change log
-        uses: orhun/git-cliff-action@v3
-        with:
-          config: get-latest/cliff.toml
-          args: |
-            ${{ steps.git-cliff-args.outputs.git-cliff-args }}
-            --include-path sys
-            --tag-pattern "^cef-dll-sys-v"
-            -t cef-dll-sys-v${{ steps.check-updates.outputs.git-cliff-version }}
-            -- cef-dll-sys-v138.2.0+138.0.21..
-        env:
-          OUTPUT: sys/CHANGELOG.md
-          GITHUB_REPO: ${{ github.repository }}
-
-      - name: Update cef change log
-        uses: orhun/git-cliff-action@v3
-        with:
-          config: get-latest/cliff.toml
-          args: |
-            ${{ steps.git-cliff-args.outputs.git-cliff-args }}
-            --include-path cef
-            --tag-pattern "^cef-v"
-            -t cef-v${{ steps.check-updates.outputs.git-cliff-version }}
-            -- cef-v138.2.0+138.0.21..
-        env:
-          OUTPUT: cef/CHANGELOG.md
-          GITHUB_REPO: ${{ github.repository }}
-
       - name: Push changes
         id: push-changes
         env:
