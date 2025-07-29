@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+  push:
+    branches:
+      - dev
+    paths:
+      - get-latest/**
+      - .github/workflows/get-latest.yml
+
 jobs:
   get-latest:
     if: ${{ github.repository_owner == 'tauri-apps' }}
@@ -17,6 +24,9 @@ jobs:
       - name: Check for updates
         id: check-updates
         run: |
+          git config --global user.email "tauri-bot@users.noreply.github.com"
+          git config --global user.name "tauri"
+
           RESET_REV=$(git rev-parse HEAD)
           echo "reset-rev=${RESET_REV}" >> "$GITHUB_OUTPUT"
           cargo run -p get-latest -- -u
