@@ -10,14 +10,11 @@ pub struct Args {
     #[cfg(not(target_os = "windows"))]
     _argv: Vec<*const c_char>,
     main_args: MainArgs,
-    cmd_line: Option<CommandLine>,
 }
 
 impl Args {
     #[cfg(target_os = "windows")]
     pub fn new() -> Self {
-        use std::ffi::CStr;
-
         let main_args = MainArgs {
             instance: cef_dll_sys::HINSTANCE(
                 unsafe {
@@ -26,22 +23,8 @@ impl Args {
                 .cast(),
             ),
         };
-        let cmd_line = command_line_create().and_then(|cmd_line| {
-            unsafe {
-                CStr::from_ptr(windows_sys::Win32::System::Environment::GetCommandLineA().cast())
-            }
-            .to_str()
-            .ok()
-            .map(|args| {
-                cmd_line.init_from_string(Some(&CefString::from(args)));
-                cmd_line
-            })
-        });
 
-        Self {
-            main_args,
-            cmd_line,
-        }
+        Self { main_args }
     }
 
     #[cfg(not(target_os = "windows"))]
@@ -59,17 +42,11 @@ impl Args {
             argc: _argv.len() as i32,
             argv: _argv.as_ptr() as *mut *mut _,
         };
-        let cmd_line = command_line_create().inspect(|cmd_line| {
-            if !_argv.is_empty() {
-                cmd_line.init_from_argv(_argv.len() as i32, _argv.as_ptr());
-            }
-        });
 
         Self {
             _source,
             _argv,
             main_args,
-            cmd_line,
         }
     }
 
@@ -77,7 +54,30 @@ impl Args {
         &self.main_args
     }
 
-    pub fn as_cmd_line(&self) -> Option<&CommandLine> {
-        self.cmd_line.as_ref()
+    #[cfg(any(target_os = "macos", target_os = "linux"))]
+    pub fn as_cmd_line(&self) -> Option<CommandLine> {
+        let Some(cmd_line) = command_line_create() else {
+            return None;
+        };
+        cmd_line.init_from_argv(self.as_main_args().argc, self.as_main_args().argv.cast());
+        Some(cmd_line)
+    }
+
+    #[cfg(target_os = "windows")]
+    pub fn as_cmd_line(&self) -> Option<CommandLine> {
+        let cmd_line = command_line_create().and_then(|cmd_line| {
+            unsafe {
+                std::ffi::CStr::from_ptr(
+                    windows_sys::Win32::System::Environment::GetCommandLineA().cast(),
+                )
+            }
+            .to_str()
+            .ok()
+            .map(|args| {
+                cmd_line.init_from_string(Some(&CefString::from(args)));
+                cmd_line
+            })
+        });
+        cmd_line
     }
 }

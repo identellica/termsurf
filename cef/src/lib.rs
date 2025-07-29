@@ -7,6 +7,9 @@ pub mod string;
 #[cfg(target_os = "macos")]
 pub mod library_loader;
 
+#[cfg(target_os = "macos")]
+pub mod sandbox;
+
 #[rustfmt::skip]
 mod bindings;
 pub use bindings::*;

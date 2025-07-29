@@ -9,7 +9,9 @@ authors.workspace = true
 repository.workspace = true
 
 [features]
+default = [ "sandbox" ]
 dox = ["cef-dll-sys/dox"]
+sandbox = [ "cef-dll-sys/sandbox" ]
 
 [package.metadata.docs.rs]
 features = [ "dox" ]
@@ -19,6 +21,9 @@ cef-dll-sys.workspace = true
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows-sys.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libloading = "0.8"
 
 [target.'cfg(target_os = "macos")'.dev-dependencies]
 plist.workspace = true
