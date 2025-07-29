@@ -8,7 +8,7 @@ members = [
     "export-cef-dir",
     "sys",
     "cef",
-    "cef/examples/osr",
+    "examples/*",
 ]
 
 [workspace.package]
@@ -23,6 +23,7 @@ authors = [
 repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
+cef = { version = "138.7.0", path = "cef" }
 cef-dll-sys = { version = "138.7.0", path = "sys" }
 download-cef = { version = "2.0", path = "download-cef" }
 

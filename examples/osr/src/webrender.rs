@@ -267,7 +267,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
             screen_info.device_scale_factor = self.handler.device_scale_factor;
             return true as _;
         }
-        return false as _;
+        false as _
     }
 
     fn screen_point(
@@ -278,7 +278,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         _screen_x: Option<&mut ::std::os::raw::c_int>,
         _screen_y: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
-        return false as _;
+        false as _
     }
 
     #[cfg(target_os = "windows")]
@@ -438,7 +438,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
 }
 
 thread_local! {
-    pub static TEXTURE: RefCell<Option<wgpu::BindGroup>> = RefCell::new(None);
+    pub static TEXTURE: RefCell<Option<wgpu::BindGroup>> = const { RefCell::new(None) };
 }
 
 pub(crate) struct ClientBuilder {

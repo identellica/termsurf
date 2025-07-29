@@ -7,7 +7,7 @@ struct DemoApp {
 }
 
 impl DemoApp {
-    fn new(window: Arc<Mutex<Option<Window>>>) -> App {
+    fn new_app(window: Arc<Mutex<Option<Window>>>) -> App {
         App::new(Self {
             object: std::ptr::null_mut(),
             window,
@@ -49,7 +49,9 @@ impl ImplApp for DemoApp {
     }
 
     fn browser_process_handler(&self) -> Option<BrowserProcessHandler> {
-        Some(DemoBrowserProcessHandler::new(self.window.clone()))
+        Some(DemoBrowserProcessHandler::new_browser_process_handler(
+            self.window.clone(),
+        ))
     }
 }
 
@@ -59,7 +61,7 @@ struct DemoBrowserProcessHandler {
 }
 
 impl DemoBrowserProcessHandler {
-    fn new(window: Arc<Mutex<Option<Window>>>) -> BrowserProcessHandler {
+    fn new_browser_process_handler(window: Arc<Mutex<Option<Window>>>) -> BrowserProcessHandler {
         BrowserProcessHandler::new(Self {
             object: std::ptr::null_mut(),
             window,
@@ -104,7 +106,7 @@ impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
     // The real lifespan of cef starts from `on_context_initialized`, so all the cef objects should be manipulated after that.
     fn on_context_initialized(&self) {
         println!("cef context intiialized");
-        let mut client = DemoClient::new();
+        let mut client = DemoClient::new_client();
         let url = CefString::from("https://www.google.com");
 
         let browser_view = browser_view_create(
@@ -117,7 +119,7 @@ impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
         )
         .expect("Failed to create browser view");
 
-        let mut delegate = DemoWindowDelegate::new(browser_view);
+        let mut delegate = DemoWindowDelegate::new_window_delegate(browser_view);
         if let Ok(mut window) = self.window.lock() {
             *window = Some(
                 window_create_top_level(Some(&mut delegate)).expect("Failed to create window"),
@@ -129,7 +131,7 @@ impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
 struct DemoClient(*mut RcImpl<cef_dll_sys::_cef_client_t, Self>);
 
 impl DemoClient {
-    fn new() -> Client {
+    fn new_client() -> Client {
         Client::new(Self(std::ptr::null_mut()))
     }
 }
@@ -172,7 +174,7 @@ struct DemoWindowDelegate {
 }
 
 impl DemoWindowDelegate {
-    fn new(browser_view: BrowserView) -> WindowDelegate {
+    fn new_window_delegate(browser_view: BrowserView) -> WindowDelegate {
         WindowDelegate::new(Self {
             base: std::ptr::null_mut(),
             browser_view,
@@ -278,7 +280,7 @@ fn main() {
     let is_browser_process = cmd.has_switch(Some(&switch)) != 1;
 
     let window = Arc::new(Mutex::new(None));
-    let mut app = DemoApp::new(window.clone());
+    let mut app = DemoApp::new_app(window.clone());
 
     let ret = execute_process(
         Some(args.as_main_args()),

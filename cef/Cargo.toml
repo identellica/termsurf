@@ -9,12 +9,12 @@ authors.workspace = true
 repository.workspace = true
 
 [features]
-default = [ "sandbox" ]
+default = ["sandbox"]
 dox = ["cef-dll-sys/dox"]
-sandbox = [ "cef-dll-sys/sandbox" ]
+sandbox = ["cef-dll-sys/sandbox"]
 
 [package.metadata.docs.rs]
-features = [ "dox" ]
+features = ["dox"]
 
 [dependencies]
 cef-dll-sys.workspace = true
@@ -24,22 +24,3 @@ windows-sys.workspace = true
 
 [target.'cfg(target_os = "macos")'.dependencies]
 libloading = "0.8"
-
-[target.'cfg(target_os = "macos")'.dev-dependencies]
-plist.workspace = true
-serde.workspace = true
-
-[[example]]
-name = "cefsimple"
-crate-type = [ "bin" ]
-path = "examples/cefsimple/main.rs"
-
-[[example]]
-name = "cefsimple_helper"
-crate-type = [ "bin" ]
-path = "examples/cefsimple/mac/helper.rs"
-
-[[example]]
-name = "bundle_cefsimple"
-crate-type = [ "bin" ]
-path = "examples/bundle_cefsimple.rs"

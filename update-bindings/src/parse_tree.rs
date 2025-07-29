@@ -21,7 +21,7 @@ pub fn generate_bindings(source_path: &Path) -> crate::Result<PathBuf> {
     let mut out_file = crate::dirs::get_out_dir();
     out_file.push("bindings.rs");
     let mut bindings = fs::File::create(&out_file)?;
-    write!(bindings, "{}", parse_tree)?;
+    write!(bindings, "{parse_tree}")?;
     format_bindings(&out_file)?;
 
     Ok(out_file)

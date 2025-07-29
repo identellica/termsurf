@@ -4,9 +4,11 @@ fn main() {
     let args = Args::new();
 
     #[cfg(all(target_os = "macos", feature = "sandbox"))]
-    let mut sandbox = cef::sandbox::Sandbox::new();
-    #[cfg(all(target_os = "macos", feature = "sandbox"))]
-    sandbox.initialize(args.as_main_args());
+    let _sandbox = {
+        let mut sandbox = cef::sandbox::Sandbox::new();
+        sandbox.initialize(args.as_main_args());
+        sandbox
+    };
 
     #[cfg(target_os = "macos")]
     let _loader = {

@@ -242,10 +242,12 @@ impl ApplicationHandler for App {
 
         let state = pollster::block_on(State::new(window.clone()));
         self.state = Some(state);
-        let mut window_info = WindowInfo::default();
-        window_info.windowless_rendering_enabled = true as _;
-        window_info.shared_texture_enabled = true as _;
-        window_info.external_begin_frame_enabled = true as _;
+        let window_info = WindowInfo {
+            windowless_rendering_enabled: true as _,
+            shared_texture_enabled: true as _,
+            external_begin_frame_enabled: true as _,
+            ..Default::default()
+        };
         let device_scale_factor = window.scale_factor();
         let (render_handler, browser_size) = OsrRenderHandler::new(
             self.state.as_ref().unwrap().device.clone(),
@@ -253,8 +255,10 @@ impl ApplicationHandler for App {
             window.inner_size().to_logical(device_scale_factor),
         );
 
-        let mut browser_settings = BrowserSettings::default();
-        browser_settings.windowless_frame_rate = 60;
+        let browser_settings = BrowserSettings {
+            windowless_frame_rate: 60,
+            ..Default::default()
+        };
         let mut context = cef::request_context_create_context(
             Some(&RequestContextSettings::default()),
             Some(&mut RequestContextHandlerBuilder::build(
@@ -344,9 +348,11 @@ fn main() -> std::process::ExitCode {
         // non-browser process does not initialize cef
         return 0.into();
     }
-    let mut settings = Settings::default();
-    settings.windowless_rendering_enabled = true as _;
-    settings.external_message_pump = true as _;
+    let settings = Settings {
+        windowless_rendering_enabled: true as _,
+        external_message_pump: true as _,
+        ..Default::default()
+    };
     assert_eq!(
         initialize(
             Some(args.as_main_args()),
@@ -486,10 +492,9 @@ mod pix {
 
                         Ok(())
                     }
-                    Err(e) => Err(Error::new(
-                        ErrorKind::Other,
-                        format!("Failed to load WinPixGpuCapturer.dll: {}", e),
-                    )),
+                    Err(e) => Err(Error::other(format!(
+                        "Failed to load WinPixGpuCapturer.dll: {e}"
+                    ))),
                 }
             } else {
                 Ok(())

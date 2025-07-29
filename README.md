@@ -55,21 +55,21 @@ $env:PATH="$env:PATH;$env:CEF_PATH"
 #### Linux
 
 ```sh
-cargo run --example cefsimple
+cargo run --bin cefsimple
 ```
 
 #### macOS
 
 ```sh
-cargo run --example bundle_cefsimple
-open target/debug/examples/cefsimple.app
+cargo run --bin bundle_cefsimple
+open target/debug/cefsimple.app
 ```
 
 #### Windows (using PowerShell)
 
 ```pwsh
-cp ./cef/examples/cefsimple/win/cefsimple.exe.manifest ./target/debug/examples/
-cargo run --example cefsimple
+cp ./examples/cefsimple/win/cefsimple.exe.manifest ./target/debug/
+cargo run --bin cefsimple
 ```
 
 ## Contributing
