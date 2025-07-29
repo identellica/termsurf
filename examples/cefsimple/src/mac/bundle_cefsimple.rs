@@ -154,9 +154,9 @@ mod mac {
     }
 
     pub fn main() -> Result<(), Box<dyn std::error::Error>> {
-        let app_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../target/debug/examples");
-        run_command(&["build", "--example", "cefsimple"])?;
-        run_command(&["build", "--example", "cefsimple_helper"])?;
+        let app_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/debug");
+        run_command(&["build", "--bin", "cefsimple"])?;
+        run_command(&["build", "--bin", "cefsimple_helper"])?;
         bundle(&app_path);
         Ok(())
     }

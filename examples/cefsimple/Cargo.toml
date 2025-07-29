@@ -1,0 +1,27 @@
+[package]
+name = "cefsimple"
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "cefsimple"
+
+[[bin]]
+name = "cefsimple_helper"
+path = "src/mac/helper.rs"
+
+[[bin]]
+name = "bundle_cefsimple"
+path = "src/mac/bundle_cefsimple.rs"
+
+[features]
+default = ["sandbox"]
+sandbox = ["cef/sandbox"]
+
+[dependencies]
+cef.workspace = true
+cef-dll-sys.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+plist.workspace = true
+serde.workspace = true
