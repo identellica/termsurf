@@ -7,11 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [138.7.0+138.0.33](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.6.1+138.0.27...cef-dll-sys-v138.7.0+138.0.33) - 2025-07-29
+
+### Other
+
+- *(release)* update CEF version to 138.0.33
+
+## [138.6.1+138.0.27](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.6.0+138.0.27...cef-dll-sys-v138.6.1+138.0.27) - 2025-07-28
+
+### Fixed
+
+- embed git-cliff as a library in get-latest
+
+### Other
+
+- *(release)* bump version for get-latest updates
+
+## [138.6.0+138.0.27](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.5.1+138.0.26...cef-dll-sys-v138.6.0+138.0.27) - 2025-07-28
+
+### Added
+
+- update CEF version to 138.0.27
+
+### Fixed
+
+- bump version for release
+
 ## [138.5.1+138.0.26](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.5.0+138.0.26...cef-dll-sys-v138.5.1+138.0.26) - 2025-07-22
 
 ### Other
 
 - *(doc)* regenerate CHANGELOG.md
+- release
 
 ## [138.5.0+138.0.26](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.4.0+138.0.25...cef-dll-sys-v138.5.0+138.0.26) - 2025-07-19
 
@@ -35,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 
+- seed CHANGELOG.md files
 - release
 
 ## [138.2.1+138.0.21](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.2.0+138.0.21...cef-dll-sys-v138.2.1+138.0.21) - 2025-07-14
@@ -42,3 +70,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - bump major version of download-cef [#145](https://github.com/tauri-apps/cef-rs/issues/145)
+
