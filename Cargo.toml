@@ -23,7 +23,7 @@ authors = [
 repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
-cef = { version = "138.7.1", path = "cef" }
+cef = { path = "cef" }
 cef-dll-sys = { version = "138.8.0", path = "sys" }
 download-cef = { version = "2.0", path = "download-cef" }
 
