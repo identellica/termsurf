@@ -7,17 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [138.8.0+138.0.34](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.7.1+138.0.33...cef-dll-sys-v138.8.0+138.0.34) - 2025-08-02
+
+### Other
+
+- *(release)* update CEF version to 138.0.34
+
 ## [138.7.1+138.0.33](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.7.0+138.0.33...cef-dll-sys-v138.7.1+138.0.33) - 2025-07-29
 
 ### Other
 
-- Merge pull request #144 from csmoe/138-mac-sandbox
+- move examples into separate crates
+- release v138.7.1+138.0.33
 
 ## [138.7.0+138.0.33](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.6.1+138.0.27...cef-dll-sys-v138.7.0+138.0.33) - 2025-07-29
 
 ### Other
 
 - *(release)* update CEF version to 138.0.33
+- update bindings
 
 ## [138.6.1+138.0.27](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v138.6.0+138.0.27...cef-dll-sys-v138.6.1+138.0.27) - 2025-07-28
 
