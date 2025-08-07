@@ -190,6 +190,9 @@ impl From<*const _cef_string_utf16_t> for CefStringUserfreeWide {
     fn from(value: *const _cef_string_utf16_t) -> Self {
         Self(UserFreeData(unsafe {
             value.as_ref().and_then(|value| {
+                if value.str_.is_null() || value.length < 0 {
+                    return None;
+                }
                 let slice = slice::from_raw_parts(value.str_, value.length);
                 NonNull::new(cef_dll_sys::cef_string_userfree_wide_alloc()).and_then(|data| {
                     if cef_dll_sys::cef_string_utf16_to_wide(
@@ -379,8 +382,11 @@ impl CefStringUtf8 {
     pub fn as_str(&self) -> Option<&str> {
         let data: Option<&_cef_string_utf8_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
+        if str_.is_null() || length < 0 {
+            return None;
+        }
         Some(unsafe {
-            let slice = slice::from_raw_parts(str_ as *const _, length);
+            let slice = slice::from_raw_parts(str_.cast(), length);
             std::str::from_utf8_unchecked(slice)
         })
     }
@@ -388,7 +394,10 @@ impl CefStringUtf8 {
     pub fn as_slice(&self) -> Option<&[u8]> {
         let data: Option<&_cef_string_utf8_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
-        Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
+        if str_.is_null() || length < 0 {
+            return None;
+        }
+        Some(unsafe { slice::from_raw_parts(str_.cast(), length) })
     }
 
     pub fn try_set(&mut self, value: &str) -> bool {
@@ -397,7 +406,7 @@ impl CefStringUtf8 {
         };
 
         unsafe {
-            assert_ne!(value.as_ptr(), data.as_ref().str_ as *const _);
+            assert_ne!(value.as_ptr(), data.as_ref().str_.cast());
             cef_dll_sys::cef_string_utf8_clear(data.as_ptr());
             cef_dll_sys::cef_string_utf8_set(value.as_ptr().cast(), value.len(), data.as_ptr(), 1)
                 != 0
@@ -549,7 +558,10 @@ impl CefStringUtf16 {
     pub fn as_slice(&self) -> Option<&[u16]> {
         let data: Option<&_cef_string_utf16_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
-        Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
+        if str_.is_null() || length < 0 {
+            return None;
+        }
+        Some(unsafe { slice::from_raw_parts(str_.cast(), length) })
     }
 
     pub fn try_set(&mut self, value: &str) -> bool {
@@ -707,7 +719,10 @@ impl CefStringWide {
     pub fn as_slice(&self) -> Option<&[i32]> {
         let data: Option<&_cef_string_wide_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
-        Some(unsafe { slice::from_raw_parts(str_ as *const _, length) })
+        if str_.is_null() || length < 0 {
+            return None;
+        }
+        Some(unsafe { slice::from_raw_parts(str_.cast(), length) })
     }
 
     pub fn try_set(&mut self, value: &str) -> bool {
