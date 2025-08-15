@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [139.1.0+139.0.20](https://github.com/tauri-apps/cef-rs/compare/cef-v139.0.1+139.0.17...cef-v139.1.0+139.0.20) - 2025-08-15
+
+### Other
+
+- *(release)* update CEF version to 139.0.20
+
 ## [139.0.1+139.0.17](https://github.com/tauri-apps/cef-rs/compare/cef-v139.0.0+139.0.17...cef-v139.0.1+139.0.17) - 2025-08-08
 
 ### Other
 
-- Merge pull request #174 from csmoe/fix-from-raw-parts
+- release v139.0.1+139.0.17
 
 ## [139.0.0+139.0.17](https://github.com/tauri-apps/cef-rs/compare/cef-v138.9.0+138.0.36...cef-v139.0.0+139.0.17) - 2025-08-08
 
