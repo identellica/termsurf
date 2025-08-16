@@ -190,7 +190,7 @@ impl From<*const _cef_string_utf16_t> for CefStringUserfreeWide {
     fn from(value: *const _cef_string_utf16_t) -> Self {
         Self(UserFreeData(unsafe {
             value.as_ref().and_then(|value| {
-                if value.str_.is_null() || value.length < 0 {
+                if value.str_.is_null() || value.length == 0 {
                     return None;
                 }
                 let slice = slice::from_raw_parts(value.str_, value.length);
@@ -382,7 +382,7 @@ impl CefStringUtf8 {
     pub fn as_str(&self) -> Option<&str> {
         let data: Option<&_cef_string_utf8_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
-        if str_.is_null() || length < 0 {
+        if str_.is_null() || length == 0 {
             return None;
         }
         Some(unsafe {
@@ -394,7 +394,7 @@ impl CefStringUtf8 {
     pub fn as_slice(&self) -> Option<&[u8]> {
         let data: Option<&_cef_string_utf8_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
-        if str_.is_null() || length < 0 {
+        if str_.is_null() || length == 0 {
             return None;
         }
         Some(unsafe { slice::from_raw_parts(str_.cast(), length) })
@@ -558,7 +558,7 @@ impl CefStringUtf16 {
     pub fn as_slice(&self) -> Option<&[u16]> {
         let data: Option<&_cef_string_utf16_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
-        if str_.is_null() || length < 0 {
+        if str_.is_null() || length == 0 {
             return None;
         }
         Some(unsafe { slice::from_raw_parts(str_.cast(), length) })
@@ -719,7 +719,7 @@ impl CefStringWide {
     pub fn as_slice(&self) -> Option<&[i32]> {
         let data: Option<&_cef_string_wide_t> = (&self.0).into();
         let (str_, length) = data.map(|value| (value.str_, value.length))?;
-        if str_.is_null() || length < 0 {
+        if str_.is_null() || length == 0 {
             return None;
         }
         Some(unsafe { slice::from_raw_parts(str_.cast(), length) })

@@ -2,7 +2,7 @@
 
 use clap::Parser;
 use download_cef::{CefIndex, OsAndArch, DEFAULT_TARGET};
-use std::{fs, path::PathBuf, sync::OnceLock};
+use std::{fs, path::PathBuf, sync::OnceLock, time::Duration};
 
 fn default_version() -> &'static str {
     static DEFAULT_VERSION: OnceLock<String> = OnceLock::new();
@@ -73,7 +73,7 @@ fn main() -> anyhow::Result<()> {
     let platform = index.platform(target)?;
     let version = platform.version(cef_version)?;
 
-    let archive = version.download_archive(&parent, true)?;
+    let archive = version.download_archive_with_retry(&parent, true, Duration::from_secs(15), 3)?;
     let extracted_dir = download_cef::extract_target_archive(target, &archive, &parent, true)?;
     if extracted_dir != cef_dir {
         return Err(anyhow::anyhow!(
