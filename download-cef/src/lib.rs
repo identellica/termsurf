@@ -13,6 +13,8 @@ use std::{
     io::{self, BufReader, IsTerminal, Write},
     path::{Path, PathBuf},
     sync::{Mutex, OnceLock},
+    thread,
+    time::Duration,
 };
 
 #[macro_use]
@@ -304,6 +306,33 @@ impl CefVersion {
         Ok(download_file)
     }
 
+    pub fn download_archive_with_retry<P>(
+        &self,
+        location: P,
+        show_progress: bool,
+        retry_delay: Duration,
+        max_retries: u32,
+    ) -> Result<PathBuf>
+    where
+        P: AsRef<Path>,
+    {
+        let mut result = self.download_archive(&location, show_progress);
+
+        let mut retry = 0;
+        while let Err(Error::Io(_)) = &result {
+            if retry >= max_retries {
+                break;
+            }
+
+            retry += 1;
+            thread::sleep(retry_delay * retry);
+
+            result = self.download_archive(&location, show_progress);
+        }
+
+        result
+    }
+
     pub fn minimal(&self) -> Result<&CefFile> {
         self.files
             .iter()
@@ -347,7 +376,7 @@ where
     let platform = index.platform(target)?;
     let version = platform.version(cef_version)?;
 
-    version.download_archive(location, show_progress)
+    version.download_archive_with_retry(location, show_progress, Duration::from_secs(15), 3)
 }
 
 pub fn extract_target_archive<P, Q>(
