@@ -56,6 +56,8 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
         .allowlist_type("cef_.*")
         .allowlist_function("cef_.*")
         .allowlist_item("CEF_API_VERSION(_.+)?")
+        .allowlist_item("CEF_VERSION(_.+)?")
+        .allowlist_item("CHROME_VERSION(_.+)?")
         .default_macro_constant_type(bindgen::MacroTypeVariation::Signed)
         .bitfield_enum(".*_mask_t")
         .clang_args([
