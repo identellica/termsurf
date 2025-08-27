@@ -5,6 +5,7 @@ use cef::{
     *,
 };
 use cef::{ImplRequestContextHandler, RequestContextHandler, WrapRequestContextHandler};
+use metal::NSObject;
 use objc::msg_send;
 use std::cell::RefCell;
 use std::ptr::null_mut;
@@ -350,24 +351,39 @@ impl ImplRenderHandler for RenderHandlerBuilder {
             else {
                 return;
             };
-            let desc = wgpu::hal::TextureDescriptor {
-                mip_level_count: texture_desc.mip_level_count,
-                view_formats: vec![],
-                sample_count: texture_desc.sample_count,
-                usage: wgpu::TextureUses::STORAGE_READ_ONLY,
-                label: Some("Cef Texture"),
-                dimension: texture_desc.dimension,
-                format: texture_desc.format,
-                size: texture_desc.size,
-                memory_flags: wgpu::hal::MemoryFlags::all(),
-            };
+            //let desc = wgpu::hal::TextureDescriptor {
+            //    mip_level_count: texture_desc.mip_level_count,
+            //    view_formats: vec![],
+            //    sample_count: texture_desc.sample_count,
+            //    usage: wgpu::TextureUses::STORAGE_READ_ONLY,
+            //    label: Some("Cef Texture"),
+            //    dimension: texture_desc.dimension,
+            //    format: texture_desc.format,
+            //    size: texture_desc.size,
+            //    memory_flags: wgpu::hal::MemoryFlags::all(),
+            //};
+            let metal_desc = metal::TextureDescriptor::new();
+            metal_desc.set_width(texture_desc.size.width as _);
+            metal_desc.set_height(texture_desc.size.height as _);
+            metal_desc.set_array_length(texture_desc.array_layer_count() as _);
+            metal_desc.set_mipmap_level_count(texture_desc.mip_level_count as _);
+            metal_desc.set_sample_count(texture_desc.sample_count as _);
+            metal_desc.set_texture_type(metal::MTLTextureType::D2);
+            metal_desc.set_pixel_format(match texture_desc.format {
+                wgpu::TextureFormat::Rgba8Unorm => metal::MTLPixelFormat::RGBA8Unorm,
+                wgpu::TextureFormat::Bgra8Unorm => metal::MTLPixelFormat::BGRA8Unorm,
+                _ => unimplemented!(),
+            });
+            metal_desc.set_usage(metal::MTLTextureUsage::ShaderRead);
+            metal_desc.set_storage_mode(metal::MTLStorageMode::Managed);
             let texture =
                 self.handler
                     .device
                     .as_hal::<wgpu::wgc::api::Metal, _, _>(|hdevice| {
                         hdevice.map(|hdevice|  {
                             use objc::*;
-                            objc::msg_send![hdevice.raw_device().lock().as_ref(), newTextureWithDescriptor:desc
+                            objc::msg_send![std::mem::transmute::<_,&metal::NSObject>(hdevice.raw_device().lock().as_ref()),
+                                newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(metal_desc.as_ref())
                                                                        iosurface:io_surface
                                                                            plane:0]
                         })
