@@ -5,11 +5,9 @@ use cef::{
     *,
 };
 use cef::{ImplRequestContextHandler, RequestContextHandler, WrapRequestContextHandler};
-use metal::NSObject;
-use objc::msg_send;
 use std::cell::RefCell;
 use std::ptr::null_mut;
-use wgpu::{Extent3d, TextureDescriptor, TextureDimension, TextureUsages, hal::Device};
+use wgpu::{Extent3d, TextureDescriptor, TextureDimension, TextureUsages};
 
 #[derive(Clone)]
 pub struct OsrApp {}
@@ -351,17 +349,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
             else {
                 return;
             };
-            //let desc = wgpu::hal::TextureDescriptor {
-            //    mip_level_count: texture_desc.mip_level_count,
-            //    view_formats: vec![],
-            //    sample_count: texture_desc.sample_count,
-            //    usage: wgpu::TextureUses::STORAGE_READ_ONLY,
-            //    label: Some("Cef Texture"),
-            //    dimension: texture_desc.dimension,
-            //    format: texture_desc.format,
-            //    size: texture_desc.size,
-            //    memory_flags: wgpu::hal::MemoryFlags::all(),
-            //};
+
             let metal_desc = metal::TextureDescriptor::new();
             metal_desc.set_width(texture_desc.size.width as _);
             metal_desc.set_height(texture_desc.size.height as _);
@@ -388,9 +376,21 @@ impl ImplRenderHandler for RenderHandlerBuilder {
                                                                            plane:0]
                         })
                     }).unwrap();
+            let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
+                texture,
+                texture_desc.format,
+                metal::MTLTextureType::D2,
+                texture_desc.array_layer_count(),
+                texture_desc.mip_level_count,
+                wgpu::hal::CopyExtent {
+                    width: texture_desc.size.width,
+                    height: texture_desc.size.height,
+                    depth: texture_desc.array_layer_count(),
+                },
+            );
             self.handler
                 .device
-                .create_texture_from_hal::<wgpu::wgc::api::Metal>(texture, &texture_desc)
+                .create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc)
         };
         //let dst_texture = self
         //    .handler

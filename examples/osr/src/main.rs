@@ -351,9 +351,11 @@ fn main() -> std::process::ExitCode {
         // non-browser process does not initialize cef
         return 0.into();
     }
-    let mut settings = Settings::default();
-    settings.windowless_rendering_enabled = true as _;
-    settings.external_message_pump = true as _;
+    let settings = Settings {
+        windowless_rendering_enabled: true as _,
+        external_message_pump: true as _,
+        ..Default::default()
+    };
     assert_eq!(
         initialize(
             Some(args.as_main_args()),
@@ -493,10 +495,9 @@ mod pix {
 
                         Ok(())
                     }
-                    Err(e) => Err(Error::new(
-                        ErrorKind::Other,
-                        format!("Failed to load WinPixGpuCapturer.dll: {}", e),
-                    )),
+                    Err(e) => Err(Error::other(format!(
+                        "Failed to load WinPixGpuCapturer.dll: {e}"
+                    ))),
                 }
             } else {
                 Ok(())
