@@ -1344,16 +1344,10 @@ impl ModifiedType {
                         } else {
                             quote! { Option<&impl #impl_trait> }
                         }),
-                        [TypeModifier::MutPtr] => Some(if is_sealed {
-                            quote! { Option<&mut #name> }
-                        } else {
-                            quote! { Option<&mut impl #impl_trait> }
-                        }),
-                        [TypeModifier::MutPtr, TypeModifier::MutPtr] => Some(if is_sealed {
-                            quote! { Option<&mut Option<#name>> }
-                        } else {
-                            quote! { Option<&mut Option<impl #impl_trait>> }
-                        }),
+                        [TypeModifier::MutPtr] => Some(quote! { Option<&mut #name> }),
+                        [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
+                            Some(quote! { Option<&mut Option<#name>> })
+                        }
                         [TypeModifier::Slice] => Some(if is_sealed {
                             quote! { Option<&[Option<#name>]> }
                         } else {
