@@ -7,6 +7,7 @@
 #endif
 
 #include "include/cef_api_hash.h"
+#include "include/cef_version.h"
 
 #include "include/capi/cef_base_capi.h"
 
