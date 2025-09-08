@@ -426,7 +426,8 @@ impl SignatureRef<'_> {
                 name,
                 ty: Some(arg_ty),
             } => {
-                let name = format_ident!("arg_{name}");
+                let arg_name = format_ident!("arg_{name}");
+                let out_name = format_ident!("out_{name}");
                 let (modifiers, arg_ty) = (arg_ty.modifiers.as_slice(), &arg_ty.ty);
                 let ty_tokens = arg_ty.to_token_stream();
                 let ty_string = ty_tokens.to_string();
@@ -436,22 +437,24 @@ impl SignatureRef<'_> {
                         match modifiers {
                             [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
                                 Some(quote! {
+                                    let #out_name = #arg_name;
                                     let mut ptr = std::ptr::null_mut();
-                                    let #name = #name
+                                    let (#out_name, #arg_name) = #out_name
                                         .map(|arg| {
                                             if let Some(arg) = arg.as_mut() {
                                                 arg.add_ref();
                                                 ptr = arg.get_raw();
                                             }
-                                            std::ptr::from_mut(&mut ptr)
+                                            (Some(arg), std::ptr::from_mut(&mut ptr))
                                         })
-                                        .unwrap_or(std::ptr::null_mut());
+                                        .unwrap_or((None, std::ptr::null_mut()));
                                 })
                             }
                             _ => {
                                 if ty_string.as_str() == BASE_REF_COUNTED {
                                     Some(quote!{
-                                        let #name = #name.map(|arg| {
+                                        let #out_name = #arg_name;
+                                        let #arg_name = #out_name.map(|arg| {
                                             arg.add_ref();
                                             arg.into_raw()
                                         }).unwrap_or(std::ptr::null_mut());
@@ -468,7 +471,7 @@ impl SignatureRef<'_> {
                                         .unwrap_or_else(|| quote!{ arg.get_raw() });
 
                                     Some(quote! {
-                                        let #name = #name.map(|arg| {
+                                        let #arg_name = #arg_name.map(|arg| {
                                             arg.add_ref();
                                             #cast
                                         }).unwrap_or(std::ptr::null_mut());
@@ -494,14 +497,14 @@ impl SignatureRef<'_> {
                                 match modifiers {
                                     [TypeModifier::ConstPtr] => {
                                         Some(quote! {
-                                            let #name = #name.cloned().map(|arg| arg.into());
-                                            let #name = #name.as_ref().map(std::ptr::from_ref).unwrap_or(std::ptr::null());;
+                                            let #arg_name = #arg_name.cloned().map(|arg| arg.into());
+                                            let #arg_name = #arg_name.as_ref().map(std::ptr::from_ref).unwrap_or(std::ptr::null());;
                                         })
                                     }
                                     [TypeModifier::MutPtr] => {
                                         Some(quote! {
-                                            let mut #name = #name.cloned().map(|arg| arg.into());
-                                            let #name = #name.as_mut().map(std::ptr::from_mut).unwrap_or(std::ptr::null_mut());;
+                                            let mut #arg_name = #arg_name.cloned().map(|arg| arg.into());
+                                            let #arg_name = #arg_name.as_mut().map(std::ptr::from_mut).unwrap_or(std::ptr::null_mut());;
                                         })
                                     }
                                     _ => None,
@@ -522,7 +525,7 @@ impl SignatureRef<'_> {
                                 };
 
                                 Some(quote! {
-                                    let #name = #name.map(|arg| arg.into_raw()).#impl_default;
+                                    let #arg_name = #arg_name.map(|arg| arg.into_raw()).#impl_default;
                                 })
                             }
                             Some(NameMapEntry {
@@ -540,32 +543,32 @@ impl SignatureRef<'_> {
                                 };
 
                                 Some(quote! {
-                                    let #name = #name.map(|arg| arg.into_raw()).#impl_default;
+                                    let #arg_name = #arg_name.map(|arg| arg.into_raw()).#impl_default;
                                 })
                             }
                             Some(_) => {
                                 Some(quote! {
-                                    let #name = #name.into_raw();
+                                    let #arg_name = #arg_name.into_raw();
                                 })
                             }
                             None => {
                                 let is_void = ty_string == quote!{ ::std::os::raw::c_void }.to_string();
                                 let cast = match modifiers {
                                     [TypeModifier::MutPtr] if !is_void => Some(quote! {
-                                        #name
+                                        #arg_name
                                             .map(std::ptr::from_mut)
                                             .unwrap_or(std::ptr::null_mut())
                                     }),
                                     [TypeModifier::ConstPtr] if !is_void  => Some(quote! {
-                                        #name
+                                        #arg_name
                                             .map(std::ptr::from_ref)
                                             .unwrap_or(std::ptr::null())
                                     }),
-                                    [TypeModifier::MutPtr | TypeModifier::ConstPtr, ..] => Some(quote! { #name.cast() }),
+                                    [TypeModifier::MutPtr | TypeModifier::ConstPtr, ..] => Some(quote! { #arg_name.cast() }),
                                     _ => None,
                                 };
                                 cast.map(|cast| quote! {
-                                    let #name = #cast;
+                                    let #arg_name = #cast;
                                 })
                             }
                         }
@@ -723,6 +726,30 @@ impl SignatureRef<'_> {
 
     fn rewrap_rust_args(&self, tree: &ParseTree) -> proc_macro2::TokenStream {
         let args = self.merge_params(tree).filter_map(|arg| match arg {
+            MergedParam::Single {
+                name,
+                ty: Some(arg_ty),
+            } => {
+                let (modifiers, arg_ty) = (arg_ty.modifiers.as_slice(), &arg_ty.ty);
+                let ty_tokens = arg_ty.to_token_stream();
+                let ty_string = ty_tokens.to_string();
+                match modifiers {
+                    [TypeModifier::MutPtr, TypeModifier::MutPtr] if tree.root(&ty_string) == BASE_REF_COUNTED => {
+                        let arg_name = format_ident!("arg_{name}");
+                        let out_name = format_ident!("out_{name}");
+                        Some(quote! {
+                            if let (Some(#out_name), Some(#arg_name)) = (#out_name, #arg_name.as_ref()) {
+                                *#out_name = if #arg_name.is_null() {
+                                    None
+                                } else {
+                                    Some((*#arg_name).wrap_result())
+                                };
+                            }
+                        })
+                    }
+                    _ => None,
+                }
+            }
             MergedParam::Bounded {
                 count_name,
                 count_ty:
