@@ -7328,9 +7328,9 @@ pub trait ImplFrame: Clone + Sized + Rc {
     #[doc = "See [`_cef_frame_t::view_source`] for more documentation."]
     fn view_source(&self);
     #[doc = "See [`_cef_frame_t::get_source`] for more documentation."]
-    fn source(&self, visitor: Option<&mut impl ImplCefStringVisitor>);
+    fn source(&self, visitor: Option<&mut CefStringVisitor>);
     #[doc = "See [`_cef_frame_t::get_text`] for more documentation."]
-    fn text(&self, visitor: Option<&mut impl ImplCefStringVisitor>);
+    fn text(&self, visitor: Option<&mut CefStringVisitor>);
     #[doc = "See [`_cef_frame_t::load_request`] for more documentation."]
     fn load_request(&self, request: Option<&mut Request>);
     #[doc = "See [`_cef_frame_t::load_url`] for more documentation."]
@@ -7359,12 +7359,12 @@ pub trait ImplFrame: Clone + Sized + Rc {
     #[doc = "See [`_cef_frame_t::get_v8_context`] for more documentation."]
     fn v8_context(&self) -> Option<V8Context>;
     #[doc = "See [`_cef_frame_t::visit_dom`] for more documentation."]
-    fn visit_dom(&self, visitor: Option<&mut impl ImplDomvisitor>);
+    fn visit_dom(&self, visitor: Option<&mut Domvisitor>);
     #[doc = "See [`_cef_frame_t::create_urlrequest`] for more documentation."]
     fn create_urlrequest(
         &self,
         request: Option<&mut Request>,
-        client: Option<&mut impl ImplUrlrequestClient>,
+        client: Option<&mut UrlrequestClient>,
     ) -> Option<Urlrequest>;
     #[doc = "See [`_cef_frame_t::send_process_message`] for more documentation."]
     fn send_process_message(&self, target_process: ProcessId, message: Option<&mut ProcessMessage>);
@@ -7455,7 +7455,7 @@ impl ImplFrame for Frame {
             }
         }
     }
-    fn source(&self, visitor: Option<&mut impl ImplCefStringVisitor>) {
+    fn source(&self, visitor: Option<&mut CefStringVisitor>) {
         unsafe {
             if let Some(f) = self.0.get_source {
                 let arg_visitor = visitor;
@@ -7470,7 +7470,7 @@ impl ImplFrame for Frame {
             }
         }
     }
-    fn text(&self, visitor: Option<&mut impl ImplCefStringVisitor>) {
+    fn text(&self, visitor: Option<&mut CefStringVisitor>) {
         unsafe {
             if let Some(f) = self.0.get_text {
                 let arg_visitor = visitor;
@@ -7640,7 +7640,7 @@ impl ImplFrame for Frame {
                 .unwrap_or_default()
         }
     }
-    fn visit_dom(&self, visitor: Option<&mut impl ImplDomvisitor>) {
+    fn visit_dom(&self, visitor: Option<&mut Domvisitor>) {
         unsafe {
             if let Some(f) = self.0.visit_dom {
                 let arg_visitor = visitor;
@@ -7658,7 +7658,7 @@ impl ImplFrame for Frame {
     fn create_urlrequest(
         &self,
         request: Option<&mut Request>,
-        client: Option<&mut impl ImplUrlrequestClient>,
+        client: Option<&mut UrlrequestClient>,
     ) -> Option<Urlrequest> {
         unsafe {
             self.0
@@ -8704,43 +8704,34 @@ impl Default for CompletionCallback {
 pub struct CookieManager(RefGuard<_cef_cookie_manager_t>);
 pub trait ImplCookieManager: Clone + Sized + Rc {
     #[doc = "See [`_cef_cookie_manager_t::visit_all_cookies`] for more documentation."]
-    fn visit_all_cookies(
-        &self,
-        visitor: Option<&mut impl ImplCookieVisitor>,
-    ) -> ::std::os::raw::c_int;
+    fn visit_all_cookies(&self, visitor: Option<&mut CookieVisitor>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_cookie_manager_t::visit_url_cookies`] for more documentation."]
     fn visit_url_cookies(
         &self,
         url: Option<&CefString>,
         include_http_only: ::std::os::raw::c_int,
-        visitor: Option<&mut impl ImplCookieVisitor>,
+        visitor: Option<&mut CookieVisitor>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_cookie_manager_t::set_cookie`] for more documentation."]
     fn set_cookie(
         &self,
         url: Option<&CefString>,
         cookie: Option<&Cookie>,
-        callback: Option<&mut impl ImplSetCookieCallback>,
+        callback: Option<&mut SetCookieCallback>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_cookie_manager_t::delete_cookies`] for more documentation."]
     fn delete_cookies(
         &self,
         url: Option<&CefString>,
         cookie_name: Option<&CefString>,
-        callback: Option<&mut impl ImplDeleteCookiesCallback>,
+        callback: Option<&mut DeleteCookiesCallback>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_cookie_manager_t::flush_store`] for more documentation."]
-    fn flush_store(
-        &self,
-        callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> ::std::os::raw::c_int;
+    fn flush_store(&self, callback: Option<&mut CompletionCallback>) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_cookie_manager_t;
 }
 impl ImplCookieManager for CookieManager {
-    fn visit_all_cookies(
-        &self,
-        visitor: Option<&mut impl ImplCookieVisitor>,
-    ) -> ::std::os::raw::c_int {
+    fn visit_all_cookies(&self, visitor: Option<&mut CookieVisitor>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .visit_all_cookies
@@ -8763,7 +8754,7 @@ impl ImplCookieManager for CookieManager {
         &self,
         url: Option<&CefString>,
         include_http_only: ::std::os::raw::c_int,
-        visitor: Option<&mut impl ImplCookieVisitor>,
+        visitor: Option<&mut CookieVisitor>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -8791,7 +8782,7 @@ impl ImplCookieManager for CookieManager {
         &self,
         url: Option<&CefString>,
         cookie: Option<&Cookie>,
-        callback: Option<&mut impl ImplSetCookieCallback>,
+        callback: Option<&mut SetCookieCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -8823,7 +8814,7 @@ impl ImplCookieManager for CookieManager {
         &self,
         url: Option<&CefString>,
         cookie_name: Option<&CefString>,
-        callback: Option<&mut impl ImplDeleteCookiesCallback>,
+        callback: Option<&mut DeleteCookiesCallback>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -8849,10 +8840,7 @@ impl ImplCookieManager for CookieManager {
                 .unwrap_or_default()
         }
     }
-    fn flush_store(
-        &self,
-        callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> ::std::os::raw::c_int {
+    fn flush_store(&self, callback: Option<&mut CompletionCallback>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .flush_store
@@ -9264,7 +9252,7 @@ impl Default for DeleteCookiesCallback {
 pub struct MediaRouter(RefGuard<_cef_media_router_t>);
 pub trait ImplMediaRouter: Clone + Sized + Rc {
     #[doc = "See [`_cef_media_router_t::add_observer`] for more documentation."]
-    fn add_observer(&self, observer: Option<&mut impl ImplMediaObserver>) -> Option<Registration>;
+    fn add_observer(&self, observer: Option<&mut MediaObserver>) -> Option<Registration>;
     #[doc = "See [`_cef_media_router_t::get_source`] for more documentation."]
     fn source(&self, urn: Option<&CefString>) -> Option<MediaSource>;
     #[doc = "See [`_cef_media_router_t::notify_current_sinks`] for more documentation."]
@@ -9274,14 +9262,14 @@ pub trait ImplMediaRouter: Clone + Sized + Rc {
         &self,
         source: Option<&mut MediaSource>,
         sink: Option<&mut MediaSink>,
-        callback: Option<&mut impl ImplMediaRouteCreateCallback>,
+        callback: Option<&mut MediaRouteCreateCallback>,
     );
     #[doc = "See [`_cef_media_router_t::notify_current_routes`] for more documentation."]
     fn notify_current_routes(&self);
     fn get_raw(&self) -> *mut _cef_media_router_t;
 }
 impl ImplMediaRouter for MediaRouter {
-    fn add_observer(&self, observer: Option<&mut impl ImplMediaObserver>) -> Option<Registration> {
+    fn add_observer(&self, observer: Option<&mut MediaObserver>) -> Option<Registration> {
         unsafe {
             self.0
                 .add_observer
@@ -9336,7 +9324,7 @@ impl ImplMediaRouter for MediaRouter {
         &self,
         source: Option<&mut MediaSource>,
         sink: Option<&mut MediaSink>,
-        callback: Option<&mut impl ImplMediaRouteCreateCallback>,
+        callback: Option<&mut MediaRouteCreateCallback>,
     ) {
         unsafe {
             if let Some(f) = self.0.create_route {
@@ -9968,7 +9956,7 @@ pub trait ImplMediaSink: Clone + Sized + Rc {
     #[doc = "See [`_cef_media_sink_t::get_icon_type`] for more documentation."]
     fn icon_type(&self) -> MediaSinkIconType;
     #[doc = "See [`_cef_media_sink_t::get_device_info`] for more documentation."]
-    fn device_info(&self, callback: Option<&mut impl ImplMediaSinkDeviceInfoCallback>);
+    fn device_info(&self, callback: Option<&mut MediaSinkDeviceInfoCallback>);
     #[doc = "See [`_cef_media_sink_t::is_cast_sink`] for more documentation."]
     fn is_cast_sink(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_media_sink_t::is_dial_sink`] for more documentation."]
@@ -10014,7 +10002,7 @@ impl ImplMediaSink for MediaSink {
                 .unwrap_or_default()
         }
     }
-    fn device_info(&self, callback: Option<&mut impl ImplMediaSinkDeviceInfoCallback>) {
+    fn device_info(&self, callback: Option<&mut MediaSinkDeviceInfoCallback>) {
         unsafe {
             if let Some(f) = self.0.get_device_info {
                 let arg_callback = callback;
@@ -10546,7 +10534,7 @@ pub trait ImplPreferenceManager: Clone + Sized + Rc {
     fn add_preference_observer(
         &self,
         name: Option<&CefString>,
-        observer: Option<&mut impl ImplPreferenceObserver>,
+        observer: Option<&mut PreferenceObserver>,
     ) -> Option<Registration>;
     fn get_raw(&self) -> *mut _cef_preference_manager_t;
 }
@@ -10653,7 +10641,7 @@ impl ImplPreferenceManager for PreferenceManager {
     fn add_preference_observer(
         &self,
         name: Option<&CefString>,
-        observer: Option<&mut impl ImplPreferenceObserver>,
+        observer: Option<&mut PreferenceObserver>,
     ) -> Option<Registration> {
         unsafe {
             self.0
@@ -10988,36 +10976,26 @@ pub trait ImplRequestContext: ImplPreferenceManager {
     #[doc = "See [`_cef_request_context_t::get_cache_path`] for more documentation."]
     fn cache_path(&self) -> CefStringUserfree;
     #[doc = "See [`_cef_request_context_t::get_cookie_manager`] for more documentation."]
-    fn cookie_manager(
-        &self,
-        callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> Option<CookieManager>;
+    fn cookie_manager(&self, callback: Option<&mut CompletionCallback>) -> Option<CookieManager>;
     #[doc = "See [`_cef_request_context_t::register_scheme_handler_factory`] for more documentation."]
     fn register_scheme_handler_factory(
         &self,
         scheme_name: Option<&CefString>,
         domain_name: Option<&CefString>,
-        factory: Option<&mut impl ImplSchemeHandlerFactory>,
+        factory: Option<&mut SchemeHandlerFactory>,
     ) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_request_context_t::clear_scheme_handler_factories`] for more documentation."]
     fn clear_scheme_handler_factories(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_request_context_t::clear_certificate_exceptions`] for more documentation."]
-    fn clear_certificate_exceptions(&self, callback: Option<&mut impl ImplCompletionCallback>);
+    fn clear_certificate_exceptions(&self, callback: Option<&mut CompletionCallback>);
     #[doc = "See [`_cef_request_context_t::clear_http_auth_credentials`] for more documentation."]
-    fn clear_http_auth_credentials(&self, callback: Option<&mut impl ImplCompletionCallback>);
+    fn clear_http_auth_credentials(&self, callback: Option<&mut CompletionCallback>);
     #[doc = "See [`_cef_request_context_t::close_all_connections`] for more documentation."]
-    fn close_all_connections(&self, callback: Option<&mut impl ImplCompletionCallback>);
+    fn close_all_connections(&self, callback: Option<&mut CompletionCallback>);
     #[doc = "See [`_cef_request_context_t::resolve_host`] for more documentation."]
-    fn resolve_host(
-        &self,
-        origin: Option<&CefString>,
-        callback: Option<&mut impl ImplResolveCallback>,
-    );
+    fn resolve_host(&self, origin: Option<&CefString>, callback: Option<&mut ResolveCallback>);
     #[doc = "See [`_cef_request_context_t::get_media_router`] for more documentation."]
-    fn media_router(
-        &self,
-        callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> Option<MediaRouter>;
+    fn media_router(&self, callback: Option<&mut CompletionCallback>) -> Option<MediaRouter>;
     #[doc = "See [`_cef_request_context_t::get_website_setting`] for more documentation."]
     fn website_setting(
         &self,
@@ -11057,10 +11035,7 @@ pub trait ImplRequestContext: ImplPreferenceManager {
     #[doc = "See [`_cef_request_context_t::get_chrome_color_scheme_variant`] for more documentation."]
     fn chrome_color_scheme_variant(&self) -> ColorVariant;
     #[doc = "See [`_cef_request_context_t::add_setting_observer`] for more documentation."]
-    fn add_setting_observer(
-        &self,
-        observer: Option<&mut impl ImplSettingObserver>,
-    ) -> Option<Registration>;
+    fn add_setting_observer(&self, observer: Option<&mut SettingObserver>) -> Option<Registration>;
     fn get_raw(&self) -> *mut _cef_request_context_t {
         <Self as ImplPreferenceManager>::get_raw(self).cast()
     }
@@ -11089,7 +11064,7 @@ impl ImplPreferenceManager for RequestContext {
     fn add_preference_observer(
         &self,
         name: Option<&CefString>,
-        observer: Option<&mut impl ImplPreferenceObserver>,
+        observer: Option<&mut PreferenceObserver>,
     ) -> Option<Registration> {
         PreferenceManager::from(self).add_preference_observer(name, observer)
     }
@@ -11181,10 +11156,7 @@ impl ImplRequestContext for RequestContext {
                 .unwrap_or_default()
         }
     }
-    fn cookie_manager(
-        &self,
-        callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> Option<CookieManager> {
+    fn cookie_manager(&self, callback: Option<&mut CompletionCallback>) -> Option<CookieManager> {
         unsafe {
             self.0
                 .get_cookie_manager
@@ -11211,7 +11183,7 @@ impl ImplRequestContext for RequestContext {
         &self,
         scheme_name: Option<&CefString>,
         domain_name: Option<&CefString>,
-        factory: Option<&mut impl ImplSchemeHandlerFactory>,
+        factory: Option<&mut SchemeHandlerFactory>,
     ) -> ::std::os::raw::c_int {
         unsafe {
             self.0
@@ -11250,7 +11222,7 @@ impl ImplRequestContext for RequestContext {
                 .unwrap_or_default()
         }
     }
-    fn clear_certificate_exceptions(&self, callback: Option<&mut impl ImplCompletionCallback>) {
+    fn clear_certificate_exceptions(&self, callback: Option<&mut CompletionCallback>) {
         unsafe {
             if let Some(f) = self.0.clear_certificate_exceptions {
                 let arg_callback = callback;
@@ -11265,7 +11237,7 @@ impl ImplRequestContext for RequestContext {
             }
         }
     }
-    fn clear_http_auth_credentials(&self, callback: Option<&mut impl ImplCompletionCallback>) {
+    fn clear_http_auth_credentials(&self, callback: Option<&mut CompletionCallback>) {
         unsafe {
             if let Some(f) = self.0.clear_http_auth_credentials {
                 let arg_callback = callback;
@@ -11280,7 +11252,7 @@ impl ImplRequestContext for RequestContext {
             }
         }
     }
-    fn close_all_connections(&self, callback: Option<&mut impl ImplCompletionCallback>) {
+    fn close_all_connections(&self, callback: Option<&mut CompletionCallback>) {
         unsafe {
             if let Some(f) = self.0.close_all_connections {
                 let arg_callback = callback;
@@ -11295,11 +11267,7 @@ impl ImplRequestContext for RequestContext {
             }
         }
     }
-    fn resolve_host(
-        &self,
-        origin: Option<&CefString>,
-        callback: Option<&mut impl ImplResolveCallback>,
-    ) {
+    fn resolve_host(&self, origin: Option<&CefString>, callback: Option<&mut ResolveCallback>) {
         unsafe {
             if let Some(f) = self.0.resolve_host {
                 let (arg_origin, arg_callback) = (origin, callback);
@@ -11317,10 +11285,7 @@ impl ImplRequestContext for RequestContext {
             }
         }
     }
-    fn media_router(
-        &self,
-        callback: Option<&mut impl ImplCompletionCallback>,
-    ) -> Option<MediaRouter> {
+    fn media_router(&self, callback: Option<&mut CompletionCallback>) -> Option<MediaRouter> {
         unsafe {
             self.0
                 .get_media_router
@@ -11520,10 +11485,7 @@ impl ImplRequestContext for RequestContext {
                 .unwrap_or_default()
         }
     }
-    fn add_setting_observer(
-        &self,
-        observer: Option<&mut impl ImplSettingObserver>,
-    ) -> Option<Registration> {
+    fn add_setting_observer(&self, observer: Option<&mut SettingObserver>) -> Option<Registration> {
         unsafe {
             self.0
                 .add_setting_observer
@@ -12473,7 +12435,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         title: Option<&CefString>,
         default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
-        callback: Option<&mut impl ImplRunFileDialogCallback>,
+        callback: Option<&mut RunFileDialogCallback>,
     );
     #[doc = "See [`_cef_browser_host_t::start_download`] for more documentation."]
     fn start_download(&self, url: Option<&CefString>);
@@ -12484,7 +12446,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         is_favicon: ::std::os::raw::c_int,
         max_image_size: u32,
         bypass_cache: ::std::os::raw::c_int,
-        callback: Option<&mut impl ImplDownloadImageCallback>,
+        callback: Option<&mut DownloadImageCallback>,
     );
     #[doc = "See [`_cef_browser_host_t::print`] for more documentation."]
     fn print(&self);
@@ -12493,7 +12455,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         &self,
         path: Option<&CefString>,
         settings: Option<&PdfPrintSettings>,
-        callback: Option<&mut impl ImplPdfPrintCallback>,
+        callback: Option<&mut PdfPrintCallback>,
     );
     #[doc = "See [`_cef_browser_host_t::find`] for more documentation."]
     fn find(
@@ -12509,7 +12471,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn show_dev_tools(
         &self,
         window_info: Option<&WindowInfo>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Client>,
         settings: Option<&BrowserSettings>,
         inspect_element_at: Option<&Point>,
     );
@@ -12529,12 +12491,12 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     #[doc = "See [`_cef_browser_host_t::add_dev_tools_message_observer`] for more documentation."]
     fn add_dev_tools_message_observer(
         &self,
-        observer: Option<&mut impl ImplDevToolsMessageObserver>,
+        observer: Option<&mut DevToolsMessageObserver>,
     ) -> Option<Registration>;
     #[doc = "See [`_cef_browser_host_t::get_navigation_entries`] for more documentation."]
     fn navigation_entries(
         &self,
-        visitor: Option<&mut impl ImplNavigationEntryVisitor>,
+        visitor: Option<&mut NavigationEntryVisitor>,
         current_only: ::std::os::raw::c_int,
     );
     #[doc = "See [`_cef_browser_host_t::replace_misspelling`] for more documentation."]
@@ -12862,7 +12824,7 @@ impl ImplBrowserHost for BrowserHost {
         title: Option<&CefString>,
         default_file_path: Option<&CefString>,
         accept_filters: Option<&mut CefStringList>,
-        callback: Option<&mut impl ImplRunFileDialogCallback>,
+        callback: Option<&mut RunFileDialogCallback>,
     ) {
         unsafe {
             if let Some(f) = self.0.run_file_dialog {
@@ -12914,7 +12876,7 @@ impl ImplBrowserHost for BrowserHost {
         is_favicon: ::std::os::raw::c_int,
         max_image_size: u32,
         bypass_cache: ::std::os::raw::c_int,
-        callback: Option<&mut impl ImplDownloadImageCallback>,
+        callback: Option<&mut DownloadImageCallback>,
     ) {
         unsafe {
             if let Some(f) = self.0.download_image {
@@ -12964,7 +12926,7 @@ impl ImplBrowserHost for BrowserHost {
         &self,
         path: Option<&CefString>,
         settings: Option<&PdfPrintSettings>,
-        callback: Option<&mut impl ImplPdfPrintCallback>,
+        callback: Option<&mut PdfPrintCallback>,
     ) {
         unsafe {
             if let Some(f) = self.0.print_to_pdf {
@@ -13025,7 +12987,7 @@ impl ImplBrowserHost for BrowserHost {
     fn show_dev_tools(
         &self,
         window_info: Option<&WindowInfo>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Client>,
         settings: Option<&BrowserSettings>,
         inspect_element_at: Option<&Point>,
     ) {
@@ -13140,7 +13102,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn add_dev_tools_message_observer(
         &self,
-        observer: Option<&mut impl ImplDevToolsMessageObserver>,
+        observer: Option<&mut DevToolsMessageObserver>,
     ) -> Option<Registration> {
         unsafe {
             self.0
@@ -13166,7 +13128,7 @@ impl ImplBrowserHost for BrowserHost {
     }
     fn navigation_entries(
         &self,
-        visitor: Option<&mut impl ImplNavigationEntryVisitor>,
+        visitor: Option<&mut NavigationEntryVisitor>,
         current_only: ::std::os::raw::c_int,
     ) {
         unsafe {
@@ -20664,7 +20626,7 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         user_gesture: ::std::os::raw::c_int,
         popup_features: Option<&PopupFeatures>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut Option<impl ImplClient>>,
+        client: Option<&mut Option<Client>>,
         settings: Option<&mut BrowserSettings>,
         extra_info: Option<&mut Option<DictionaryValue>>,
         no_javascript_access: Option<&mut ::std::os::raw::c_int>,
@@ -20683,7 +20645,7 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut Browser>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut Option<impl ImplClient>>,
+        client: Option<&mut Option<Client>>,
         settings: Option<&mut BrowserSettings>,
         extra_info: Option<&mut Option<DictionaryValue>>,
         use_default_window: Option<&mut ::std::os::raw::c_int>,
@@ -20979,7 +20941,7 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
         user_gesture: ::std::os::raw::c_int,
         popup_features: Option<&PopupFeatures>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut Option<impl ImplClient>>,
+        client: Option<&mut Option<Client>>,
         settings: Option<&mut BrowserSettings>,
         extra_info: Option<&mut Option<DictionaryValue>>,
         no_javascript_access: Option<&mut ::std::os::raw::c_int>,
@@ -21047,31 +21009,33 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                         .as_mut()
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
+                    let out_client = arg_client;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_client = arg_client
+                    let (out_client, arg_client) = out_client
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
                     let mut arg_settings = arg_settings.cloned().map(|arg| arg.into());
                     let arg_settings = arg_settings
                         .as_mut()
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
+                    let out_extra_info = arg_extra_info;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_extra_info = arg_extra_info
+                    let (out_extra_info, arg_extra_info) = out_extra_info
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
                     let arg_no_javascript_access = arg_no_javascript_access
                         .map(std::ptr::from_mut)
                         .unwrap_or(std::ptr::null_mut());
@@ -21091,6 +21055,19 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                         arg_extra_info,
                         arg_no_javascript_access,
                     );
+                    if let (Some(out_client), Some(arg_client)) = (out_client, arg_client.as_ref())
+                    {
+                        *out_client = arg_client
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
+                    if let (Some(out_extra_info), Some(arg_extra_info)) =
+                        (out_extra_info, arg_extra_info.as_ref())
+                    {
+                        *out_extra_info = arg_extra_info
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
                     result.wrap_result()
                 })
                 .unwrap_or_default()
@@ -21119,7 +21096,7 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
         &self,
         browser: Option<&mut Browser>,
         window_info: Option<&mut WindowInfo>,
-        client: Option<&mut Option<impl ImplClient>>,
+        client: Option<&mut Option<Client>>,
         settings: Option<&mut BrowserSettings>,
         extra_info: Option<&mut Option<DictionaryValue>>,
         use_default_window: Option<&mut ::std::os::raw::c_int>,
@@ -21153,31 +21130,33 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                     .as_mut()
                     .map(std::ptr::from_mut)
                     .unwrap_or(std::ptr::null_mut());
+                let out_client = arg_client;
                 let mut ptr = std::ptr::null_mut();
-                let arg_client = arg_client
+                let (out_client, arg_client) = out_client
                     .map(|arg| {
                         if let Some(arg) = arg.as_mut() {
                             arg.add_ref();
                             ptr = arg.get_raw();
                         }
-                        std::ptr::from_mut(&mut ptr)
+                        (Some(arg), std::ptr::from_mut(&mut ptr))
                     })
-                    .unwrap_or(std::ptr::null_mut());
+                    .unwrap_or((None, std::ptr::null_mut()));
                 let mut arg_settings = arg_settings.cloned().map(|arg| arg.into());
                 let arg_settings = arg_settings
                     .as_mut()
                     .map(std::ptr::from_mut)
                     .unwrap_or(std::ptr::null_mut());
+                let out_extra_info = arg_extra_info;
                 let mut ptr = std::ptr::null_mut();
-                let arg_extra_info = arg_extra_info
+                let (out_extra_info, arg_extra_info) = out_extra_info
                     .map(|arg| {
                         if let Some(arg) = arg.as_mut() {
                             arg.add_ref();
                             ptr = arg.get_raw();
                         }
-                        std::ptr::from_mut(&mut ptr)
+                        (Some(arg), std::ptr::from_mut(&mut ptr))
                     })
-                    .unwrap_or(std::ptr::null_mut());
+                    .unwrap_or((None, std::ptr::null_mut()));
                 let arg_use_default_window = arg_use_default_window
                     .map(std::ptr::from_mut)
                     .unwrap_or(std::ptr::null_mut());
@@ -21190,6 +21169,18 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                     arg_extra_info,
                     arg_use_default_window,
                 );
+                if let (Some(out_client), Some(arg_client)) = (out_client, arg_client.as_ref()) {
+                    *out_client = arg_client
+                        .as_mut()
+                        .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                }
+                if let (Some(out_extra_info), Some(arg_extra_info)) =
+                    (out_extra_info, arg_extra_info.as_ref())
+                {
+                    *out_extra_info = arg_extra_info
+                        .as_mut()
+                        .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                }
             }
         }
     }
@@ -29633,13 +29624,9 @@ pub trait ImplTaskRunner: Clone + Sized + Rc {
     #[doc = "See [`_cef_task_runner_t::belongs_to_thread`] for more documentation."]
     fn belongs_to_thread(&self, thread_id: ThreadId) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_task_runner_t::post_task`] for more documentation."]
-    fn post_task(&self, task: Option<&mut impl ImplTask>) -> ::std::os::raw::c_int;
+    fn post_task(&self, task: Option<&mut Task>) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_task_runner_t::post_delayed_task`] for more documentation."]
-    fn post_delayed_task(
-        &self,
-        task: Option<&mut impl ImplTask>,
-        delay_ms: i64,
-    ) -> ::std::os::raw::c_int;
+    fn post_delayed_task(&self, task: Option<&mut Task>, delay_ms: i64) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_task_runner_t;
 }
 impl ImplTaskRunner for TaskRunner {
@@ -29688,7 +29675,7 @@ impl ImplTaskRunner for TaskRunner {
                 .unwrap_or_default()
         }
     }
-    fn post_task(&self, task: Option<&mut impl ImplTask>) -> ::std::os::raw::c_int {
+    fn post_task(&self, task: Option<&mut Task>) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .post_task
@@ -29707,11 +29694,7 @@ impl ImplTaskRunner for TaskRunner {
                 .unwrap_or_default()
         }
     }
-    fn post_delayed_task(
-        &self,
-        task: Option<&mut impl ImplTask>,
-        delay_ms: i64,
-    ) -> ::std::os::raw::c_int {
+    fn post_delayed_task(&self, task: Option<&mut Task>, delay_ms: i64) -> ::std::os::raw::c_int {
         unsafe {
             self.0
                 .post_delayed_task
@@ -29944,26 +29927,28 @@ impl ImplV8Context for V8Context {
                     let arg_script_url = arg_script_url
                         .map(|arg| arg.into_raw())
                         .unwrap_or(std::ptr::null());
+                    let out_retval = arg_retval;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_retval = arg_retval
+                    let (out_retval, arg_retval) = out_retval
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
+                    let out_exception = arg_exception;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_exception = arg_exception
+                    let (out_exception, arg_exception) = out_exception
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
                     let result = f(
                         arg_self_,
                         arg_code,
@@ -29972,6 +29957,19 @@ impl ImplV8Context for V8Context {
                         arg_retval,
                         arg_exception,
                     );
+                    if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
+                    {
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
+                    if let (Some(out_exception), Some(arg_exception)) =
+                        (out_exception, arg_exception.as_ref())
+                    {
+                        *out_exception = arg_exception
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
                     result.wrap_result()
                 })
                 .unwrap_or_default()
@@ -30185,16 +30183,17 @@ impl ImplV8Handler for V8Handler {
                     } else {
                         vec_arguments.as_ptr()
                     };
+                    let out_retval = arg_retval;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_retval = arg_retval
+                    let (out_retval, arg_retval) = out_retval
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
                     let arg_exception = arg_exception
                         .map(|arg| arg.into_raw())
                         .unwrap_or(std::ptr::null_mut());
@@ -30207,6 +30206,12 @@ impl ImplV8Handler for V8Handler {
                         arg_retval,
                         arg_exception,
                     );
+                    if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
+                    {
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
                     result.wrap_result()
                 })
                 .unwrap_or_default()
@@ -30409,20 +30414,27 @@ impl ImplV8Accessor for V8Accessor {
                             ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
+                    let out_retval = arg_retval;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_retval = arg_retval
+                    let (out_retval, arg_retval) = out_retval
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
                     let arg_exception = arg_exception
                         .map(|arg| arg.into_raw())
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_name, arg_object, arg_retval, arg_exception);
+                    if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
+                    {
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
                     result.wrap_result()
                 })
                 .unwrap_or_default()
@@ -30752,20 +30764,27 @@ impl ImplV8Interceptor for V8Interceptor {
                             ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
+                    let out_retval = arg_retval;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_retval = arg_retval
+                    let (out_retval, arg_retval) = out_retval
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
                     let arg_exception = arg_exception
                         .map(|arg| arg.into_raw())
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_name, arg_object, arg_retval, arg_exception);
+                    if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
+                    {
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
                     result.wrap_result()
                 })
                 .unwrap_or_default()
@@ -30791,20 +30810,27 @@ impl ImplV8Interceptor for V8Interceptor {
                             ImplV8Value::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
+                    let out_retval = arg_retval;
                     let mut ptr = std::ptr::null_mut();
-                    let arg_retval = arg_retval
+                    let (out_retval, arg_retval) = out_retval
                         .map(|arg| {
                             if let Some(arg) = arg.as_mut() {
                                 arg.add_ref();
                                 ptr = arg.get_raw();
                             }
-                            std::ptr::from_mut(&mut ptr)
+                            (Some(arg), std::ptr::from_mut(&mut ptr))
                         })
-                        .unwrap_or(std::ptr::null_mut());
+                        .unwrap_or((None, std::ptr::null_mut()));
                     let arg_exception = arg_exception
                         .map(|arg| arg.into_raw())
                         .unwrap_or(std::ptr::null_mut());
                     let result = f(arg_self_, arg_index, arg_object, arg_retval, arg_exception);
+                    if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
+                    {
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
+                    }
                     result.wrap_result()
                 })
                 .unwrap_or_default()
@@ -31851,7 +31877,8 @@ impl ImplV8Value for V8Value {
                 .map(|f| {
                     let arg_user_data = user_data;
                     let arg_self_ = self.into_raw();
-                    let arg_user_data = arg_user_data
+                    let out_user_data = arg_user_data;
+                    let arg_user_data = out_user_data
                         .map(|arg| {
                             arg.add_ref();
                             arg.into_raw()
@@ -38411,7 +38438,7 @@ pub trait ImplBrowserViewDelegate: ImplViewDelegate {
         &self,
         browser_view: Option<&mut BrowserView>,
         settings: Option<&BrowserSettings>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Client>,
         is_devtools: ::std::os::raw::c_int,
     ) -> Option<BrowserViewDelegate> {
         Default::default()
@@ -38758,7 +38785,7 @@ impl ImplBrowserViewDelegate for BrowserViewDelegate {
         &self,
         browser_view: Option<&mut BrowserView>,
         settings: Option<&BrowserSettings>,
-        client: Option<&mut impl ImplClient>,
+        client: Option<&mut Client>,
         is_devtools: ::std::os::raw::c_int,
     ) -> Option<BrowserViewDelegate> {
         unsafe {
@@ -46547,9 +46574,7 @@ pub fn stream_reader_create_for_data(data: *mut u8, size: usize) -> Option<Strea
 }
 
 /// See [`cef_stream_reader_create_for_handler`] for more documentation.
-pub fn stream_reader_create_for_handler(
-    handler: Option<&mut impl ImplReadHandler>,
-) -> Option<StreamReader> {
+pub fn stream_reader_create_for_handler(handler: Option<&mut ReadHandler>) -> Option<StreamReader> {
     unsafe {
         let arg_handler = handler;
         let arg_handler = arg_handler
@@ -46585,7 +46610,7 @@ pub fn stream_writer_create_for_file(file_name: Option<&CefString>) -> Option<St
 
 /// See [`cef_stream_writer_create_for_handler`] for more documentation.
 pub fn stream_writer_create_for_handler(
-    handler: Option<&mut impl ImplWriteHandler>,
+    handler: Option<&mut WriteHandler>,
 ) -> Option<StreamWriter> {
     unsafe {
         let arg_handler = handler;
@@ -46670,7 +46695,7 @@ pub fn post_data_element_create() -> Option<PostDataElement> {
 
 /// See [`cef_cookie_manager_get_global_manager`] for more documentation.
 pub fn cookie_manager_get_global_manager(
-    callback: Option<&mut impl ImplCompletionCallback>,
+    callback: Option<&mut CompletionCallback>,
 ) -> Option<CookieManager> {
     unsafe {
         let arg_callback = callback;
@@ -46690,9 +46715,7 @@ pub fn cookie_manager_get_global_manager(
 }
 
 /// See [`cef_media_router_get_global`] for more documentation.
-pub fn media_router_get_global(
-    callback: Option<&mut impl ImplCompletionCallback>,
-) -> Option<MediaRouter> {
+pub fn media_router_get_global(callback: Option<&mut CompletionCallback>) -> Option<MediaRouter> {
     unsafe {
         let arg_callback = callback;
         let arg_callback = arg_callback
@@ -46759,7 +46782,7 @@ pub fn request_context_get_global_context() -> Option<RequestContext> {
 /// See [`cef_request_context_create_context`] for more documentation.
 pub fn request_context_create_context(
     settings: Option<&RequestContextSettings>,
-    handler: Option<&mut impl ImplRequestContextHandler>,
+    handler: Option<&mut RequestContextHandler>,
 ) -> Option<RequestContext> {
     unsafe {
         let (arg_settings, arg_handler) = (settings, handler);
@@ -46786,7 +46809,7 @@ pub fn request_context_create_context(
 /// See [`cef_request_context_cef_create_context_shared`] for more documentation.
 pub fn request_context_cef_create_context_shared(
     other: Option<&mut RequestContext>,
-    handler: Option<&mut impl ImplRequestContextHandler>,
+    handler: Option<&mut RequestContextHandler>,
 ) -> Option<RequestContext> {
     unsafe {
         let (arg_other, arg_handler) = (other, handler);
@@ -46814,7 +46837,7 @@ pub fn request_context_cef_create_context_shared(
 /// See [`cef_browser_host_create_browser`] for more documentation.
 pub fn browser_host_create_browser(
     window_info: Option<&WindowInfo>,
-    client: Option<&mut impl ImplClient>,
+    client: Option<&mut Client>,
     url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut DictionaryValue>,
@@ -46882,7 +46905,7 @@ pub fn browser_host_create_browser(
 /// See [`cef_browser_host_create_browser_sync`] for more documentation.
 pub fn browser_host_create_browser_sync(
     window_info: Option<&WindowInfo>,
-    client: Option<&mut impl ImplClient>,
+    client: Option<&mut Client>,
     url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut DictionaryValue>,
@@ -46967,7 +46990,7 @@ pub fn browser_host_get_browser_by_identifier(
 }
 
 /// See [`cef_menu_model_create`] for more documentation.
-pub fn menu_model_create(delegate: Option<&mut impl ImplMenuModelDelegate>) -> Option<MenuModel> {
+pub fn menu_model_create(delegate: Option<&mut MenuModelDelegate>) -> Option<MenuModel> {
     unsafe {
         let arg_delegate = delegate;
         let arg_delegate = arg_delegate
@@ -47080,7 +47103,7 @@ pub fn currently_on(thread_id: ThreadId) -> ::std::os::raw::c_int {
 }
 
 /// See [`cef_post_task`] for more documentation.
-pub fn post_task(thread_id: ThreadId, task: Option<&mut impl ImplTask>) -> ::std::os::raw::c_int {
+pub fn post_task(thread_id: ThreadId, task: Option<&mut Task>) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_thread_id, arg_task) = (thread_id, task);
         let arg_thread_id = arg_thread_id.into_raw();
@@ -47098,7 +47121,7 @@ pub fn post_task(thread_id: ThreadId, task: Option<&mut impl ImplTask>) -> ::std
 /// See [`cef_post_delayed_task`] for more documentation.
 pub fn post_delayed_task(
     thread_id: ThreadId,
-    task: Option<&mut impl ImplTask>,
+    task: Option<&mut Task>,
     delay_ms: i64,
 ) -> ::std::os::raw::c_int {
     unsafe {
@@ -47254,8 +47277,8 @@ pub fn v8_value_create_string(value: Option<&CefString>) -> Option<V8Value> {
 
 /// See [`cef_v8_value_create_object`] for more documentation.
 pub fn v8_value_create_object(
-    accessor: Option<&mut impl ImplV8Accessor>,
-    interceptor: Option<&mut impl ImplV8Interceptor>,
+    accessor: Option<&mut V8Accessor>,
+    interceptor: Option<&mut V8Interceptor>,
 ) -> Option<V8Value> {
     unsafe {
         let (arg_accessor, arg_interceptor) = (accessor, interceptor);
@@ -47297,7 +47320,7 @@ pub fn v8_value_create_array(length: ::std::os::raw::c_int) -> Option<V8Value> {
 pub fn v8_value_create_array_buffer(
     buffer: *mut u8,
     length: usize,
-    release_callback: Option<&mut impl ImplV8ArrayBufferReleaseCallback>,
+    release_callback: Option<&mut V8ArrayBufferReleaseCallback>,
 ) -> Option<V8Value> {
     unsafe {
         let (arg_buffer, arg_length, arg_release_callback) = (buffer, length, release_callback);
@@ -47334,7 +47357,7 @@ pub fn v8_value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) ->
 /// See [`cef_v8_value_create_function`] for more documentation.
 pub fn v8_value_create_function(
     name: Option<&CefString>,
-    handler: Option<&mut impl ImplV8Handler>,
+    handler: Option<&mut V8Handler>,
 ) -> Option<V8Value> {
     unsafe {
         let (arg_name, arg_handler) = (name, handler);
@@ -47385,7 +47408,7 @@ pub fn v8_stack_trace_get_current(frame_limit: ::std::os::raw::c_int) -> Option<
 pub fn register_extension(
     extension_name: Option<&CefString>,
     javascript_code: Option<&CefString>,
-    handler: Option<&mut impl ImplV8Handler>,
+    handler: Option<&mut V8Handler>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_extension_name, arg_javascript_code, arg_handler) =
@@ -47411,7 +47434,7 @@ pub fn register_extension(
 pub fn register_scheme_handler_factory(
     scheme_name: Option<&CefString>,
     domain_name: Option<&CefString>,
-    factory: Option<&mut impl ImplSchemeHandlerFactory>,
+    factory: Option<&mut SchemeHandlerFactory>,
 ) -> ::std::os::raw::c_int {
     unsafe {
         let (arg_scheme_name, arg_domain_name, arg_factory) = (scheme_name, domain_name, factory);
@@ -47444,7 +47467,7 @@ pub fn clear_scheme_handler_factories() -> ::std::os::raw::c_int {
 /// See [`cef_execute_process`] for more documentation.
 pub fn execute_process(
     args: Option<&MainArgs>,
-    application: Option<&mut impl ImplApp>,
+    application: Option<&mut App>,
     windows_sandbox_info: *mut u8,
 ) -> ::std::os::raw::c_int {
     unsafe {
@@ -47471,7 +47494,7 @@ pub fn execute_process(
 pub fn initialize(
     args: Option<&MainArgs>,
     settings: Option<&Settings>,
-    application: Option<&mut impl ImplApp>,
+    application: Option<&mut App>,
     windows_sandbox_info: *mut u8,
 ) -> ::std::os::raw::c_int {
     unsafe {
@@ -47543,7 +47566,7 @@ pub fn quit_message_loop() {
 /// See [`cef_urlrequest_create`] for more documentation.
 pub fn urlrequest_create(
     request: Option<&mut Request>,
-    client: Option<&mut impl ImplUrlrequestClient>,
+    client: Option<&mut UrlrequestClient>,
     request_context: Option<&mut RequestContext>,
 ) -> Option<Urlrequest> {
     unsafe {
@@ -47577,7 +47600,7 @@ pub fn urlrequest_create(
 
 /// See [`cef_label_button_create`] for more documentation.
 pub fn label_button_create(
-    delegate: Option<&mut impl ImplButtonDelegate>,
+    delegate: Option<&mut ButtonDelegate>,
     text: Option<&CefString>,
 ) -> Option<LabelButton> {
     unsafe {
@@ -47602,7 +47625,7 @@ pub fn label_button_create(
 
 /// See [`cef_menu_button_create`] for more documentation.
 pub fn menu_button_create(
-    delegate: Option<&mut impl ImplMenuButtonDelegate>,
+    delegate: Option<&mut MenuButtonDelegate>,
     text: Option<&CefString>,
 ) -> Option<MenuButton> {
     unsafe {
@@ -47626,7 +47649,7 @@ pub fn menu_button_create(
 }
 
 /// See [`cef_textfield_create`] for more documentation.
-pub fn textfield_create(delegate: Option<&mut impl ImplTextfieldDelegate>) -> Option<Textfield> {
+pub fn textfield_create(delegate: Option<&mut TextfieldDelegate>) -> Option<Textfield> {
     unsafe {
         let arg_delegate = delegate;
         let arg_delegate = arg_delegate
@@ -47646,12 +47669,12 @@ pub fn textfield_create(delegate: Option<&mut impl ImplTextfieldDelegate>) -> Op
 
 /// See [`cef_browser_view_create`] for more documentation.
 pub fn browser_view_create(
-    client: Option<&mut impl ImplClient>,
+    client: Option<&mut Client>,
     url: Option<&CefString>,
     settings: Option<&BrowserSettings>,
     extra_info: Option<&mut DictionaryValue>,
     request_context: Option<&mut RequestContext>,
-    delegate: Option<&mut impl ImplBrowserViewDelegate>,
+    delegate: Option<&mut BrowserViewDelegate>,
 ) -> Option<BrowserView> {
     unsafe {
         let (arg_client, arg_url, arg_settings, arg_extra_info, arg_request_context, arg_delegate) =
@@ -47724,7 +47747,7 @@ pub fn browser_view_get_for_browser(browser: Option<&mut Browser>) -> Option<Bro
 }
 
 /// See [`cef_scroll_view_create`] for more documentation.
-pub fn scroll_view_create(delegate: Option<&mut impl ImplViewDelegate>) -> Option<ScrollView> {
+pub fn scroll_view_create(delegate: Option<&mut ViewDelegate>) -> Option<ScrollView> {
     unsafe {
         let arg_delegate = delegate;
         let arg_delegate = arg_delegate
@@ -47908,7 +47931,7 @@ pub fn display_convert_screen_rect_from_pixels(rect: Option<&Rect>) -> Rect {
 }
 
 /// See [`cef_panel_create`] for more documentation.
-pub fn panel_create(delegate: Option<&mut impl ImplPanelDelegate>) -> Option<Panel> {
+pub fn panel_create(delegate: Option<&mut PanelDelegate>) -> Option<Panel> {
     unsafe {
         let arg_delegate = delegate;
         let arg_delegate = arg_delegate
@@ -47927,7 +47950,7 @@ pub fn panel_create(delegate: Option<&mut impl ImplPanelDelegate>) -> Option<Pan
 }
 
 /// See [`cef_window_create_top_level`] for more documentation.
-pub fn window_create_top_level(delegate: Option<&mut impl ImplWindowDelegate>) -> Option<Window> {
+pub fn window_create_top_level(delegate: Option<&mut WindowDelegate>) -> Option<Window> {
     unsafe {
         let arg_delegate = delegate;
         let arg_delegate = arg_delegate
