@@ -21095,20 +21095,16 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                     );
                     if let (Some(out_client), Some(arg_client)) = (out_client, arg_client.as_ref())
                     {
-                        *out_client = if arg_client.is_null() {
-                            None
-                        } else {
-                            Some((*arg_client).wrap_result())
-                        };
+                        *out_client = arg_client
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     if let (Some(out_extra_info), Some(arg_extra_info)) =
                         (out_extra_info, arg_extra_info.as_ref())
                     {
-                        *out_extra_info = if arg_extra_info.is_null() {
-                            None
-                        } else {
-                            Some((*arg_extra_info).wrap_result())
-                        };
+                        *out_extra_info = arg_extra_info
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     result.wrap_result()
                 })
@@ -21212,20 +21208,16 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                     arg_use_default_window,
                 );
                 if let (Some(out_client), Some(arg_client)) = (out_client, arg_client.as_ref()) {
-                    *out_client = if arg_client.is_null() {
-                        None
-                    } else {
-                        Some((*arg_client).wrap_result())
-                    };
+                    *out_client = arg_client
+                        .as_mut()
+                        .map(|arg| std::ptr::from_mut(arg).wrap_result());
                 }
                 if let (Some(out_extra_info), Some(arg_extra_info)) =
                     (out_extra_info, arg_extra_info.as_ref())
                 {
-                    *out_extra_info = if arg_extra_info.is_null() {
-                        None
-                    } else {
-                        Some((*arg_extra_info).wrap_result())
-                    };
+                    *out_extra_info = arg_extra_info
+                        .as_mut()
+                        .map(|arg| std::ptr::from_mut(arg).wrap_result());
                 }
             }
         }
@@ -30005,20 +29997,16 @@ impl ImplV8Context for V8Context {
                     );
                     if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
                     {
-                        *out_retval = if arg_retval.is_null() {
-                            None
-                        } else {
-                            Some((*arg_retval).wrap_result())
-                        };
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     if let (Some(out_exception), Some(arg_exception)) =
                         (out_exception, arg_exception.as_ref())
                     {
-                        *out_exception = if arg_exception.is_null() {
-                            None
-                        } else {
-                            Some((*arg_exception).wrap_result())
-                        };
+                        *out_exception = arg_exception
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     result.wrap_result()
                 })
@@ -30258,11 +30246,9 @@ impl ImplV8Handler for V8Handler {
                     );
                     if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
                     {
-                        *out_retval = if arg_retval.is_null() {
-                            None
-                        } else {
-                            Some((*arg_retval).wrap_result())
-                        };
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     result.wrap_result()
                 })
@@ -30483,11 +30469,9 @@ impl ImplV8Accessor for V8Accessor {
                     let result = f(arg_self_, arg_name, arg_object, arg_retval, arg_exception);
                     if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
                     {
-                        *out_retval = if arg_retval.is_null() {
-                            None
-                        } else {
-                            Some((*arg_retval).wrap_result())
-                        };
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     result.wrap_result()
                 })
@@ -30835,11 +30819,9 @@ impl ImplV8Interceptor for V8Interceptor {
                     let result = f(arg_self_, arg_name, arg_object, arg_retval, arg_exception);
                     if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
                     {
-                        *out_retval = if arg_retval.is_null() {
-                            None
-                        } else {
-                            Some((*arg_retval).wrap_result())
-                        };
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     result.wrap_result()
                 })
@@ -30883,11 +30865,9 @@ impl ImplV8Interceptor for V8Interceptor {
                     let result = f(arg_self_, arg_index, arg_object, arg_retval, arg_exception);
                     if let (Some(out_retval), Some(arg_retval)) = (out_retval, arg_retval.as_ref())
                     {
-                        *out_retval = if arg_retval.is_null() {
-                            None
-                        } else {
-                            Some((*arg_retval).wrap_result())
-                        };
+                        *out_retval = arg_retval
+                            .as_mut()
+                            .map(|arg| std::ptr::from_mut(arg).wrap_result());
                     }
                     result.wrap_result()
                 })

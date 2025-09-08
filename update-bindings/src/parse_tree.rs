@@ -739,11 +739,7 @@ impl SignatureRef<'_> {
                         let out_name = format_ident!("out_{name}");
                         Some(quote! {
                             if let (Some(#out_name), Some(#arg_name)) = (#out_name, #arg_name.as_ref()) {
-                                *#out_name = if #arg_name.is_null() {
-                                    None
-                                } else {
-                                    Some((*#arg_name).wrap_result())
-                                };
+                                *#out_name = #arg_name.as_mut().map(|arg| std::ptr::from_mut(arg).wrap_result());
                             }
                         })
                     }
