@@ -277,6 +277,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         false as _
     }
 
+    #[cfg(any(target_os = "macos", target_os = "windows"))]
     fn on_accelerated_paint(
         &self,
         _browser: Option<&mut Browser>,
