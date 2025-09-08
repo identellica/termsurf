@@ -30,7 +30,10 @@ struct State {
 impl State {
     async fn new(window: Arc<Window>) -> State {
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+            #[cfg(target_os = "windows")]
             backends: Backends::from_comma_list("dx12"),
+            #[cfg(target_os = "macos")]
+            backends: Backends::from_comma_list("metal"),
             //flags: wgpu::InstanceFlags::debugging(),
             ..Default::default()
         });
@@ -316,14 +319,14 @@ fn main() -> std::process::ExitCode {
     #[cfg(all(target_os = "windows", debug_assertions))]
     pix::load_winpix_gpu_capturer().unwrap();
 
-    env_logger::init();
-
     #[cfg(target_os = "macos")]
     let _loader = {
         let loader = library_loader::LibraryLoader::new(&std::env::current_exe().unwrap(), false);
         assert!(loader.load());
         loader
     };
+
+    env_logger::init();
 
     let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
 
