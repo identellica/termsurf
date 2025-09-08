@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [139.7.2+139.0.38](https://github.com/tauri-apps/cef-rs/compare/cef-v139.7.1+139.0.38...cef-v139.7.2+139.0.38) - 2025-09-08
+
+### Fixed
+
+- cleanup logic for copying back out-params
+- handle out-params ([#173](https://github.com/tauri-apps/cef-rs/pull/173))
+
+### Other
+
+- update bindings
+
 ## [139.7.1+139.0.38](https://github.com/tauri-apps/cef-rs/compare/cef-v139.7.0+139.0.38...cef-v139.7.1+139.0.38) - 2025-09-07
 
 ### Other
