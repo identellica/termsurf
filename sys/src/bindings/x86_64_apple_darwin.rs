@@ -13,21 +13,22 @@ pub const CEF_API_VERSION_13601: i32 = 13601;
 pub const CEF_API_VERSION_13700: i32 = 13700;
 pub const CEF_API_VERSION_13800: i32 = 13800;
 pub const CEF_API_VERSION_13900: i32 = 13900;
+pub const CEF_API_VERSION_14000: i32 = 14000;
 pub const CEF_API_VERSION_999998: i32 = 999998;
 pub const CEF_API_VERSION_999999: i32 = 999999;
 pub const CEF_API_VERSION_MIN: i32 = 13300;
-pub const CEF_API_VERSION_LAST: i32 = 13900;
+pub const CEF_API_VERSION_LAST: i32 = 14000;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
-pub const CEF_VERSION: &[u8; 42] = b"139.0.40+g465474a+chromium-139.0.7258.139\0";
-pub const CEF_VERSION_MAJOR: i32 = 139;
-pub const CEF_VERSION_MINOR: i32 = 0;
-pub const CEF_VERSION_PATCH: i32 = 40;
-pub const CHROME_VERSION_MAJOR: i32 = 139;
+pub const CEF_VERSION: &[u8; 41] = b"140.1.13+g5eb3258+chromium-140.0.7339.41\0";
+pub const CEF_VERSION_MAJOR: i32 = 140;
+pub const CEF_VERSION_MINOR: i32 = 1;
+pub const CEF_VERSION_PATCH: i32 = 13;
+pub const CHROME_VERSION_MAJOR: i32 = 140;
 pub const CHROME_VERSION_MINOR: i32 = 0;
-pub const CHROME_VERSION_BUILD: i32 = 7258;
-pub const CHROME_VERSION_PATCH: i32 = 139;
+pub const CHROME_VERSION_BUILD: i32 = 7339;
+pub const CHROME_VERSION_PATCH: i32 = 41;
 unsafe extern "C" {
     #[doc = "\n Load the CEF library at the specified |path|. Returns true (1) on\n success and false (0) on failure.\n"]
     pub fn cef_load_library(path: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
@@ -695,10 +696,8 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_REDUCED_ACCEPT_LANGUAGE = 75,
     #[doc = " Website setting which is used for NotificationPermissionReviewService to\n store origin blocklist from review notification permissions feature."]
     CEF_CONTENT_SETTING_TYPE_NOTIFICATION_PERMISSION_REVIEW = 76,
-    #[doc = " Website setting to store permissions granted to access particular devices\n in private network."]
-    CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_GUARD = 77,
-    #[doc = " Website setting to store permissions granted to access particular devices\n in private network."]
-    CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_CHOOSER_DATA = 78,
+    CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_GUARD_DEPRECATED = 77,
+    CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_CHOOSER_DATA_DEPRECATED = 78,
     #[doc = " Website setting which stores whether the browser has observed the user\n signing into an identity-provider based on observing the IdP-SignIn-Status\n HTTP header."]
     CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS = 79,
     #[doc = " Website setting which is used for RevokedPermissionsService to\n store revoked permissions of unused sites from unused site permissions\n feature."]
@@ -786,7 +785,11 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_INITIALIZED_TRANSLATIONS = 121,
     #[doc = " Stores a list of notification ids where content detection found the\n notification to be suspicious and a warning has already been shown for the\n site. Used for recovering notification contents from the database if the\n user decides they would like to see all of these notifications."]
     CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_NOTIFICATION_IDS = 122,
-    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 123,
+    #[doc = " To support approximate geolocation, the permission is migrating to use\n permissions with options, which won't be stored as ContentSettings. Upon\n launch of the feature, GEOLOCATION and GEOLOCATION_WITH_OPTIONS should be\n merged."]
+    CEF_CONTENT_SETTING_TYPE_GEOLOCATION_WITH_OPTIONS = 123,
+    #[doc = " Setting for enabling the Device Attributes API. Spec link:\n https://wicg.github.io/WebApiDevice/device_attributes/"]
+    CEF_CONTENT_SETTING_TYPE_DEVICE_ATTRIBUTES = 124,
+    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 125,
 }
 #[repr(u32)]
 #[non_exhaustive]
@@ -798,7 +801,7 @@ pub enum cef_content_setting_values_t {
     CEF_CONTENT_SETTING_VALUE_BLOCK = 2,
     CEF_CONTENT_SETTING_VALUE_ASK = 3,
     CEF_CONTENT_SETTING_VALUE_SESSION_ONLY = 4,
-    CEF_CONTENT_SETTING_VALUE_DETECT_IMPORTANT_CONTENT = 5,
+    CEF_CONTENT_SETTING_VALUE_DETECT_IMPORTANT_CONTENT_DEPRECATED = 5,
     CEF_CONTENT_SETTING_VALUE_NUM_VALUES = 6,
 }
 #[doc = "\n Structure representing a point.\n"]
@@ -1738,6 +1741,7 @@ pub enum cef_errorcode_t {
     ERR_INVALID_ECH_CONFIG_LIST = -182,
     ERR_ECH_NOT_NEGOTIATED = -183,
     ERR_ECH_FALLBACK_CERTIFICATE_INVALID = -184,
+    ERR_PROXY_UNABLE_TO_CONNECT_TO_DESTINATION = -186,
     ERR_CERT_COMMON_NAME_INVALID = -200,
     ERR_CERT_DATE_INVALID = -201,
     ERR_CERT_AUTHORITY_INVALID = -202,
@@ -3809,18 +3813,23 @@ pub enum cef_chrome_page_action_icon_type_t {
     CEF_CPAIT_COLLABORATION_MESSAGING = 32,
     CEF_CPAIT_CHANGE_PASSWORD = 33,
     CEF_CPAIT_LENS_OVERLAY_HOMEWORK = 34,
-    CEF_CPAIT_NUM_VALUES = 35,
+    CEF_CPAIT_AI_MODE = 35,
+    CEF_CPAIT_NUM_VALUES = 36,
 }
 #[repr(u32)]
 #[non_exhaustive]
 #[doc = "\n Chrome toolbar button types. Should be kept in sync with CEF's internal\n ToolbarButtonType type.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum cef_chrome_toolbar_button_type_t {
-    CEF_CTBT_CAST = 0,
+    CEF_CTBT_CAST_DEPRECATED = 0,
     CEF_CTBT_DOWNLOAD_DEPRECATED = 1,
     CEF_CTBT_SEND_TAB_TO_SELF_DEPRECATED = 2,
-    CEF_CTBT_SIDE_PANEL = 3,
-    CEF_CTBT_NUM_VALUES = 4,
+    CEF_CTBT_SIDE_PANEL_DEPRECATED = 3,
+    CEF_CTBT_MEDIA = 4,
+    CEF_CTBT_TAB_SEARCH = 5,
+    CEF_CTBT_BATTERY_SAVER = 6,
+    CEF_CTBT_AVATAR = 7,
+    CEF_CTBT_NUM_VALUES = 8,
 }
 #[repr(u32)]
 #[non_exhaustive]
@@ -4110,8 +4119,7 @@ pub enum cef_task_type_t {
     CEF_TASK_TYPE_EXTENSION = 6,
     #[doc = " A browser plugin guest process."]
     CEF_TASK_TYPE_GUEST = 7,
-    #[doc = " A plugin process."]
-    CEF_TASK_TYPE_PLUGIN = 8,
+    CEF_TASK_TYPE_PLUGIN_DEPRECATED = 8,
     #[doc = " A sandbox helper process"]
     CEF_TASK_TYPE_SANDBOX_HELPER = 9,
     #[doc = " A dedicated worker running on the renderer process."]

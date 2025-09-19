@@ -15553,7 +15553,7 @@ impl From<ChromeToolbarButtonType> for cef_chrome_toolbar_button_type_t {
 }
 impl Default for ChromeToolbarButtonType {
     fn default() -> Self {
-        Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_CAST)
+        Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_CAST_DEPRECATED)
     }
 }
 
