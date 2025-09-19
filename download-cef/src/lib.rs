@@ -108,7 +108,7 @@ pub fn check_archive_json(version: &str, location: &str) -> Result<()> {
     let archive_version = pattern.replace(&archive_json.name, "$1");
     let archive = Version::parse(&archive_version)?;
 
-    if archive == expected {
+    if archive <= expected {
         Ok(())
     } else {
         Err(Error::VersionMismatch {
@@ -344,19 +344,46 @@ impl CefVersion {
     where
         P: AsRef<Path>,
     {
-        let archive_version = serde_json::to_string_pretty(self.minimal()?)?;
+        self.minimal()?.write_archive_json(location)
+    }
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+pub struct CefFile {
+    #[serde(rename = "type")]
+    pub file_type: String,
+    pub name: String,
+    pub sha1: String,
+}
+
+impl CefFile {
+    pub fn write_archive_json<P>(&self, location: P) -> Result<()>
+    where
+        P: AsRef<Path>,
+    {
+        let archive_version = serde_json::to_string_pretty(self)?;
         let mut archive_json = File::create(archive_json_path(location))?;
         archive_json.write_all(archive_version.as_bytes())?;
         Ok(())
     }
 }
 
-#[derive(Deserialize, Serialize)]
-pub struct CefFile {
-    #[serde(rename = "type")]
-    pub file_type: String,
-    pub name: String,
-    pub sha1: String,
+impl TryFrom<&Path> for CefFile {
+    type Error = Error;
+
+    fn try_from(location: &Path) -> Result<Self> {
+        let file_type = "minimal".to_string();
+        let name = location
+            .file_name()
+            .map(|f| f.display().to_string())
+            .ok_or_else(|| Error::InvalidArchiveFile(location.display().to_string()))?;
+        let sha1 = calculate_file_sha1(location);
+        Ok(Self {
+            file_type,
+            name,
+            sha1,
+        })
+    }
 }
 
 pub fn download_target_archive<P>(
