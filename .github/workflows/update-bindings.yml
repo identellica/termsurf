@@ -10,7 +10,7 @@ on:
         type: string
     outputs:
       published:
-        description: "Whether a PR was created for the update-bindings branch"
+        description: "Whether a PR was created for the target branch"
         value: ${{ (jobs.publish-pr.outputs.published == 'true')
           && 'true' || 'false' }}
 
@@ -220,12 +220,19 @@ jobs:
         with:
           name: merge-changes
 
+      - name: Update branch name
+        run: |
+          echo "Target branch name: ${{ inputs.branch }}"
+          SOURCE_BRANCH=${{ inputs.branch == 'dev' && 'update-bindings' || inputs.branch }}
+          echo "Source branch name: ${SOURCE_BRANCH}"
+          echo "SOURCE_BRANCH=${SOURCE_BRANCH}" >> $GITHUB_ENV
+
       - name: Publish PR
         id: publish-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git switch -c update-bindings
+          ${{ inputs.branch == 'dev' && 'git switch -c ${SOURCE_BRANCH}' || 'echo "Re-using ${SOURCE_BRANCH}"' }}
           RESET_REV=$(git rev-parse HEAD)
 
           echo "Extracting merge-changes.tar.gz"
@@ -237,7 +244,7 @@ jobs:
 
           CHANGED=($(git diff --name-only --staged | xargs))
           if [ ${#CHANGED[@]} -gt 0 ]; then
-            git push --force -u origin update-bindings
+            git push --force -u origin ${SOURCE_BRANCH}
 
             FILES=()
             for VALUE in ${CHANGED[@]}; do
@@ -247,7 +254,7 @@ jobs:
 
             gh api graphql \
               -F githubRepository=${GITHUB_REPOSITORY} \
-              -F branchName=update-bindings \
+              -F branchName=${SOURCE_BRANCH} \
               -F expectedHeadOid=${RESET_REV} \
               -F 'commitMessage=chore: update bindings' \
               -F query=@.github/api/createCommitOnBranch.graphql \
@@ -255,7 +262,7 @@ jobs:
 
             git pull
 
-            echo "Publishing PR for update-bindings branch"
+            echo "Publishing PR for ${SOURCE_BRANCH} branch"
             gh pr create -f
             echo "published=true" >> "$GITHUB_OUTPUT"
           else
