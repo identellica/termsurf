@@ -1,12 +1,13 @@
 #[cfg(not(feature = "dox"))]
 fn main() -> anyhow::Result<()> {
-    use download_cef::{CefIndex, OsAndArch};
+    use download_cef::{CefIndex, OsAndArch, DEFAULT_CDN_URL};
     use std::{env, fs, path::PathBuf};
 
     println!("cargo::rerun-if-changed=build.rs");
 
     let target = env::var("TARGET")?;
     let os_arch = OsAndArch::try_from(target.as_str())?;
+    let url = std::env::var("CEF_DOWNLOAD_URL").unwrap_or(DEFAULT_CDN_URL.into());
 
     println!("cargo::rerun-if-env-changed=FLATPAK");
     println!("cargo::rerun-if-env-changed=CEF_PATH");
@@ -28,11 +29,11 @@ fn main() -> anyhow::Result<()> {
 
             if !fs::exists(&cef_dir)? {
                 let cef_version = download_cef::default_version(&env::var("CARGO_PKG_VERSION")?);
-                let index = CefIndex::download()?;
+                let index = CefIndex::download(url.as_str())?;
                 let platform = index.platform(&target)?;
                 let version = platform.version(&cef_version)?;
 
-                let archive = version.download_archive(&out_dir, false)?;
+                let archive = version.download_archive(url.as_str(), &out_dir, false)?;
                 let extracted_dir =
                     download_cef::extract_target_archive(&target, &archive, &out_dir, false)?;
                 if extracted_dir != cef_dir {

@@ -1,7 +1,7 @@
 #![doc = include_str!("../README.md")]
 
 use clap::Parser;
-use download_cef::{CefFile, CefIndex, OsAndArch, DEFAULT_TARGET};
+use download_cef::{CefFile, CefIndex, OsAndArch, DEFAULT_CDN_URL, DEFAULT_TARGET};
 use std::{
     fs,
     path::{Path, PathBuf},
@@ -35,6 +35,8 @@ struct Args {
 fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let output = PathBuf::from(args.output);
+    let url = std::env::var("CEF_DOWNLOAD_URL").unwrap_or(DEFAULT_CDN_URL.into());
+
     let parent = PathBuf::from(
         output
             .parent()
@@ -84,12 +86,17 @@ fn main() -> anyhow::Result<()> {
         }
         None => {
             let cef_version = args.version.as_str();
-            let index = CefIndex::download()?;
+            let index = CefIndex::download(url.as_str())?;
             let platform = index.platform(target)?;
             let version = platform.version(cef_version)?;
 
-            let archive =
-                version.download_archive_with_retry(&parent, true, Duration::from_secs(15), 3)?;
+            let archive = version.download_archive_with_retry(
+                url.as_str(),
+                &parent,
+                true,
+                Duration::from_secs(15),
+                3,
+            )?;
             let extracted_dir =
                 download_cef::extract_target_archive(target, &archive, &parent, true)?;
 
