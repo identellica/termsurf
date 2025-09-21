@@ -247,13 +247,17 @@ impl ApplicationHandler for App {
         self.state = Some(state);
         let window_info = WindowInfo {
             windowless_rendering_enabled: true as _,
+            #[cfg(any(target_os = "windows", target_os = "macos"))]
             shared_texture_enabled: true as _,
+            #[cfg(target_os = "linux")]
+            shared_texture_enabled: false as _,
             external_begin_frame_enabled: true as _,
             ..Default::default()
         };
         let device_scale_factor = window.scale_factor();
         let (render_handler, browser_size) = OsrRenderHandler::new(
             self.state.as_ref().unwrap().device.clone(),
+            self.state.as_ref().unwrap().queue.clone(),
             device_scale_factor as _,
             window.inner_size().to_logical(device_scale_factor),
         );

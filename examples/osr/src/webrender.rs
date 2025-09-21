@@ -176,11 +176,13 @@ pub struct OsrRenderHandler {
     device_scale_factor: f32,
     size: std::rc::Rc<RefCell<winit::dpi::LogicalSize<f32>>>,
     device: wgpu::Device,
+    queue: wgpu::Queue,
 }
 
 impl OsrRenderHandler {
     pub fn new(
         device: wgpu::Device,
+        queue: wgpu::Queue,
         device_scale_factor: f32,
         size: winit::dpi::LogicalSize<f32>,
     ) -> (Self, std::rc::Rc<RefCell<winit::dpi::LogicalSize<f32>>>) {
@@ -190,6 +192,7 @@ impl OsrRenderHandler {
                 size: size.clone(),
                 device_scale_factor,
                 device,
+                queue,
             },
             size,
         )
@@ -484,6 +487,131 @@ impl ImplRenderHandler for RenderHandlerBuilder {
                 ],
             });
 
+        TEXTURE.with_borrow_mut(|texture| {
+            texture.replace(bind_group);
+        });
+    }
+
+    #[cfg(target_os = "linux")]
+    fn on_paint(
+        &self,
+        _browser: Option<&mut Browser>,
+        _type_: PaintElementType,
+        _dirty_rects_count: usize,
+        _dirty_rects: Option<&Rect>,
+        buffer: *const u8,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+    ) {
+        if buffer.is_null() || width <= 0 || height <= 0 {
+            return;
+        }
+
+        let buffer_size = (width * height * 4) as usize; // BGRA format
+        let buffer_slice = unsafe {
+            std::slice::from_raw_parts(buffer, buffer_size)
+        };
+
+        // Create texture from CEF paint buffer
+        let texture_desc = TextureDescriptor {
+            label: Some("CEF Paint Texture"),
+            size: Extent3d {
+                width: width as u32,
+                height: height as u32,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: TextureDimension::D2,
+            format: wgpu::TextureFormat::Bgra8Unorm,
+            usage: TextureUsages::TEXTURE_BINDING | TextureUsages::COPY_DST,
+            view_formats: &[],
+        };
+
+        let texture = self.handler.device.create_texture(&texture_desc);
+
+        // Upload the CEF buffer data to the texture
+        self.handler.queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &texture,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            buffer_slice,
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(4 * width as u32),
+                rows_per_image: Some(height as u32),
+            },
+            texture_desc.size,
+        );
+
+        // Create sampler
+        let sampler = self
+            .handler
+            .device
+            .create_sampler(&wgpu::SamplerDescriptor {
+                address_mode_u: wgpu::AddressMode::ClampToEdge,
+                address_mode_v: wgpu::AddressMode::ClampToEdge,
+                address_mode_w: wgpu::AddressMode::ClampToEdge,
+                mag_filter: wgpu::FilterMode::Linear,
+                min_filter: wgpu::FilterMode::Linear,
+                mipmap_filter: wgpu::FilterMode::Linear,
+                ..Default::default()
+            });
+
+        // Create bind group layout (matching the existing one)
+        let texture_bind_group_layout =
+            self.handler
+                .device
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                    label: Some("CEF Texture Bind Group Layout Linux"),
+                    entries: &[
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 0,
+                            visibility: wgpu::ShaderStages::FRAGMENT,
+                            ty: wgpu::BindingType::Texture {
+                                multisampled: false,
+                                view_dimension: wgpu::TextureViewDimension::D2,
+                                sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                            },
+                            count: None,
+                        },
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 1,
+                            visibility: wgpu::ShaderStages::FRAGMENT,
+                            ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                            count: None,
+                        },
+                    ],
+                });
+
+        // Create bind group
+        let bind_group = self
+            .handler
+            .device
+            .create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("CEF Texture Bind Group Linux"),
+                layout: &texture_bind_group_layout,
+                entries: &[
+                    wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: wgpu::BindingResource::TextureView(&texture.create_view(
+                            &wgpu::TextureViewDescriptor {
+                                label: Some("CEF Texture View Linux"),
+                                ..Default::default()
+                            },
+                        )),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: wgpu::BindingResource::Sampler(&sampler),
+                    },
+                ],
+            });
+
+        // Update the global texture
         TEXTURE.with_borrow_mut(|texture| {
             texture.replace(bind_group);
         });
