@@ -1,14 +1,10 @@
+#[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
+use cef::sys::cef_color_type_t;
 use cef::{
     self, BrowserProcessHandler, ImplBrowserProcessHandler, WrapBrowserProcessHandler,
     rc::{Rc, RcImpl},
     sys::{self},
     *,
-};
-#[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
-use cef::{
-    sys::{
-        cef_color_type_t
-    }    
 };
 use cef::{ImplRequestContextHandler, RequestContextHandler, WrapRequestContextHandler};
 use std::cell::RefCell;
@@ -313,9 +309,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
             }
 
             match shared_handle.import_texture(&self.handler.device) {
-                Ok(texture) => {
-                    texture
-                }
+                Ok(texture) => texture,
                 Err(e) => {
                     tracing::error!("Failed to import shared texture: {:?}", e);
                     return;
@@ -405,9 +399,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         }
 
         let buffer_size = (width * height * 4) as usize; // BGRA format
-        let buffer_slice = unsafe {
-            std::slice::from_raw_parts(buffer, buffer_size)
-        };
+        let buffer_slice = unsafe { std::slice::from_raw_parts(buffer, buffer_size) };
 
         // Create texture from CEF paint buffer
         let texture_desc = TextureDescriptor {

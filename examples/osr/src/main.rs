@@ -1,5 +1,5 @@
-mod webrender;
 mod texture_import;
+mod webrender;
 
 use cef::{args::Args, *};
 use std::{cell::RefCell, process::ExitCode, sync::Arc, thread::sleep, time::Duration};

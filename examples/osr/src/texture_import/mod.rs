@@ -44,32 +44,32 @@ pub type TextureImportResult = Result<wgpu::Texture, TextureImportError>;
 /// Errors that can occur during texture import
 #[derive(Debug, thiserror::Error)]
 pub enum TextureImportError {
-	#[error("Invalid texture handle: {0}")]
-	InvalidHandle(String),
+    #[error("Invalid texture handle: {0}")]
+    InvalidHandle(String),
 
-	#[error("Unsupported texture format: {format:?}")]
-	UnsupportedFormat { format: cef::sys::cef_color_type_t },
+    #[error("Unsupported texture format: {format:?}")]
+    UnsupportedFormat { format: cef::sys::cef_color_type_t },
 
-	#[error("Hardware acceleration not available: {reason}")]
-	HardwareUnavailable { reason: String },
+    #[error("Hardware acceleration not available: {reason}")]
+    HardwareUnavailable { reason: String },
 
-	#[error("Vulkan operation failed: {operation}")]
-	VulkanError { operation: String },
+    #[error("Vulkan operation failed: {operation}")]
+    VulkanError { operation: String },
 
-	#[error("Platform-specific error: {message}")]
-	PlatformError { message: String },
+    #[error("Platform-specific error: {message}")]
+    PlatformError { message: String },
 
-	#[error("Unsupported platform for texture import")]
-	UnsupportedPlatform,
+    #[error("Unsupported platform for texture import")]
+    UnsupportedPlatform,
 }
 
 /// Trait for platform-specific texture importers
 pub trait TextureImporter {
-	fn new(info: &cef::AcceleratedPaintInfo) -> Self;
+    fn new(info: &cef::AcceleratedPaintInfo) -> Self;
 
-	/// Import the texture into wgpu, with automatic fallback to CPU texture
-	fn import_to_wgpu(&self, device: &wgpu::Device) -> TextureImportResult;
+    /// Import the texture into wgpu, with automatic fallback to CPU texture
+    fn import_to_wgpu(&self, device: &wgpu::Device) -> TextureImportResult;
 
-	/// Check if hardware acceleration is available for this texture
-	fn supports_hardware_acceleration(&self, device: &wgpu::Device) -> bool;
+    /// Check if hardware acceleration is available for this texture
+    fn supports_hardware_acceleration(&self, device: &wgpu::Device) -> bool;
 }
