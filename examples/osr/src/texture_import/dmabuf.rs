@@ -47,6 +47,7 @@ impl TextureImporter for DmaBufImporter {
 		texture::create_fallback(device, self.width, self.height, self.format, "CEF DMA-BUF Texture (fallback)")
 	}
 
+    #[cfg(target_os = "linux")]
 	fn supports_hardware_acceleration(&self, device: &wgpu::Device) -> bool {
 		// Check if we have valid file descriptors
 		if self.fds.is_empty() {

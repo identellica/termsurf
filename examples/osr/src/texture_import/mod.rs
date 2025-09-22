@@ -27,7 +27,7 @@
 pub(crate) mod common;
 
 pub(crate) mod shared_texture_handle;
-pub(crate) use shared_texture_handle::SharedTextureHandle;
+// pub(crate) use shared_texture_handle::SharedTextureHandle;
 
 #[cfg(target_os = "linux")]
 pub(crate) mod dmabuf;

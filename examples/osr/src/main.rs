@@ -1,4 +1,6 @@
 mod webrender;
+mod texture_import;
+
 use cef::{args::Args, *};
 use std::{cell::RefCell, process::ExitCode, sync::Arc, thread::sleep, time::Duration};
 use wgpu::Backends;
@@ -34,6 +36,8 @@ impl State {
             backends: Backends::from_comma_list("dx12"),
             #[cfg(target_os = "macos")]
             backends: Backends::from_comma_list("metal"),
+            #[cfg(target_os = "linux")]
+            backends: Backends::from_comma_list("vulkan"),
             //flags: wgpu::InstanceFlags::debugging(),
             ..Default::default()
         });
@@ -247,10 +251,9 @@ impl ApplicationHandler for App {
         self.state = Some(state);
         let window_info = WindowInfo {
             windowless_rendering_enabled: true as _,
-            #[cfg(any(target_os = "windows", target_os = "macos"))]
+            #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
             shared_texture_enabled: true as _,
-            #[cfg(target_os = "linux")]
-            shared_texture_enabled: false as _,
+            #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
             external_begin_frame_enabled: true as _,
             ..Default::default()
         };
@@ -298,6 +301,7 @@ impl ApplicationHandler for App {
                 event_loop.exit();
             }
             WindowEvent::RedrawRequested => {
+                #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
                 if let Some(host) = self.browser.as_mut().and_then(|b| b.browser.host()) {
                     host.send_external_begin_frame();
                 }
