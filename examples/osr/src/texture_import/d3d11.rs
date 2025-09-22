@@ -14,6 +14,7 @@ pub struct D3D11Importer {
 	pub height: u32,
 }
 
+#[cfg(target_os = "windows")]
 impl TextureImporter for D3D11Importer {
 	fn new(info: &AcceleratedPaintInfo) -> Self {
 		Self {
@@ -138,11 +139,8 @@ impl D3D11Importer {
 				};
 
 				// Import D3D11 shared handle into Vulkan
-				let vk_image = self.import_d3d11_handle_to_vulkan(device)?;
-
-				// Wrap VkImage in wgpu-hal texture
-				let hal_texture = <api::Vulkan as wgpu::hal::Api>::Device::texture_from_raw(
-					vk_image,
+				let hal_texture = <api::Vulkan as wgpu::hal::Api>::Device::texture_from_d3d11_shared_handle(
+					windows::Win32::Foundation::HANDLE(self.handle),
 					&wgpu::hal::TextureDescriptor {
 						label: Some("CEF D3D11 Shared Texture"),
 						size: wgpu::Extent3d {
@@ -159,7 +157,7 @@ impl D3D11Importer {
 						view_formats: vec![],
 					},
 					None, // drop_callback
-				);
+				)?;
 
 				Ok(hal_texture)
 			})
@@ -187,80 +185,6 @@ impl D3D11Importer {
 		};
 
 		Ok(texture)
-	}
-
-	fn import_d3d11_handle_to_vulkan(&self, hal_device: &<api::Vulkan as wgpu::hal::Api>::Device) -> Result<vk::Image, TextureImportError> {
-		// Get raw Vulkan handles
-		let device = hal_device.raw_device();
-		let _instance = hal_device.shared_instance().raw_instance();
-
-		// Validate dimensions
-		if self.width == 0 || self.height == 0 {
-			return Err(TextureImportError::InvalidHandle("Invalid D3D11 texture dimensions".to_string()));
-		}
-
-		// Create external memory image info
-		let mut external_memory_info = vk::ExternalMemoryImageCreateInfo::default().handle_types(vk::ExternalMemoryHandleTypeFlags::D3D11_TEXTURE);
-
-		// Create image create info
-		let image_create_info = vk::ImageCreateInfo::default()
-			.image_type(vk::ImageType::TYPE_2D)
-			.format(format::cef_to_vulkan(self.format)?)
-			.extent(vk::Extent3D {
-				width: self.width,
-				height: self.height,
-				depth: 1,
-			})
-			.mip_levels(1)
-			.array_layers(1)
-			.samples(vk::SampleCountFlags::TYPE_1)
-			.tiling(vk::ImageTiling::OPTIMAL)
-			.usage(vk::ImageUsageFlags::SAMPLED | vk::ImageUsageFlags::COLOR_ATTACHMENT)
-			.sharing_mode(vk::SharingMode::EXCLUSIVE)
-			.push_next(&mut external_memory_info);
-
-		// Create the image
-		let image = unsafe {
-			device.create_image(&image_create_info, None).map_err(|e| TextureImportError::VulkanError {
-				operation: format!("Failed to create Vulkan image: {:?}", e),
-			})?
-		};
-
-		// Get memory requirements
-		let memory_requirements = unsafe { device.get_image_memory_requirements(image) };
-
-		// Import D3D11 handle
-		let mut import_memory_win32 = vk::ImportMemoryWin32HandleInfoKHR::default()
-			.handle_type(vk::ExternalMemoryHandleTypeFlags::D3D11_TEXTURE)
-			.handle(self.handle as isize);
-
-		// Find a suitable memory type
-		let memory_properties = unsafe { hal_device.shared_instance().raw_instance().get_physical_device_memory_properties(hal_device.raw_physical_device()) };
-
-		let memory_type_index =
-			vulkan::find_memory_type_index(memory_requirements.memory_type_bits, vk::MemoryPropertyFlags::empty(), &memory_properties).ok_or_else(|| TextureImportError::VulkanError {
-				operation: "Failed to find suitable memory type for D3D11 texture".to_string(),
-			})?;
-
-		let allocate_info = vk::MemoryAllocateInfo::default()
-			.allocation_size(memory_requirements.size)
-			.memory_type_index(memory_type_index)
-			.push_next(&mut import_memory_win32);
-
-		let device_memory = unsafe {
-			device.allocate_memory(&allocate_info, None).map_err(|e| TextureImportError::VulkanError {
-				operation: format!("Failed to allocate memory for D3D11 texture: {:?}", e),
-			})?
-		};
-
-		// Bind memory to image
-		unsafe {
-			device.bind_image_memory(image, device_memory, 0).map_err(|e| TextureImportError::VulkanError {
-				operation: format!("Failed to bind memory to image: {:?}", e),
-			})?;
-		}
-
-		Ok(image)
 	}
 
 	fn import_d3d11_handle_to_d3d12(&self, hal_device: &<wgpu::hal::api::Dx12 as wgpu::hal::Api>::Device) -> Result<windows::Win32::Graphics::Direct3D12::ID3D12Resource, TextureImportError> {
