@@ -69,7 +69,7 @@ impl TextureImporter for IOSurfaceImporter {
 impl IOSurfaceImporter {
     fn import_via_metal(&self, device: &wgpu::Device) -> TextureImportResult {
         // Get wgpu's Metal device
-        use wgpu::{hal::Api, wgc::api::Metal};
+        use wgpu::{wgc::api::Metal, TextureUses};
         let hal_texture = unsafe {
             device.as_hal::<api::Metal, _, _>(|device| {
                 let Some(device) = device else {
@@ -95,7 +95,7 @@ impl IOSurfaceImporter {
                         sample_count: 1,
                         dimension: wgpu::TextureDimension::D2,
                         format: format::cef_to_wgpu(self.format)?,
-                        usage: wgpu::hal::TextureUses::RESOURCE,
+                        usage: TextureUses::RESOURCE,
                         memory_flags: wgpu::hal::MemoryFlags::empty(),
                         view_formats: vec![],
                     },
