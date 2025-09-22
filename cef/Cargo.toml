@@ -12,6 +12,7 @@ repository.workspace = true
 default = ["sandbox"]
 dox = ["cef-dll-sys/dox"]
 sandbox = ["cef-dll-sys/sandbox"]
+# Unified texture import system for CEF hardware acceleration
 accelerated_osr = ["wgpu", "windows", "libc", "ash", "tracing", "thiserror"]
 
 [package.metadata.docs.rs]
