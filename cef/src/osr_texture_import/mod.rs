@@ -13,10 +13,39 @@
 //! # Usage
 //!
 //! ```no_run
-//! // Import texture with automatic platform detection
-//! let texture = shared_handle.import_texture(&device)?;
-//! ```
+//! use cef::{PaintElementType, AcceleratedPaintInfo};
+//! use wgpu::Device;
+//! 
+//! fn on_accelerated_paint(device: &wgpu::Device, type_: PaintElementType, info: Option<&AcceleratedPaintInfo>) {
+//!     let Some(info) = info else { return };
 //!
+//!     let src_texture = {
+//!         use cef::osr_texture_import::shared_texture_handle::SharedTextureHandle;
+//!
+//!         if type_ != PaintElementType::default() {
+//!             return;
+//!         }
+//!
+//!         // Import texture with automatic platform detection
+//!         let shared_handle = SharedTextureHandle::new(info);
+//!         if let SharedTextureHandle::Unsupported = shared_handle {
+//!             eprintln!("Platform does not support accelerated painting");
+//!             return;
+//!         }
+//!
+//!         match shared_handle.import_texture(device) {
+//!             Ok(texture) => texture,
+//!                 Err(e) => {
+//!                     eprintln!("Failed to import shared texture: {:?}", e);
+//!                     return;
+//!                 }
+//!         }
+//!         // Use `src_texture` in rendering pipeline...
+//!     };
+//!     // Use `src_texture` in rendering pipeline...
+//! };
+//!```
+//! 
 //! # Features
 //!
 //! - `accelerated_paint` - Base feature for texture import
