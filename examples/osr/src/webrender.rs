@@ -295,7 +295,6 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         let Some(info) = info else { return };
 
         let src_texture = {
-            // Import from current relative path: texture_import::shared_texture_handle::SharedTextureHandle;
             use cef::osr_texture_import::shared_texture_handle::SharedTextureHandle;
 
             if type_ != PaintElementType::default() {
