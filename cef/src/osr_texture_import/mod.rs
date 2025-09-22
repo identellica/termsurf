@@ -94,6 +94,14 @@ pub enum TextureImportError {
     UnsupportedPlatform,
 }
 
+impl From<wgpu::hal::DeviceError> for TextureImportError {
+    fn from(e: wgpu::hal::DeviceError) -> Self {
+        TextureImportError::PlatformError {
+            message: format!("wgpu-hal DeviceError: {:?}", e),
+        }
+    }
+}
+
 /// Trait for platform-specific texture importers
 pub trait TextureImporter {
     fn new(info: &crate::AcceleratedPaintInfo) -> Self;

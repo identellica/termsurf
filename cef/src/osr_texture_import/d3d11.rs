@@ -3,7 +3,6 @@
 use super::common::{format, texture, vulkan};
 use super::{TextureImportError, TextureImportResult, TextureImporter};
 use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
-use ash::vk;
 use std::os::raw::c_void;
 use wgpu::hal::api;
 
@@ -151,28 +150,28 @@ impl D3D11Importer {
                 };
 
                 // Import D3D11 shared handle into Vulkan
-                let hal_texture =
-                    <api::Vulkan as wgpu::hal::Api>::Device::texture_from_d3d11_shared_handle(
-                        windows::Win32::Foundation::HANDLE(self.handle),
-                        &wgpu::hal::TextureDescriptor {
-                            label: Some("CEF D3D11 Shared Texture"),
-                            size: wgpu::Extent3d {
-                                width: self.width,
-                                height: self.height,
-                                depth_or_array_layers: 1,
-                            },
-                            mip_level_count: 1,
-                            sample_count: 1,
-                            dimension: wgpu::TextureDimension::D2,
-                            format: format::cef_to_wgpu(self.format)?,
-                            usage: TextureUses::COPY_DST | TextureUses::RESOURCE,
-                            memory_flags: wgpu::hal::MemoryFlags::empty(),
-                            view_formats: vec![],
+                <api::Vulkan as wgpu::hal::Api>::Device::texture_from_d3d11_shared_handle(
+                    device.raw(), // <-- Pass the raw Vulkan device
+                    windows::Win32::Foundation::HANDLE(self.handle),
+                    &wgpu::hal::TextureDescriptor {
+                        label: Some("CEF D3D11 Shared Texture"),
+                        size: wgpu::Extent3d {
+                            width: self.width,
+                            height: self.height,
+                            depth_or_array_layers: 1,
                         },
-                        None, // drop_callback
-                    )?;
-
-                Ok(hal_texture)
+                        mip_level_count: 1,
+                        sample_count: 1,
+                        dimension: wgpu::TextureDimension::D2,
+                        format: format::cef_to_wgpu(self.format)?,
+                        usage: TextureUses::COPY_DST | TextureUses::RESOURCE,
+                        memory_flags: wgpu::hal::MemoryFlags::empty(),
+                        view_formats: vec![],
+                    },
+                )
+                .map_err(|e| TextureImportError::PlatformError {
+                    message: format!("Failed to import D3D11 shared handle into Vulkan: {:?}", e),
+                })
             })
         }?;
 
