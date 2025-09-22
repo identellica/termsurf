@@ -4,22 +4,17 @@ edition = "2024"
 publish = false
 
 [dependencies]
-cef.workspace = true
+cef = { workspace = true, features = ["accelerated_osr"] }
+wgpu = { workspace = true }
 
 env_logger = "0.11"
 pollster = "0.4"
-wgpu = "25"
 tokio = { version = "1", features = ["full"] }
 winit = { version = "0.30" }
 bytemuck = "1"
 
-# Hardware acceleration dependencies
-ash = { version = "0.38" }
-thiserror = "2.0"
-tracing = "0.1"
-
 [target.'cfg(target_os = "windows")'.dependencies]
-windows = { version = "0.58", features = ["Win32_Graphics_Direct3D12"] }
+windows = { workspace = true }
 # For gpu debugging on Windows with PIX
 libloading = "0.8"
 

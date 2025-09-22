@@ -10,6 +10,9 @@ pub mod library_loader;
 #[cfg(target_os = "macos")]
 pub mod sandbox;
 
+#[cfg(feature = "accelerated_osr")]
+pub mod osr_texture_import;
+
 #[rustfmt::skip]
 mod bindings;
 pub use bindings::*;
