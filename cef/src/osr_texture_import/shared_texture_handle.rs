@@ -1,8 +1,8 @@
-use cef::AcceleratedPaintInfo;
+use crate::AcceleratedPaintInfo;
 
 use super::{TextureImportError, TextureImportResult, TextureImporter};
 
-pub(crate) enum SharedTextureHandle {
+pub enum SharedTextureHandle {
     #[cfg(target_os = "linux")]
     DmaBuf(super::dmabuf::DmaBufImporter),
     #[cfg(target_os = "windows")]
@@ -13,7 +13,7 @@ pub(crate) enum SharedTextureHandle {
 }
 
 impl SharedTextureHandle {
-    pub(crate) fn new(info: &AcceleratedPaintInfo) -> Self {
+    pub fn new(info: &AcceleratedPaintInfo) -> Self {
         // Extract DMA-BUF information
         #[cfg(target_os = "linux")]
         return Self::DmaBuf(super::dmabuf::DmaBufImporter::new(info));
@@ -31,7 +31,7 @@ impl SharedTextureHandle {
     }
 
     /// Import a texture using the appropriate platform-specific importer
-    pub(crate) fn import_texture(self, device: &wgpu::Device) -> TextureImportResult {
+    pub fn import_texture(self, device: &wgpu::Device) -> TextureImportResult {
         match self {
             #[cfg(target_os = "linux")]
             SharedTextureHandle::DmaBuf(importer) => importer.import_to_wgpu(device),

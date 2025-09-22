@@ -2,11 +2,11 @@
 
 use super::common::{format, texture, vulkan};
 use super::{TextureImportError, TextureImportResult, TextureImporter};
+use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
 use ash::vk;
-use cef::{AcceleratedPaintInfo, sys::cef_color_type_t};
 use wgpu::hal::api;
 
-pub(crate) struct DmaBufImporter {
+pub struct DmaBufImporter {
     fds: Vec<std::os::fd::RawFd>,
     format: cef_color_type_t,
     modifier: u64,
@@ -82,7 +82,7 @@ impl TextureImporter for DmaBufImporter {
 impl DmaBufImporter {
     fn import_via_vulkan(&self, device: &wgpu::Device) -> TextureImportResult {
         // Get wgpu's Vulkan instance and device
-        use wgpu::{TextureUses, wgc::api::Vulkan};
+        use wgpu::{wgc::api::Vulkan, TextureUses};
         let hal_texture = unsafe {
             device.as_hal::<api::Vulkan, _, _>(|device| {
                 let Some(device) = device else {
@@ -265,7 +265,7 @@ impl DmaBufImporter {
     }
 }
 
-fn extract_fds_from_info(info: &cef::AcceleratedPaintInfo) -> Vec<std::os::fd::RawFd> {
+fn extract_fds_from_info(info: &crate::AcceleratedPaintInfo) -> Vec<std::os::fd::RawFd> {
     let plane_count = info.plane_count as usize;
     let mut fds = Vec::with_capacity(plane_count);
 
@@ -278,7 +278,7 @@ fn extract_fds_from_info(info: &cef::AcceleratedPaintInfo) -> Vec<std::os::fd::R
     fds
 }
 
-fn extract_strides_from_info(info: &cef::AcceleratedPaintInfo) -> Vec<u32> {
+fn extract_strides_from_info(info: &crate::AcceleratedPaintInfo) -> Vec<u32> {
     let plane_count = info.plane_count as usize;
     let mut strides = Vec::with_capacity(plane_count);
 
@@ -291,7 +291,7 @@ fn extract_strides_from_info(info: &cef::AcceleratedPaintInfo) -> Vec<u32> {
     strides
 }
 
-fn extract_offsets_from_info(info: &cef::AcceleratedPaintInfo) -> Vec<u32> {
+fn extract_offsets_from_info(info: &crate::AcceleratedPaintInfo) -> Vec<u32> {
     let plane_count = info.plane_count as usize;
     let mut offsets = Vec::with_capacity(plane_count);
 

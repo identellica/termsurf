@@ -2,7 +2,7 @@
 
 use super::common::{format, texture};
 use super::{TextureImportError, TextureImportResult, TextureImporter};
-use cef::{AcceleratedPaintInfo, sys::cef_color_type_t};
+use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
 use core_foundation::base::{CFType, TCFType};
 use objc2_io_surface::{IOSurface, IOSurfaceRef};
 use objc2_metal::{

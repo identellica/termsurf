@@ -1,8 +1,8 @@
 //! Common utilities and traits for texture import across platforms
 
 use super::*;
+use crate::sys::cef_color_type_t;
 use ash::vk;
-use cef::sys::cef_color_type_t;
 use wgpu::Device;
 
 /// Common format conversion utilities

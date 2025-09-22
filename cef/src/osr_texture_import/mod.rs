@@ -26,8 +26,8 @@
 
 pub(crate) mod common;
 
-pub(crate) mod shared_texture_handle;
-// pub(crate) use shared_texture_handle::SharedTextureHandle;
+pub mod shared_texture_handle;
+pub use shared_texture_handle::SharedTextureHandle;
 
 #[cfg(target_os = "linux")]
 pub(crate) mod dmabuf;
@@ -48,7 +48,9 @@ pub enum TextureImportError {
     InvalidHandle(String),
 
     #[error("Unsupported texture format: {format:?}")]
-    UnsupportedFormat { format: cef::sys::cef_color_type_t },
+    UnsupportedFormat {
+        format: crate::sys::cef_color_type_t,
+    },
 
     #[error("Hardware acceleration not available: {reason}")]
     HardwareUnavailable { reason: String },
@@ -65,7 +67,7 @@ pub enum TextureImportError {
 
 /// Trait for platform-specific texture importers
 pub trait TextureImporter {
-    fn new(info: &cef::AcceleratedPaintInfo) -> Self;
+    fn new(info: &crate::AcceleratedPaintInfo) -> Self;
 
     /// Import the texture into wgpu, with automatic fallback to CPU texture
     fn import_to_wgpu(&self, device: &wgpu::Device) -> TextureImportResult;

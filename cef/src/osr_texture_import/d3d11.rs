@@ -2,8 +2,8 @@
 
 use super::common::{format, texture, vulkan};
 use super::{TextureImportError, TextureImportResult, TextureImporter};
+use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
 use ash::vk;
-use cef::{AcceleratedPaintInfo, sys::cef_color_type_t};
 use std::os::raw::c_void;
 use wgpu::hal::api;
 
@@ -141,7 +141,7 @@ impl D3D11Importer {
 
     fn import_via_vulkan(&self, device: &wgpu::Device) -> TextureImportResult {
         // Get wgpu's Vulkan instance and device
-        use wgpu::{TextureUses, wgc::api::Vulkan};
+        use wgpu::{wgc::api::Vulkan, TextureUses};
         let hal_texture = unsafe {
             device.as_hal::<api::Vulkan, _, _>(|device| {
                 let Some(device) = device else {

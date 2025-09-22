@@ -304,14 +304,14 @@ impl ImplRenderHandler for RenderHandlerBuilder {
 
             let shared_handle = SharedTextureHandle::new(info);
             if let SharedTextureHandle::Unsupported = shared_handle {
-                tracing::error!("Platform does not support accelerated painting");
+                eprintln!("Platform does not support accelerated painting");
                 return;
             }
 
             match shared_handle.import_texture(&self.handler.device) {
                 Ok(texture) => texture,
                 Err(e) => {
-                    tracing::error!("Failed to import shared texture: {:?}", e);
+                    eprintln!("Failed to import shared texture: {:?}", e);
                     return;
                 }
             }
