@@ -126,7 +126,7 @@ where
     location.as_ref().join("archive.json")
 }
 
-const URL: &str = "https://cef-builds.spotifycdn.com";
+pub const DEFAULT_CDN_URL: &str = "https://cef-builds.spotifycdn.com";
 
 #[derive(Clone, PartialEq, Eq, Deserialize, Serialize, ValueEnum)]
 #[serde(rename_all = "lowercase")]
@@ -157,8 +157,8 @@ pub struct CefIndex {
 }
 
 impl CefIndex {
-    pub fn download() -> Result<Self> {
-        Ok(ureq::get(&format!("{URL}/index.json"))
+    pub fn download(url: &str) -> Result<Self> {
+        Ok(ureq::get(&format!("{url}/index.json"))
             .call()?
             .into_body()
             .read_json()?)
@@ -224,7 +224,12 @@ pub struct CefVersion {
 }
 
 impl CefVersion {
-    pub fn download_archive<P>(&self, location: P, show_progress: bool) -> Result<PathBuf>
+    pub fn download_archive<P>(
+        &self,
+        url: &str,
+        location: P,
+        show_progress: bool,
+    ) -> Result<PathBuf>
     where
         P: AsRef<Path>,
     {
@@ -250,7 +255,7 @@ impl CefVersion {
             fs::remove_file(&corrupted_file)?;
         }
 
-        let cef_url = format!("{URL}/{file}");
+        let cef_url = format!("{url}/{file}");
         if show_progress {
             println!("Using archive url: {cef_url}");
         }
@@ -308,6 +313,7 @@ impl CefVersion {
 
     pub fn download_archive_with_retry<P>(
         &self,
+        url: &str,
         location: P,
         show_progress: bool,
         retry_delay: Duration,
@@ -316,7 +322,7 @@ impl CefVersion {
     where
         P: AsRef<Path>,
     {
-        let mut result = self.download_archive(&location, show_progress);
+        let mut result = self.download_archive(&url, &location, show_progress);
 
         let mut retry = 0;
         while let Err(Error::Io(_)) = &result {
@@ -327,7 +333,7 @@ impl CefVersion {
             retry += 1;
             thread::sleep(retry_delay * retry);
 
-            result = self.download_archive(&location, show_progress);
+            result = self.download_archive(&url, &location, show_progress);
         }
 
         result
@@ -387,6 +393,7 @@ impl TryFrom<&Path> for CefFile {
 }
 
 pub fn download_target_archive<P>(
+    url: &str,
     target: &str,
     cef_version: &str,
     location: P,
@@ -399,11 +406,11 @@ where
         println!("Downloading CEF archive for {target}...");
     }
 
-    let index = CefIndex::download()?;
+    let index = CefIndex::download(&url)?;
     let platform = index.platform(target)?;
     let version = platform.version(cef_version)?;
 
-    version.download_archive_with_retry(location, show_progress, Duration::from_secs(15), 3)
+    version.download_archive_with_retry(url, location, show_progress, Duration::from_secs(15), 3)
 }
 
 pub fn extract_target_archive<P, Q>(

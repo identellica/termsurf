@@ -4,7 +4,9 @@
 extern crate thiserror;
 
 use clap::Parser;
-use download_cef::{CefIndex, Channel, LINUX_TARGETS, MACOS_TARGETS, WINDOWS_TARGETS};
+use download_cef::{
+    CefIndex, Channel, DEFAULT_CDN_URL, LINUX_TARGETS, MACOS_TARGETS, WINDOWS_TARGETS,
+};
 use git_cliff::args::*;
 use regex::Regex;
 use semver::{BuildMetadata, Version};
@@ -54,8 +56,9 @@ fn main() -> Result<()> {
 
     let args = Args::parse();
     let channel = args.channel;
+    let url = std::env::var("CEF_DOWNLOAD_URL").unwrap_or(DEFAULT_CDN_URL.into());
 
-    let index = CefIndex::download()?;
+    let index = CefIndex::download(url.as_str())?;
     let latest_versions: Vec<_> = LINUX_TARGETS
         .iter()
         .chain(MACOS_TARGETS.iter())

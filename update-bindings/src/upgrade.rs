@@ -18,11 +18,12 @@ const TARGETS: &[&str] = &[
     "arm-unknown-linux-gnueabi",
 ];
 
-pub fn download(target: &str, version: &str) -> PathBuf {
+pub fn download(url: &str, target: &str, version: &str) -> PathBuf {
     assert!(TARGETS.contains(&target), "unsupported target {target}");
 
-    let archive = download_cef::download_target_archive(target, version, dirs::get_out_dir(), true)
-        .expect("download failed");
+    let archive =
+        download_cef::download_target_archive(url, target, version, dirs::get_out_dir(), true)
+            .expect("download failed");
 
     download_cef::extract_target_archive(target, &archive, dirs::get_out_dir(), true)
         .expect("extraction failed")

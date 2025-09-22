@@ -4,7 +4,7 @@
 extern crate thiserror;
 
 use clap::Parser;
-use download_cef::DEFAULT_TARGET;
+use download_cef::{DEFAULT_CDN_URL, DEFAULT_TARGET};
 use std::{fs, io::Read, path::Path, sync::OnceLock};
 
 #[derive(Debug, Error)]
@@ -54,10 +54,11 @@ struct Args {
 fn main() -> Result<()> {
     let args = Args::parse();
     let target = args.target.as_str();
+    let url = std::env::var("CEF_DOWNLOAD_URL").unwrap_or(DEFAULT_CDN_URL.into());
 
     if args.bindgen {
         if args.download {
-            let _ = upgrade::download(target, args.version.as_str());
+            let _ = upgrade::download(url.as_str(), target, args.version.as_str());
         }
 
         upgrade::sys_bindgen(target)?;
