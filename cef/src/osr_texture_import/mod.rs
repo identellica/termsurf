@@ -15,7 +15,6 @@
 //! ```no_run
 //! use cef::{PaintElementType, AcceleratedPaintInfo};
 //! use wgpu::Device;
-//! 
 //! fn on_accelerated_paint(device: &wgpu::Device, type_: PaintElementType, info: Option<&AcceleratedPaintInfo>) {
 //!     let Some(info) = info else { return };
 //!
@@ -45,7 +44,6 @@
 //!     // Use `src_texture` in rendering pipeline...
 //! };
 //!```
-//! 
 //! # Features
 //!
 //! - `accelerated_paint` - Base feature for texture import
