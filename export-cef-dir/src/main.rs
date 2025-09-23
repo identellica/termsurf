@@ -1,7 +1,7 @@
 #![doc = include_str!("../README.md")]
 
 use clap::Parser;
-use download_cef::{CefFile, CefIndex, OsAndArch, DEFAULT_CDN_URL, DEFAULT_TARGET};
+use download_cef::{CefFile, CefIndex, OsAndArch, DEFAULT_TARGET};
 use std::{
     fs,
     path::{Path, PathBuf},
@@ -16,6 +16,13 @@ fn default_version() -> &'static str {
         .as_str()
 }
 
+fn default_download_url() -> &'static str {
+    static DEFAULT_DOWNLOAD_URL: OnceLock<String> = OnceLock::new();
+    DEFAULT_DOWNLOAD_URL
+        .get_or_init(|| download_cef::default_download_url())
+        .as_str()
+}
+
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
 struct Args {
@@ -27,6 +34,8 @@ struct Args {
     target: String,
     #[arg(short, long, default_value = default_version())]
     version: String,
+    #[arg(short, long, default_value = default_download_url())]
+    mirror_url: String,
     #[arg(short, long)]
     archive: Option<String>,
     output: String,
@@ -35,7 +44,7 @@ struct Args {
 fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let output = PathBuf::from(args.output);
-    let url = std::env::var("CEF_DOWNLOAD_URL").unwrap_or(DEFAULT_CDN_URL.into());
+    let url = args.mirror_url.as_str();
 
     let parent = PathBuf::from(
         output
@@ -86,12 +95,12 @@ fn main() -> anyhow::Result<()> {
         }
         None => {
             let cef_version = args.version.as_str();
-            let index = CefIndex::download(url.as_str())?;
+            let index = CefIndex::download_from(url)?;
             let platform = index.platform(target)?;
             let version = platform.version(cef_version)?;
 
-            let archive = version.download_archive_with_retry(
-                url.as_str(),
+            let archive = version.download_archive_with_retry_from(
+                url,
                 &parent,
                 true,
                 Duration::from_secs(15),

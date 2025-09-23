@@ -4,9 +4,7 @@
 extern crate thiserror;
 
 use clap::Parser;
-use download_cef::{
-    CefIndex, Channel, DEFAULT_CDN_URL, LINUX_TARGETS, MACOS_TARGETS, WINDOWS_TARGETS,
-};
+use download_cef::{CefIndex, Channel, LINUX_TARGETS, MACOS_TARGETS, WINDOWS_TARGETS};
 use git_cliff::args::*;
 use regex::Regex;
 use semver::{BuildMetadata, Version};
@@ -15,6 +13,7 @@ use std::{
     io::Write,
     path::PathBuf,
     process::{Command, ExitStatus},
+    sync::OnceLock,
 };
 use toml_edit::{value, DocumentMut};
 
@@ -42,9 +41,18 @@ enum Error {
 
 type Result<T> = std::result::Result<T, Error>;
 
+fn default_download_url() -> &'static str {
+    static DEFAULT_DOWNLOAD_URL: OnceLock<String> = OnceLock::new();
+    DEFAULT_DOWNLOAD_URL
+        .get_or_init(|| download_cef::default_download_url())
+        .as_str()
+}
+
 #[derive(Parser)]
 #[command(about, long_about = None)]
 struct Args {
+    #[arg(short, long, default_value = default_download_url())]
+    mirror_url: String,
     #[arg(short, long, default_value = "stable")]
     channel: Channel,
     #[arg(short, long)]
@@ -56,9 +64,9 @@ fn main() -> Result<()> {
 
     let args = Args::parse();
     let channel = args.channel;
-    let url = std::env::var("CEF_DOWNLOAD_URL").unwrap_or(DEFAULT_CDN_URL.into());
+    let url = args.mirror_url.as_str();
 
-    let index = CefIndex::download(url.as_str())?;
+    let index = CefIndex::download_from(url)?;
     let latest_versions: Vec<_> = LINUX_TARGETS
         .iter()
         .chain(MACOS_TARGETS.iter())
