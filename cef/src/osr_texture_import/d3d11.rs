@@ -4,7 +4,6 @@ use super::common::{format, texture, vulkan};
 use super::{TextureImportError, TextureImportResult, TextureImporter};
 use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
 use std::os::raw::c_void;
-use wgpu::hal::api;
 
 pub struct D3D11Importer {
     pub handle: *mut c_void,
@@ -142,7 +141,7 @@ impl D3D11Importer {
         // Get wgpu's Vulkan instance and device
         use wgpu::{wgc::api::Vulkan, TextureUses};
         let hal_texture = unsafe {
-            device.as_hal::<api::Vulkan, _, _>(|device| {
+            device.as_hal::<Vulkan, _, _>(|device| {
                 let Some(device) = device else {
                     return Err(TextureImportError::HardwareUnavailable {
                         reason: "Device is not using Vulkan backend".to_string(),
@@ -150,8 +149,8 @@ impl D3D11Importer {
                 };
 
                 // Import D3D11 shared handle into Vulkan
-                <api::Vulkan as wgpu::hal::Api>::Device::texture_from_d3d11_shared_handle(
-                    device.raw(), // <-- Pass the raw Vulkan device
+                <Vulkan as wgpu::hal::Api>::Device::texture_from_d3d11_shared_handle(
+                    device, // <-- Pass the raw Vulkan device
                     windows::Win32::Foundation::HANDLE(self.handle),
                     &wgpu::hal::TextureDescriptor {
                         label: Some("CEF D3D11 Shared Texture"),

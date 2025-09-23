@@ -2,7 +2,6 @@
 
 use super::*;
 use crate::sys::cef_color_type_t;
-use ash::vk;
 use wgpu::Device;
 
 /// Common format conversion utilities
@@ -20,12 +19,12 @@ pub mod format {
         }
     }
 
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "linux")]
     /// Convert CEF color type to Vulkan format
-    pub fn cef_to_vulkan(format: cef_color_type_t) -> Result<vk::Format, TextureImportError> {
+    pub fn cef_to_vulkan(format: cef_color_type_t) -> Result<ash::vk::Format, TextureImportError> {
         match format {
-            cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => Ok(vk::Format::B8G8R8A8_UNORM),
-            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => Ok(vk::Format::R8G8B8A8_UNORM),
+            cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => Ok(ash::vk::Format::B8G8R8A8_UNORM),
+            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => Ok(ash::vk::Format::R8G8B8A8_UNORM),
             _ => Err(TextureImportError::UnsupportedFormat { format }),
         }
     }
@@ -75,6 +74,7 @@ pub mod vulkan {
     use super::*;
 
     /// Find a suitable memory type index for Vulkan allocation
+    #[cfg(target_os = "linux")]
     pub fn find_memory_type_index(
         type_filter: u32,
         properties: vk::MemoryPropertyFlags,
