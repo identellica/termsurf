@@ -2,8 +2,6 @@
 
 use super::*;
 use crate::sys::cef_color_type_t;
-#[cfg(target_os = "linux")]
-use ash::vk;
 use wgpu::Device;
 
 /// Common format conversion utilities
@@ -73,7 +71,10 @@ pub mod texture {
 
 /// Common Vulkan utilities
 pub mod vulkan {
-    use super::*;
+    use super::Device;
+
+    #[cfg(target_os = "linux")]
+    use ash::vk;
 
     /// Find a suitable memory type index for Vulkan allocation
     #[cfg(target_os = "linux")]

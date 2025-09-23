@@ -13,7 +13,7 @@ default = ["sandbox"]
 dox = ["cef-dll-sys/dox"]
 sandbox = ["cef-dll-sys/sandbox"]
 # Unified texture import system for CEF hardware acceleration
-accelerated_osr = ["wgpu", "windows", "libc", "ash", "tracing", "thiserror", "objc2-io-surface", "objc2-metal", "core-foundation" ]
+accelerated_osr = ["wgpu", "windows", "libc", "ash", "tracing", "thiserror", "objc2-io-surface", "objc2-metal", "core-foundation", "objc", "metal" ]
 
 [package.metadata.docs.rs]
 features = ["dox"]
@@ -36,7 +36,8 @@ libloading = "0.8"
 objc2-io-surface = { version = "0.3", optional = true }
 objc2-metal = { version = "0.3", optional = true }
 core-foundation = { version = "0.9", optional = true }
-
+objc = { version = "0.2", optional = true }
+metal = { version = "0.31", optional = true }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 libc = { version = "0.2", optional = true }
