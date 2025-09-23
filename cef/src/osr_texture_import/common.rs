@@ -2,6 +2,8 @@
 
 use super::*;
 use crate::sys::cef_color_type_t;
+#[cfg(target_os = "linux")]
+use ash::vk;
 use wgpu::Device;
 
 /// Common format conversion utilities
