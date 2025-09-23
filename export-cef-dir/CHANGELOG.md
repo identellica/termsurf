@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [140.3.0+140.1.14](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v140.2.0+140.1.14...export-cef-dir-v140.3.0+140.1.14) - 2025-09-23
+
+### Added
+
+- add --mirror-url cli args
+- Allow to download CEF binaries with custom base url set in env variable
+
 ## [140.2.0+140.1.14](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v140.1.0+140.1.13...export-cef-dir-v140.2.0+140.1.14) - 2025-09-21
 
 ### Other
