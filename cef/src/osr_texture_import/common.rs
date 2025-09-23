@@ -71,6 +71,7 @@ pub mod texture {
 
 /// Common Vulkan utilities
 pub mod vulkan {
+    #[cfg(not(target_os = "macos"))]
     use super::Device;
 
     #[cfg(target_os = "linux")]
