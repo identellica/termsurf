@@ -3,8 +3,7 @@
 use super::common::texture;
 use super::{TextureImportError, TextureImportResult, TextureImporter};
 use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
-use core_foundation::base::{CFType, TCFType};
-use objc2_io_surface::{IOSurface, IOSurfaceRef};
+use objc2_io_surface::IOSurfaceRef;
 use wgpu::TextureDescriptor;
 
 use std::os::raw::c_void;
@@ -123,30 +122,34 @@ impl IOSurfaceImporter {
 
         let res_texture = unsafe {
             // Convert handle to IOSurface
-            let iosurface = unsafe {
-                let cf_type = CFType::wrap_under_get_rule(self.handle as IOSurfaceRef);
-                IOSurface::from(cf_type)
+            let Some(io_surface) = std::ptr::NonNull::new(self.handle.cast::<IOSurfaceRef>())
+            else {
+                return;
             };
 
             let texture_desc = self.get_texture_desc();
             let metal_desc = self.get_metal_desc(&texture_desc)?;
 
-            let Some(device) = device_.as_hal::<wgpu::wgc::api::Metal, _, _>(|d| d) else {
+            let Some(device) = device_ else {
+                return Err(TextureImportError::InvalidHandle(
+                    "Failed to get wgpu device".to_string(),
+                ));
+            };
+
+            let Some(hal_device) = device_.as_hal::<wgpu::wgc::api::Metal, _, _>(|d| d) else {
                 return Err(TextureImportError::InvalidHandle(
                     "Failed to get Metal device from wgpu".to_string(),
                 ));
             };
-            let texture = device.as_hal::<wgpu::wgc::api::Metal, _, _>(|hdevice| {
-                        hdevice.map(|hdevice|  {
-                            objc::msg_send![
-                                std::mem::transmute::<_,&metal::NSObject>(hdevice.raw_device().lock().as_ref()),
-                                newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(
-                                                                        metal_desc.as_ref())
-                                                                        &iosurface,
-                                                                        0
-                                                            ]
-                        })
-                    }).unwrap();
+
+            let texture = {
+                objc::msg_send![
+                    std::mem::transmute::<_,&metal::NSObject>(hal_device.raw_device().lock().as_ref()),
+                    newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(metal_desc.as_ref())
+                    &iosurface,
+                    0
+                ]
+            };
 
             let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
                 texture,
