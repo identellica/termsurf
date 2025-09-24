@@ -8,7 +8,6 @@ use objc2_io_surface::{IOSurface, IOSurfaceRef};
 use wgpu::TextureDescriptor;
 
 use std::os::raw::c_void;
-use wgpu::hal::api;
 
 pub struct IOSurfaceImporter {
     pub handle: *mut c_void,
@@ -93,7 +92,7 @@ impl IOSurfaceImporter {
         &self,
         texture_desc: &TextureDescriptor,
     ) -> Result<metal::TextureDescriptor, TextureImportError> {
-        use metal::{MTLPixelFormat, MTLTextureType, MTLTextureUsage};
+        use metal::{MTLPixelFormat, MTLStorageMode, MTLTextureType, MTLTextureUsage};
 
         if self.width == 0 || self.height == 0 {
             return Err(TextureImportError::InvalidHandle(
@@ -116,7 +115,7 @@ impl IOSurfaceImporter {
         metal_desc.set_usage(MTLTextureUsage::ShaderRead);
         metal_desc.set_storage_mode(MTLStorageMode::Managed);
 
-        metal_desc
+        Ok(metal_desc)
     }
 
     fn import_via_metal(&self, device_: &wgpu::Device) -> TextureImportResult {
@@ -125,34 +124,26 @@ impl IOSurfaceImporter {
         let res_texture = unsafe {
             // Convert handle to IOSurface
             let iosurface = unsafe {
-                let cf_type = CFType::wrap_under_get_rule(self.handle);
+                let cf_type = CFType::wrap_under_get_rule(self.handle as IOSurfaceRef);
                 IOSurface::from(cf_type)
             };
 
             let texture_desc = self.get_texture_desc();
-            let metal_desc = self.get_metal_desc(texture_desc)?;
+            let metal_desc = self.get_metal_desc(&texture_desc)?;
 
-            let device = if let Some(device) = device_.as_hal::<wgpu::wgc::api::Metal, _, _>(|d| d)
-            {
-                device.ok_or_else(|| {
-                    TextureImportError::InvalidHandle(
-                        "Failed to get Metal device from wgpu".to_string(),
-                    )
-                })?
-            } else {
+            let Some(device) = device_.as_hal::<wgpu::wgc::api::Metal, _, _>(|d| d) else {
                 return Err(TextureImportError::InvalidHandle(
                     "Failed to get Metal device from wgpu".to_string(),
                 ));
             };
             let texture = device.as_hal::<wgpu::wgc::api::Metal, _, _>(|hdevice| {
                         hdevice.map(|hdevice|  {
-                            use objc::*;
                             objc::msg_send![
                                 std::mem::transmute::<_,&metal::NSObject>(hdevice.raw_device().lock().as_ref()),
                                 newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(
                                                                         metal_desc.as_ref())
                                                                         &iosurface,
-                                                                        plane:0
+                                                                        0
                                                             ]
                         })
                     }).unwrap();
