@@ -120,27 +120,17 @@ impl IOSurfaceImporter {
     fn import_via_metal(&self, device_: &wgpu::Device) -> TextureImportResult {
         use metal::MTLTextureType;
 
-        let res_texture = unsafe {
+        let res_texture = (|| {
             // Convert handle to IOSurface
-            let Some(io_surface) = std::ptr::NonNull::new(self.handle.cast::<IOSurfaceRef>())
-            else {
-                return;
-            };
+            let io_surface = std::ptr::NonNull::new(self.handle.cast::<IOSurfaceRef>())
+                .ok_or(TextureImportError::InvalidHandle("Invalid IOSurface handle".to_string()))?;
 
             let texture_desc = self.get_texture_desc();
             let metal_desc = self.get_metal_desc(&texture_desc)?;
 
-            let Some(device) = device_ else {
-                return Err(TextureImportError::InvalidHandle(
-                    "Failed to get wgpu device".to_string(),
-                ));
-            };
-
-            let Some(hal_device) = device_.as_hal::<wgpu::wgc::api::Metal, _, _>(|d| d) else {
-                return Err(TextureImportError::InvalidHandle(
-                    "Failed to get Metal device from wgpu".to_string(),
-                ));
-            };
+            // Get Metal device from wgpu
+            let hal_device = device_.as_hal::<wgpu::wgc::api::Metal, _, _>(|d| d)
+                .ok_or(TextureImportError::InvalidHandle("Failed to get Metal device from wgpu".to_string()))?;
 
             let texture = {
                 objc::msg_send![
@@ -164,8 +154,8 @@ impl IOSurfaceImporter {
                 },
             );
 
-            device.create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc)
-        }?;
+            Ok(device.create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc))
+        })()?;
 
         Ok(res_texture)
     }
