@@ -1,5 +1,7 @@
 //! macOS IOSurface texture import implementation
 
+#![allow(unexpected_cfgs)] // Suppress objc crate internal cfg warnings
+
 use super::common::texture;
 use super::{TextureImportError, TextureImportResult, TextureImporter};
 use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
@@ -7,6 +9,9 @@ use objc2_io_surface::IOSurfaceRef;
 use wgpu::TextureDescriptor;
 
 use std::os::raw::c_void;
+
+#[cfg(target_os = "macos")]
+use objc::{sel, sel_impl};
 
 pub struct IOSurfaceImporter {
     pub handle: *mut c_void,
@@ -64,7 +69,7 @@ impl TextureImporter for IOSurfaceImporter {
 }
 
 impl IOSurfaceImporter {
-    fn get_texture_desc(&self) -> TextureDescriptor {
+    fn get_texture_desc(&self) -> TextureDescriptor<'_> {
         use wgpu::{Extent3d, TextureDimension, TextureUsages};
         let format = match self.format {
             cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => wgpu::TextureFormat::Bgra8Unorm,
@@ -120,48 +125,48 @@ impl IOSurfaceImporter {
     fn import_via_metal(&self, device: &wgpu::Device) -> TextureImportResult {
         use metal::MTLTextureType;
 
-        let res_texture = (|| {
-            // Convert handle to IOSurface
-            let io_surface = std::ptr::NonNull::new(self.handle.cast::<IOSurfaceRef>()).ok_or(
-                TextureImportError::InvalidHandle("Invalid IOSurface handle".to_string()),
-            )?;
+        // Convert handle to IOSurface
+        let io_surface = std::ptr::NonNull::new(self.handle.cast::<IOSurfaceRef>()).ok_or(
+            TextureImportError::InvalidHandle("Invalid IOSurface handle".to_string()),
+        )?;
 
-            let texture_desc = self.get_texture_desc();
-            let metal_desc = self.get_metal_desc(&texture_desc)?;
+        let texture_desc = self.get_texture_desc();
+        let metal_desc = self.get_metal_desc(&texture_desc)?;
 
-            // Get Metal device from wgpu
-            let hal_device = device.as_hal::<wgpu::wgc::api::Metal, _, _>(|d| d).ok_or(
-                TextureImportError::InvalidHandle(
-                    "Failed to get Metal device from wgpu".to_string(),
-                ),
-            )?;
+        // Get Metal device from wgpu and create texture
+        let hal_tex = unsafe {
+            device.as_hal::<wgpu::wgc::api::Metal, _, _>(|hal_device| {
+                let Some(hal_device) = hal_device else {
+                    return Err(TextureImportError::InvalidHandle(
+                        "Failed to get Metal device from wgpu".to_string(),
+                    ));
+                };
 
-            let texture = {
-                objc::msg_send![
+                let texture = objc::msg_send![
                     std::mem::transmute::<_,&metal::NSObject>(hal_device.raw_device().lock().as_ref()),
                     newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(metal_desc.as_ref())
                     iosurface:io_surface
                     plane:0
-                ]
-            };
+                ];
 
-            let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
-                texture,
-                texture_desc.format,
-                MTLTextureType::D2,
-                texture_desc.array_layer_count(),
-                texture_desc.mip_level_count,
-                wgpu::hal::CopyExtent {
-                    width: texture_desc.size.width,
-                    height: texture_desc.size.height,
-                    depth: texture_desc.array_layer_count(),
-                },
-            );
+                let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
+                    texture,
+                    texture_desc.format,
+                    MTLTextureType::D2,
+                    texture_desc.array_layer_count(),
+                    texture_desc.mip_level_count,
+                    wgpu::hal::CopyExtent {
+                        width: texture_desc.size.width,
+                        height: texture_desc.size.height,
+                        depth: texture_desc.array_layer_count(),
+                    },
+                );
 
-            Ok(device.create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc))
-        })()?;
+                Ok::<_, TextureImportError>(hal_tex)
+            })
+        }?;
 
-        Ok(res_texture)
+        Ok(unsafe { device.create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc) })
     }
 
     fn is_metal_backend(&self, device: &wgpu::Device) -> bool {
