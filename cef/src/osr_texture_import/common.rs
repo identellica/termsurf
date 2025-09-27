@@ -96,25 +96,17 @@ pub mod vulkan {
     #[cfg(not(target_os = "macos"))]
     pub fn is_vulkan_backend(device: &Device) -> bool {
         use wgpu::hal::api;
-        let mut is_vulkan = false;
         unsafe {
-            device.as_hal::<api::Vulkan, _, _>(|device| {
-                is_vulkan = device.is_some();
-            });
+            device.as_hal::<api::Vulkan>().is_some()
         }
-        is_vulkan
     }
 
     /// Check if the wgpu device is using D3D12 backend
     #[cfg(target_os = "windows")]
     pub fn is_d3d12_backend(device: &Device) -> bool {
         use wgpu::hal::api;
-        let mut is_d3d12 = false;
         unsafe {
-            device.as_hal::<api::Dx12, _, _>(|device| {
-                is_d3d12 = device.is_some();
-            });
+            device.as_hal::<api::Dx12>().is_some()
         }
-        is_d3d12
     }
 }

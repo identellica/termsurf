@@ -84,39 +84,39 @@ impl DmaBufImporter {
         // Get wgpu's Vulkan instance and device
         use wgpu::{wgc::api::Vulkan, TextureUses};
         let hal_texture = unsafe {
-            device.as_hal::<api::Vulkan, _, _>(|device| {
-                let Some(device) = device else {
-                    return Err(TextureImportError::HardwareUnavailable {
-                        reason: "Device is not using Vulkan backend".to_string(),
-                    });
-                };
+            let hal_device_guard = device.as_hal::<api::Vulkan>();
+            let Some(hal_device) = hal_device_guard else {
+                return Err(TextureImportError::HardwareUnavailable {
+                    reason: "Device is not using Vulkan backend".to_string(),
+                });
+            };
 
-                // Create VkImage from DMA-BUF using external memory
-                let vk_image = self.create_vulkan_image_from_dmabuf(device)?;
+            // Create VkImage from DMA-BUF using external memory
+            let vk_image = self.create_vulkan_image_from_dmabuf(&hal_device)?;
 
-                // Wrap VkImage in wgpu-hal texture
-                let hal_texture = <api::Vulkan as wgpu::hal::Api>::Device::texture_from_raw(
-                    vk_image,
-                    &wgpu::hal::TextureDescriptor {
-                        label: Some("CEF DMA-BUF Texture"),
-                        size: wgpu::Extent3d {
-                            width: self.width,
-                            height: self.height,
-                            depth_or_array_layers: 1,
-                        },
-                        mip_level_count: 1,
-                        sample_count: 1,
-                        dimension: wgpu::TextureDimension::D2,
-                        format: format::cef_to_wgpu(self.format)?,
-                        usage: TextureUses::COPY_DST | TextureUses::RESOURCE,
-                        memory_flags: wgpu::hal::MemoryFlags::empty(),
-                        view_formats: vec![],
+            // Wrap VkImage in wgpu-hal texture
+            let hal_texture = <api::Vulkan as wgpu::hal::Api>::Device::texture_from_raw(
+                &hal_device,
+                vk_image,
+                &wgpu::hal::TextureDescriptor {
+                    label: Some("CEF DMA-BUF Texture"),
+                    size: wgpu::Extent3d {
+                        width: self.width,
+                        height: self.height,
+                        depth_or_array_layers: 1,
                     },
-                    None, // drop_callback
-                );
+                    mip_level_count: 1,
+                    sample_count: 1,
+                    dimension: wgpu::TextureDimension::D2,
+                    format: format::cef_to_wgpu(self.format)?,
+                    usage: TextureUses::COPY_DST | TextureUses::RESOURCE,
+                    memory_flags: wgpu::hal::MemoryFlags::empty(),
+                    view_formats: vec![],
+                },
+                None, // drop_callback
+            );
 
-                Ok(hal_texture)
-            })
+            Ok::<_, TextureImportError>(hal_texture)
         }?;
 
         // Import hal texture into wgpu

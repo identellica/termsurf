@@ -85,32 +85,32 @@ impl D3D11Importer {
         // Get wgpu's D3D12 device
         use wgpu::hal::api;
         let hal_texture = unsafe {
-            device.as_hal::<api::Dx12, _, _>(|device| {
-                let Some(device) = device else {
-                    return Err(TextureImportError::HardwareUnavailable {
-                        reason: "Device is not using D3D12 backend".to_string(),
-                    });
-                };
+            let hal_device_guard = device.as_hal::<api::Dx12>();
+            let Some(hal_device) = hal_device_guard else {
+                return Err(TextureImportError::HardwareUnavailable {
+                    reason: "Device is not using D3D12 backend".to_string(),
+                });
+            };
 
-                // Import D3D11 shared handle directly into D3D12 resource
-                let d3d12_resource = self.import_d3d11_handle_to_d3d12(device)?;
+            // Import D3D11 shared handle directly into D3D12 resource
+            let d3d12_resource = self.import_d3d11_handle_to_d3d12(&hal_device)?;
 
-                // Wrap D3D12 resource in wgpu-hal texture
-                let hal_texture = <api::Dx12 as wgpu::hal::Api>::Device::texture_from_raw(
-                    d3d12_resource,
-                    format::cef_to_wgpu(self.format)?,
-                    wgpu::TextureDimension::D2,
-                    wgpu::Extent3d {
-                        width: self.width,
-                        height: self.height,
-                        depth_or_array_layers: 1,
-                    },
-                    1, // mip_level_count
-                    1, // sample_count
-                );
+            // Wrap D3D12 resource in wgpu-hal texture
+            let hal_texture = <api::Dx12 as wgpu::hal::Api>::Device::texture_from_raw(
+                &hal_device,
+                d3d12_resource,
+                format::cef_to_wgpu(self.format)?,
+                wgpu::TextureDimension::D2,
+                wgpu::Extent3d {
+                    width: self.width,
+                    height: self.height,
+                    depth_or_array_layers: 1,
+                },
+                1, // mip_level_count
+                1, // sample_count
+            );
 
-                Ok(hal_texture)
-            })
+            Ok::<_, TextureImportError>(hal_texture)
         }?;
 
         // Import hal texture into wgpu
@@ -141,37 +141,38 @@ impl D3D11Importer {
         // Get wgpu's Vulkan instance and device
         use wgpu::{wgc::api::Vulkan, TextureUses};
         let hal_texture = unsafe {
-            device.as_hal::<Vulkan, _, _>(|device| {
-                let Some(device) = device else {
-                    return Err(TextureImportError::HardwareUnavailable {
-                        reason: "Device is not using Vulkan backend".to_string(),
-                    });
-                };
+            let hal_device_guard = device.as_hal::<Vulkan>();
+            let Some(hal_device) = hal_device_guard else {
+                return Err(TextureImportError::HardwareUnavailable {
+                    reason: "Device is not using Vulkan backend".to_string(),
+                });
+            };
 
-                // Import D3D11 shared handle into Vulkan
-                <Vulkan as wgpu::hal::Api>::Device::texture_from_d3d11_shared_handle(
-                    device, // <-- Pass the raw Vulkan device
-                    windows::Win32::Foundation::HANDLE(self.handle),
-                    &wgpu::hal::TextureDescriptor {
-                        label: Some("CEF D3D11 Shared Texture"),
-                        size: wgpu::Extent3d {
-                            width: self.width,
-                            height: self.height,
-                            depth_or_array_layers: 1,
-                        },
-                        mip_level_count: 1,
-                        sample_count: 1,
-                        dimension: wgpu::TextureDimension::D2,
-                        format: format::cef_to_wgpu(self.format)?,
-                        usage: TextureUses::COPY_DST | TextureUses::RESOURCE,
-                        memory_flags: wgpu::hal::MemoryFlags::empty(),
-                        view_formats: vec![],
+            // Import D3D11 shared handle into Vulkan
+            let hal_texture = <Vulkan as wgpu::hal::Api>::Device::texture_from_d3d11_shared_handle(
+                &hal_device, // <-- Pass the raw Vulkan device
+                windows::Win32::Foundation::HANDLE(self.handle),
+                &wgpu::hal::TextureDescriptor {
+                    label: Some("CEF D3D11 Shared Texture"),
+                    size: wgpu::Extent3d {
+                        width: self.width,
+                        height: self.height,
+                        depth_or_array_layers: 1,
                     },
-                )
-                .map_err(|e| TextureImportError::PlatformError {
-                    message: format!("Failed to import D3D11 shared handle into Vulkan: {:?}", e),
-                })
-            })
+                    mip_level_count: 1,
+                    sample_count: 1,
+                    dimension: wgpu::TextureDimension::D2,
+                    format: format::cef_to_wgpu(self.format)?,
+                    usage: TextureUses::COPY_DST | TextureUses::RESOURCE,
+                    memory_flags: wgpu::hal::MemoryFlags::empty(),
+                    view_formats: vec![],
+                },
+            )
+            .map_err(|e| TextureImportError::PlatformError {
+                message: format!("Failed to import D3D11 shared handle into Vulkan: {:?}", e),
+            })?;
+
+            Ok::<_, TextureImportError>(hal_texture)
         }?;
 
         // Import hal texture into wgpu

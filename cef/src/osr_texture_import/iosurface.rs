@@ -135,35 +135,35 @@ impl IOSurfaceImporter {
 
         // Get Metal device from wgpu and create texture
         let hal_tex = unsafe {
-            device.as_hal::<wgpu::wgc::api::Metal, _, _>(|hal_device| {
-                let Some(hal_device) = hal_device else {
-                    return Err(TextureImportError::InvalidHandle(
-                        "Failed to get Metal device from wgpu".to_string(),
-                    ));
-                };
+            let hal_device_guard = device.as_hal::<wgpu::wgc::api::Metal>();
+            let Some(hal_device) = hal_device_guard else {
+                return Err(TextureImportError::InvalidHandle(
+                    "Failed to get Metal device from wgpu".to_string(),
+                ));
+            };
 
-                let texture = objc::msg_send![
-                    std::mem::transmute::<_,&metal::NSObject>(hal_device.raw_device().lock().as_ref()),
-                    newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(metal_desc.as_ref())
-                    iosurface:io_surface
-                    plane:0
-                ];
+            let texture = objc::msg_send![
+                std::mem::transmute::<_,&metal::NSObject>(hal_device.raw_device().lock().as_ref()),
+                newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(metal_desc.as_ref())
+                iosurface:io_surface
+                plane:0
+            ];
 
-                let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
-                    texture,
-                    texture_desc.format,
-                    MTLTextureType::D2,
-                    texture_desc.array_layer_count(),
-                    texture_desc.mip_level_count,
-                    wgpu::hal::CopyExtent {
-                        width: texture_desc.size.width,
-                        height: texture_desc.size.height,
-                        depth: texture_desc.array_layer_count(),
-                    },
-                );
+            let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
+                &hal_device,
+                texture,
+                texture_desc.format,
+                MTLTextureType::D2,
+                texture_desc.array_layer_count(),
+                texture_desc.mip_level_count,
+                wgpu::hal::CopyExtent {
+                    width: texture_desc.size.width,
+                    height: texture_desc.size.height,
+                    depth: texture_desc.array_layer_count(),
+                },
+            );
 
-                Ok::<_, TextureImportError>(hal_tex)
-            })
+            Ok::<_, TextureImportError>(hal_tex)
         }?;
 
         Ok(unsafe { device.create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc) })
@@ -171,12 +171,8 @@ impl IOSurfaceImporter {
 
     fn is_metal_backend(&self, device: &wgpu::Device) -> bool {
         use wgpu::hal::api;
-        let mut is_metal = false;
         unsafe {
-            device.as_hal::<api::Metal, _, _>(|device| {
-                is_metal = device.is_some();
-            });
+            device.as_hal::<api::Metal>().is_some()
         }
-        is_metal
     }
 }
