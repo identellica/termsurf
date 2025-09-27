@@ -248,14 +248,19 @@ impl ApplicationHandler for App {
 
         let state = pollster::block_on(State::new(window.clone()));
         self.state = Some(state);
-        let window_info = WindowInfo {
+        let mut window_info = WindowInfo {
             windowless_rendering_enabled: true as _,
-            #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
-            shared_texture_enabled: true as _,
-            #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
-            external_begin_frame_enabled: true as _,
             ..Default::default()
         };
+        #[cfg(all(
+            any(target_os = "macos", target_os = "windows", target_os = "linux"),
+            feature = "accelerated_osr"
+        ))]
+        {
+            window_info.shared_texture_enabled = true as _;
+            window_info.external_begin_frame_enabled = true as _;
+        }
+
         let device_scale_factor = window.scale_factor();
         let (render_handler, browser_size) = OsrRenderHandler::new(
             self.state.as_ref().unwrap().device.clone(),

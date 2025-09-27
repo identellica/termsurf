@@ -3,6 +3,10 @@ name = "cef-osr"
 edition = "2024"
 publish = false
 
+[features]
+default = ["accelerated_osr"]
+accelerated_osr = ["cef/accelerated_osr"]
+
 [dependencies]
 cef = { workspace = true, features = ["accelerated_osr"] }
 wgpu = { workspace = true }

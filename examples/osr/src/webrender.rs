@@ -279,7 +279,10 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         false as _
     }
 
-    #[cfg(any(target_os = "macos", target_os = "windows", target_os = "linux"))]
+    #[cfg(all(
+        any(target_os = "macos", target_os = "windows", target_os = "linux"),
+        feature = "accelerated_osr"
+    ))]
     fn on_accelerated_paint(
         &self,
         _browser: Option<&mut Browser>,
@@ -378,7 +381,10 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         });
     }
 
-    #[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
+    #[cfg(any(
+        not(any(target_os = "macos", target_os = "windows", target_os = "linux")),
+        not(feature = "accelerated_osr")
+    ))]
     fn on_paint(
         &self,
         _browser: Option<&mut Browser>,
