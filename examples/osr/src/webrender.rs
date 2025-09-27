@@ -1,5 +1,3 @@
-#[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
-use cef::sys::cef_color_type_t;
 use cef::{
     self, BrowserProcessHandler, ImplBrowserProcessHandler, WrapBrowserProcessHandler,
     rc::{Rc, RcImpl},
@@ -9,8 +7,6 @@ use cef::{
 use cef::{ImplRequestContextHandler, RequestContextHandler, WrapRequestContextHandler};
 use std::cell::RefCell;
 use std::ptr::null_mut;
-#[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
-use wgpu::{Extent3d, TextureDescriptor, TextureDimension, TextureUsages};
 
 #[derive(Clone)]
 pub struct OsrApp {}
@@ -393,6 +389,8 @@ impl ImplRenderHandler for RenderHandlerBuilder {
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
     ) {
+        use wgpu::{Extent3d, TextureDescriptor, TextureDimension, TextureUsages};
+
         if buffer.is_null() || width <= 0 || height <= 0 {
             return;
         }
