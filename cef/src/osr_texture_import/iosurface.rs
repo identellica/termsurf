@@ -150,7 +150,6 @@ impl IOSurfaceImporter {
             ];
 
             let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
-                &hal_device,
                 texture,
                 texture_desc.format,
                 MTLTextureType::D2,

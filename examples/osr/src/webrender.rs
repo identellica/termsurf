@@ -511,7 +511,7 @@ impl ImplRenderHandler for RenderHandlerBuilder {
 }
 
 thread_local! {
-    pub static TEXTURE: RefCell<Option<wgpu::BindGroup>> = RefCell::new(None);
+    pub static TEXTURE: RefCell<Option<wgpu::BindGroup>> = const { RefCell::new(None) };
 }
 
 pub(crate) struct ClientBuilder {
