@@ -166,13 +166,13 @@ impl IOSurfaceImporter {
             Ok::<_, TextureImportError>(hal_tex)
         }?;
 
-        Ok(unsafe { device.create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc) })
+        Ok(unsafe {
+            device.create_texture_from_hal::<wgpu::wgc::api::Metal>(hal_tex, &texture_desc)
+        })
     }
 
     fn is_metal_backend(&self, device: &wgpu::Device) -> bool {
         use wgpu::hal::api;
-        unsafe {
-            device.as_hal::<api::Metal>().is_some()
-        }
+        unsafe { device.as_hal::<api::Metal>().is_some() }
     }
 }
