@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [140.3.1+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.0+140.1.14...cef-v140.3.1+140.1.14) - 2025-10-03
+
+### Fixed
+
+- copy wrapped out-params back to pointers ([#224](https://github.com/tauri-apps/cef-rs/pull/224))
+
+### Other
+
+- update bindings
+- *(test)* test out-params
+
 ## [140.2.0+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.1.0+140.1.13...cef-v140.2.0+140.1.14) - 2025-09-21
 
 ### Other
