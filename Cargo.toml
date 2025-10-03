@@ -28,12 +28,19 @@ cef-dll-sys = { version = "140.2.0", path = "sys" }
 download-cef = { version = "2.1", path = "download-cef" }
 
 anyhow = "1"
+ash = "0.38"
 bindgen = "0.72"
 clap = { version = "4", features = ["derive"] }
 cmake = "0.1.52"
 convert_case = "0.8"
 git-cliff = "2"
 git-cliff-core = "2"
+io-surface = "0.16"
+libc = "0.2"
+libloading = "0.8"
+metal = "0.31"
+objc = "0.2"
+objc2-io-surface = "0.3"
 plist = "1"
 proc-macro2 = "1"
 quote = "1"
@@ -44,7 +51,8 @@ serde_json = "1"
 syn = { version = "2", features = ["full"] }
 thiserror = "2"
 toml_edit = "0.23"
-wgpu = "^26.0.1"
+tracing = "0.1"
+wgpu = "27"
 
 [workspace.dependencies.windows-sys]
 version = "0.61"

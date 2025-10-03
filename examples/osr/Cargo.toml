@@ -8,8 +8,8 @@ default = ["accelerated_osr"]
 accelerated_osr = ["cef/accelerated_osr"]
 
 [dependencies]
-cef = { workspace = true, features = ["accelerated_osr"] }
-wgpu = { workspace = true }
+cef.workspace = true
+wgpu.workspace = true
 
 env_logger = "0.11"
 pollster = "0.4"
@@ -20,12 +20,12 @@ bytemuck = "1"
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = { workspace = true }
 # For gpu debugging on Windows with PIX
-libloading = "0.8"
+libloading.workspace = true
 
 [target.'cfg(target_os = "macos")'.dependencies]
-metal = "0.31"
-objc = "0.2"
-io-surface = "0.16"
+metal.workspace = true
+objc.workspace = true
+io-surface.workspace = true
 
 [target.'cfg(target_os = "linux")'.dependencies]
-libc = { version = "0.2" }
+libc.workspace = true
