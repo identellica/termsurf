@@ -2067,12 +2067,6 @@ impl ParseTree<'_> {
                     object
                 }
             }
-
-            impl Default for #rust_name {
-                fn default() -> Self {
-                    unsafe { std::mem::zeroed() }
-                }
-            }
         }
         .to_string();
 
@@ -2127,12 +2121,6 @@ impl ParseTree<'_> {
                         let object = value.get_raw();
                         std::mem::forget(value);
                         object
-                    }
-                }
-
-                impl Default for #rust_name {
-                    fn default() -> Self {
-                        Self(unsafe { RefGuard::from_raw(std::ptr::null_mut()) })
                     }
                 }
             }
@@ -2527,12 +2515,6 @@ impl ParseTree<'_> {
                     object
                 }
             }
-
-            impl Default for #rust_name {
-                fn default() -> Self {
-                    unsafe { std::mem::zeroed() }
-                }
-            }
         }
         .to_string();
 
@@ -2579,12 +2561,6 @@ impl ParseTree<'_> {
                 impl From<#rust_name> for *mut #name_ident {
                     fn from(value: #rust_name) -> Self {
                         value.get_raw()
-                    }
-                }
-
-                impl Default for #rust_name {
-                    fn default() -> Self {
-                        Self(std::ptr::null_mut())
                     }
                 }
             }
@@ -2925,12 +2901,6 @@ impl ParseTree<'_> {
                     #impl_trait::get_raw(&value)
                 }
             }
-
-            impl Default for #rust_name {
-                fn default() -> Self {
-                    Self(std::ptr::null_mut())
-                }
-            }
         }
         .to_string();
 
@@ -3012,12 +2982,6 @@ impl ParseTree<'_> {
                     impl AsMut<#name_ident> for #rust_name {
                         fn as_mut(&mut self) -> &mut #name_ident {
                             &mut self.0
-                        }
-                    }
-
-                    impl Default for #rust_name {
-                        fn default() -> Self {
-                            unsafe { std::mem::zeroed() }
                         }
                     }
                 }
