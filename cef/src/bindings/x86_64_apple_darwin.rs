@@ -1584,11 +1584,6 @@ impl From<BaseRefCounted> for *mut _cef_base_ref_counted_t {
         object
     }
 }
-impl Default for BaseRefCounted {
-    fn default() -> Self {
-        Self(unsafe { RefGuard::from_raw(std::ptr::null_mut()) })
-    }
-}
 
 /// See [`_cef_base_scoped_t`] for more documentation.
 #[derive(Clone, Copy)]
@@ -1616,11 +1611,6 @@ impl ConvertReturnValue<BaseScoped> for *mut _cef_base_scoped_t {
 impl From<BaseScoped> for *mut _cef_base_scoped_t {
     fn from(value: BaseScoped) -> Self {
         value.get_raw()
-    }
-}
-impl Default for BaseScoped {
-    fn default() -> Self {
-        Self(std::ptr::null_mut())
     }
 }
 
@@ -1967,11 +1957,6 @@ impl From<DevToolsMessageObserver> for *mut _cef_dev_tools_message_observer_t {
         let object = ImplDevToolsMessageObserver::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for DevToolsMessageObserver {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -2384,11 +2369,6 @@ impl From<Value> for *mut _cef_value_t {
         object
     }
 }
-impl Default for Value {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_binary_value_t`] for more documentation.
 #[derive(Clone)]
@@ -2575,11 +2555,6 @@ impl From<BinaryValue> for *mut _cef_binary_value_t {
         let object = ImplBinaryValue::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for BinaryValue {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -3234,11 +3209,6 @@ impl From<DictionaryValue> for *mut _cef_dictionary_value_t {
         object
     }
 }
-impl Default for DictionaryValue {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_list_value_t`] for more documentation.
 #[derive(Clone)]
@@ -3764,11 +3734,6 @@ impl From<ListValue> for *mut _cef_list_value_t {
         object
     }
 }
-impl Default for ListValue {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_image_t`] for more documentation.
 #[derive(Clone)]
@@ -4235,11 +4200,6 @@ impl From<Image> for *mut _cef_image_t {
         object
     }
 }
-impl Default for Image {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_read_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -4441,11 +4401,6 @@ impl From<ReadHandler> for *mut _cef_read_handler_t {
         object
     }
 }
-impl Default for ReadHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_stream_reader_t`] for more documentation.
 #[derive(Clone)]
@@ -4561,11 +4516,6 @@ impl From<StreamReader> for *mut _cef_stream_reader_t {
         let object = ImplStreamReader::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for StreamReader {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -4769,11 +4719,6 @@ impl From<WriteHandler> for *mut _cef_write_handler_t {
         object
     }
 }
-impl Default for WriteHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_stream_writer_t`] for more documentation.
 #[derive(Clone)]
@@ -4889,11 +4834,6 @@ impl From<StreamWriter> for *mut _cef_stream_writer_t {
         let object = ImplStreamWriter::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for StreamWriter {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -5336,11 +5276,6 @@ impl From<DragData> for *mut _cef_drag_data_t {
         object
     }
 }
-impl Default for DragData {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_domvisitor_t`] for more documentation.
 #[derive(Clone)]
@@ -5438,11 +5373,6 @@ impl From<Domvisitor> for *mut _cef_domvisitor_t {
         let object = ImplDomvisitor::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Domvisitor {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -5709,11 +5639,6 @@ impl From<Domdocument> for *mut _cef_domdocument_t {
         let object = ImplDomdocument::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Domdocument {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -6182,11 +6107,6 @@ impl From<Domnode> for *mut _cef_domnode_t {
         object
     }
 }
-impl Default for Domnode {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_shared_memory_region_t`] for more documentation.
 #[derive(Clone)]
@@ -6271,11 +6191,6 @@ impl From<SharedMemoryRegion> for *mut _cef_shared_memory_region_t {
         let object = ImplSharedMemoryRegion::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for SharedMemoryRegion {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -6416,11 +6331,6 @@ impl From<ProcessMessage> for *mut _cef_process_message_t {
         let object = ImplProcessMessage::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for ProcessMessage {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -6828,11 +6738,6 @@ impl From<Request> for *mut _cef_request_t {
         object
     }
 }
-impl Default for Request {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_post_data_t`] for more documentation.
 #[derive(Clone)]
@@ -7021,11 +6926,6 @@ impl From<PostData> for *mut _cef_post_data_t {
         object
     }
 }
-impl Default for PostData {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_post_data_element_t`] for more documentation.
 #[derive(Clone)]
@@ -7178,11 +7078,6 @@ impl From<PostDataElement> for *mut _cef_post_data_element_t {
         object
     }
 }
-impl Default for PostDataElement {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_string_visitor_t`] for more documentation.
 #[derive(Clone)]
@@ -7280,11 +7175,6 @@ impl From<CefStringVisitor> for *mut _cef_string_visitor_t {
         let object = ImplCefStringVisitor::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for CefStringVisitor {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -7729,11 +7619,6 @@ impl From<Frame> for *mut _cef_frame_t {
         object
     }
 }
-impl Default for Frame {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_x509_cert_principal_t`] for more documentation.
 #[derive(Clone)]
@@ -7874,11 +7759,6 @@ impl From<X509CertPrincipal> for *mut _cef_x509_cert_principal_t {
         let object = ImplX509CertPrincipal::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for X509CertPrincipal {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -8153,11 +8033,6 @@ impl From<X509Certificate> for *mut _cef_x509_certificate_t {
         object
     }
 }
-impl Default for X509Certificate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_sslstatus_t`] for more documentation.
 #[derive(Clone)]
@@ -8274,11 +8149,6 @@ impl From<Sslstatus> for *mut _cef_sslstatus_t {
         let object = ImplSslstatus::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Sslstatus {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -8469,11 +8339,6 @@ impl From<NavigationEntry> for *mut _cef_navigation_entry_t {
         object
     }
 }
-impl Default for NavigationEntry {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_registration_t`] for more documentation.
 #[derive(Clone)]
@@ -8516,11 +8381,6 @@ impl From<Registration> for *mut _cef_registration_t {
         let object = ImplRegistration::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Registration {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -8585,11 +8445,6 @@ impl From<Callback> for *mut _cef_callback_t {
         let object = ImplCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Callback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -8676,11 +8531,6 @@ impl From<CompletionCallback> for *mut _cef_completion_callback_t {
         let object = ImplCompletionCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for CompletionCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -8880,11 +8730,6 @@ impl From<CookieManager> for *mut _cef_cookie_manager_t {
         object
     }
 }
-impl Default for CookieManager {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_cookie_visitor_t`] for more documentation.
 #[derive(Clone)]
@@ -9034,11 +8879,6 @@ impl From<CookieVisitor> for *mut _cef_cookie_visitor_t {
         object
     }
 }
-impl Default for CookieVisitor {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_set_cookie_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -9130,11 +8970,6 @@ impl From<SetCookieCallback> for *mut _cef_set_cookie_callback_t {
         object
     }
 }
-impl Default for SetCookieCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_delete_cookies_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -9224,11 +9059,6 @@ impl From<DeleteCookiesCallback> for *mut _cef_delete_cookies_callback_t {
         let object = ImplDeleteCookiesCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for DeleteCookiesCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -9379,11 +9209,6 @@ impl From<MediaRouter> for *mut _cef_media_router_t {
         let object = ImplMediaRouter::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MediaRouter {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -9656,11 +9481,6 @@ impl From<MediaObserver> for *mut _cef_media_observer_t {
         object
     }
 }
-impl Default for MediaObserver {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_media_route_t`] for more documentation.
 #[derive(Clone)]
@@ -9787,11 +9607,6 @@ impl From<MediaRoute> for *mut _cef_media_route_t {
         let object = ImplMediaRoute::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MediaRoute {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -9922,11 +9737,6 @@ impl From<MediaRouteCreateCallback> for *mut _cef_media_route_create_callback_t 
         let object = ImplMediaRouteCreateCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MediaRouteCreateCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -10081,11 +9891,6 @@ impl From<MediaSink> for *mut _cef_media_sink_t {
         object
     }
 }
-impl Default for MediaSink {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_media_sink_device_info_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -10198,11 +10003,6 @@ impl From<MediaSinkDeviceInfoCallback> for *mut _cef_media_sink_device_info_call
         object
     }
 }
-impl Default for MediaSinkDeviceInfoCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_media_source_t`] for more documentation.
 #[derive(Clone)]
@@ -10287,11 +10087,6 @@ impl From<MediaSource> for *mut _cef_media_source_t {
         let object = ImplMediaSource::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MediaSource {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -10384,11 +10179,6 @@ impl ConvertReturnValue<PreferenceRegistrar> for *mut _cef_preference_registrar_
 impl From<PreferenceRegistrar> for *mut _cef_preference_registrar_t {
     fn from(value: PreferenceRegistrar) -> Self {
         ImplPreferenceRegistrar::get_raw(&value)
-    }
-}
-impl Default for PreferenceRegistrar {
-    fn default() -> Self {
-        Self(std::ptr::null_mut())
     }
 }
 
@@ -10488,11 +10278,6 @@ impl From<PreferenceObserver> for *mut _cef_preference_observer_t {
         let object = ImplPreferenceObserver::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for PreferenceObserver {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -10689,11 +10474,6 @@ impl From<PreferenceManager> for *mut _cef_preference_manager_t {
         object
     }
 }
-impl Default for PreferenceManager {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_resolve_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -10798,11 +10578,6 @@ impl From<ResolveCallback> for *mut _cef_resolve_callback_t {
         let object = ImplResolveCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for ResolveCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -10938,11 +10713,6 @@ impl From<SettingObserver> for *mut _cef_setting_observer_t {
         let object = ImplSettingObserver::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for SettingObserver {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -11529,11 +11299,6 @@ impl From<RequestContext> for *mut _cef_request_context_t {
         object
     }
 }
-impl Default for RequestContext {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_browser_t`] for more documentation.
 #[derive(Clone)]
@@ -11887,11 +11652,6 @@ impl From<Browser> for *mut _cef_browser_t {
         object
     }
 }
-impl Default for Browser {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_run_file_dialog_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -11991,11 +11751,6 @@ impl From<RunFileDialogCallback> for *mut _cef_run_file_dialog_callback_t {
         let object = ImplRunFileDialogCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for RunFileDialogCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -12131,11 +11886,6 @@ impl From<NavigationEntryVisitor> for *mut _cef_navigation_entry_visitor_t {
         object
     }
 }
-impl Default for NavigationEntryVisitor {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_pdf_print_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -12235,11 +11985,6 @@ impl From<PdfPrintCallback> for *mut _cef_pdf_print_callback_t {
         let object = ImplPdfPrintCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for PdfPrintCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -12369,11 +12114,6 @@ impl From<DownloadImageCallback> for *mut _cef_download_image_callback_t {
         let object = ImplDownloadImageCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for DownloadImageCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -13705,11 +13445,6 @@ impl From<BrowserHost> for *mut _cef_browser_host_t {
         object
     }
 }
-impl Default for BrowserHost {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_audio_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -14018,11 +13753,6 @@ impl From<AudioHandler> for *mut _cef_audio_handler_t {
         object
     }
 }
-impl Default for AudioHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_command_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -14314,11 +14044,6 @@ impl From<CommandHandler> for *mut _cef_command_handler_t {
         let object = ImplCommandHandler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for CommandHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -14686,11 +14411,6 @@ impl From<MenuModelDelegate> for *mut _cef_menu_model_delegate_t {
         let object = ImplMenuModelDelegate::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MenuModelDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -15991,11 +15711,6 @@ impl From<MenuModel> for *mut _cef_menu_model_t {
         object
     }
 }
-impl Default for MenuModel {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_run_context_menu_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -16062,11 +15777,6 @@ impl From<RunContextMenuCallback> for *mut _cef_run_context_menu_callback_t {
         object
     }
 }
-impl Default for RunContextMenuCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_run_quick_menu_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -16131,11 +15841,6 @@ impl From<RunQuickMenuCallback> for *mut _cef_run_quick_menu_callback_t {
         let object = ImplRunQuickMenuCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for RunQuickMenuCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -16782,11 +16487,6 @@ impl From<ContextMenuHandler> for *mut _cef_context_menu_handler_t {
         object
     }
 }
-impl Default for ContextMenuHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_context_menu_params_t`] for more documentation.
 #[derive(Clone)]
@@ -17121,11 +16821,6 @@ impl From<ContextMenuParams> for *mut _cef_context_menu_params_t {
         object
     }
 }
-impl Default for ContextMenuParams {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_file_dialog_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -17192,11 +16887,6 @@ impl From<FileDialogCallback> for *mut _cef_file_dialog_callback_t {
         let object = ImplFileDialogCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for FileDialogCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -17443,11 +17133,6 @@ impl From<DialogHandler> for *mut _cef_dialog_handler_t {
         let object = ImplDialogHandler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for DialogHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -18233,11 +17918,6 @@ impl From<DisplayHandler> for *mut _cef_display_handler_t {
         object
     }
 }
-impl Default for DisplayHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_download_item_t`] for more documentation.
 #[derive(Clone)]
@@ -18548,11 +18228,6 @@ impl From<DownloadItem> for *mut _cef_download_item_t {
         object
     }
 }
-impl Default for DownloadItem {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_before_download_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -18609,11 +18284,6 @@ impl From<BeforeDownloadCallback> for *mut _cef_before_download_callback_t {
         let object = ImplBeforeDownloadCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for BeforeDownloadCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -18688,11 +18358,6 @@ impl From<DownloadItemCallback> for *mut _cef_download_item_callback_t {
         let object = ImplDownloadItemCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for DownloadItemCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -18994,11 +18659,6 @@ impl From<DownloadHandler> for *mut _cef_download_handler_t {
         object
     }
 }
-impl Default for DownloadHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_drag_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -19207,11 +18867,6 @@ impl From<DragHandler> for *mut _cef_drag_handler_t {
         object
     }
 }
-impl Default for DragHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_find_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -19394,11 +19049,6 @@ impl From<FindHandler> for *mut _cef_find_handler_t {
         object
     }
 }
-impl Default for FindHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_focus_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -19573,11 +19223,6 @@ impl From<FocusHandler> for *mut _cef_focus_handler_t {
         let object = ImplFocusHandler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for FocusHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -19891,11 +19536,6 @@ impl From<FrameHandler> for *mut _cef_frame_handler_t {
         object
     }
 }
-impl Default for FrameHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_jsdialog_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -19952,11 +19592,6 @@ impl From<JsdialogCallback> for *mut _cef_jsdialog_callback_t {
         let object = ImplJsdialogCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for JsdialogCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -20330,11 +19965,6 @@ impl From<JsdialogHandler> for *mut _cef_jsdialog_handler_t {
         object
     }
 }
-impl Default for JsdialogHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_keyboard_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -20556,11 +20186,6 @@ impl From<KeyboardHandler> for *mut _cef_keyboard_handler_t {
         let object = ImplKeyboardHandler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for KeyboardHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -21264,11 +20889,6 @@ impl From<LifeSpanHandler> for *mut _cef_life_span_handler_t {
         object
     }
 }
-impl Default for LifeSpanHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_load_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -21613,11 +21233,6 @@ impl From<LoadHandler> for *mut _cef_load_handler_t {
         object
     }
 }
-impl Default for LoadHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_media_access_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -21683,11 +21298,6 @@ impl From<MediaAccessCallback> for *mut _cef_media_access_callback_t {
         object
     }
 }
-impl Default for MediaAccessCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_permission_prompt_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -21742,11 +21352,6 @@ impl From<PermissionPromptCallback> for *mut _cef_permission_prompt_callback_t {
         let object = ImplPermissionPromptCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for PermissionPromptCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -22102,11 +21707,6 @@ impl From<PermissionHandler> for *mut _cef_permission_handler_t {
         let object = ImplPermissionHandler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for PermissionHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -22483,11 +22083,6 @@ impl From<PrintSettings> for *mut _cef_print_settings_t {
         object
     }
 }
-impl Default for PrintSettings {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_print_dialog_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -22559,11 +22154,6 @@ impl From<PrintDialogCallback> for *mut _cef_print_dialog_callback_t {
         object
     }
 }
-impl Default for PrintDialogCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_print_job_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -22616,11 +22206,6 @@ impl From<PrintJobCallback> for *mut _cef_print_job_callback_t {
         let object = ImplPrintJobCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for PrintJobCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -23016,11 +22601,6 @@ impl From<PrintHandler> for *mut _cef_print_handler_t {
         object
     }
 }
-impl Default for PrintHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_accessibility_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -23147,11 +22727,6 @@ impl From<AccessibilityHandler> for *mut _cef_accessibility_handler_t {
         let object = ImplAccessibilityHandler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for AccessibilityHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -24263,11 +23838,6 @@ impl From<RenderHandler> for *mut _cef_render_handler_t {
         object
     }
 }
-impl Default for RenderHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_auth_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -24337,11 +23907,6 @@ impl From<AuthCallback> for *mut _cef_auth_callback_t {
         let object = ImplAuthCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for AuthCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -24638,11 +24203,6 @@ impl From<Response> for *mut _cef_response_t {
         object
     }
 }
-impl Default for Response {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_resource_skip_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -24698,11 +24258,6 @@ impl From<ResourceSkipCallback> for *mut _cef_resource_skip_callback_t {
         object
     }
 }
-impl Default for ResourceSkipCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_resource_read_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -24756,11 +24311,6 @@ impl From<ResourceReadCallback> for *mut _cef_resource_read_callback_t {
         let object = ImplResourceReadCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for ResourceReadCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -25273,11 +24823,6 @@ impl From<ResourceHandler> for *mut _cef_resource_handler_t {
         object
     }
 }
-impl Default for ResourceHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_response_filter_t`] for more documentation.
 #[derive(Clone)]
@@ -25511,11 +25056,6 @@ impl From<ResponseFilter> for *mut _cef_response_filter_t {
         let object = ImplResponseFilter::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for ResponseFilter {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -26322,11 +25862,6 @@ impl From<ResourceRequestHandler> for *mut _cef_resource_request_handler_t {
         object
     }
 }
-impl Default for ResourceRequestHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_cookie_access_filter_t`] for more documentation.
 #[derive(Clone)]
@@ -26591,11 +26126,6 @@ impl From<CookieAccessFilter> for *mut _cef_cookie_access_filter_t {
         object
     }
 }
-impl Default for CookieAccessFilter {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_sslinfo_t`] for more documentation.
 #[derive(Clone)]
@@ -26672,11 +26202,6 @@ impl From<Sslinfo> for *mut _cef_sslinfo_t {
         object
     }
 }
-impl Default for Sslinfo {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_unresponsive_process_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -26739,11 +26264,6 @@ impl From<UnresponsiveProcessCallback> for *mut _cef_unresponsive_process_callba
         let object = ImplUnresponsiveProcessCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for UnresponsiveProcessCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -26811,11 +26331,6 @@ impl From<SelectClientCertificateCallback> for *mut _cef_select_client_certifica
         let object = ImplSelectClientCertificateCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for SelectClientCertificateCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -27868,11 +27383,6 @@ impl From<RequestHandler> for *mut _cef_request_handler_t {
         object
     }
 }
-impl Default for RequestHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_client_t`] for more documentation.
 #[derive(Clone)]
@@ -28585,11 +28095,6 @@ impl From<Client> for *mut _cef_client_t {
         object
     }
 }
-impl Default for Client {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_command_line_t`] for more documentation.
 #[derive(Clone)]
@@ -28931,11 +28436,6 @@ impl From<CommandLine> for *mut _cef_command_line_t {
         object
     }
 }
-impl Default for CommandLine {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_request_context_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -29196,11 +28696,6 @@ impl From<RequestContextHandler> for *mut _cef_request_context_handler_t {
         let object = ImplRequestContextHandler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for RequestContextHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -29511,11 +29006,6 @@ impl From<BrowserProcessHandler> for *mut _cef_browser_process_handler_t {
         object
     }
 }
-impl Default for BrowserProcessHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_task_t`] for more documentation.
 #[derive(Clone)]
@@ -29600,11 +29090,6 @@ impl From<Task> for *mut _cef_task_t {
         let object = ImplTask::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Task {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -29742,11 +29227,6 @@ impl From<TaskRunner> for *mut _cef_task_runner_t {
         let object = ImplTaskRunner::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for TaskRunner {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -30006,11 +29486,6 @@ impl From<V8Context> for *mut _cef_v8_context_t {
         object
     }
 }
-impl Default for V8Context {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_v8_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -30252,11 +29727,6 @@ impl From<V8Handler> for *mut _cef_v8_handler_t {
         let object = ImplV8Handler::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for V8Handler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -30519,11 +29989,6 @@ impl From<V8Accessor> for *mut _cef_v8_accessor_t {
         let object = ImplV8Accessor::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for V8Accessor {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -30964,11 +30429,6 @@ impl From<V8Interceptor> for *mut _cef_v8_interceptor_t {
         object
     }
 }
-impl Default for V8Interceptor {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_v8_exception_t`] for more documentation.
 #[derive(Clone)]
@@ -31125,11 +30585,6 @@ impl From<V8Exception> for *mut _cef_v8_exception_t {
         object
     }
 }
-impl Default for V8Exception {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_v8_array_buffer_release_callback_t`] for more documentation.
 #[derive(Clone)]
@@ -31226,11 +30681,6 @@ impl From<V8ArrayBufferReleaseCallback> for *mut _cef_v8_array_buffer_release_ca
         let object = ImplV8ArrayBufferReleaseCallback::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for V8ArrayBufferReleaseCallback {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -32231,11 +31681,6 @@ impl From<V8Value> for *mut _cef_v8_value_t {
         object
     }
 }
-impl Default for V8Value {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_v8_stack_trace_t`] for more documentation.
 #[derive(Clone)]
@@ -32325,11 +31770,6 @@ impl From<V8StackTrace> for *mut _cef_v8_stack_trace_t {
         let object = ImplV8StackTrace::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for V8StackTrace {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -32486,11 +31926,6 @@ impl From<V8StackFrame> for *mut _cef_v8_stack_frame_t {
         let object = ImplV8StackFrame::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for V8StackFrame {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -33072,11 +32507,6 @@ impl From<RenderProcessHandler> for *mut _cef_render_process_handler_t {
         object
     }
 }
-impl Default for RenderProcessHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_resource_bundle_handler_t`] for more documentation.
 #[derive(Clone)]
@@ -33355,11 +32785,6 @@ impl From<ResourceBundleHandler> for *mut _cef_resource_bundle_handler_t {
         object
     }
 }
-impl Default for ResourceBundleHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_scheme_registrar_t`] for more documentation.
 #[derive(Clone, Copy)]
@@ -33442,11 +32867,6 @@ impl ConvertReturnValue<SchemeRegistrar> for *mut _cef_scheme_registrar_t {
 impl From<SchemeRegistrar> for *mut _cef_scheme_registrar_t {
     fn from(value: SchemeRegistrar) -> Self {
         ImplSchemeRegistrar::get_raw(&value)
-    }
-}
-impl Default for SchemeRegistrar {
-    fn default() -> Self {
-        Self(std::ptr::null_mut())
     }
 }
 
@@ -33615,11 +33035,6 @@ impl From<SchemeHandlerFactory> for *mut _cef_scheme_handler_factory_t {
         let object = ImplSchemeHandlerFactory::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for SchemeHandlerFactory {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -33866,11 +33281,6 @@ impl From<App> for *mut _cef_app_t {
         object
     }
 }
-impl Default for App {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_urlrequest_t`] for more documentation.
 #[derive(Clone)]
@@ -34019,11 +33429,6 @@ impl From<Urlrequest> for *mut _cef_urlrequest_t {
         let object = ImplUrlrequest::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Urlrequest {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -34355,11 +33760,6 @@ impl From<UrlrequestClient> for *mut _cef_urlrequest_client_t {
         object
     }
 }
-impl Default for UrlrequestClient {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_layout_t`] for more documentation.
 #[derive(Clone)]
@@ -34452,11 +33852,6 @@ impl From<Layout> for *mut _cef_layout_t {
         let object = ImplLayout::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Layout {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -34558,11 +33953,6 @@ impl From<BoxLayout> for *mut _cef_box_layout_t {
         object
     }
 }
-impl Default for BoxLayout {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_fill_layout_t`] for more documentation.
 #[derive(Clone)]
@@ -34626,11 +34016,6 @@ impl From<FillLayout> for *mut _cef_fill_layout_t {
         let object = ImplFillLayout::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for FillLayout {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -35127,11 +34512,6 @@ impl From<ViewDelegate> for *mut _cef_view_delegate_t {
         let object = ImplViewDelegate::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for ViewDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -35995,11 +35375,6 @@ impl From<View> for *mut _cef_view_t {
         object
     }
 }
-impl Default for View {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_button_t`] for more documentation.
 #[derive(Clone)]
@@ -36303,11 +35678,6 @@ impl From<Button> for *mut _cef_button_t {
         object
     }
 }
-impl Default for Button {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_button_delegate_t`] for more documentation.
 #[derive(Clone)]
@@ -36500,11 +35870,6 @@ impl From<ButtonDelegate> for *mut _cef_button_delegate_t {
         let object = ImplButtonDelegate::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for ButtonDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -36920,11 +36285,6 @@ impl From<LabelButton> for *mut _cef_label_button_t {
         object
     }
 }
-impl Default for LabelButton {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_menu_button_pressed_lock_t`] for more documentation.
 #[derive(Clone)]
@@ -36967,11 +36327,6 @@ impl From<MenuButtonPressedLock> for *mut _cef_menu_button_pressed_lock_t {
         let object = ImplMenuButtonPressedLock::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MenuButtonPressedLock {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -37196,11 +36551,6 @@ impl From<MenuButtonDelegate> for *mut _cef_menu_button_delegate_t {
         let object = ImplMenuButtonDelegate::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MenuButtonDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -37543,11 +36893,6 @@ impl From<MenuButton> for *mut _cef_menu_button_t {
         object
     }
 }
-impl Default for MenuButton {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_textfield_delegate_t`] for more documentation.
 #[derive(Clone)]
@@ -37766,11 +37111,6 @@ impl From<TextfieldDelegate> for *mut _cef_textfield_delegate_t {
         let object = ImplTextfieldDelegate::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for TextfieldDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -38410,11 +37750,6 @@ impl From<Textfield> for *mut _cef_textfield_t {
         object
     }
 }
-impl Default for Textfield {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_browser_view_delegate_t`] for more documentation.
 #[derive(Clone)]
@@ -39018,11 +38353,6 @@ impl From<BrowserViewDelegate> for *mut _cef_browser_view_delegate_t {
         object
     }
 }
-impl Default for BrowserViewDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_browser_view_t`] for more documentation.
 #[derive(Clone)]
@@ -39302,11 +38632,6 @@ impl From<BrowserView> for *mut _cef_browser_view_t {
         let object = ImplBrowserView::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for BrowserView {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -39634,11 +38959,6 @@ impl From<ScrollView> for *mut _cef_scroll_view_t {
         object
     }
 }
-impl Default for ScrollView {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_display_t`] for more documentation.
 #[derive(Clone)]
@@ -39783,11 +39103,6 @@ impl From<Display> for *mut _cef_display_t {
         let object = ImplDisplay::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Display {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -40112,11 +39427,6 @@ impl From<OverlayController> for *mut _cef_overlay_controller_t {
         object
     }
 }
-impl Default for OverlayController {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_panel_delegate_t`] for more documentation.
 #[derive(Clone)]
@@ -40250,11 +39560,6 @@ impl From<PanelDelegate> for *mut _cef_panel_delegate_t {
         let object = ImplPanelDelegate::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for PanelDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -40674,11 +39979,6 @@ impl From<Panel> for *mut _cef_panel_t {
         let object = ImplPanel::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Panel {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -41760,11 +41060,6 @@ impl From<WindowDelegate> for *mut _cef_window_delegate_t {
         object
     }
 }
-impl Default for WindowDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 /// See [`_cef_window_t`] for more documentation.
 #[derive(Clone)]
@@ -42671,11 +41966,6 @@ impl From<Window> for *mut _cef_window_t {
         let object = ImplWindow::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Window {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
