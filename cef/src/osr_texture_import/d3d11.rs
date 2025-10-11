@@ -97,7 +97,6 @@ impl D3D11Importer {
 
             // Wrap D3D12 resource in wgpu-hal texture
             let hal_texture = <api::Dx12 as wgpu::hal::Api>::Device::texture_from_raw(
-                &hal_device,
                 d3d12_resource,
                 format::cef_to_wgpu(self.format)?,
                 wgpu::TextureDimension::D2,
