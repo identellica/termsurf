@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [140.3.2+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.1+140.1.14...cef-v140.3.2+140.1.14) - 2025-10-11
+
+### Fixed
+
+- windows build with wgpu@27
+- macos build with wgpu@27
+- macos osr texture handling now builds correctly
+- macos metal texture fetching wrongly used macro and variables
+- *(macos)* revert io_surface handle creation to original example, fix improper hal vs non-hal device usage
+- (last attempt) macos accelerated rendering implementation
+- (attempt) macos accelerated rendering implementation
+- convert iostream implementation to previous one, since the original impl is broken
+- attempt macos impl fix
+- patch removed essential dependency in linux
+- Windows accelerated paint now running
+- modify osr_texture_import and example code for its new location
+
+### Other
+
+- Merge pull request #219 from rgon/fix/osr-on-linux
+- cleanup dependencies
+- cargo fmt
+- upgrade wgpu to ^26
+- throw compile error if accelerated_osr requested on unsupported platform
+- fix cargo fmt
+- clean up import_via_metal code into closures
+- remove unused objc2-metal dependency
+- fix format
+- attempt macos build error fix
+- fix macos missing dependencies
+- (attempt) fix windows build errors
+- fix create proper docstring for mod.rs
+- describe the accelerated_osr feature flag in Cargo.toml
+- move osr_texture_import onto main cef crate
+
 ## [140.3.1+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.0+140.1.14...cef-v140.3.1+140.1.14) - 2025-10-03
 
 ### Fixed
