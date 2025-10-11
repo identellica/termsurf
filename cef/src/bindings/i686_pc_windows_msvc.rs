@@ -1599,11 +1599,6 @@ impl From<BaseRefCounted> for *mut _cef_base_ref_counted_t {
         object
     }
 }
-impl Default for BaseRefCounted {
-    fn default() -> Self {
-        Self(unsafe { RefGuard::from_raw(std::ptr::null_mut()) })
-    }
-}
 
 /// See [`_cef_base_scoped_t`] for more documentation.
 #[derive(Clone, Copy)]
@@ -1631,11 +1626,6 @@ impl ConvertReturnValue<BaseScoped> for *mut _cef_base_scoped_t {
 impl From<BaseScoped> for *mut _cef_base_scoped_t {
     fn from(value: BaseScoped) -> Self {
         value.get_raw()
-    }
-}
-impl Default for BaseScoped {
-    fn default() -> Self {
-        Self(std::ptr::null_mut())
     }
 }
 
@@ -4178,11 +4168,6 @@ impl From<Registration> for *mut _cef_registration_t {
         let object = ImplRegistration::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for Registration {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -11821,11 +11806,6 @@ impl From<MenuButtonPressedLock> for *mut _cef_menu_button_pressed_lock_t {
         let object = ImplMenuButtonPressedLock::get_raw(&value);
         std::mem::forget(value);
         object
-    }
-}
-impl Default for MenuButtonPressedLock {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
     }
 }
 
