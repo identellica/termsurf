@@ -1,4 +1,5 @@
 mod webrender;
+
 use cef::{args::Args, *};
 use std::{cell::RefCell, process::ExitCode, sync::Arc, thread::sleep, time::Duration};
 use wgpu::Backends;
@@ -34,6 +35,8 @@ impl State {
             backends: Backends::from_comma_list("dx12"),
             #[cfg(target_os = "macos")]
             backends: Backends::from_comma_list("metal"),
+            #[cfg(target_os = "linux")]
+            backends: Backends::from_comma_list("vulkan"),
             //flags: wgpu::InstanceFlags::debugging(),
             ..Default::default()
         });
@@ -200,6 +203,7 @@ impl State {
                             load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
                             store: wgpu::StoreOp::Store,
                         },
+                        depth_slice: None,
                     })],
                     ..Default::default()
                 });
@@ -245,15 +249,25 @@ impl ApplicationHandler for App {
 
         let state = pollster::block_on(State::new(window.clone()));
         self.state = Some(state);
+        let accelerated_osr = cfg!(all(
+            any(
+                target_os = "macos",
+                target_os = "windows",
+                target_os = "linux"
+            ),
+            feature = "accelerated_osr"
+        ));
         let window_info = WindowInfo {
             windowless_rendering_enabled: true as _,
-            shared_texture_enabled: true as _,
-            external_begin_frame_enabled: true as _,
+            shared_texture_enabled: accelerated_osr as _,
+            external_begin_frame_enabled: accelerated_osr as _,
             ..Default::default()
         };
+
         let device_scale_factor = window.scale_factor();
         let (render_handler, browser_size) = OsrRenderHandler::new(
             self.state.as_ref().unwrap().device.clone(),
+            self.state.as_ref().unwrap().queue.clone(),
             device_scale_factor as _,
             window.inner_size().to_logical(device_scale_factor),
         );
@@ -294,6 +308,7 @@ impl ApplicationHandler for App {
                 event_loop.exit();
             }
             WindowEvent::RedrawRequested => {
+                #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
                 if let Some(host) = self.browser.as_mut().and_then(|b| b.browser.host()) {
                     host.send_external_begin_frame();
                 }

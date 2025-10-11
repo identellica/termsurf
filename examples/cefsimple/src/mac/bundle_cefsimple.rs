@@ -146,7 +146,7 @@ mod mac {
             if entry.file_type().unwrap().is_dir() {
                 copy_directory(&entry.path(), &dst_path);
             } else {
-                fs::copy(&entry.path(), &dst_path).unwrap();
+                fs::copy(entry.path(), &dst_path).unwrap();
             }
         }
     }

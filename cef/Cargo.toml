@@ -12,6 +12,18 @@ repository.workspace = true
 default = ["sandbox"]
 dox = ["cef-dll-sys/dox"]
 sandbox = ["cef-dll-sys/sandbox"]
+# Unified texture import system for CEF hardware acceleration
+accelerated_osr = [
+    "wgpu",
+    "windows",
+    "libc",
+    "ash",
+    "tracing",
+    "thiserror",
+    "objc2-io-surface",
+    "objc",
+    "metal"
+]
 
 [package.metadata.docs.rs]
 features = ["dox"]
@@ -19,8 +31,21 @@ features = ["dox"]
 [dependencies]
 cef-dll-sys.workspace = true
 
+# accelerated_osr
+ash = { workspace = true, optional = true }
+thiserror = { workspace = true, optional = true }
+tracing = { workspace = true, optional = true }
+wgpu = { workspace = true, optional = true }
+
 [target.'cfg(target_os = "windows")'.dependencies]
 windows-sys.workspace = true
+windows = { workspace = true, optional = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-libloading = "0.8"
+libloading.workspace = true
+objc2-io-surface = { workspace = true, optional = true }
+objc = { workspace = true, optional = true }
+metal = { workspace = true, optional = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = { workspace = true, optional = true }
