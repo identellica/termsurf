@@ -1,264 +1,107 @@
 use cef::{args::Args, rc::*, *};
 use std::sync::{Arc, Mutex};
 
-struct DemoApp {
-    object: *mut RcImpl<cef_dll_sys::_cef_app_t, Self>,
-    window: Arc<Mutex<Option<Window>>>,
-}
-
-impl DemoApp {
-    fn new_app(window: Arc<Mutex<Option<Window>>>) -> App {
-        App::new(Self {
-            object: std::ptr::null_mut(),
-            window,
-        })
+wrap_app! {
+    struct DemoApp {
+        window: Arc<Mutex<Option<Window>>>,
     }
-}
 
-impl WrapApp for DemoApp {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_app_t, Self>) {
-        self.object = object;
-    }
-}
-
-impl Clone for DemoApp {
-    fn clone(&self) -> Self {
-        let object = unsafe {
-            let rc_impl = &mut *self.object;
-            rc_impl.interface.add_ref();
-            self.object
-        };
-        let window = self.window.clone();
-
-        Self { object, window }
-    }
-}
-
-impl Rc for DemoApp {
-    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
-        unsafe {
-            let base = &*self.object;
-            std::mem::transmute(&base.cef_object)
+    impl App {
+        fn browser_process_handler(&self) -> Option<BrowserProcessHandler> {
+            Some(DemoBrowserProcessHandler::new(
+                self.window.clone(),
+            ))
         }
     }
 }
 
-impl ImplApp for DemoApp {
-    fn get_raw(&self) -> *mut cef_dll_sys::_cef_app_t {
-        self.object.cast()
+wrap_browser_process_handler! {
+    struct DemoBrowserProcessHandler {
+        window: Arc<Mutex<Option<Window>>>,
     }
 
-    fn browser_process_handler(&self) -> Option<BrowserProcessHandler> {
-        Some(DemoBrowserProcessHandler::new_browser_process_handler(
-            self.window.clone(),
-        ))
-    }
-}
+    impl BrowserProcessHandler {
+        // The real lifespan of cef starts from `on_context_initialized`, so all the cef objects should be manipulated after that.
+        fn on_context_initialized(&self) {
+            println!("cef context intiialized");
+            let mut client = DemoClient::new();
+            let url = CefString::from("https://www.google.com");
 
-struct DemoBrowserProcessHandler {
-    object: *mut RcImpl<cef_dll_sys::cef_browser_process_handler_t, Self>,
-    window: Arc<Mutex<Option<Window>>>,
-}
+            let browser_view = browser_view_create(
+                Some(&mut client),
+                Some(&url),
+                Some(&Default::default()),
+                Option::<&mut DictionaryValue>::None,
+                Option::<&mut RequestContext>::None,
+                Option::<&mut BrowserViewDelegate>::None,
+            )
+            .expect("Failed to create browser view");
 
-impl DemoBrowserProcessHandler {
-    fn new_browser_process_handler(window: Arc<Mutex<Option<Window>>>) -> BrowserProcessHandler {
-        BrowserProcessHandler::new(Self {
-            object: std::ptr::null_mut(),
-            window,
-        })
-    }
-}
-
-impl Rc for DemoBrowserProcessHandler {
-    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
-        unsafe {
-            let base = &*self.object;
-            std::mem::transmute(&base.cef_object)
+            let mut delegate = DemoWindowDelegate::new(browser_view);
+            if let Ok(mut window) = self.window.lock() {
+                *window = Some(
+                    window_create_top_level(Some(&mut delegate)).expect("Failed to create window"),
+                );
+            }
         }
     }
 }
 
-impl WrapBrowserProcessHandler for DemoBrowserProcessHandler {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_browser_process_handler_t, Self>) {
-        self.object = object;
-    }
+wrap_client! {
+    struct DemoClient;
+    impl Client {}
 }
 
-impl Clone for DemoBrowserProcessHandler {
-    fn clone(&self) -> Self {
-        let object = unsafe {
-            let rc_impl = &mut *self.object;
-            rc_impl.interface.add_ref();
-            rc_impl
-        };
-
-        let window = self.window.clone();
-
-        Self { object, window }
-    }
-}
-
-impl ImplBrowserProcessHandler for DemoBrowserProcessHandler {
-    fn get_raw(&self) -> *mut cef_dll_sys::_cef_browser_process_handler_t {
-        self.object.cast()
+wrap_window_delegate! {
+    struct DemoWindowDelegate {
+        browser_view: BrowserView,
     }
 
-    // The real lifespan of cef starts from `on_context_initialized`, so all the cef objects should be manipulated after that.
-    fn on_context_initialized(&self) {
-        println!("cef context intiialized");
-        let mut client = DemoClient::new_client();
-        let url = CefString::from("https://www.google.com");
-
-        let browser_view = browser_view_create(
-            Some(&mut client),
-            Some(&url),
-            Some(&Default::default()),
-            Option::<&mut DictionaryValue>::None,
-            Option::<&mut RequestContext>::None,
-            Option::<&mut BrowserViewDelegate>::None,
-        )
-        .expect("Failed to create browser view");
-
-        let mut delegate = DemoWindowDelegate::new_window_delegate(browser_view);
-        if let Ok(mut window) = self.window.lock() {
-            *window = Some(
-                window_create_top_level(Some(&mut delegate)).expect("Failed to create window"),
-            );
-        }
-    }
-}
-
-struct DemoClient(*mut RcImpl<cef_dll_sys::_cef_client_t, Self>);
-
-impl DemoClient {
-    fn new_client() -> Client {
-        Client::new(Self(std::ptr::null_mut()))
-    }
-}
-
-impl WrapClient for DemoClient {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_client_t, Self>) {
-        self.0 = object;
-    }
-}
-
-impl Clone for DemoClient {
-    fn clone(&self) -> Self {
-        unsafe {
-            let rc_impl = &mut *self.0;
-            rc_impl.interface.add_ref();
-        }
-
-        Self(self.0)
-    }
-}
-
-impl Rc for DemoClient {
-    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
-        unsafe {
-            let base = &*self.0;
-            std::mem::transmute(&base.cef_object)
-        }
-    }
-}
-
-impl ImplClient for DemoClient {
-    fn get_raw(&self) -> *mut cef_dll_sys::_cef_client_t {
-        self.0.cast()
-    }
-}
-
-struct DemoWindowDelegate {
-    base: *mut RcImpl<cef_dll_sys::_cef_window_delegate_t, Self>,
-    browser_view: BrowserView,
-}
-
-impl DemoWindowDelegate {
-    fn new_window_delegate(browser_view: BrowserView) -> WindowDelegate {
-        WindowDelegate::new(Self {
-            base: std::ptr::null_mut(),
-            browser_view,
-        })
-    }
-}
-
-impl WrapWindowDelegate for DemoWindowDelegate {
-    fn wrap_rc(&mut self, object: *mut RcImpl<cef_dll_sys::_cef_window_delegate_t, Self>) {
-        self.base = object;
-    }
-}
-
-impl Clone for DemoWindowDelegate {
-    fn clone(&self) -> Self {
-        unsafe {
-            let rc_impl = &mut *self.base;
-            rc_impl.interface.add_ref();
-        }
-
-        Self {
-            base: self.base,
-            browser_view: self.browser_view.clone(),
-        }
-    }
-}
-
-impl Rc for DemoWindowDelegate {
-    fn as_base(&self) -> &cef_dll_sys::cef_base_ref_counted_t {
-        unsafe {
-            let base = &*self.base;
-            std::mem::transmute(&base.cef_object)
-        }
-    }
-}
-
-impl ImplViewDelegate for DemoWindowDelegate {
-    fn on_child_view_changed(
-        &self,
-        _view: Option<&mut View>,
-        _added: ::std::os::raw::c_int,
-        _child: Option<&mut View>,
-    ) {
-        // view.as_panel().map(|x| x.as_window().map(|w| w.close()));
-    }
-
-    fn get_raw(&self) -> *mut cef_dll_sys::_cef_view_delegate_t {
-        self.base.cast()
-    }
-}
-
-impl ImplPanelDelegate for DemoWindowDelegate {}
-
-impl ImplWindowDelegate for DemoWindowDelegate {
-    fn on_window_created(&self, window: Option<&mut Window>) {
-        if let Some(window) = window {
-            let view = self.browser_view.clone();
-            window.add_child_view(Some(&mut (&view).into()));
-            window.show();
+    impl ViewDelegate {
+        fn on_child_view_changed(
+            &self,
+            _view: Option<&mut View>,
+            _added: ::std::os::raw::c_int,
+            _child: Option<&mut View>,
+        ) {
+            // view.as_panel().map(|x| x.as_window().map(|w| w.close()));
         }
     }
 
-    fn on_window_destroyed(&self, _window: Option<&mut Window>) {
-        quit_message_loop();
-    }
+    impl PanelDelegate {}
 
-    fn with_standard_window_buttons(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
-        1
-    }
+    impl WindowDelegate {
+        fn on_window_created(&self, window: Option<&mut Window>) {
+            if let Some(window) = window {
+                let view = self.browser_view.clone();
+                window.add_child_view(Some(&mut (&view).into()));
+                window.show();
+            }
+        }
 
-    fn can_resize(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
-        1
-    }
+        fn on_window_destroyed(&self, _window: Option<&mut Window>) {
+            quit_message_loop();
+        }
 
-    fn can_maximize(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
-        1
-    }
+        fn with_standard_window_buttons(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
+            1
+        }
 
-    fn can_minimize(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
-        1
-    }
+        fn can_resize(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
+            1
+        }
 
-    fn can_close(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
-        1
+        fn can_maximize(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
+            1
+        }
+
+        fn can_minimize(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
+            1
+        }
+
+        fn can_close(&self, _window: Option<&mut Window>) -> ::std::os::raw::c_int {
+            1
+        }
     }
 }
 
@@ -280,7 +123,7 @@ fn main() {
     let is_browser_process = cmd.has_switch(Some(&switch)) != 1;
 
     let window = Arc::new(Mutex::new(None));
-    let mut app = DemoApp::new_app(window.clone());
+    let mut app = DemoApp::new(window.clone());
 
     let ret = execute_process(
         Some(args.as_main_args()),
