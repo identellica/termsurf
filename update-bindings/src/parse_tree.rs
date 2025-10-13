@@ -2616,7 +2616,7 @@ fn make_my_struct() -> {rust_name} {{
                     }
 
                     impl $name {
-                        pub fn new($($field_name: $field_type)*) -> #rust_name {
+                        pub fn new($($field_name: $field_type),*) -> #rust_name {
                             #rust_name::new(
                                 Self {
                                     $($field_name,)*
@@ -2640,9 +2640,7 @@ fn make_my_struct() -> {rust_name} {{
                             }
 
                             Self {
-                                $($field_name: self
-                                    .$field_name
-                                    .clone(),)*
+                                $($field_name: self.$field_name.clone(),)*
                                 cef_object: self.cef_object,
                             }
                         }
