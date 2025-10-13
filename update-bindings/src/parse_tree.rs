@@ -2387,6 +2387,7 @@ fn make_my_struct() -> {rust_name} {{
                     let base = &entry.name;
                     let base = format_ident!("{base}");
                     let wrap_base_type = make_wrap_type_macro_name(&base_struct.name);
+                    let attrs_name = format_ident!("{wrap_base_type}_attrs_name");
                     let method_name = format_ident!("{wrap_base_type}_method_name");
                     let self_name = format_ident!("{wrap_base_type}_self");
                     let arg_name = format_ident!("{wrap_base_type}_arg_name");
@@ -2396,7 +2397,12 @@ fn make_my_struct() -> {rust_name} {{
 
                     quote! {
                         impl #base {
-                            $(fn $#method_name:ident (&$#self_name:ident $(, $#arg_name:ident: $#arg_type:ty)*) $(-> $#return_type:ty)? { $($#body:tt)* })*
+                            $(
+                                $(#[$#attrs_name:meta])*
+                                fn $#method_name:ident (&$#self_name:ident $(, $#arg_name:ident: $#arg_type:ty)*) $(-> $#return_type:ty)? {
+                                    $($#body:tt)*
+                                }
+                            )*
                         }
                     }
                 })
@@ -2411,6 +2417,7 @@ fn make_my_struct() -> {rust_name} {{
                     let base = &base_struct.name;
                     let base_ident = format_ident!("{base}");
                     let wrap_base_type = make_wrap_type_macro_name(base);
+                    let attrs_name = format_ident!("{wrap_base_type}_attrs_name");
                     let method_name = format_ident!("{wrap_base_type}_method_name");
                     let self_name = format_ident!("{wrap_base_type}_self");
                     let arg_name = format_ident!("{wrap_base_type}_arg_name");
@@ -2422,7 +2429,12 @@ fn make_my_struct() -> {rust_name} {{
 
                     quote! {
                         impl #base for $name {
-                            $(fn $#method_name(&$#self_name $(, $#arg_name: $#arg_type)*) $(-> $#return_type)? { $($#body)* })*
+                            $(
+                                $(#[$#attrs_name])*
+                                fn $#method_name(&$#self_name $(, $#arg_name: $#arg_type)*) $(-> $#return_type)? {
+                                    $($#body)*
+                                }
+                            )*
 
                             fn get_raw(&self) -> *mut $crate::sys::#base_ident {
                                 self.cef_object.cast()
@@ -2563,13 +2575,24 @@ fn make_my_struct() -> {rust_name} {{
                     $vis:vis struct $name:ident;
                     #(#wrap_base_type_impl_pattern)*
                     impl #rust_name {
-                        $(fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)*) $(-> $return_type:ty)? { $($body:tt)* })*
+                        $(
+                            $(#[$attrs_name:meta])*
+                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)*) $(-> $return_type:ty)? {
+                                $($body:tt)*
+                            }
+                        )*
                     }
                 ) => {
                     #wrap_type_macro_name! {
                         $vis struct $name {}
                         impl #rust_name {
-                            $(fn $method_name(&$self $(, $arg_name: $arg_type)*) $(-> $return_type)? { $($body)* })*
+                            $(
+                                $(#[$attrs_name])*
+                                fn $method_name(&$self $(, $arg_name: $arg_type)*) $(-> $return_type)?
+                                {
+                                    $($body)*
+                                }
+                            )*
                         }
                     }
                 };
@@ -2579,7 +2602,12 @@ fn make_my_struct() -> {rust_name} {{
                     }
                     #(#wrap_base_type_impl_pattern)*
                     impl #rust_name {
-                        $(fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)*) $(-> $return_type:ty)? { $($body:tt)* })*
+                        $(
+                            $(#[$attrs_name:meta])*
+                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)*) $(-> $return_type:ty)? {
+                                $($body:tt)*
+                            }
+                        )*
                     }
                 ) => {
                     $vis struct $name {
@@ -2632,7 +2660,13 @@ fn make_my_struct() -> {rust_name} {{
                     #(#wrap_base_type_impl)*
 
                     impl #impl_trait for $name {
-                        $(fn $method_name(&$self $(, $arg_name: $arg_type)*) $(-> $return_type)? { $($body)* })*
+                        $(
+                            $(#[$attrs_name])*
+                            fn $method_name(&$self $(, $arg_name: $arg_type)*) $(-> $return_type)?
+                            {
+                                $($body)*
+                            }
+                        )*
 
                         fn get_raw(&self) -> *mut $crate::sys::#name_ident {
                             self.cef_object.cast()
