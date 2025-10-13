@@ -5,6 +5,9 @@ pub mod rc;
 pub mod string;
 
 #[cfg(target_os = "macos")]
+pub mod application_mac;
+
+#[cfg(target_os = "macos")]
 pub mod library_loader;
 
 #[cfg(target_os = "macos")]
