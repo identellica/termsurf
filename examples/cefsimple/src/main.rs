@@ -271,6 +271,9 @@ fn main() {
         loader
     };
 
+    #[cfg(target_os = "macos")]
+    cef::application_mac::SimpleApplication::init().unwrap();
+
     let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
 
     let args = Args::new();
