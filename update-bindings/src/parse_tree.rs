@@ -2399,7 +2399,7 @@ fn make_my_struct() -> {rust_name} {{
                         impl #base {
                             $(
                                 $(#[$#attrs_name:meta])*
-                                fn $#method_name:ident (&$#self_name:ident $(, $#arg_name:ident: $#arg_type:ty)*) $(-> $#return_type:ty)? {
+                                fn $#method_name:ident (&$#self_name:ident $(, $#arg_name:ident: $#arg_type:ty)* $(,)?) $(-> $#return_type:ty)? {
                                     $($#body:tt)*
                                 }
                             )*
@@ -2577,7 +2577,7 @@ fn make_my_struct() -> {rust_name} {{
                     impl #rust_name {
                         $(
                             $(#[$attrs_name:meta])*
-                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)*) $(-> $return_type:ty)? {
+                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)* $(,)?) $(-> $return_type:ty)? {
                                 $($body:tt)*
                             }
                         )*
@@ -2598,13 +2598,13 @@ fn make_my_struct() -> {rust_name} {{
                 };
                 (
                     $vis:vis struct $name:ident {
-                        $($field_vis:vis $field_name:ident: $field_type:ty,)*
+                        $($field_vis:vis $field_name:ident: $field_type:ty),* $(,)?
                     }
                     #(#wrap_base_type_impl_pattern)*
                     impl #rust_name {
                         $(
                             $(#[$attrs_name:meta])*
-                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)*) $(-> $return_type:ty)? {
+                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)* $(,)?) $(-> $return_type:ty)? {
                                 $($body:tt)*
                             }
                         )*
