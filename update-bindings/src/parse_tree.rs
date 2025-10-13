@@ -2215,6 +2215,8 @@ impl ParseTree<'_> {
         let base_name = self.base(name);
         let impl_trait = format_ident!("Impl{rust_name}");
         let wrap_trait = format_ident!("Wrap{rust_name}");
+        let wrap_type_macro = make_wrap_type_macro_name(name);
+        let wrap_type_macro_name = format_ident!("{wrap_type_macro}");
         let impl_base_name = base_name
             .filter(|base| *base != BASE_REF_COUNTED)
             .and_then(|base| self.cef_name_map.get(base))
@@ -2286,7 +2288,7 @@ impl ParseTree<'_> {
             .rev();
 
         let impl_bases = base_structs
-            .into_iter()
+            .iter()
             .filter_map(|base_struct| {
                 self.cef_name_map.get(&base_struct.name).map(|entry| {
                     let base = &base_struct.name;
@@ -2334,6 +2336,114 @@ impl ParseTree<'_> {
             .collect::<Vec<_>>()
             .into_iter()
             .rev();
+
+        let wrap_base_type_comments = base_structs
+            .iter()
+            .rev()
+            .filter_map(|base_struct| {
+                self.cef_name_map.get(&base_struct.name).map(|entry| {
+                    let base = &entry.name;
+                    format!(
+                        r#"
+    impl {base} {{
+        // ...
+    }}
+"#
+                    )
+                })
+            })
+            .collect::<String>();
+
+        let wrap_type_comment = format!(
+            r#"Implement the [`Wrap{rust_name}`] trait for the specified struct. You can declare more
+members for your struct, and in the `impl {rust_name}` block you can override default
+methods implemented by the [`Impl{rust_name}`] trait.
+
+# Example
+```rust
+# use cef::{{*, rc::*}};
+
+{wrap_type_macro}! {{
+    struct My{rust_name} {{
+        payload: String,
+    }}
+{wrap_base_type_comments}
+    impl {rust_name} {{
+        // ...
+    }}
+}}
+
+fn make_my_struct() -> {rust_name} {{
+    My{rust_name}::new("payload".to_string())
+}}
+```"#
+        );
+
+        let wrap_base_type_impl_pattern = base_structs
+            .iter()
+            .rev()
+            .filter_map(|base_struct| {
+                self.cef_name_map.get(&base_struct.name).map(|entry| {
+                    let base = &entry.name;
+                    let base = format_ident!("{base}");
+                    let wrap_base_type = make_wrap_type_macro_name(&base_struct.name);
+                    let attrs_name = format_ident!("{wrap_base_type}_attrs_name");
+                    let method_name = format_ident!("{wrap_base_type}_method_name");
+                    let self_name = format_ident!("{wrap_base_type}_self");
+                    let arg_name = format_ident!("{wrap_base_type}_arg_name");
+                    let arg_type = format_ident!("{wrap_base_type}_arg_type");
+                    let return_type = format_ident!("{wrap_base_type}_return_type");
+                    let body = format_ident!("{wrap_base_type}_body");
+
+                    quote! {
+                        impl #base {
+                            $(
+                                $(#[$#attrs_name:meta])*
+                                fn $#method_name:ident (&$#self_name:ident $(, $#arg_name:ident: $#arg_type:ty)* $(,)?) $(-> $#return_type:ty)? {
+                                    $($#body:tt)*
+                                }
+                            )*
+                        }
+                    }
+                })
+            })
+            .collect::<Vec<_>>();
+
+        let wrap_base_type_impl = base_structs
+            .iter()
+            .rev()
+            .filter_map(|base_struct| {
+                self.cef_name_map.get(&base_struct.name).map(|entry| {
+                    let base = &base_struct.name;
+                    let base_ident = format_ident!("{base}");
+                    let wrap_base_type = make_wrap_type_macro_name(base);
+                    let attrs_name = format_ident!("{wrap_base_type}_attrs_name");
+                    let method_name = format_ident!("{wrap_base_type}_method_name");
+                    let self_name = format_ident!("{wrap_base_type}_self");
+                    let arg_name = format_ident!("{wrap_base_type}_arg_name");
+                    let arg_type = format_ident!("{wrap_base_type}_arg_type");
+                    let return_type = format_ident!("{wrap_base_type}_return_type");
+                    let body = format_ident!("{wrap_base_type}_body");
+                    let base = &entry.name;
+                    let base = format_ident!("Impl{base}");
+
+                    quote! {
+                        impl #base for $name {
+                            $(
+                                $(#[$#attrs_name])*
+                                fn $#method_name(&$#self_name $(, $#arg_name: $#arg_type)*) $(-> $#return_type)? {
+                                    $($#body)*
+                                }
+                            )*
+
+                            fn get_raw(&self) -> *mut $crate::sys::#base_ident {
+                                self.cef_object.cast()
+                            }
+                        }
+                    }
+                })
+            })
+            .collect::<Vec<_>>();
 
         let name = &s.name;
         let impl_mod = format_ident!("impl{name}");
@@ -2456,6 +2566,113 @@ impl ParseTree<'_> {
                 }
 
                 #impl_get_raw
+            }
+
+            #[doc = #wrap_type_comment]
+            #[macro_export]
+            macro_rules! #wrap_type_macro_name {
+                (
+                    $vis:vis struct $name:ident;
+                    #(#wrap_base_type_impl_pattern)*
+                    impl #rust_name {
+                        $(
+                            $(#[$attrs_name:meta])*
+                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)* $(,)?) $(-> $return_type:ty)? {
+                                $($body:tt)*
+                            }
+                        )*
+                    }
+                ) => {
+                    #wrap_type_macro_name! {
+                        $vis struct $name {}
+                        impl #rust_name {
+                            $(
+                                $(#[$attrs_name])*
+                                fn $method_name(&$self $(, $arg_name: $arg_type)*) $(-> $return_type)?
+                                {
+                                    $($body)*
+                                }
+                            )*
+                        }
+                    }
+                };
+                (
+                    $vis:vis struct $name:ident {
+                        $($field_vis:vis $field_name:ident: $field_type:ty),* $(,)?
+                    }
+                    #(#wrap_base_type_impl_pattern)*
+                    impl #rust_name {
+                        $(
+                            $(#[$attrs_name:meta])*
+                            fn $method_name:ident (&$self:ident $(, $arg_name:ident: $arg_type:ty)* $(,)?) $(-> $return_type:ty)? {
+                                $($body:tt)*
+                            }
+                        )*
+                    }
+                ) => {
+                    $vis struct $name {
+                        $($field_vis $field_name: $field_type,)*
+                        cef_object: *mut $crate::rc::RcImpl<$crate::sys::#name_ident, Self>
+                    }
+
+                    impl $name {
+                        pub fn new($($field_name: $field_type)*) -> #rust_name {
+                            #rust_name::new(
+                                Self {
+                                    $($field_name,)*
+                                    cef_object: std::ptr::null_mut(),
+                                }
+                            )
+                        }
+                    }
+
+                    impl #wrap_trait for $name {
+                        fn wrap_rc(&mut self, cef_object: *mut $crate::rc::RcImpl<$crate::sys::#name_ident, Self>) {
+                            self.cef_object = cef_object;
+                        }
+                    }
+
+                    impl Clone for $name {
+                        fn clone(&self) -> Self {
+                            unsafe {
+                                let rc_impl = &mut *self.cef_object;
+                                rc_impl.interface.add_ref();
+                            }
+
+                            Self {
+                                $($field_name: self
+                                    .$field_name
+                                    .clone(),)*
+                                cef_object: self.cef_object,
+                            }
+                        }
+                    }
+
+                    impl $crate::rc::Rc for $name {
+                        fn as_base(&self) -> &$crate::sys::cef_base_ref_counted_t {
+                            unsafe {
+                                let base = &*self.cef_object;
+                                std::mem::transmute(&base.cef_object)
+                            }
+                        }
+                    }
+
+                    #(#wrap_base_type_impl)*
+
+                    impl #impl_trait for $name {
+                        $(
+                            $(#[$attrs_name])*
+                            fn $method_name(&$self $(, $arg_name: $arg_type)*) $(-> $return_type)?
+                            {
+                                $($body)*
+                            }
+                        )*
+
+                        fn get_raw(&self) -> *mut $crate::sys::#name_ident {
+                            self.cef_object.cast()
+                        }
+                    }
+                };
             }
 
             mod #impl_mod {
@@ -3506,9 +3723,13 @@ fn format_bindings(source_path: &Path) -> crate::Result<()> {
     Ok(())
 }
 
-fn make_rust_type_name(name: &str) -> Option<String> {
+fn cef_type_name_pattern() -> &'static Regex {
     static PATTERN: OnceLock<Regex> = OnceLock::new();
-    let pattern = PATTERN.get_or_init(|| Regex::new(r"^_?cef_(\w+)_t$").unwrap());
+    PATTERN.get_or_init(|| Regex::new(r"^_?cef_(\w+)_t$").unwrap())
+}
+
+fn make_rust_type_name(name: &str) -> Option<String> {
+    let pattern = cef_type_name_pattern();
     pattern
         .captures(name)
         .and_then(|captures| captures.get(1))
@@ -3523,6 +3744,16 @@ fn make_rust_type_name(name: &str) -> Option<String> {
                 name
             }
         })
+}
+
+fn make_wrap_type_macro_name(name: &str) -> String {
+    let pattern = cef_type_name_pattern();
+    let name = pattern
+        .captures(name)
+        .and_then(|captures| captures.get(1))
+        .map(|name| name.as_str())
+        .unwrap_or(name);
+    format!("wrap_{}", name)
 }
 
 fn make_snake_case_value_name(name: &str) -> String {
