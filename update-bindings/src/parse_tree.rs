@@ -2428,7 +2428,11 @@ fn make_my_struct() -> {rust_name} {{
                     let base = format_ident!("Impl{base}");
 
                     quote! {
-                        impl #base for $name {
+                        impl$(<$($generic_type,)+>)? #base for $name$(<$($generic_type,)+>)?
+                        $(where
+                            $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
+                        )?
+                        {
                             $(
                                 $(#[$#attrs_name])*
                                 fn $#method_name(&$#self_name $(, $#arg_name: $#arg_type)*) $(-> $#return_type)? {
@@ -2597,7 +2601,9 @@ fn make_my_struct() -> {rust_name} {{
                     }
                 };
                 (
-                    $vis:vis struct $name:ident {
+                    $vis:vis struct $name:ident$(<
+                        $($generic_type:ident : $first_generic_type_bound:tt $(+ $generic_type_bound:tt)*),+ $(,)?
+                    >)? {
                         $($field_vis:vis $field_name:ident: $field_type:ty),* $(,)?
                     }
                     #(#wrap_base_type_impl_pattern)*
@@ -2610,12 +2616,20 @@ fn make_my_struct() -> {rust_name} {{
                         )*
                     }
                 ) => {
-                    $vis struct $name {
+                    $vis struct $name$(<$($generic_type,)+>)?
+                    $(where
+                        $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
+                    )?
+                    {
                         $($field_vis $field_name: $field_type,)*
                         cef_object: *mut $crate::rc::RcImpl<$crate::sys::#name_ident, Self>
                     }
 
-                    impl $name {
+                    impl$(<$($generic_type,)+>)? $name$(<$($generic_type,)+>)?
+                    $(where
+                        $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
+                    )?
+                    {
                         pub fn new($($field_name: $field_type),*) -> #rust_name {
                             #rust_name::new(
                                 Self {
@@ -2626,13 +2640,21 @@ fn make_my_struct() -> {rust_name} {{
                         }
                     }
 
-                    impl #wrap_trait for $name {
+                    impl$(<$($generic_type,)+>)? #wrap_trait for $name$(<$($generic_type,)+>)?
+                    $(where
+                        $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
+                    )?
+                    {
                         fn wrap_rc(&mut self, cef_object: *mut $crate::rc::RcImpl<$crate::sys::#name_ident, Self>) {
                             self.cef_object = cef_object;
                         }
                     }
 
-                    impl Clone for $name {
+                    impl$(<$($generic_type,)+>)? Clone for $name$(<$($generic_type,)+>)?
+                    $(where
+                        $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
+                    )?
+                    {
                         fn clone(&self) -> Self {
                             unsafe {
                                 let rc_impl = &mut *self.cef_object;
@@ -2646,7 +2668,11 @@ fn make_my_struct() -> {rust_name} {{
                         }
                     }
 
-                    impl $crate::rc::Rc for $name {
+                    impl$(<$($generic_type,)+>)? $crate::rc::Rc for $name$(<$($generic_type,)+>)?
+                    $(where
+                        $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
+                    )?
+                    {
                         fn as_base(&self) -> &$crate::sys::cef_base_ref_counted_t {
                             unsafe {
                                 let base = &*self.cef_object;
@@ -2657,7 +2683,11 @@ fn make_my_struct() -> {rust_name} {{
 
                     #(#wrap_base_type_impl)*
 
-                    impl #impl_trait for $name {
+                    impl$(<$($generic_type,)+>)? #impl_trait for $name$(<$($generic_type,)+>)?
+                    $(where
+                        $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
+                    )?
+                    {
                         $(
                             $(#[$attrs_name])*
                             fn $method_name(&$self $(, $arg_name: $arg_type)*) $(-> $return_type)?
