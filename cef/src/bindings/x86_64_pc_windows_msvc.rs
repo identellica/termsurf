@@ -28304,6 +28304,8 @@ pub trait ImplCommandLine: Clone + Sized + Rc {
     fn append_argument(&self, argument: Option<&CefString>);
     #[doc = "See [`_cef_command_line_t::prepend_wrapper`] for more documentation."]
     fn prepend_wrapper(&self, wrapper: Option<&CefString>);
+    #[doc = "See [`_cef_command_line_t::remove_switch`] for more documentation."]
+    fn remove_switch(&self, name: Option<&CefString>);
     fn get_raw(&self) -> *mut _cef_command_line_t;
 }
 impl ImplCommandLine for CommandLine {
@@ -28557,6 +28559,18 @@ impl ImplCommandLine for CommandLine {
                     .map(|arg| arg.into_raw())
                     .unwrap_or(std::ptr::null());
                 f(arg_self_, arg_wrapper);
+            }
+        }
+    }
+    fn remove_switch(&self, name: Option<&CefString>) {
+        unsafe {
+            if let Some(f) = self.0.remove_switch {
+                let arg_name = name;
+                let arg_self_ = self.into_raw();
+                let arg_name = arg_name
+                    .map(|arg| arg.into_raw())
+                    .unwrap_or(std::ptr::null());
+                f(arg_self_, arg_name);
             }
         }
     }
@@ -47086,6 +47100,14 @@ pub fn run_message_loop() {
 pub fn quit_message_loop() {
     unsafe {
         cef_quit_message_loop();
+    }
+}
+
+/// See [`cef_set_nestable_tasks_allowed`] for more documentation.
+pub fn set_nestable_tasks_allowed(allowed: ::std::os::raw::c_int) {
+    unsafe {
+        let arg_allowed = allowed;
+        cef_set_nestable_tasks_allowed(arg_allowed);
     }
 }
 
