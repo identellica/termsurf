@@ -7,26 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [141.0.0+141.0.5](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.6+140.1.14...cef-v141.0.0+141.0.5) - 2025-10-16
+
+### Other
+
+- *(release)* update CEF version to 141.0.5
+
 ## [140.3.6+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.5+140.1.14...cef-v140.3.6+140.1.14) - 2025-10-14
 
 ### Other
 
+- release v140.3.6+140.1.14
 - update bindings
 
 ## [140.3.5+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.4+140.1.14...cef-v140.3.5+140.1.14) - 2025-10-13
 
 ### Fixed
 
-- add commas to fn new parameters ([#239](https://github.com/tauri-apps/cef-rs/pull/239))
+- add commas to fn new parameters ([#239](https://github.com/tauri-apps/cef-rs/issues/239))
 
 ### Other
 
+- release v140.3.5+140.1.14
 - update bindings
 
 ## [140.3.4+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.3+140.1.14...cef-v140.3.4+140.1.14) - 2025-10-13
 
 ### Other
 
+- release v140.3.4+140.1.14
 - update bindings
 - update bindings
 - update bindings
@@ -35,10 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- do not impl Default for structs with methods ([#225](https://github.com/tauri-apps/cef-rs/pull/225))
+- do not impl Default for structs with methods ([#225](https://github.com/tauri-apps/cef-rs/issues/225))
 
 ### Other
 
+- release v140.3.3+140.1.14
 - update bindings
 
 ## [140.3.2+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.3.1+140.1.14...cef-v140.3.2+140.1.14) - 2025-10-11
@@ -60,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 
-- Merge pull request #219 from rgon/fix/osr-on-linux
+- release v140.3.2+140.1.14
 - cleanup dependencies
 - cargo fmt
 - upgrade wgpu to ^26
@@ -80,12 +90,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- copy wrapped out-params back to pointers ([#224](https://github.com/tauri-apps/cef-rs/pull/224))
+- copy wrapped out-params back to pointers ([#224](https://github.com/tauri-apps/cef-rs/issues/224))
 
 ### Other
 
+- release v140.3.1+140.1.14
 - update bindings
 - *(test)* test out-params
+
+## [140.3.0+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.2.0+140.1.14...cef-v140.3.0+140.1.14) - 2025-09-23
+
+### Other
+
+- release
 
 ## [140.2.0+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-v140.1.0+140.1.13...cef-v140.2.0+140.1.14) - 2025-09-21
 
