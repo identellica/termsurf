@@ -9579,6 +9579,9 @@ pub struct CommandLine {
     pub prepend_wrapper: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_command_line_t, wrapper: *const cef_string_t),
     >,
+    pub remove_switch: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_command_line_t, name: *const cef_string_t),
+    >,
 }
 impl From<_cef_command_line_t> for CommandLine {
     fn from(value: _cef_command_line_t) -> Self {
@@ -9604,6 +9607,7 @@ impl From<_cef_command_line_t> for CommandLine {
             get_arguments: value.get_arguments,
             append_argument: value.append_argument,
             prepend_wrapper: value.prepend_wrapper,
+            remove_switch: value.remove_switch,
         }
     }
 }
@@ -9631,6 +9635,7 @@ impl From<CommandLine> for _cef_command_line_t {
             get_arguments: value.get_arguments,
             append_argument: value.append_argument,
             prepend_wrapper: value.prepend_wrapper,
+            remove_switch: value.remove_switch,
         }
     }
 }
@@ -17977,6 +17982,14 @@ pub fn run_message_loop() {
 pub fn quit_message_loop() {
     unsafe {
         cef_quit_message_loop();
+    }
+}
+
+/// See [`cef_set_nestable_tasks_allowed`] for more documentation.
+pub fn set_nestable_tasks_allowed(allowed: ::std::os::raw::c_int) {
+    unsafe {
+        let arg_allowed = allowed;
+        cef_set_nestable_tasks_allowed(arg_allowed);
     }
 }
 

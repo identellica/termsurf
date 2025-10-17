@@ -7,10 +7,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [141.1.0+141.0.6](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v141.0.0+141.0.5...cef-dll-sys-v141.1.0+141.0.6) - 2025-10-17
+
+### Other
+
+- *(release)* update CEF version to 141.0.6
+
+## [141.0.0+141.0.5](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.3.6+140.1.14...cef-dll-sys-v141.0.0+141.0.5) - 2025-10-16
+
+### Other
+
+- update bindings
+- *(release)* update CEF version to 141.0.5
+
+## [140.3.6+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.3.5+140.1.14...cef-dll-sys-v140.3.6+140.1.14) - 2025-10-14
+
+### Other
+
+- release v140.3.6+140.1.14
+
+## [140.3.5+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.3.4+140.1.14...cef-dll-sys-v140.3.5+140.1.14) - 2025-10-13
+
+### Other
+
+- release v140.3.5+140.1.14
+
+## [140.3.4+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.3.3+140.1.14...cef-dll-sys-v140.3.4+140.1.14) - 2025-10-13
+
+### Other
+
+- release v140.3.4+140.1.14
+
+## [140.3.3+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.3.2+140.1.14...cef-dll-sys-v140.3.3+140.1.14) - 2025-10-11
+
+### Other
+
+- release v140.3.3+140.1.14
+
+## [140.3.2+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.3.1+140.1.14...cef-dll-sys-v140.3.2+140.1.14) - 2025-10-11
+
+### Fixed
+
+- macos build with wgpu@27
+
+### Other
+
+- release v140.3.2+140.1.14
+- cleanup dependencies
+- upgrade wgpu to ^26
+- move osr_texture_import onto main cef crate
+
+## [140.3.1+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.3.0+140.1.14...cef-dll-sys-v140.3.1+140.1.14) - 2025-10-03
+
+### Other
+
+- release v140.3.1+140.1.14
+
+## [140.3.0+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.2.0+140.1.14...cef-dll-sys-v140.3.0+140.1.14) - 2025-09-23
+
+### Added
+
+- add --mirror-url cli args
+- Allow to download CEF binaries with custom base url set in env variable
+
+### Other
+
+- release
+
 ## [140.2.0+140.1.14](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.1.0+140.1.13...cef-dll-sys-v140.2.0+140.1.14) - 2025-09-21
 
 ### Other
 
+- update bindings
 - *(release)* update CEF version to 140.1.14
 
 ## [140.1.0+140.1.13](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v140.0.0+140.1.13...cef-dll-sys-v140.1.0+140.1.13) - 2025-09-19

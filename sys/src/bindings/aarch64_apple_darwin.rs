@@ -14,21 +14,22 @@ pub const CEF_API_VERSION_13700: i32 = 13700;
 pub const CEF_API_VERSION_13800: i32 = 13800;
 pub const CEF_API_VERSION_13900: i32 = 13900;
 pub const CEF_API_VERSION_14000: i32 = 14000;
+pub const CEF_API_VERSION_14100: i32 = 14100;
 pub const CEF_API_VERSION_999998: i32 = 999998;
 pub const CEF_API_VERSION_999999: i32 = 999999;
 pub const CEF_API_VERSION_MIN: i32 = 13300;
-pub const CEF_API_VERSION_LAST: i32 = 14000;
+pub const CEF_API_VERSION_LAST: i32 = 14100;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
-pub const CEF_VERSION: &[u8; 42] = b"140.1.14+geb1c06e+chromium-140.0.7339.185\0";
-pub const CEF_VERSION_MAJOR: i32 = 140;
-pub const CEF_VERSION_MINOR: i32 = 1;
-pub const CEF_VERSION_PATCH: i32 = 14;
-pub const CHROME_VERSION_MAJOR: i32 = 140;
+pub const CEF_VERSION: &[u8; 41] = b"141.0.6+g5bb5565+chromium-141.0.7390.108\0";
+pub const CEF_VERSION_MAJOR: i32 = 141;
+pub const CEF_VERSION_MINOR: i32 = 0;
+pub const CEF_VERSION_PATCH: i32 = 6;
+pub const CHROME_VERSION_MAJOR: i32 = 141;
 pub const CHROME_VERSION_MINOR: i32 = 0;
-pub const CHROME_VERSION_BUILD: i32 = 7339;
-pub const CHROME_VERSION_PATCH: i32 = 185;
+pub const CHROME_VERSION_BUILD: i32 = 7390;
+pub const CHROME_VERSION_PATCH: i32 = 108;
 unsafe extern "C" {
     #[doc = "\n Load the CEF library at the specified |path|. Returns true (1) on\n success and false (0) on failure.\n"]
     pub fn cef_load_library(path: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
@@ -12203,10 +12204,14 @@ pub struct _cef_command_line_t {
     pub prepend_wrapper: ::std::option::Option<
         unsafe extern "C" fn(self_: *mut _cef_command_line_t, wrapper: *const cef_string_t),
     >,
+    #[doc = "\n Remove a switch from the command line. If no such switch is present, this\n has no effect.\n"]
+    pub remove_switch: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_command_line_t, name: *const cef_string_t),
+    >,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_command_line_t"][::std::mem::size_of::<_cef_command_line_t>() - 200usize];
+    ["Size of _cef_command_line_t"][::std::mem::size_of::<_cef_command_line_t>() - 208usize];
     ["Alignment of _cef_command_line_t"][::std::mem::align_of::<_cef_command_line_t>() - 8usize];
     ["Offset of field: _cef_command_line_t::base"]
         [::std::mem::offset_of!(_cef_command_line_t, base) - 0usize];
@@ -12250,6 +12255,8 @@ const _: () = {
         [::std::mem::offset_of!(_cef_command_line_t, append_argument) - 184usize];
     ["Offset of field: _cef_command_line_t::prepend_wrapper"]
         [::std::mem::offset_of!(_cef_command_line_t, prepend_wrapper) - 192usize];
+    ["Offset of field: _cef_command_line_t::remove_switch"]
+        [::std::mem::offset_of!(_cef_command_line_t, remove_switch) - 200usize];
 };
 #[doc = "\n Structure used to create and/or parse command line arguments. Arguments with\n \"--\", \"-\" and, on Windows, \"/\" prefixes are considered switches. Switches\n will always precede any arguments without switch prefixes. Switches can\n optionally have a value specified using the \"=\" delimiter (e.g.\n \"-switch=value\"). An argument of \"--\" will terminate switch parsing with all\n subsequent tokens, regardless of prefix, being interpreted as non-switch\n arguments. Switch names should be lowercase ASCII and will be converted to\n such if necessary. Switch values will retain the original case and UTF8\n encoding. This structure can be used before cef_initialize() is called.\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_command_line_t = _cef_command_line_t;
@@ -13704,6 +13711,10 @@ unsafe extern "C" {
 unsafe extern "C" {
     #[doc = "\n Quit the CEF message loop that was started by calling\n cef_run_message_loop(). This function should only be called on the main\n application thread and only if cef_run_message_loop() was used.\n"]
     pub fn cef_quit_message_loop();
+}
+unsafe extern "C" {
+    #[doc = "\n Set to true (1) before calling OS APIs on the CEF UI thread that will enter\n a native message loop (see usage restrictions below). Set to false (0) after\n exiting the native message loop. On Windows, use the CefSetOSModalLoop\n function instead in cases like native top menus where resize of the browser\n content is not required, or in cases like printer APIs where reentrancy\n safety cannot be guaranteed.\n\n Nested processing of Chromium tasks is disabled by default because common\n controls and/or printer functions may use nested native message loops that\n lead to unplanned reentrancy. This function re-enables nested processing in\n the scope of an upcoming native message loop. It must only be used in cases\n where the stack is reentrancy safe and processing nestable tasks is\n explicitly safe. Do not use in cases (like the printer example) where an OS\n API may experience unplanned reentrancy as a result of a new task executing\n immediately.\n\n For instance,\n - The UI thread is running a message loop.\n - It receives a task #1 and executes it.\n - The task #1 implicitly starts a nested message loop. For example, via\n   Windows APIs such as MessageBox or GetSaveFileName, or default handling of\n   a user-initiated drag/resize operation (e.g. DefWindowProc handling of\n   WM_SYSCOMMAND for SC_MOVE/SC_SIZE).\n - The UI thread receives a task #2 before or while in this second message\n   loop.\n - With NestableTasksAllowed set to true (1), the task #2 will run right\n   away. Otherwise, it will be executed right after task #1 completes at\n   \"thread message loop level\".\n"]
+    pub fn cef_set_nestable_tasks_allowed(allowed: ::std::os::raw::c_int);
 }
 #[doc = "\n Structure used to make a URL request. URL requests are not associated with a\n browser instance so no cef_client_t callbacks will be executed. URL requests\n can be created on any valid CEF thread in either the browser or render\n process. Once created the functions of the URL request object must be\n accessed on the same thread that created it.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
