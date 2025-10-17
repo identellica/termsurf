@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [141.1.0+141.0.6](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v141.0.0+141.0.5...export-cef-dir-v141.1.0+141.0.6) - 2025-10-17
+
+### Other
+
+- *(release)* update CEF version to 141.0.6
+
 ## [141.0.0+141.0.5](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v140.3.6+140.1.14...export-cef-dir-v141.0.0+141.0.5) - 2025-10-16
 
 ### Other
