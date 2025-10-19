@@ -56,9 +56,7 @@ impl Args {
 
     #[cfg(any(target_os = "macos", target_os = "linux"))]
     pub fn as_cmd_line(&self) -> Option<CommandLine> {
-        let Some(cmd_line) = command_line_create() else {
-            return None;
-        };
+        let cmd_line = command_line_create()?;
         cmd_line.init_from_argv(self.as_main_args().argc, self.as_main_args().argv.cast());
         Some(cmd_line)
     }
@@ -79,5 +77,14 @@ impl Args {
             })
         });
         cmd_line
+    }
+}
+
+impl From<MainArgs> for Args {
+    fn from(main_args: MainArgs) -> Self {
+        Args {
+            main_args,
+            ..Default::default()
+        }
     }
 }

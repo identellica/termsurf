@@ -8,22 +8,43 @@ license.workspace = true
 authors.workspace = true
 repository.workspace = true
 
+[lib]
+
+[[bin]]
+name = "bundle-cef-app"
+
 [features]
-default = ["sandbox"]
+default = ["sandbox", "build-util"]
 dox = ["cef-dll-sys/dox"]
 sandbox = ["cef-dll-sys/sandbox"]
+
 # Unified texture import system for CEF hardware acceleration
 accelerated_osr = [
+    "ash",
+    "libc",
+    "objc",
+    "objc2-io-surface",
+    "metal",
+    "thiserror",
+    "tracing",
     "wgpu",
     "windows",
-    "libc",
-    "ash",
-    "tracing",
-    "thiserror",
-    "objc2-io-surface",
-    "objc",
-    "metal"
 ]
+
+# Build utilities, including the bundle-cef-app tool.
+build-util = [
+    "anyhow",
+    "cargo_metadata",
+    "clap",
+    "plist",
+    "semver",
+    "serde",
+    "serde_json",
+    "thiserror",
+]
+
+# Linux X11 support in bundle-cef-app.
+linux-x11 = []
 
 [package.metadata.docs.rs]
 features = ["dox"]
@@ -37,6 +58,13 @@ thiserror = { workspace = true, optional = true }
 tracing = { workspace = true, optional = true }
 wgpu = { workspace = true, optional = true }
 
+# bundle
+anyhow = { workspace = true, optional = true }
+clap = { workspace = true, optional = true }
+cargo_metadata = { workspace = true, optional = true }
+serde = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+
 [target.'cfg(target_os = "windows")'.dependencies]
 windows-sys.workspace = true
 windows = { workspace = true, optional = true }
@@ -47,6 +75,8 @@ objc2.workspace = true
 objc2-io-surface = { workspace = true, optional = true }
 objc = { workspace = true, optional = true }
 metal = { workspace = true, optional = true }
+plist = { workspace = true, optional = true }
+semver = { workspace = true, optional = true }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 libc = { workspace = true, optional = true }

@@ -43,6 +43,12 @@ impl Sandbox {
     }
 }
 
+impl Default for Sandbox {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Drop for Sandbox {
     fn drop(&mut self) {
         unsafe {

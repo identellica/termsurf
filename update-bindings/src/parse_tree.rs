@@ -2720,6 +2720,7 @@ fn make_my_struct() -> {rust_name} {{
                         $($generic_type: $first_generic_type_bound $(+ $generic_type_bound)*,)+
                     )?
                     {
+                        #[allow(clippy::new_ret_no_self)]
                         pub fn new($($field_name: $field_type),*) -> #rust_name {
                             #rust_name::new(
                                 Self {

@@ -23,18 +23,20 @@ authors = [
 repository = "https://github.com/tauri-apps/cef-rs"
 
 [workspace.dependencies]
-cef = { path = "cef" }
+cef = { path = "cef", default-features = false }
 cef-dll-sys = { version = "143.4.0", path = "sys" }
 download-cef = { version = "2.2", path = "download-cef" }
 
 anyhow = "1"
 ash = "0.38"
 bindgen = "0.72"
+cargo_metadata = "0.23.1"
 clap = { version = "4", features = ["derive"] }
 cmake = "0.1.52"
 convert_case = "0.10"
 git-cliff = "2"
 git-cliff-core = "2"
+glib = "0.21"
 io-surface = "0.16"
 libc = "0.2"
 libloading = "0.9"
@@ -42,7 +44,8 @@ metal = "0.32"
 objc = "0.2"
 objc2 = "0.6.3"
 objc2-app-kit = { version = "0.3.2", default-features = false }
-objc2-io-surface = "0.3"
+objc2-foundation = "0.3.2"
+objc2-io-surface = "0.3.2"
 plist = "1"
 proc-macro2 = "1"
 quote = "1"
@@ -55,6 +58,8 @@ thiserror = "2"
 toml_edit = "0.24"
 tracing = "0.1"
 wgpu = "27"
+winres = "0.1"
+x11-dl = "2"
 
 [workspace.dependencies.windows-sys]
 version = "0.61"

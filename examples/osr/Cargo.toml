@@ -7,6 +7,9 @@ publish = false
 default = ["accelerated_osr"]
 accelerated_osr = ["cef/accelerated_osr"]
 
+[package.metadata.cef.bundle]
+helper_name = "cefsimple_helper"
+
 [dependencies]
 cef.workspace = true
 wgpu.workspace = true
