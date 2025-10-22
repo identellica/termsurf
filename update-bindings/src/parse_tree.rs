@@ -3316,7 +3316,7 @@ fn make_my_struct() -> {rust_name} {{
             };
 
             let wrapper = quote! {
-                #[derive(Clone)]
+                #[derive(Clone, Debug)]
                 pub struct #rust_name {
                     #(#fields_decl)*
                 }
