@@ -74,7 +74,7 @@ pub use crate::string::CefStringMap;
 pub use crate::string::CefStringMultimap;
 
 /// See [`_cef_basetime_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Basetime {
     pub val: i64,
 }
@@ -95,7 +95,7 @@ impl Default for Basetime {
 }
 
 /// See [`_cef_time_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Time {
     pub year: ::std::os::raw::c_int,
     pub month: ::std::os::raw::c_int,
@@ -141,7 +141,7 @@ impl Default for Time {
 }
 
 /// See [`_cef_point_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Point {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -169,7 +169,7 @@ impl Default for Point {
 }
 
 /// See [`_cef_rect_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Rect {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -203,7 +203,7 @@ impl Default for Rect {
 }
 
 /// See [`_cef_size_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Size {
     pub width: ::std::os::raw::c_int,
     pub height: ::std::os::raw::c_int,
@@ -231,7 +231,7 @@ impl Default for Size {
 }
 
 /// See [`_cef_insets_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Insets {
     pub top: ::std::os::raw::c_int,
     pub left: ::std::os::raw::c_int,
@@ -265,7 +265,7 @@ impl Default for Insets {
 }
 
 /// See [`_cef_accelerated_paint_info_common_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AcceleratedPaintInfoCommon {
     pub size: usize,
     pub timestamp: u64,
@@ -329,7 +329,7 @@ impl Default for AcceleratedPaintInfoCommon {
 }
 
 /// See [`_cef_main_args_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MainArgs {
     pub instance: HINSTANCE,
 }
@@ -354,7 +354,7 @@ impl Default for MainArgs {
 }
 
 /// See [`_cef_window_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct WindowInfo {
     pub size: usize,
     pub ex_style: DWORD,
@@ -415,7 +415,7 @@ impl Default for WindowInfo {
 }
 
 /// See [`_cef_accelerated_paint_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AcceleratedPaintInfo {
     pub size: usize,
     pub shared_texture_handle: HANDLE,
@@ -452,7 +452,7 @@ impl Default for AcceleratedPaintInfo {
 }
 
 /// See [`_cef_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Settings {
     pub size: usize,
     pub no_sandbox: ::std::os::raw::c_int,
@@ -567,7 +567,7 @@ impl Default for Settings {
 }
 
 /// See [`_cef_request_context_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RequestContextSettings {
     pub size: usize,
     pub cache_path: CefString,
@@ -610,7 +610,7 @@ impl Default for RequestContextSettings {
 }
 
 /// See [`_cef_browser_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BrowserSettings {
     pub size: usize,
     pub windowless_frame_rate: ::std::os::raw::c_int,
@@ -719,7 +719,7 @@ impl Default for BrowserSettings {
 }
 
 /// See [`_cef_urlparts_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Urlparts {
     pub size: usize,
     pub spec: CefString,
@@ -777,7 +777,7 @@ impl Default for Urlparts {
 }
 
 /// See [`_cef_cookie_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Cookie {
     pub size: usize,
     pub name: CefString,
@@ -841,7 +841,7 @@ impl Default for Cookie {
 }
 
 /// See [`_cef_draggable_region_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DraggableRegion {
     pub bounds: Rect,
     pub draggable: ::std::os::raw::c_int,
@@ -869,7 +869,7 @@ impl Default for DraggableRegion {
 }
 
 /// See [`_cef_screen_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ScreenInfo {
     pub size: usize,
     pub device_scale_factor: f32,
@@ -915,7 +915,7 @@ impl Default for ScreenInfo {
 }
 
 /// See [`_cef_linux_window_properties_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LinuxWindowProperties {
     pub size: usize,
     pub wayland_app_id: CefString,
@@ -955,7 +955,7 @@ impl Default for LinuxWindowProperties {
 }
 
 /// See [`_cef_mouse_event_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MouseEvent {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -986,7 +986,7 @@ impl Default for MouseEvent {
 }
 
 /// See [`_cef_touch_event_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TouchEvent {
     pub id: ::std::os::raw::c_int,
     pub x: f32,
@@ -1038,7 +1038,7 @@ impl Default for TouchEvent {
 }
 
 /// See [`_cef_key_event_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct KeyEvent {
     pub size: usize,
     pub type_: KeyEventType,
@@ -1090,7 +1090,7 @@ impl Default for KeyEvent {
 }
 
 /// See [`_cef_popup_features_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PopupFeatures {
     pub size: usize,
     pub x: ::std::os::raw::c_int,
@@ -1145,7 +1145,7 @@ impl Default for PopupFeatures {
 }
 
 /// See [`_cef_cursor_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CursorInfo {
     pub hotspot: Point,
     pub image_scale_factor: f32,
@@ -1179,7 +1179,7 @@ impl Default for CursorInfo {
 }
 
 /// See [`_cef_pdf_print_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PdfPrintSettings {
     pub size: usize,
     pub landscape: ::std::os::raw::c_int,
@@ -1258,7 +1258,7 @@ impl Default for PdfPrintSettings {
 }
 
 /// See [`_cef_box_layout_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BoxLayoutSettings {
     pub size: usize,
     pub horizontal: ::std::os::raw::c_int,
@@ -1313,7 +1313,7 @@ impl Default for BoxLayoutSettings {
 }
 
 /// See [`_cef_range_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Range {
     pub from: u32,
     pub to: u32,
@@ -1341,7 +1341,7 @@ impl Default for Range {
 }
 
 /// See [`_cef_composition_underline_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CompositionUnderline {
     pub size: usize,
     pub range: Range,
@@ -1384,7 +1384,7 @@ impl Default for CompositionUnderline {
 }
 
 /// See [`_cef_audio_parameters_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AudioParameters {
     pub size: usize,
     pub channel_layout: ChannelLayout,
@@ -1421,7 +1421,7 @@ impl Default for AudioParameters {
 }
 
 /// See [`_cef_media_sink_device_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaSinkDeviceInfo {
     pub size: usize,
     pub ip_address: CefString,
@@ -1458,7 +1458,7 @@ impl Default for MediaSinkDeviceInfo {
 }
 
 /// See [`_cef_touch_handle_state_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TouchHandleState {
     pub size: usize,
     pub touch_handle_id: ::std::os::raw::c_int,
@@ -1510,7 +1510,7 @@ impl Default for TouchHandleState {
 }
 
 /// See [`_cef_task_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TaskInfo {
     pub size: usize,
     pub id: i64,
@@ -1630,7 +1630,7 @@ impl From<BaseScoped> for *mut _cef_base_scoped_t {
 }
 
 /// See [`_cef_dev_tools_message_observer_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DevToolsMessageObserver {
     pub base: BaseRefCounted,
     pub on_dev_tools_message: ::std::option::Option<
@@ -1704,7 +1704,7 @@ impl Default for DevToolsMessageObserver {
 }
 
 /// See [`_cef_value_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Value {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -1862,7 +1862,7 @@ impl Default for Value {
 }
 
 /// See [`_cef_binary_value_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BinaryValue {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -1939,7 +1939,7 @@ impl Default for BinaryValue {
 }
 
 /// See [`_cef_dictionary_value_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DictionaryValue {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -2189,7 +2189,7 @@ impl Default for DictionaryValue {
 }
 
 /// See [`_cef_list_value_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ListValue {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -2421,7 +2421,7 @@ impl Default for ListValue {
 }
 
 /// See [`_cef_image_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Image {
     pub base: BaseRefCounted,
     pub is_empty: ::std::option::Option<
@@ -2562,7 +2562,7 @@ impl Default for Image {
 }
 
 /// See [`_cef_read_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ReadHandler {
     pub base: BaseRefCounted,
     pub read: ::std::option::Option<
@@ -2620,7 +2620,7 @@ impl Default for ReadHandler {
 }
 
 /// See [`_cef_stream_reader_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct StreamReader {
     pub base: BaseRefCounted,
     pub read: ::std::option::Option<
@@ -2678,7 +2678,7 @@ impl Default for StreamReader {
 }
 
 /// See [`_cef_write_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct WriteHandler {
     pub base: BaseRefCounted,
     pub write: ::std::option::Option<
@@ -2736,7 +2736,7 @@ impl Default for WriteHandler {
 }
 
 /// See [`_cef_stream_writer_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct StreamWriter {
     pub base: BaseRefCounted,
     pub write: ::std::option::Option<
@@ -2794,7 +2794,7 @@ impl Default for StreamWriter {
 }
 
 /// See [`_cef_drag_data_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DragData {
     pub base: BaseRefCounted,
     pub clone: ::std::option::Option<
@@ -2965,7 +2965,7 @@ impl Default for DragData {
 }
 
 /// See [`_cef_domvisitor_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Domvisitor {
     pub base: BaseRefCounted,
     pub visit: ::std::option::Option<
@@ -2998,7 +2998,7 @@ impl Default for Domvisitor {
 }
 
 /// See [`_cef_domdocument_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Domdocument {
     pub base: BaseRefCounted,
     pub get_type: ::std::option::Option<
@@ -3099,7 +3099,7 @@ impl Default for Domdocument {
 }
 
 /// See [`_cef_domnode_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Domnode {
     pub base: BaseRefCounted,
     pub get_type: ::std::option::Option<
@@ -3269,7 +3269,7 @@ impl Default for Domnode {
 }
 
 /// See [`_cef_shared_memory_region_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SharedMemoryRegion {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -3313,7 +3313,7 @@ impl Default for SharedMemoryRegion {
 }
 
 /// See [`_cef_process_message_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ProcessMessage {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -3372,7 +3372,7 @@ impl Default for ProcessMessage {
 }
 
 /// See [`_cef_request_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Request {
     pub base: BaseRefCounted,
     pub is_read_only: ::std::option::Option<
@@ -3524,7 +3524,7 @@ impl Default for Request {
 }
 
 /// See [`_cef_post_data_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PostData {
     pub base: BaseRefCounted,
     pub is_read_only: ::std::option::Option<
@@ -3592,7 +3592,7 @@ impl Default for PostData {
 }
 
 /// See [`_cef_post_data_element_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PostDataElement {
     pub base: BaseRefCounted,
     pub is_read_only: ::std::option::Option<
@@ -3669,7 +3669,7 @@ impl Default for PostDataElement {
 }
 
 /// See [`_cef_string_visitor_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CefStringVisitor {
     pub base: BaseRefCounted,
     pub visit: ::std::option::Option<
@@ -3699,7 +3699,7 @@ impl Default for CefStringVisitor {
 }
 
 /// See [`_cef_frame_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Frame {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -3850,7 +3850,7 @@ impl Default for Frame {
 }
 
 /// See [`_cef_x509_cert_principal_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct X509CertPrincipal {
     pub base: BaseRefCounted,
     pub get_display_name: ::std::option::Option<
@@ -3916,7 +3916,7 @@ impl Default for X509CertPrincipal {
 }
 
 /// See [`_cef_x509_certificate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct X509Certificate {
     pub base: BaseRefCounted,
     pub get_subject: ::std::option::Option<
@@ -4003,7 +4003,7 @@ impl Default for X509Certificate {
 }
 
 /// See [`_cef_sslstatus_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Sslstatus {
     pub base: BaseRefCounted,
     pub is_secure_connection: ::std::option::Option<
@@ -4053,7 +4053,7 @@ impl Default for Sslstatus {
 }
 
 /// See [`_cef_navigation_entry_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct NavigationEntry {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -4172,7 +4172,7 @@ impl From<Registration> for *mut _cef_registration_t {
 }
 
 /// See [`_cef_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Callback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_callback_t)>,
@@ -4203,7 +4203,7 @@ impl Default for Callback {
 }
 
 /// See [`_cef_completion_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CompletionCallback {
     pub base: BaseRefCounted,
     pub on_complete:
@@ -4232,7 +4232,7 @@ impl Default for CompletionCallback {
 }
 
 /// See [`_cef_cookie_manager_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CookieManager {
     pub base: BaseRefCounted,
     pub visit_all_cookies: ::std::option::Option<
@@ -4303,7 +4303,7 @@ impl Default for CookieManager {
 }
 
 /// See [`_cef_cookie_visitor_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CookieVisitor {
     pub base: BaseRefCounted,
     pub visit: ::std::option::Option<
@@ -4339,7 +4339,7 @@ impl Default for CookieVisitor {
 }
 
 /// See [`_cef_set_cookie_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SetCookieCallback {
     pub base: BaseRefCounted,
     pub on_complete: ::std::option::Option<
@@ -4372,7 +4372,7 @@ impl Default for SetCookieCallback {
 }
 
 /// See [`_cef_delete_cookies_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DeleteCookiesCallback {
     pub base: BaseRefCounted,
     pub on_complete: ::std::option::Option<
@@ -4405,7 +4405,7 @@ impl Default for DeleteCookiesCallback {
 }
 
 /// See [`_cef_media_router_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaRouter {
     pub base: BaseRefCounted,
     pub add_observer: ::std::option::Option<
@@ -4464,7 +4464,7 @@ impl Default for MediaRouter {
 }
 
 /// See [`_cef_media_observer_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaObserver {
     pub base: BaseRefCounted,
     pub on_sinks: ::std::option::Option<
@@ -4526,7 +4526,7 @@ impl Default for MediaObserver {
 }
 
 /// See [`_cef_media_route_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaRoute {
     pub base: BaseRefCounted,
     pub get_id: ::std::option::Option<
@@ -4579,7 +4579,7 @@ impl Default for MediaRoute {
 }
 
 /// See [`_cef_media_route_create_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaRouteCreateCallback {
     pub base: BaseRefCounted,
     pub on_media_route_create_finished: ::std::option::Option<
@@ -4614,7 +4614,7 @@ impl Default for MediaRouteCreateCallback {
 }
 
 /// See [`_cef_media_sink_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaSink {
     pub base: BaseRefCounted,
     pub get_id: ::std::option::Option<
@@ -4680,7 +4680,7 @@ impl Default for MediaSink {
 }
 
 /// See [`_cef_media_sink_device_info_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaSinkDeviceInfoCallback {
     pub base: BaseRefCounted,
     pub on_media_sink_device_info: ::std::option::Option<
@@ -4713,7 +4713,7 @@ impl Default for MediaSinkDeviceInfoCallback {
 }
 
 /// See [`_cef_media_source_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaSource {
     pub base: BaseRefCounted,
     pub get_id: ::std::option::Option<
@@ -4753,7 +4753,7 @@ impl Default for MediaSource {
 }
 
 /// See [`_cef_preference_registrar_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PreferenceRegistrar {
     pub base: BaseScoped,
     pub add_preference: ::std::option::Option<
@@ -4787,7 +4787,7 @@ impl Default for PreferenceRegistrar {
 }
 
 /// See [`_cef_preference_observer_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PreferenceObserver {
     pub base: BaseRefCounted,
     pub on_preference_changed: ::std::option::Option<
@@ -4820,7 +4820,7 @@ impl Default for PreferenceObserver {
 }
 
 /// See [`_cef_preference_manager_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PreferenceManager {
     pub base: BaseRefCounted,
     pub has_preference: ::std::option::Option<
@@ -4896,7 +4896,7 @@ impl Default for PreferenceManager {
 }
 
 /// See [`_cef_resolve_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ResolveCallback {
     pub base: BaseRefCounted,
     pub on_resolve_completed: ::std::option::Option<
@@ -4930,7 +4930,7 @@ impl Default for ResolveCallback {
 }
 
 /// See [`_cef_setting_observer_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SettingObserver {
     pub base: BaseRefCounted,
     pub on_setting_changed: ::std::option::Option<
@@ -4965,7 +4965,7 @@ impl Default for SettingObserver {
 }
 
 /// See [`_cef_request_context_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RequestContext {
     pub base: PreferenceManager,
     pub is_same: ::std::option::Option<
@@ -5161,7 +5161,7 @@ impl Default for RequestContext {
 }
 
 /// See [`_cef_browser_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Browser {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -5290,7 +5290,7 @@ impl Default for Browser {
 }
 
 /// See [`_cef_run_file_dialog_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RunFileDialogCallback {
     pub base: BaseRefCounted,
     pub on_file_dialog_dismissed: ::std::option::Option<
@@ -5323,7 +5323,7 @@ impl Default for RunFileDialogCallback {
 }
 
 /// See [`_cef_navigation_entry_visitor_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct NavigationEntryVisitor {
     pub base: BaseRefCounted,
     pub visit: ::std::option::Option<
@@ -5359,7 +5359,7 @@ impl Default for NavigationEntryVisitor {
 }
 
 /// See [`_cef_pdf_print_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PdfPrintCallback {
     pub base: BaseRefCounted,
     pub on_pdf_print_finished: ::std::option::Option<
@@ -5393,7 +5393,7 @@ impl Default for PdfPrintCallback {
 }
 
 /// See [`_cef_download_image_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DownloadImageCallback {
     pub base: BaseRefCounted,
     pub on_download_image_finished: ::std::option::Option<
@@ -5428,7 +5428,7 @@ impl Default for DownloadImageCallback {
 }
 
 /// See [`_cef_browser_host_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BrowserHost {
     pub base: BaseRefCounted,
     pub get_browser: ::std::option::Option<
@@ -5910,7 +5910,7 @@ impl Default for BrowserHost {
 }
 
 /// See [`_cef_audio_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AudioHandler {
     pub base: BaseRefCounted,
     pub get_audio_parameters: ::std::option::Option<
@@ -5979,7 +5979,7 @@ impl Default for AudioHandler {
 }
 
 /// See [`_cef_command_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CommandHandler {
     pub base: BaseRefCounted,
     pub on_chrome_command: ::std::option::Option<
@@ -6048,7 +6048,7 @@ impl Default for CommandHandler {
 }
 
 /// See [`_cef_menu_model_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MenuModelDelegate {
     pub base: BaseRefCounted,
     pub execute_command: ::std::option::Option<
@@ -6135,7 +6135,7 @@ impl Default for MenuModelDelegate {
 }
 
 /// See [`_cef_menu_model_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MenuModel {
     pub base: BaseRefCounted,
     pub is_sub_menu: ::std::option::Option<
@@ -6646,7 +6646,7 @@ impl Default for MenuModel {
 }
 
 /// See [`_cef_run_context_menu_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RunContextMenuCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -6685,7 +6685,7 @@ impl Default for RunContextMenuCallback {
 }
 
 /// See [`_cef_run_quick_menu_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RunQuickMenuCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -6724,7 +6724,7 @@ impl Default for RunQuickMenuCallback {
 }
 
 /// See [`_cef_context_menu_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ContextMenuHandler {
     pub base: BaseRefCounted,
     pub on_before_context_menu: ::std::option::Option<
@@ -6826,7 +6826,7 @@ impl Default for ContextMenuHandler {
 }
 
 /// See [`_cef_context_menu_params_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ContextMenuParams {
     pub base: BaseRefCounted,
     pub get_xcoord: ::std::option::Option<
@@ -6962,7 +6962,7 @@ impl Default for ContextMenuParams {
 }
 
 /// See [`_cef_file_dialog_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct FileDialogCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -6999,7 +6999,7 @@ impl Default for FileDialogCallback {
 }
 
 /// See [`_cef_dialog_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DialogHandler {
     pub base: BaseRefCounted,
     pub on_file_dialog: ::std::option::Option<
@@ -7039,7 +7039,7 @@ impl Default for DialogHandler {
 }
 
 /// See [`_cef_display_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DisplayHandler {
     pub base: BaseRefCounted,
     pub on_address_change: ::std::option::Option<
@@ -7188,7 +7188,7 @@ impl Default for DisplayHandler {
 }
 
 /// See [`_cef_download_item_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DownloadItem {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -7306,7 +7306,7 @@ impl Default for DownloadItem {
 }
 
 /// See [`_cef_before_download_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BeforeDownloadCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -7340,7 +7340,7 @@ impl Default for BeforeDownloadCallback {
 }
 
 /// See [`_cef_download_item_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DownloadItemCallback {
     pub base: BaseRefCounted,
     pub cancel: ::std::option::Option<
@@ -7380,7 +7380,7 @@ impl Default for DownloadItemCallback {
 }
 
 /// See [`_cef_download_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DownloadHandler {
     pub base: BaseRefCounted,
     pub can_download: ::std::option::Option<
@@ -7436,7 +7436,7 @@ impl Default for DownloadHandler {
 }
 
 /// See [`_cef_drag_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DragHandler {
     pub base: BaseRefCounted,
     pub on_drag_enter: ::std::option::Option<
@@ -7482,7 +7482,7 @@ impl Default for DragHandler {
 }
 
 /// See [`_cef_find_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct FindHandler {
     pub base: BaseRefCounted,
     pub on_find_result: ::std::option::Option<
@@ -7520,7 +7520,7 @@ impl Default for FindHandler {
 }
 
 /// See [`_cef_focus_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct FocusHandler {
     pub base: BaseRefCounted,
     pub on_take_focus: ::std::option::Option<
@@ -7568,7 +7568,7 @@ impl Default for FocusHandler {
 }
 
 /// See [`_cef_frame_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct FrameHandler {
     pub base: BaseRefCounted,
     pub on_frame_created: ::std::option::Option<
@@ -7640,7 +7640,7 @@ impl Default for FrameHandler {
 }
 
 /// See [`_cef_jsdialog_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct JsdialogCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -7674,7 +7674,7 @@ impl Default for JsdialogCallback {
 }
 
 /// See [`_cef_jsdialog_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct JsdialogHandler {
     pub base: BaseRefCounted,
     pub on_jsdialog: ::std::option::Option<
@@ -7740,7 +7740,7 @@ impl Default for JsdialogHandler {
 }
 
 /// See [`_cef_keyboard_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct KeyboardHandler {
     pub base: BaseRefCounted,
     pub on_pre_key_event: ::std::option::Option<
@@ -7786,7 +7786,7 @@ impl Default for KeyboardHandler {
 }
 
 /// See [`_cef_life_span_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LifeSpanHandler {
     pub base: BaseRefCounted,
     pub on_before_popup: ::std::option::Option<
@@ -7877,7 +7877,7 @@ impl Default for LifeSpanHandler {
 }
 
 /// See [`_cef_load_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LoadHandler {
     pub base: BaseRefCounted,
     pub on_loading_state_change: ::std::option::Option<
@@ -7945,7 +7945,7 @@ impl Default for LoadHandler {
 }
 
 /// See [`_cef_media_access_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaAccessCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -7982,7 +7982,7 @@ impl Default for MediaAccessCallback {
 }
 
 /// See [`_cef_permission_prompt_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PermissionPromptCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -8015,7 +8015,7 @@ impl Default for PermissionPromptCallback {
 }
 
 /// See [`_cef_permission_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PermissionHandler {
     pub base: BaseRefCounted,
     pub on_request_media_access_permission: ::std::option::Option<
@@ -8074,7 +8074,7 @@ impl Default for PermissionHandler {
 }
 
 /// See [`_cef_print_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PrintSettings {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -8234,7 +8234,7 @@ impl Default for PrintSettings {
 }
 
 /// See [`_cef_print_dialog_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PrintDialogCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -8271,7 +8271,7 @@ impl Default for PrintDialogCallback {
 }
 
 /// See [`_cef_print_job_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PrintJobCallback {
     pub base: BaseRefCounted,
     pub cont:
@@ -8300,7 +8300,7 @@ impl Default for PrintJobCallback {
 }
 
 /// See [`_cef_print_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PrintHandler {
     pub base: BaseRefCounted,
     pub on_print_start: ::std::option::Option<
@@ -8375,7 +8375,7 @@ impl Default for PrintHandler {
 }
 
 /// See [`_cef_accessibility_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AccessibilityHandler {
     pub base: BaseRefCounted,
     pub on_accessibility_tree_change: ::std::option::Option<
@@ -8416,7 +8416,7 @@ impl Default for AccessibilityHandler {
 }
 
 /// See [`_cef_render_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RenderHandler {
     pub base: BaseRefCounted,
     pub get_accessibility_handler: ::std::option::Option<
@@ -8611,7 +8611,7 @@ impl Default for RenderHandler {
 }
 
 /// See [`_cef_auth_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AuthCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -8648,7 +8648,7 @@ impl Default for AuthCallback {
 }
 
 /// See [`_cef_response_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Response {
     pub base: BaseRefCounted,
     pub is_read_only: ::std::option::Option<
@@ -8766,7 +8766,7 @@ impl Default for Response {
 }
 
 /// See [`_cef_resource_skip_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ResourceSkipCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -8796,7 +8796,7 @@ impl Default for ResourceSkipCallback {
 }
 
 /// See [`_cef_resource_read_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ResourceReadCallback {
     pub base: BaseRefCounted,
     pub cont: ::std::option::Option<
@@ -8829,7 +8829,7 @@ impl Default for ResourceReadCallback {
 }
 
 /// See [`_cef_resource_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ResourceHandler {
     pub base: BaseRefCounted,
     pub open: ::std::option::Option<
@@ -8919,7 +8919,7 @@ impl Default for ResourceHandler {
 }
 
 /// See [`_cef_response_filter_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ResponseFilter {
     pub base: BaseRefCounted,
     pub init_filter: ::std::option::Option<
@@ -8962,7 +8962,7 @@ impl Default for ResponseFilter {
 }
 
 /// See [`_cef_resource_request_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ResourceRequestHandler {
     pub base: BaseRefCounted,
     pub get_cookie_access_filter: ::std::option::Option<
@@ -9076,7 +9076,7 @@ impl Default for ResourceRequestHandler {
 }
 
 /// See [`_cef_cookie_access_filter_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CookieAccessFilter {
     pub base: BaseRefCounted,
     pub can_send_cookie: ::std::option::Option<
@@ -9124,7 +9124,7 @@ impl Default for CookieAccessFilter {
 }
 
 /// See [`_cef_sslinfo_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Sslinfo {
     pub base: BaseRefCounted,
     pub get_cert_status: ::std::option::Option<
@@ -9159,7 +9159,7 @@ impl Default for Sslinfo {
 }
 
 /// See [`_cef_unresponsive_process_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct UnresponsiveProcessCallback {
     pub base: BaseRefCounted,
     pub wait: ::std::option::Option<
@@ -9194,7 +9194,7 @@ impl Default for UnresponsiveProcessCallback {
 }
 
 /// See [`_cef_select_client_certificate_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SelectClientCertificateCallback {
     pub base: BaseRefCounted,
     pub select: ::std::option::Option<
@@ -9227,7 +9227,7 @@ impl Default for SelectClientCertificateCallback {
 }
 
 /// See [`_cef_request_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RequestHandler {
     pub base: BaseRefCounted,
     pub on_before_browse: ::std::option::Option<
@@ -9375,7 +9375,7 @@ impl Default for RequestHandler {
 }
 
 /// See [`_cef_client_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Client {
     pub base: BaseRefCounted,
     pub get_audio_handler: ::std::option::Option<
@@ -9501,7 +9501,7 @@ impl Default for Client {
 }
 
 /// See [`_cef_command_line_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CommandLine {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -9646,7 +9646,7 @@ impl Default for CommandLine {
 }
 
 /// See [`_cef_request_context_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RequestContextHandler {
     pub base: BaseRefCounted,
     pub on_request_context_initialized: ::std::option::Option<
@@ -9693,7 +9693,7 @@ impl Default for RequestContextHandler {
 }
 
 /// See [`_cef_browser_process_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BrowserProcessHandler {
     pub base: BaseRefCounted,
     pub on_register_custom_preferences: ::std::option::Option<
@@ -9768,7 +9768,7 @@ impl Default for BrowserProcessHandler {
 }
 
 /// See [`_cef_task_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Task {
     pub base: BaseRefCounted,
     pub execute: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_task_t)>,
@@ -9796,7 +9796,7 @@ impl Default for Task {
 }
 
 /// See [`_cef_task_runner_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TaskRunner {
     pub base: BaseRefCounted,
     pub is_same: ::std::option::Option<
@@ -9859,7 +9859,7 @@ impl Default for TaskRunner {
 }
 
 /// See [`_cef_v8_context_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8Context {
     pub base: BaseRefCounted,
     pub get_task_runner: ::std::option::Option<
@@ -9939,7 +9939,7 @@ impl Default for V8Context {
 }
 
 /// See [`_cef_v8_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8Handler {
     pub base: BaseRefCounted,
     pub execute: ::std::option::Option<
@@ -9977,7 +9977,7 @@ impl Default for V8Handler {
 }
 
 /// See [`_cef_v8_accessor_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8Accessor {
     pub base: BaseRefCounted,
     pub get: ::std::option::Option<
@@ -10024,7 +10024,7 @@ impl Default for V8Accessor {
 }
 
 /// See [`_cef_v8_interceptor_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8Interceptor {
     pub base: BaseRefCounted,
     pub get_byname: ::std::option::Option<
@@ -10093,7 +10093,7 @@ impl Default for V8Interceptor {
 }
 
 /// See [`_cef_v8_exception_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8Exception {
     pub base: BaseRefCounted,
     pub get_message: ::std::option::Option<
@@ -10158,7 +10158,7 @@ impl Default for V8Exception {
 }
 
 /// See [`_cef_v8_array_buffer_release_callback_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8ArrayBufferReleaseCallback {
     pub base: BaseRefCounted,
     pub release_buffer: ::std::option::Option<
@@ -10191,7 +10191,7 @@ impl Default for V8ArrayBufferReleaseCallback {
 }
 
 /// See [`_cef_v8_value_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8Value {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -10537,7 +10537,7 @@ impl Default for V8Value {
 }
 
 /// See [`_cef_v8_stack_trace_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8StackTrace {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -10580,7 +10580,7 @@ impl Default for V8StackTrace {
 }
 
 /// See [`_cef_v8_stack_frame_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct V8StackFrame {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -10645,7 +10645,7 @@ impl Default for V8StackFrame {
 }
 
 /// See [`_cef_render_process_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RenderProcessHandler {
     pub base: BaseRefCounted,
     pub on_web_kit_initialized: ::std::option::Option<
@@ -10752,7 +10752,7 @@ impl Default for RenderProcessHandler {
 }
 
 /// See [`_cef_resource_bundle_handler_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ResourceBundleHandler {
     pub base: BaseRefCounted,
     pub get_localized_string: ::std::option::Option<
@@ -10807,7 +10807,7 @@ impl Default for ResourceBundleHandler {
 }
 
 /// See [`_cef_scheme_registrar_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SchemeRegistrar {
     pub base: BaseScoped,
     pub add_custom_scheme: ::std::option::Option<
@@ -10841,7 +10841,7 @@ impl Default for SchemeRegistrar {
 }
 
 /// See [`_cef_scheme_handler_factory_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SchemeHandlerFactory {
     pub base: BaseRefCounted,
     pub create: ::std::option::Option<
@@ -10877,7 +10877,7 @@ impl Default for SchemeHandlerFactory {
 }
 
 /// See [`_cef_app_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct App {
     pub base: BaseRefCounted,
     pub on_before_command_line_processing: ::std::option::Option<
@@ -10931,7 +10931,7 @@ impl Default for App {
 }
 
 /// See [`_cef_urlrequest_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Urlrequest {
     pub base: BaseRefCounted,
     pub get_request: ::std::option::Option<
@@ -10989,7 +10989,7 @@ impl Default for Urlrequest {
 }
 
 /// See [`_cef_urlrequest_client_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct UrlrequestClient {
     pub base: BaseRefCounted,
     pub on_request_complete: ::std::option::Option<
@@ -11065,7 +11065,7 @@ impl Default for UrlrequestClient {
 }
 
 /// See [`_cef_layout_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Layout {
     pub base: BaseRefCounted,
     pub as_box_layout: ::std::option::Option<
@@ -11105,7 +11105,7 @@ impl Default for Layout {
 }
 
 /// See [`_cef_box_layout_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BoxLayout {
     pub base: Layout,
     pub set_flex_for_view: ::std::option::Option<
@@ -11144,7 +11144,7 @@ impl Default for BoxLayout {
 }
 
 /// See [`_cef_fill_layout_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct FillLayout {
     pub base: Layout,
 }
@@ -11169,7 +11169,7 @@ impl Default for FillLayout {
 }
 
 /// See [`_cef_view_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ViewDelegate {
     pub base: BaseRefCounted,
     pub get_preferred_size: ::std::option::Option<
@@ -11280,7 +11280,7 @@ impl Default for ViewDelegate {
 }
 
 /// See [`_cef_view_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct View {
     pub base: BaseRefCounted,
     pub as_browser_view: ::std::option::Option<
@@ -11587,7 +11587,7 @@ impl Default for View {
 }
 
 /// See [`_cef_button_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Button {
     pub base: View,
     pub as_label_button: ::std::option::Option<
@@ -11642,7 +11642,7 @@ impl Default for Button {
 }
 
 /// See [`_cef_button_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ButtonDelegate {
     pub base: ViewDelegate,
     pub on_button_pressed: ::std::option::Option<
@@ -11677,7 +11677,7 @@ impl Default for ButtonDelegate {
 }
 
 /// See [`_cef_label_button_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LabelButton {
     pub base: Button,
     pub as_menu_button: ::std::option::Option<
@@ -11815,7 +11815,7 @@ impl From<MenuButtonPressedLock> for *mut _cef_menu_button_pressed_lock_t {
 }
 
 /// See [`_cef_menu_button_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MenuButtonDelegate {
     pub base: ButtonDelegate,
     pub on_menu_button_pressed: ::std::option::Option<
@@ -11850,7 +11850,7 @@ impl Default for MenuButtonDelegate {
 }
 
 /// See [`_cef_menu_button_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MenuButton {
     pub base: LabelButton,
     pub show_menu: ::std::option::Option<
@@ -11889,7 +11889,7 @@ impl Default for MenuButton {
 }
 
 /// See [`_cef_textfield_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TextfieldDelegate {
     pub base: ViewDelegate,
     pub on_key_event: ::std::option::Option<
@@ -11931,7 +11931,7 @@ impl Default for TextfieldDelegate {
 }
 
 /// See [`_cef_textfield_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Textfield {
     pub base: View,
     pub set_password_input: ::std::option::Option<
@@ -12126,7 +12126,7 @@ impl Default for Textfield {
 }
 
 /// See [`_cef_browser_view_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BrowserViewDelegate {
     pub base: ViewDelegate,
     pub on_browser_created: ::std::option::Option<
@@ -12230,7 +12230,7 @@ impl Default for BrowserViewDelegate {
 }
 
 /// See [`_cef_browser_view_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BrowserView {
     pub base: View,
     pub get_browser: ::std::option::Option<
@@ -12278,7 +12278,7 @@ impl Default for BrowserView {
 }
 
 /// See [`_cef_scroll_view_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ScrollView {
     pub base: View,
     pub set_content_view: ::std::option::Option<
@@ -12338,7 +12338,7 @@ impl Default for ScrollView {
 }
 
 /// See [`_cef_display_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Display {
     pub base: BaseRefCounted,
     pub get_id:
@@ -12394,7 +12394,7 @@ impl Default for Display {
 }
 
 /// See [`_cef_overlay_controller_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct OverlayController {
     pub base: BaseRefCounted,
     pub is_valid: ::std::option::Option<
@@ -12527,7 +12527,7 @@ impl Default for OverlayController {
 }
 
 /// See [`_cef_panel_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PanelDelegate {
     pub base: ViewDelegate,
 }
@@ -12552,7 +12552,7 @@ impl Default for PanelDelegate {
 }
 
 /// See [`_cef_panel_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Panel {
     pub base: View,
     pub as_window: ::std::option::Option<
@@ -12647,7 +12647,7 @@ impl Default for Panel {
 }
 
 /// See [`_cef_window_delegate_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct WindowDelegate {
     pub base: PanelDelegate,
     pub on_window_created: ::std::option::Option<
@@ -12854,7 +12854,7 @@ impl Default for WindowDelegate {
 }
 
 /// See [`_cef_window_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Window {
     pub base: Panel,
     pub show: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_window_t)>,
