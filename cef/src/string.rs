@@ -163,6 +163,12 @@ impl Drop for CefStringUserfreeUtf16 {
     }
 }
 
+impl Debug for CefStringUtf16 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", CefStringUtf8::from(self))
+    }
+}
+
 #[derive(Clone, Default)]
 pub struct CefStringUserfreeWide(UserFreeData<_cef_string_wide_t>);
 

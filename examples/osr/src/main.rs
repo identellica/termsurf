@@ -47,7 +47,13 @@ impl State {
             .await
             .unwrap();
         let (device, queue) = adapter
-            .request_device(&wgpu::DeviceDescriptor::default())
+            .request_device(&wgpu::DeviceDescriptor {
+                required_limits: wgpu::Limits {
+                    max_non_sampler_bindings: 2048,
+                    ..Default::default()
+                },
+                ..Default::default()
+            })
             .await
             .unwrap();
 
