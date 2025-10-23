@@ -68,7 +68,7 @@ open target/debug/cefsimple.app
 #### Windows (using PowerShell)
 
 ```pwsh
-cp ./examples/cefsimple/win/cefsimple.exe.manifest ./target/debug/
+cp ./examples/cefsimple/src/win/cefsimple.exe.manifest ./target/debug/
 cargo run --bin cefsimple
 ```
 

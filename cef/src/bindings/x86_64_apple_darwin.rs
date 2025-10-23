@@ -62,7 +62,7 @@ pub use crate::string::CefStringMap;
 pub use crate::string::CefStringMultimap;
 
 /// See [`_cef_basetime_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Basetime {
     pub val: i64,
 }
@@ -83,7 +83,7 @@ impl Default for Basetime {
 }
 
 /// See [`_cef_time_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Time {
     pub year: ::std::os::raw::c_int,
     pub month: ::std::os::raw::c_int,
@@ -129,7 +129,7 @@ impl Default for Time {
 }
 
 /// See [`_cef_point_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Point {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -157,7 +157,7 @@ impl Default for Point {
 }
 
 /// See [`_cef_rect_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Rect {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -191,7 +191,7 @@ impl Default for Rect {
 }
 
 /// See [`_cef_size_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Size {
     pub width: ::std::os::raw::c_int,
     pub height: ::std::os::raw::c_int,
@@ -219,7 +219,7 @@ impl Default for Size {
 }
 
 /// See [`_cef_insets_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Insets {
     pub top: ::std::os::raw::c_int,
     pub left: ::std::os::raw::c_int,
@@ -253,7 +253,7 @@ impl Default for Insets {
 }
 
 /// See [`_cef_accelerated_paint_info_common_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AcceleratedPaintInfoCommon {
     pub size: usize,
     pub timestamp: u64,
@@ -317,7 +317,7 @@ impl Default for AcceleratedPaintInfoCommon {
 }
 
 /// See [`_cef_main_args_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MainArgs {
     pub argc: ::std::os::raw::c_int,
     pub argv: *mut *mut ::std::os::raw::c_char,
@@ -345,7 +345,7 @@ impl Default for MainArgs {
 }
 
 /// See [`_cef_window_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct WindowInfo {
     pub size: usize,
     pub window_name: CefString,
@@ -400,7 +400,7 @@ impl Default for WindowInfo {
 }
 
 /// See [`_cef_accelerated_paint_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AcceleratedPaintInfo {
     pub size: usize,
     pub shared_texture_io_surface: *mut ::std::os::raw::c_void,
@@ -437,7 +437,7 @@ impl Default for AcceleratedPaintInfo {
 }
 
 /// See [`_cef_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Settings {
     pub size: usize,
     pub no_sandbox: ::std::os::raw::c_int,
@@ -552,7 +552,7 @@ impl Default for Settings {
 }
 
 /// See [`_cef_request_context_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RequestContextSettings {
     pub size: usize,
     pub cache_path: CefString,
@@ -595,7 +595,7 @@ impl Default for RequestContextSettings {
 }
 
 /// See [`_cef_browser_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BrowserSettings {
     pub size: usize,
     pub windowless_frame_rate: ::std::os::raw::c_int,
@@ -704,7 +704,7 @@ impl Default for BrowserSettings {
 }
 
 /// See [`_cef_urlparts_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Urlparts {
     pub size: usize,
     pub spec: CefString,
@@ -762,7 +762,7 @@ impl Default for Urlparts {
 }
 
 /// See [`_cef_cookie_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Cookie {
     pub size: usize,
     pub name: CefString,
@@ -826,7 +826,7 @@ impl Default for Cookie {
 }
 
 /// See [`_cef_draggable_region_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DraggableRegion {
     pub bounds: Rect,
     pub draggable: ::std::os::raw::c_int,
@@ -854,7 +854,7 @@ impl Default for DraggableRegion {
 }
 
 /// See [`_cef_screen_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ScreenInfo {
     pub size: usize,
     pub device_scale_factor: f32,
@@ -900,7 +900,7 @@ impl Default for ScreenInfo {
 }
 
 /// See [`_cef_linux_window_properties_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LinuxWindowProperties {
     pub size: usize,
     pub wayland_app_id: CefString,
@@ -940,7 +940,7 @@ impl Default for LinuxWindowProperties {
 }
 
 /// See [`_cef_mouse_event_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MouseEvent {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -971,7 +971,7 @@ impl Default for MouseEvent {
 }
 
 /// See [`_cef_touch_event_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TouchEvent {
     pub id: ::std::os::raw::c_int,
     pub x: f32,
@@ -1023,7 +1023,7 @@ impl Default for TouchEvent {
 }
 
 /// See [`_cef_key_event_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct KeyEvent {
     pub size: usize,
     pub type_: KeyEventType,
@@ -1075,7 +1075,7 @@ impl Default for KeyEvent {
 }
 
 /// See [`_cef_popup_features_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PopupFeatures {
     pub size: usize,
     pub x: ::std::os::raw::c_int,
@@ -1130,7 +1130,7 @@ impl Default for PopupFeatures {
 }
 
 /// See [`_cef_cursor_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CursorInfo {
     pub hotspot: Point,
     pub image_scale_factor: f32,
@@ -1164,7 +1164,7 @@ impl Default for CursorInfo {
 }
 
 /// See [`_cef_pdf_print_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PdfPrintSettings {
     pub size: usize,
     pub landscape: ::std::os::raw::c_int,
@@ -1243,7 +1243,7 @@ impl Default for PdfPrintSettings {
 }
 
 /// See [`_cef_box_layout_settings_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BoxLayoutSettings {
     pub size: usize,
     pub horizontal: ::std::os::raw::c_int,
@@ -1298,7 +1298,7 @@ impl Default for BoxLayoutSettings {
 }
 
 /// See [`_cef_range_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Range {
     pub from: u32,
     pub to: u32,
@@ -1326,7 +1326,7 @@ impl Default for Range {
 }
 
 /// See [`_cef_composition_underline_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CompositionUnderline {
     pub size: usize,
     pub range: Range,
@@ -1369,7 +1369,7 @@ impl Default for CompositionUnderline {
 }
 
 /// See [`_cef_audio_parameters_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AudioParameters {
     pub size: usize,
     pub channel_layout: ChannelLayout,
@@ -1406,7 +1406,7 @@ impl Default for AudioParameters {
 }
 
 /// See [`_cef_media_sink_device_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MediaSinkDeviceInfo {
     pub size: usize,
     pub ip_address: CefString,
@@ -1443,7 +1443,7 @@ impl Default for MediaSinkDeviceInfo {
 }
 
 /// See [`_cef_touch_handle_state_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TouchHandleState {
     pub size: usize,
     pub touch_handle_id: ::std::os::raw::c_int,
@@ -1495,7 +1495,7 @@ impl Default for TouchHandleState {
 }
 
 /// See [`_cef_task_info_t`] for more documentation.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TaskInfo {
     pub size: usize,
     pub id: i64,
