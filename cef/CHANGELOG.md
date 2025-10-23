@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [141.4.1+141.0.9](https://github.com/tauri-apps/cef-rs/compare/cef-v141.4.0+141.0.9...cef-v141.4.1+141.0.9) - 2025-10-23
+
+### Fixed
+
+- move `SimpleApplication` to the cefsimple example per review
+
+### Other
+
+- Merge branch 'dev' of https://github.com/tauri-apps/cef-rs into dev
+- Merge branch 'dev' of https://github.com/tauri-apps/cef-rs into dev
+
 ## [141.4.0+141.0.9](https://github.com/tauri-apps/cef-rs/compare/cef-v141.3.1+141.0.8...cef-v141.4.0+141.0.9) - 2025-10-23
 
 ### Other
