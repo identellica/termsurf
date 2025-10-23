@@ -115,7 +115,29 @@ fn main() {
     };
 
     #[cfg(target_os = "macos")]
-    cef::application_mac::SimpleApplication::init().unwrap();
+    {
+        use objc2::{
+            ClassType, MainThreadMarker, msg_send,
+            rc::Retained,
+            runtime::{AnyObject, NSObjectProtocol},
+        };
+        use objc2_app_kit::NSApp;
+
+        use application::SimpleApplication;
+
+        let mtm = MainThreadMarker::new().unwrap();
+
+        unsafe {
+            // Initialize the SimpleApplication instance.
+            // SAFETY: mtm ensures that here is the main thread.
+            let _: Retained<AnyObject> = msg_send![SimpleApplication::class(), sharedApplication];
+        }
+
+        // If there was an invocation to NSApp prior to here,
+        // then the NSApp will not be a SimpleApplication.
+        // The following assertion ensures that this doesn't happen.
+        assert!(NSApp(mtm).isKindOfClass(SimpleApplication::class()));
+    }
 
     let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
 
@@ -165,4 +187,44 @@ fn main() {
     assert!(window.has_one_ref());
 
     shutdown();
+}
+
+#[cfg(target_os = "macos")]
+mod application {
+    use std::cell::Cell;
+
+    use cef::application_mac::{CefAppProtocol, CrAppControlProtocol, CrAppProtocol};
+    use objc2::{DefinedClass, define_class, runtime::Bool};
+    use objc2_app_kit::NSApplication;
+
+    /// Instance variables of `SimpleApplication`.
+    pub struct SimpleApplicationIvars {
+        handling_send_event: Cell<Bool>,
+    }
+
+    define_class!(
+        /// A `NSApplication` subclass that implements the required CEF protocols.
+        ///
+        /// This class provides the necessary `CefAppProtocol` conformance to
+        /// ensure that events are handled correctly by the Chromium framework on macOS.
+        #[unsafe(super(NSApplication))]
+        #[ivars = SimpleApplicationIvars]
+        pub struct SimpleApplication;
+
+        unsafe impl CrAppControlProtocol for SimpleApplication {
+            #[unsafe(method(setHandlingSendEvent:))]
+            unsafe fn set_handling_send_event(&self, handling_send_event: Bool) {
+                self.ivars().handling_send_event.set(handling_send_event);
+            }
+        }
+
+        unsafe impl CrAppProtocol for SimpleApplication {
+            #[unsafe(method(isHandlingSendEvent))]
+            unsafe fn is_handling_send_event(&self) -> Bool {
+                self.ivars().handling_send_event.get()
+            }
+        }
+
+        unsafe impl CefAppProtocol for SimpleApplication {}
+    );
 }
