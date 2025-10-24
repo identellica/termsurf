@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [141.5.0+141.0.10](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v141.4.1+141.0.9...export-cef-dir-v141.5.0+141.0.10) - 2025-10-24
+
+### Other
+
+- *(release)* update CEF version to 141.0.10
+
+## [141.4.1+141.0.9](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v141.4.0+141.0.9...export-cef-dir-v141.4.1+141.0.9) - 2025-10-23
+
+### Other
+
+- release v141.4.1+141.0.9
+
 ## [141.4.0+141.0.9](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v141.3.1+141.0.8...export-cef-dir-v141.4.0+141.0.9) - 2025-10-23
 
 ### Other
@@ -56,6 +68,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - release v140.3.5+140.1.14
 
 ## [140.3.4+140.1.14](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v140.3.3+140.1.14...export-cef-dir-v140.3.4+140.1.14) - 2025-10-13
+
+### Added
+
+- port SimpleApplication from original cefsimple
+- add CefAppProtocol bindings
+
+### Fixed
+
+- resolve cargo build warning about default-features on macOS
 
 ### Other
 
