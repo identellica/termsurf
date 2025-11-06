@@ -32,7 +32,7 @@ ash = "0.38"
 bindgen = "0.72"
 clap = { version = "4", features = ["derive"] }
 cmake = "0.1.52"
-convert_case = "0.8"
+convert_case = "0.9"
 git-cliff = "2"
 git-cliff-core = "2"
 io-surface = "0.16"
