@@ -61,6 +61,8 @@ fn bindgen(target: &str, cef_path: &Path) -> crate::Result<()> {
         .allowlist_item("CHROME_VERSION(_.+)?")
         .default_macro_constant_type(bindgen::MacroTypeVariation::Signed)
         .bitfield_enum(".*_mask_t")
+        .bitfield_enum(".*_flags_t")
+        .bitfield_enum("cef_v8_propertyattribute_t")
         .clang_args([
             format!("-I{}", cef_path.display()),
             format!("--target={target}"),
