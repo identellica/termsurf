@@ -814,7 +814,7 @@ impl SignatureRef<'_> {
         let capture = self.capture_params();
         let args = self.merge_params(tree).filter_map(|arg| match arg {
             MergedParam::Receiver => Some(quote! {
-                let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+                let arg_self_: &RcImpl<R, I> = RcImpl::get(arg_self_.cast());
             }),
             MergedParam::Single {
                 name,
@@ -2280,7 +2280,7 @@ impl ParseTree<'_> {
                 let impl_mod = format_ident!("impl{name}");
                 let bases = iter::repeat_n(format_ident!("base"), i + 1);
                 quote! {
-                    #impl_mod::init_methods::<Self>(&mut object.#(#bases).*);
+                    #impl_mod::init_methods::<Self, #name_ident>(&mut object.#(#bases).*);
                 }
             })
             .collect::<Vec<_>>()
@@ -2455,7 +2455,7 @@ fn make_my_struct() -> {rust_name} {{
             let name = &m.name;
             let name = format_ident!("{name}");
             quote! {
-                object.#name = Some(#name::<I>);
+                object.#name = Some(#name::<I, R>);
             }
         });
 
@@ -2526,7 +2526,7 @@ fn make_my_struct() -> {rust_name} {{
             }
 
             quote! {
-                extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
+                extern "C" fn #name<I: #impl_trait, R: Rc>(#(#args),*) #output {
                     #wrapped_args
                     #call_impl
                     #unwrapped_args
@@ -2566,7 +2566,7 @@ fn make_my_struct() -> {rust_name} {{
 
                 fn init_methods(object: &mut #name_ident) {
                     #(#init_bases)*
-                    #impl_mod::init_methods::<Self>(object);
+                    #impl_mod::init_methods::<Self, #name_ident>(object);
                 }
 
                 #impl_get_raw
@@ -2706,7 +2706,7 @@ fn make_my_struct() -> {rust_name} {{
             mod #impl_mod {
                 use super::*;
 
-                pub fn init_methods<I: #impl_trait>(object: &mut #name_ident) {
+                pub fn init_methods<I: #impl_trait, R: Rc>(object: &mut #name_ident) {
                     #(#init_methods)*
                 }
 
@@ -2948,7 +2948,7 @@ fn make_my_struct() -> {rust_name} {{
                 let impl_mod = format_ident!("impl{name}");
                 let bases = iter::repeat_n(format_ident!("base"), i + 1);
                 quote! {
-                    #impl_mod::init_methods::<Self>(&mut object.#(#bases).*);
+                    #impl_mod::init_methods::<Self, R>(&mut object.#(#bases).*);
                 }
             })
             .collect::<Vec<_>>()
@@ -3008,7 +3008,7 @@ fn make_my_struct() -> {rust_name} {{
             let name = &m.name;
             let name = format_ident!("{name}");
             quote! {
-                object.#name = Some(#name::<I>);
+                object.#name = Some(#name::<I, R>);
             }
         });
 
@@ -3079,7 +3079,7 @@ fn make_my_struct() -> {rust_name} {{
                 }
 
                 quote! {
-                    extern "C" fn #name<I: #impl_trait>(#(#args),*) #output {
+                    extern "C" fn #name<I: #impl_trait, R: Rc>(#(#args),*) #output {
                         #wrapped_args
                         #call_impl
                         #unwrapped_args
@@ -3095,9 +3095,9 @@ fn make_my_struct() -> {rust_name} {{
             pub trait #impl_trait : #impl_base_name {
                 #(#impl_methods)*
 
-                fn init_methods(object: &mut #name_ident) {
+                fn init_methods<R: Rc>(object: &mut #name_ident) {
                     #(#init_bases)*
-                    #impl_mod::init_methods::<Self>(object);
+                    #impl_mod::init_methods::<Self, R>(object);
                 }
 
                 #impl_get_raw
@@ -3106,7 +3106,7 @@ fn make_my_struct() -> {rust_name} {{
             mod #impl_mod {
                 use super::*;
 
-                pub fn init_methods<I: #impl_trait>(object: &mut #name_ident) {
+                pub fn init_methods<I: #impl_trait, R: Rc>(object: &mut #name_ident) {
                     #(#init_methods)*
                 }
 
