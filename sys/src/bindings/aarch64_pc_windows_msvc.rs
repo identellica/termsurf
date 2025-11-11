@@ -15,21 +15,22 @@ pub const CEF_API_VERSION_13800: i32 = 13800;
 pub const CEF_API_VERSION_13900: i32 = 13900;
 pub const CEF_API_VERSION_14000: i32 = 14000;
 pub const CEF_API_VERSION_14100: i32 = 14100;
+pub const CEF_API_VERSION_14200: i32 = 14200;
 pub const CEF_API_VERSION_999998: i32 = 999998;
 pub const CEF_API_VERSION_999999: i32 = 999999;
 pub const CEF_API_VERSION_MIN: i32 = 13300;
-pub const CEF_API_VERSION_LAST: i32 = 14100;
+pub const CEF_API_VERSION_LAST: i32 = 14200;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
-pub const CEF_VERSION: &[u8; 42] = b"141.0.11+g7e73ac4+chromium-141.0.7390.123\0";
-pub const CEF_VERSION_MAJOR: i32 = 141;
+pub const CEF_VERSION: &[u8; 41] = b"142.0.8+gaa285ed+chromium-142.0.7444.135\0";
+pub const CEF_VERSION_MAJOR: i32 = 142;
 pub const CEF_VERSION_MINOR: i32 = 0;
-pub const CEF_VERSION_PATCH: i32 = 11;
-pub const CHROME_VERSION_MAJOR: i32 = 141;
+pub const CEF_VERSION_PATCH: i32 = 8;
+pub const CHROME_VERSION_MAJOR: i32 = 142;
 pub const CHROME_VERSION_MINOR: i32 = 0;
-pub const CHROME_VERSION_BUILD: i32 = 7390;
-pub const CHROME_VERSION_PATCH: i32 = 123;
+pub const CHROME_VERSION_BUILD: i32 = 7444;
+pub const CHROME_VERSION_PATCH: i32 = 135;
 unsafe extern "C" {
     #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n"]
     pub fn cef_api_hash(
@@ -770,7 +771,11 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_GEOLOCATION_WITH_OPTIONS = 123,
     #[doc = " Setting for enabling the Device Attributes API. Spec link:\n https://wicg.github.io/WebApiDevice/device_attributes/"]
     CEF_CONTENT_SETTING_TYPE_DEVICE_ATTRIBUTES = 124,
-    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 125,
+    #[doc = " Stores per-origin state for permission heuristics. Currently used for\n auto-granting geolocation element permission request after repeated\n temporary grants."]
+    CEF_CONTENT_SETTING_TYPE_PERMISSION_ACTIONS_HISTORY = 125,
+    #[doc = " Website setting to indicate whether the user has selected \"show original\"\n when suspicious warning is shown. If the user has selected this, the\n notification permission will not be revoked based on suspicious verdict."]
+    CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_NOTIFICATION_SHOW_ORIGINAL = 126,
+    CEF_CONTENT_SETTING_TYPE_NUM_VALUES = 127,
 }
 #[repr(i32)]
 #[non_exhaustive]
