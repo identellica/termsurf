@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [142.0.0+142.0.8](https://github.com/tauri-apps/cef-rs/compare/cef-v141.6.1+141.0.11...cef-v142.0.0+142.0.8) - 2025-11-11
+
+### Other
+
+- *(release)* update CEF version to 142.0.8
+
 ## [141.6.1+141.0.11](https://github.com/tauri-apps/cef-rs/compare/cef-v141.6.0+141.0.11...cef-v141.6.1+141.0.11) - 2025-11-09
 
 ### Fixed
@@ -15,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 
+- release v141.6.1+141.0.11
+- *(deps)* update rust crate convert_case to 0.9
+- *(deps)* update rust crate libloading to 0.9
 - update bindings
 
 ## [141.6.0+141.0.11](https://github.com/tauri-apps/cef-rs/compare/cef-v141.5.0+141.0.10...cef-v141.6.0+141.0.11) - 2025-10-26
