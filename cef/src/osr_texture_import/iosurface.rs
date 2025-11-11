@@ -4,6 +4,7 @@
 
 use super::common::texture;
 use super::{TextureImportError, TextureImportResult, TextureImporter};
+use crate::osr_texture_import::common::format;
 use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
 use objc2_io_surface::IOSurfaceRef;
 use wgpu::TextureDescriptor;
@@ -71,11 +72,6 @@ impl TextureImporter for IOSurfaceImporter {
 impl IOSurfaceImporter {
     fn get_texture_desc(&self) -> TextureDescriptor<'_> {
         use wgpu::{Extent3d, TextureDimension, TextureUsages};
-        let format = match self.format {
-            cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => wgpu::TextureFormat::Bgra8Unorm,
-            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => wgpu::TextureFormat::Rgba8Unorm,
-            _ => panic!("Unsupported color type"),
-        };
 
         TextureDescriptor {
             label: Some("Cef Texture"),
@@ -87,7 +83,7 @@ impl IOSurfaceImporter {
             mip_level_count: 1,
             sample_count: 1,
             dimension: TextureDimension::D2,
-            format,
+            format: format::cef_to_wgpu(self.format).expect("Unsupported CEF color format"),
             usage: TextureUsages::TEXTURE_BINDING | TextureUsages::COPY_SRC,
             view_formats: &[],
         }
@@ -112,8 +108,8 @@ impl IOSurfaceImporter {
         metal_desc.set_sample_count(texture_desc.sample_count as _);
         metal_desc.set_texture_type(MTLTextureType::D2);
         metal_desc.set_pixel_format(match texture_desc.format {
-            wgpu::TextureFormat::Rgba8Unorm => MTLPixelFormat::RGBA8Unorm,
-            wgpu::TextureFormat::Bgra8Unorm => MTLPixelFormat::BGRA8Unorm,
+            wgpu::TextureFormat::Rgba8UnormSrgb => MTLPixelFormat::RGBA8Unorm_sRGB,
+            wgpu::TextureFormat::Bgra8UnormSrgb => MTLPixelFormat::BGRA8Unorm_sRGB,
             _ => unimplemented!(),
         });
         metal_desc.set_usage(MTLTextureUsage::ShaderRead);
