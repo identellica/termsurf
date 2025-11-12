@@ -9,12 +9,11 @@ impl LibraryLoader {
         "Chromium Embedded Framework.framework/Chromium Embedded Framework";
 
     pub fn new(path: &std::path::Path, helper: bool) -> Self {
-        let resolver = if helper {
-            "../../../.."
-        } else {
-            "../../Frameworks"
-        };
+        let resolver = if helper { "../../.." } else { "../Frameworks" };
         let path = path
+            // path is the current_exe path, read the parent to support symlinks
+            .parent()
+            .unwrap()
             .join(resolver)
             .join(Self::FRAMEWORK_PATH)
             .canonicalize()
