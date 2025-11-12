@@ -10,12 +10,15 @@ pub struct Sandbox {
 
 impl Sandbox {
     const LIBCEF_SANDBOX_PATH: &str =
-        "../../../../Chromium Embedded Framework.framework/Libraries/libcef_sandbox.dylib";
+        "../../../Chromium Embedded Framework.framework/Libraries/libcef_sandbox.dylib";
 
     pub fn new() -> Self {
         unsafe {
             let lib = Library::new(
                 std::env::current_exe()
+                    .unwrap()
+                    // use parent() so we the helper exe can be a symlink
+                    .parent()
                     .unwrap()
                     .join(Self::LIBCEF_SANDBOX_PATH)
                     .canonicalize()
