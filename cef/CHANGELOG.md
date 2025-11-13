@@ -7,15 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [142.2.0+142.0.10](https://github.com/tauri-apps/cef-rs/compare/cef-v142.1.0+142.0.8...cef-v142.2.0+142.0.10) - 2025-11-13
+
+### Other
+
+- *(release)* update CEF version to 142.0.10
+
 ## [142.1.0+142.0.8](https://github.com/tauri-apps/cef-rs/compare/cef-v142.0.0+142.0.8...cef-v142.1.0+142.0.8) - 2025-11-12
 
 ### Added
 
 - support symlink for helper binaries
 
+### Fixed
+
+- osr texture is srgb
+
 ### Other
 
-- Merge pull request #272 from timon-schelling/osr_texture_import_iosurface_use_srgb
+- release v142.1.0+142.0.8
 
 ## [142.0.0+142.0.8](https://github.com/tauri-apps/cef-rs/compare/cef-v141.6.1+141.0.11...cef-v142.0.0+142.0.8) - 2025-11-11
 
