@@ -66,6 +66,11 @@ pub use crate::string::CefStringMultimap;
 pub struct Basetime {
     pub val: i64,
 }
+impl Basetime {
+    fn get_raw(&self) -> _cef_basetime_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_basetime_t> for Basetime {
     fn from(value: _cef_basetime_t) -> Self {
         Self { val: value.val }
@@ -93,6 +98,11 @@ pub struct Time {
     pub minute: ::std::os::raw::c_int,
     pub second: ::std::os::raw::c_int,
     pub millisecond: ::std::os::raw::c_int,
+}
+impl Time {
+    fn get_raw(&self) -> _cef_time_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_time_t> for Time {
     fn from(value: _cef_time_t) -> Self {
@@ -134,6 +144,11 @@ pub struct Point {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
 }
+impl Point {
+    fn get_raw(&self) -> _cef_point_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_point_t> for Point {
     fn from(value: _cef_point_t) -> Self {
         Self {
@@ -163,6 +178,11 @@ pub struct Rect {
     pub y: ::std::os::raw::c_int,
     pub width: ::std::os::raw::c_int,
     pub height: ::std::os::raw::c_int,
+}
+impl Rect {
+    fn get_raw(&self) -> _cef_rect_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_rect_t> for Rect {
     fn from(value: _cef_rect_t) -> Self {
@@ -196,6 +216,11 @@ pub struct Size {
     pub width: ::std::os::raw::c_int,
     pub height: ::std::os::raw::c_int,
 }
+impl Size {
+    fn get_raw(&self) -> _cef_size_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_size_t> for Size {
     fn from(value: _cef_size_t) -> Self {
         Self {
@@ -225,6 +250,11 @@ pub struct Insets {
     pub left: ::std::os::raw::c_int,
     pub bottom: ::std::os::raw::c_int,
     pub right: ::std::os::raw::c_int,
+}
+impl Insets {
+    fn get_raw(&self) -> _cef_insets_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_insets_t> for Insets {
     fn from(value: _cef_insets_t) -> Self {
@@ -268,6 +298,11 @@ pub struct AcceleratedPaintInfoCommon {
     pub has_region_capture_rect: u8,
     pub has_source_size: u8,
     pub has_capture_counter: u8,
+}
+impl AcceleratedPaintInfoCommon {
+    fn get_raw(&self) -> _cef_accelerated_paint_info_common_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
     fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
@@ -322,6 +357,11 @@ pub struct MainArgs {
     pub argc: ::std::os::raw::c_int,
     pub argv: *mut *mut ::std::os::raw::c_char,
 }
+impl MainArgs {
+    fn get_raw(&self) -> _cef_main_args_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_main_args_t> for MainArgs {
     fn from(value: _cef_main_args_t) -> Self {
         Self {
@@ -357,6 +397,11 @@ pub struct WindowInfo {
     pub external_begin_frame_enabled: ::std::os::raw::c_int,
     pub view: *mut ::std::os::raw::c_void,
     pub runtime_style: RuntimeStyle,
+}
+impl WindowInfo {
+    fn get_raw(&self) -> _cef_window_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_window_info_t> for WindowInfo {
     fn from(value: _cef_window_info_t) -> Self {
@@ -406,6 +451,11 @@ pub struct AcceleratedPaintInfo {
     pub shared_texture_io_surface: *mut ::std::os::raw::c_void,
     pub format: ColorType,
     pub extra: AcceleratedPaintInfoCommon,
+}
+impl AcceleratedPaintInfo {
+    fn get_raw(&self) -> _cef_accelerated_paint_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
@@ -469,6 +519,11 @@ pub struct Settings {
     pub chrome_policy_id: CefString,
     pub chrome_app_icon_id: ::std::os::raw::c_int,
     pub disable_signal_handlers: ::std::os::raw::c_int,
+}
+impl Settings {
+    fn get_raw(&self) -> _cef_settings_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_settings_t> for Settings {
     fn from(value: _cef_settings_t) -> Self {
@@ -561,6 +616,11 @@ pub struct RequestContextSettings {
     pub cookieable_schemes_list: CefString,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
 }
+impl RequestContextSettings {
+    fn get_raw(&self) -> _cef_request_context_settings_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_request_context_settings_t> for RequestContextSettings {
     fn from(value: _cef_request_context_settings_t) -> Self {
         Self {
@@ -625,6 +685,11 @@ pub struct BrowserSettings {
     pub background_color: u32,
     pub chrome_status_bubble: State,
     pub chrome_zoom_bubble: State,
+}
+impl BrowserSettings {
+    fn get_raw(&self) -> _cef_browser_settings_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_browser_settings_t> for BrowserSettings {
     fn from(value: _cef_browser_settings_t) -> Self {
@@ -718,6 +783,11 @@ pub struct Urlparts {
     pub query: CefString,
     pub fragment: CefString,
 }
+impl Urlparts {
+    fn get_raw(&self) -> _cef_urlparts_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_urlparts_t> for Urlparts {
     fn from(value: _cef_urlparts_t) -> Self {
         Self {
@@ -778,6 +848,11 @@ pub struct Cookie {
     pub same_site: CookieSameSite,
     pub priority: CookiePriority,
 }
+impl Cookie {
+    fn get_raw(&self) -> _cef_cookie_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_cookie_t> for Cookie {
     fn from(value: _cef_cookie_t) -> Self {
         Self {
@@ -831,6 +906,11 @@ pub struct DraggableRegion {
     pub bounds: Rect,
     pub draggable: ::std::os::raw::c_int,
 }
+impl DraggableRegion {
+    fn get_raw(&self) -> _cef_draggable_region_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_draggable_region_t> for DraggableRegion {
     fn from(value: _cef_draggable_region_t) -> Self {
         Self {
@@ -863,6 +943,11 @@ pub struct ScreenInfo {
     pub is_monochrome: ::std::os::raw::c_int,
     pub rect: Rect,
     pub available_rect: Rect,
+}
+impl ScreenInfo {
+    fn get_raw(&self) -> _cef_screen_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_screen_info_t> for ScreenInfo {
     fn from(value: _cef_screen_info_t) -> Self {
@@ -908,6 +993,11 @@ pub struct LinuxWindowProperties {
     pub wm_class_name: CefString,
     pub wm_role_name: CefString,
 }
+impl LinuxWindowProperties {
+    fn get_raw(&self) -> _cef_linux_window_properties_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn from(value: _cef_linux_window_properties_t) -> Self {
         Self {
@@ -946,6 +1036,11 @@ pub struct MouseEvent {
     pub y: ::std::os::raw::c_int,
     pub modifiers: u32,
 }
+impl MouseEvent {
+    fn get_raw(&self) -> _cef_mouse_event_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_mouse_event_t> for MouseEvent {
     fn from(value: _cef_mouse_event_t) -> Self {
         Self {
@@ -983,6 +1078,11 @@ pub struct TouchEvent {
     pub type_: TouchEventType,
     pub modifiers: u32,
     pub pointer_type: PointerType,
+}
+impl TouchEvent {
+    fn get_raw(&self) -> _cef_touch_event_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_touch_event_t> for TouchEvent {
     fn from(value: _cef_touch_event_t) -> Self {
@@ -1034,6 +1134,11 @@ pub struct KeyEvent {
     pub character: char16_t,
     pub unmodified_character: char16_t,
     pub focus_on_editable_field: ::std::os::raw::c_int,
+}
+impl KeyEvent {
+    fn get_raw(&self) -> _cef_key_event_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_key_event_t> for KeyEvent {
     fn from(value: _cef_key_event_t) -> Self {
@@ -1088,6 +1193,11 @@ pub struct PopupFeatures {
     pub height_set: ::std::os::raw::c_int,
     pub is_popup: ::std::os::raw::c_int,
 }
+impl PopupFeatures {
+    fn get_raw(&self) -> _cef_popup_features_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_popup_features_t> for PopupFeatures {
     fn from(value: _cef_popup_features_t) -> Self {
         Self {
@@ -1137,6 +1247,11 @@ pub struct CursorInfo {
     pub buffer: *mut ::std::os::raw::c_void,
     pub size: Size,
 }
+impl CursorInfo {
+    fn get_raw(&self) -> _cef_cursor_info_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_cursor_info_t> for CursorInfo {
     fn from(value: _cef_cursor_info_t) -> Self {
         Self {
@@ -1184,6 +1299,11 @@ pub struct PdfPrintSettings {
     pub footer_template: CefString,
     pub generate_tagged_pdf: ::std::os::raw::c_int,
     pub generate_document_outline: ::std::os::raw::c_int,
+}
+impl PdfPrintSettings {
+    fn get_raw(&self) -> _cef_pdf_print_settings_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_pdf_print_settings_t> for PdfPrintSettings {
     fn from(value: _cef_pdf_print_settings_t) -> Self {
@@ -1256,6 +1376,11 @@ pub struct BoxLayoutSettings {
     pub minimum_cross_axis_size: ::std::os::raw::c_int,
     pub default_flex: ::std::os::raw::c_int,
 }
+impl BoxLayoutSettings {
+    fn get_raw(&self) -> _cef_box_layout_settings_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_box_layout_settings_t> for BoxLayoutSettings {
     fn from(value: _cef_box_layout_settings_t) -> Self {
         Self {
@@ -1303,6 +1428,11 @@ pub struct Range {
     pub from: u32,
     pub to: u32,
 }
+impl Range {
+    fn get_raw(&self) -> _cef_range_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_range_t> for Range {
     fn from(value: _cef_range_t) -> Self {
         Self {
@@ -1334,6 +1464,11 @@ pub struct CompositionUnderline {
     pub background_color: u32,
     pub thick: ::std::os::raw::c_int,
     pub style: CompositionUnderlineStyle,
+}
+impl CompositionUnderline {
+    fn get_raw(&self) -> _cef_composition_underline_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_composition_underline_t> for CompositionUnderline {
     fn from(value: _cef_composition_underline_t) -> Self {
@@ -1376,6 +1511,11 @@ pub struct AudioParameters {
     pub sample_rate: ::std::os::raw::c_int,
     pub frames_per_buffer: ::std::os::raw::c_int,
 }
+impl AudioParameters {
+    fn get_raw(&self) -> _cef_audio_parameters_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_audio_parameters_t> for AudioParameters {
     fn from(value: _cef_audio_parameters_t) -> Self {
         Self {
@@ -1412,6 +1552,11 @@ pub struct MediaSinkDeviceInfo {
     pub ip_address: CefString,
     pub port: ::std::os::raw::c_int,
     pub model_name: CefString,
+}
+impl MediaSinkDeviceInfo {
+    fn get_raw(&self) -> _cef_media_sink_device_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn from(value: _cef_media_sink_device_info_t) -> Self {
@@ -1454,6 +1599,11 @@ pub struct TouchHandleState {
     pub mirror_horizontal: ::std::os::raw::c_int,
     pub origin: Point,
     pub alpha: f32,
+}
+impl TouchHandleState {
+    fn get_raw(&self) -> _cef_touch_handle_state_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_touch_handle_state_t> for TouchHandleState {
     fn from(value: _cef_touch_handle_state_t) -> Self {
@@ -1507,6 +1657,11 @@ pub struct TaskInfo {
     pub memory: i64,
     pub gpu_memory: i64,
     pub is_gpu_memory_inflated: ::std::os::raw::c_int,
+}
+impl TaskInfo {
+    fn get_raw(&self) -> _cef_task_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_task_info_t> for TaskInfo {
     fn from(value: _cef_task_info_t) -> Self {
@@ -12355,8 +12510,7 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn ime_set_composition(
         &self,
         text: Option<&CefString>,
-        underlines_count: usize,
-        underlines: Option<&CompositionUnderline>,
+        underlines: Option<&[CompositionUnderline]>,
         replacement_range: Option<&Range>,
         selection_range: Option<&Range>,
     );
@@ -13164,35 +13318,31 @@ impl ImplBrowserHost for BrowserHost {
     fn ime_set_composition(
         &self,
         text: Option<&CefString>,
-        underlines_count: usize,
-        underlines: Option<&CompositionUnderline>,
+        underlines: Option<&[CompositionUnderline]>,
         replacement_range: Option<&Range>,
         selection_range: Option<&Range>,
     ) {
         unsafe {
             if let Some(f) = self.0.ime_set_composition {
-                let (
-                    arg_text,
-                    arg_underlines_count,
-                    arg_underlines,
-                    arg_replacement_range,
-                    arg_selection_range,
-                ) = (
-                    text,
-                    underlines_count,
-                    underlines,
-                    replacement_range,
-                    selection_range,
-                );
+                let (arg_text, arg_underlines, arg_replacement_range, arg_selection_range) =
+                    (text, underlines, replacement_range, selection_range);
                 let arg_self_ = self.into_raw();
                 let arg_text = arg_text
                     .map(|arg| arg.into_raw())
                     .unwrap_or(std::ptr::null());
-                let arg_underlines = arg_underlines.cloned().map(|arg| arg.into());
-                let arg_underlines = arg_underlines
+                let arg_underlines_count = arg_underlines
                     .as_ref()
-                    .map(std::ptr::from_ref)
-                    .unwrap_or(std::ptr::null());
+                    .map(|arg| arg.len())
+                    .unwrap_or_default();
+                let vec_underlines = arg_underlines
+                    .as_ref()
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_underlines = if vec_underlines.is_empty() {
+                    std::ptr::null()
+                } else {
+                    vec_underlines.as_ptr()
+                };
                 let arg_replacement_range = arg_replacement_range.cloned().map(|arg| arg.into());
                 let arg_replacement_range = arg_replacement_range
                     .as_ref()
@@ -18802,8 +18952,7 @@ pub trait ImplDragHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut Browser>,
         frame: Option<&mut Frame>,
-        regions_count: usize,
-        regions: Option<&DraggableRegion>,
+        regions: Option<&[DraggableRegion]>,
     ) {
     }
     fn init_methods(object: &mut _cef_drag_handler_t) {
@@ -18853,18 +19002,18 @@ mod impl_cef_drag_handler_t {
         let mut arg_frame =
             unsafe { arg_frame.as_mut() }.map(|arg| Frame(unsafe { RefGuard::from_raw(arg) }));
         let arg_frame = arg_frame.as_mut();
-        let arg_regions_count = arg_regions_count.into_raw();
         let arg_regions = if arg_regions.is_null() {
             None
         } else {
-            Some(WrapParamRef::<DraggableRegion, _>::from(arg_regions))
+            let arg_regions = unsafe { std::slice::from_raw_parts(arg_regions, arg_regions_count) };
+            let arg_regions: Vec<_> = arg_regions.iter().map(|elem| elem.clone().into()).collect();
+            Some(arg_regions)
         };
-        let arg_regions = arg_regions.as_ref().map(|arg| arg.as_ref());
+        let arg_regions = arg_regions.as_deref();
         ImplDragHandler::on_draggable_regions_changed(
             &arg_self_.interface,
             arg_browser,
             arg_frame,
-            arg_regions_count,
             arg_regions,
         )
     }
@@ -18905,13 +19054,11 @@ impl ImplDragHandler for DragHandler {
         &self,
         browser: Option<&mut Browser>,
         frame: Option<&mut Frame>,
-        regions_count: usize,
-        regions: Option<&DraggableRegion>,
+        regions: Option<&[DraggableRegion]>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_draggable_regions_changed {
-                let (arg_browser, arg_frame, arg_regions_count, arg_regions) =
-                    (browser, frame, regions_count, regions);
+                let (arg_browser, arg_frame, arg_regions) = (browser, frame, regions);
                 let arg_self_ = self.into_raw();
                 let arg_browser = arg_browser
                     .map(|arg| {
@@ -18925,11 +19072,19 @@ impl ImplDragHandler for DragHandler {
                         ImplFrame::get_raw(arg)
                     })
                     .unwrap_or(std::ptr::null_mut());
-                let arg_regions = arg_regions.cloned().map(|arg| arg.into());
-                let arg_regions = arg_regions
+                let arg_regions_count = arg_regions
                     .as_ref()
-                    .map(std::ptr::from_ref)
-                    .unwrap_or(std::ptr::null());
+                    .map(|arg| arg.len())
+                    .unwrap_or_default();
+                let vec_regions = arg_regions
+                    .as_ref()
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_regions = if vec_regions.is_empty() {
+                    std::ptr::null()
+                } else {
+                    vec_regions.as_ptr()
+                };
                 f(
                     arg_self_,
                     arg_browser,
@@ -21872,11 +22027,11 @@ pub trait ImplPrintSettings: Clone + Sized + Rc {
     #[doc = "See [`_cef_print_settings_t::get_dpi`] for more documentation."]
     fn dpi(&self) -> ::std::os::raw::c_int;
     #[doc = "See [`_cef_print_settings_t::set_page_ranges`] for more documentation."]
-    fn set_page_ranges(&self, ranges_count: usize, ranges: Option<&Range>);
+    fn set_page_ranges(&self, ranges: Option<&[Range]>);
     #[doc = "See [`_cef_print_settings_t::get_page_ranges_count`] for more documentation."]
     fn page_ranges_count(&self) -> usize;
     #[doc = "See [`_cef_print_settings_t::get_page_ranges`] for more documentation."]
-    fn page_ranges(&self, ranges_count: Option<&mut usize>, ranges: Option<&mut Range>);
+    fn page_ranges(&self, ranges: Option<&mut Vec<Range>>);
     #[doc = "See [`_cef_print_settings_t::set_selection_only`] for more documentation."]
     fn set_selection_only(&self, selection_only: ::std::os::raw::c_int);
     #[doc = "See [`_cef_print_settings_t::is_selection_only`] for more documentation."]
@@ -22031,16 +22186,21 @@ impl ImplPrintSettings for PrintSettings {
                 .unwrap_or_default()
         }
     }
-    fn set_page_ranges(&self, ranges_count: usize, ranges: Option<&Range>) {
+    fn set_page_ranges(&self, ranges: Option<&[Range]>) {
         unsafe {
             if let Some(f) = self.0.set_page_ranges {
-                let (arg_ranges_count, arg_ranges) = (ranges_count, ranges);
+                let arg_ranges = ranges;
                 let arg_self_ = self.into_raw();
-                let arg_ranges = arg_ranges.cloned().map(|arg| arg.into());
-                let arg_ranges = arg_ranges
+                let arg_ranges_count = arg_ranges.as_ref().map(|arg| arg.len()).unwrap_or_default();
+                let vec_ranges = arg_ranges
                     .as_ref()
-                    .map(std::ptr::from_ref)
-                    .unwrap_or(std::ptr::null());
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_ranges = if vec_ranges.is_empty() {
+                    std::ptr::null()
+                } else {
+                    vec_ranges.as_ptr()
+                };
                 f(arg_self_, arg_ranges_count, arg_ranges);
             }
         }
@@ -22057,20 +22217,32 @@ impl ImplPrintSettings for PrintSettings {
                 .unwrap_or_default()
         }
     }
-    fn page_ranges(&self, ranges_count: Option<&mut usize>, ranges: Option<&mut Range>) {
+    fn page_ranges(&self, ranges: Option<&mut Vec<Range>>) {
         unsafe {
             if let Some(f) = self.0.get_page_ranges {
-                let (arg_ranges_count, arg_ranges) = (ranges_count, ranges);
+                let arg_ranges = ranges;
                 let arg_self_ = self.into_raw();
-                let arg_ranges_count = arg_ranges_count
-                    .map(std::ptr::from_mut)
-                    .unwrap_or(std::ptr::null_mut());
-                let mut arg_ranges = arg_ranges.cloned().map(|arg| arg.into());
-                let arg_ranges = arg_ranges
-                    .as_mut()
-                    .map(std::ptr::from_mut)
-                    .unwrap_or(std::ptr::null_mut());
+                let mut out_ranges_count =
+                    arg_ranges.as_ref().map(|arg| arg.len()).unwrap_or_default();
+                let arg_ranges_count = &mut out_ranges_count;
+                let out_ranges = arg_ranges;
+                let mut vec_ranges = out_ranges
+                    .as_ref()
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_ranges = if vec_ranges.is_empty() {
+                    std::ptr::null_mut()
+                } else {
+                    vec_ranges.as_mut_ptr()
+                };
                 f(arg_self_, arg_ranges_count, arg_ranges);
+                if let Some(out_ranges) = out_ranges {
+                    *out_ranges = vec_ranges
+                        .into_iter()
+                        .take(out_ranges_count)
+                        .map(|elem| elem.wrap_result())
+                        .collect();
+                }
             }
         }
     }
@@ -22938,8 +23110,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut Browser>,
         type_: PaintElementType,
-        dirty_rects_count: usize,
-        dirty_rects: Option<&Rect>,
+        dirty_rects: Option<&[Rect]>,
         buffer: *const u8,
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
@@ -22950,8 +23121,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut Browser>,
         type_: PaintElementType,
-        dirty_rects_count: usize,
-        dirty_rects: Option<&Rect>,
+        dirty_rects: Option<&[Rect]>,
         info: Option<&AcceleratedPaintInfo>,
     ) {
     }
@@ -22990,8 +23160,7 @@ pub trait ImplRenderHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut Browser>,
         selected_range: Option<&Range>,
-        character_bounds_count: usize,
-        character_bounds: Option<&Rect>,
+        character_bounds: Option<&[Rect]>,
     ) {
     }
     #[doc = "See [`_cef_render_handler_t::on_text_selection_changed`] for more documentation."]
@@ -23204,13 +23373,18 @@ mod impl_cef_render_handler_t {
             unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
         let arg_browser = arg_browser.as_mut();
         let arg_type_ = arg_type_.into_raw();
-        let arg_dirty_rects_count = arg_dirty_rects_count.into_raw();
         let arg_dirty_rects = if arg_dirty_rects.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect, _>::from(arg_dirty_rects))
+            let arg_dirty_rects =
+                unsafe { std::slice::from_raw_parts(arg_dirty_rects, arg_dirty_rects_count) };
+            let arg_dirty_rects: Vec<_> = arg_dirty_rects
+                .iter()
+                .map(|elem| elem.clone().into())
+                .collect();
+            Some(arg_dirty_rects)
         };
-        let arg_dirty_rects = arg_dirty_rects.as_ref().map(|arg| arg.as_ref());
+        let arg_dirty_rects = arg_dirty_rects.as_deref();
         let arg_buffer = arg_buffer.cast();
         let arg_width = arg_width.into_raw();
         let arg_height = arg_height.into_raw();
@@ -23218,7 +23392,6 @@ mod impl_cef_render_handler_t {
             &arg_self_.interface,
             arg_browser,
             arg_type_,
-            arg_dirty_rects_count,
             arg_dirty_rects,
             arg_buffer,
             arg_width,
@@ -23240,13 +23413,18 @@ mod impl_cef_render_handler_t {
             unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
         let arg_browser = arg_browser.as_mut();
         let arg_type_ = arg_type_.into_raw();
-        let arg_dirty_rects_count = arg_dirty_rects_count.into_raw();
         let arg_dirty_rects = if arg_dirty_rects.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect, _>::from(arg_dirty_rects))
+            let arg_dirty_rects =
+                unsafe { std::slice::from_raw_parts(arg_dirty_rects, arg_dirty_rects_count) };
+            let arg_dirty_rects: Vec<_> = arg_dirty_rects
+                .iter()
+                .map(|elem| elem.clone().into())
+                .collect();
+            Some(arg_dirty_rects)
         };
-        let arg_dirty_rects = arg_dirty_rects.as_ref().map(|arg| arg.as_ref());
+        let arg_dirty_rects = arg_dirty_rects.as_deref();
         let arg_info = if arg_info.is_null() {
             None
         } else {
@@ -23257,7 +23435,6 @@ mod impl_cef_render_handler_t {
             &arg_self_.interface,
             arg_browser,
             arg_type_,
-            arg_dirty_rects_count,
             arg_dirty_rects,
             arg_info,
         )
@@ -23397,18 +23574,23 @@ mod impl_cef_render_handler_t {
             Some(WrapParamRef::<Range, _>::from(arg_selected_range))
         };
         let arg_selected_range = arg_selected_range.as_ref().map(|arg| arg.as_ref());
-        let arg_character_bounds_count = arg_character_bounds_count.into_raw();
         let arg_character_bounds = if arg_character_bounds.is_null() {
             None
         } else {
-            Some(WrapParamRef::<Rect, _>::from(arg_character_bounds))
+            let arg_character_bounds = unsafe {
+                std::slice::from_raw_parts(arg_character_bounds, arg_character_bounds_count)
+            };
+            let arg_character_bounds: Vec<_> = arg_character_bounds
+                .iter()
+                .map(|elem| elem.clone().into())
+                .collect();
+            Some(arg_character_bounds)
         };
-        let arg_character_bounds = arg_character_bounds.as_ref().map(|arg| arg.as_ref());
+        let arg_character_bounds = arg_character_bounds.as_deref();
         ImplRenderHandler::on_ime_composition_range_changed(
             &arg_self_.interface,
             arg_browser,
             arg_selected_range,
-            arg_character_bounds_count,
             arg_character_bounds,
         )
     }
@@ -23633,31 +23815,15 @@ impl ImplRenderHandler for RenderHandler {
         &self,
         browser: Option<&mut Browser>,
         type_: PaintElementType,
-        dirty_rects_count: usize,
-        dirty_rects: Option<&Rect>,
+        dirty_rects: Option<&[Rect]>,
         buffer: *const u8,
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
     ) {
         unsafe {
             if let Some(f) = self.0.on_paint {
-                let (
-                    arg_browser,
-                    arg_type_,
-                    arg_dirty_rects_count,
-                    arg_dirty_rects,
-                    arg_buffer,
-                    arg_width,
-                    arg_height,
-                ) = (
-                    browser,
-                    type_,
-                    dirty_rects_count,
-                    dirty_rects,
-                    buffer,
-                    width,
-                    height,
-                );
+                let (arg_browser, arg_type_, arg_dirty_rects, arg_buffer, arg_width, arg_height) =
+                    (browser, type_, dirty_rects, buffer, width, height);
                 let arg_self_ = self.into_raw();
                 let arg_browser = arg_browser
                     .map(|arg| {
@@ -23666,11 +23832,19 @@ impl ImplRenderHandler for RenderHandler {
                     })
                     .unwrap_or(std::ptr::null_mut());
                 let arg_type_ = arg_type_.into_raw();
-                let arg_dirty_rects = arg_dirty_rects.cloned().map(|arg| arg.into());
-                let arg_dirty_rects = arg_dirty_rects
+                let arg_dirty_rects_count = arg_dirty_rects
                     .as_ref()
-                    .map(std::ptr::from_ref)
-                    .unwrap_or(std::ptr::null());
+                    .map(|arg| arg.len())
+                    .unwrap_or_default();
+                let vec_dirty_rects = arg_dirty_rects
+                    .as_ref()
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_dirty_rects = if vec_dirty_rects.is_empty() {
+                    std::ptr::null()
+                } else {
+                    vec_dirty_rects.as_ptr()
+                };
                 let arg_buffer = arg_buffer.cast();
                 f(
                     arg_self_,
@@ -23689,14 +23863,13 @@ impl ImplRenderHandler for RenderHandler {
         &self,
         browser: Option<&mut Browser>,
         type_: PaintElementType,
-        dirty_rects_count: usize,
-        dirty_rects: Option<&Rect>,
+        dirty_rects: Option<&[Rect]>,
         info: Option<&AcceleratedPaintInfo>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_accelerated_paint {
-                let (arg_browser, arg_type_, arg_dirty_rects_count, arg_dirty_rects, arg_info) =
-                    (browser, type_, dirty_rects_count, dirty_rects, info);
+                let (arg_browser, arg_type_, arg_dirty_rects, arg_info) =
+                    (browser, type_, dirty_rects, info);
                 let arg_self_ = self.into_raw();
                 let arg_browser = arg_browser
                     .map(|arg| {
@@ -23705,11 +23878,19 @@ impl ImplRenderHandler for RenderHandler {
                     })
                     .unwrap_or(std::ptr::null_mut());
                 let arg_type_ = arg_type_.into_raw();
-                let arg_dirty_rects = arg_dirty_rects.cloned().map(|arg| arg.into());
-                let arg_dirty_rects = arg_dirty_rects
+                let arg_dirty_rects_count = arg_dirty_rects
                     .as_ref()
-                    .map(std::ptr::from_ref)
-                    .unwrap_or(std::ptr::null());
+                    .map(|arg| arg.len())
+                    .unwrap_or_default();
+                let vec_dirty_rects = arg_dirty_rects
+                    .as_ref()
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_dirty_rects = if vec_dirty_rects.is_empty() {
+                    std::ptr::null()
+                } else {
+                    vec_dirty_rects.as_ptr()
+                };
                 let arg_info = arg_info.cloned().map(|arg| arg.into());
                 let arg_info = arg_info
                     .as_ref()
@@ -23852,22 +24033,12 @@ impl ImplRenderHandler for RenderHandler {
         &self,
         browser: Option<&mut Browser>,
         selected_range: Option<&Range>,
-        character_bounds_count: usize,
-        character_bounds: Option<&Rect>,
+        character_bounds: Option<&[Rect]>,
     ) {
         unsafe {
             if let Some(f) = self.0.on_ime_composition_range_changed {
-                let (
-                    arg_browser,
-                    arg_selected_range,
-                    arg_character_bounds_count,
-                    arg_character_bounds,
-                ) = (
-                    browser,
-                    selected_range,
-                    character_bounds_count,
-                    character_bounds,
-                );
+                let (arg_browser, arg_selected_range, arg_character_bounds) =
+                    (browser, selected_range, character_bounds);
                 let arg_self_ = self.into_raw();
                 let arg_browser = arg_browser
                     .map(|arg| {
@@ -23880,11 +24051,19 @@ impl ImplRenderHandler for RenderHandler {
                     .as_ref()
                     .map(std::ptr::from_ref)
                     .unwrap_or(std::ptr::null());
-                let arg_character_bounds = arg_character_bounds.cloned().map(|arg| arg.into());
-                let arg_character_bounds = arg_character_bounds
+                let arg_character_bounds_count = arg_character_bounds
                     .as_ref()
-                    .map(std::ptr::from_ref)
-                    .unwrap_or(std::ptr::null());
+                    .map(|arg| arg.len())
+                    .unwrap_or_default();
+                let vec_character_bounds = arg_character_bounds
+                    .as_ref()
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_character_bounds = if vec_character_bounds.is_empty() {
+                    std::ptr::null()
+                } else {
+                    vec_character_bounds.as_ptr()
+                };
                 f(
                     arg_self_,
                     arg_browser,
@@ -41418,7 +41597,7 @@ pub trait ImplWindow: ImplPanel {
     #[doc = "See [`_cef_window_t::get_client_area_bounds_in_screen`] for more documentation."]
     fn client_area_bounds_in_screen(&self) -> Rect;
     #[doc = "See [`_cef_window_t::set_draggable_regions`] for more documentation."]
-    fn set_draggable_regions(&self, regions_count: usize, regions: Option<&DraggableRegion>);
+    fn set_draggable_regions(&self, regions: Option<&[DraggableRegion]>);
     #[doc = "See [`_cef_window_t::get_window_handle`] for more documentation."]
     fn window_handle(&self) -> cef_window_handle_t;
     #[doc = "See [`_cef_window_t::send_key_press`] for more documentation."]
@@ -42068,16 +42247,24 @@ impl ImplWindow for Window {
                 .unwrap_or_default()
         }
     }
-    fn set_draggable_regions(&self, regions_count: usize, regions: Option<&DraggableRegion>) {
+    fn set_draggable_regions(&self, regions: Option<&[DraggableRegion]>) {
         unsafe {
             if let Some(f) = self.0.set_draggable_regions {
-                let (arg_regions_count, arg_regions) = (regions_count, regions);
+                let arg_regions = regions;
                 let arg_self_ = self.into_raw();
-                let arg_regions = arg_regions.cloned().map(|arg| arg.into());
-                let arg_regions = arg_regions
+                let arg_regions_count = arg_regions
                     .as_ref()
-                    .map(std::ptr::from_ref)
-                    .unwrap_or(std::ptr::null());
+                    .map(|arg| arg.len())
+                    .unwrap_or_default();
+                let vec_regions = arg_regions
+                    .as_ref()
+                    .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                    .unwrap_or_default();
+                let arg_regions = if vec_regions.is_empty() {
+                    std::ptr::null()
+                } else {
+                    vec_regions.as_ptr()
+                };
                 f(arg_self_, arg_regions_count, arg_regions);
             }
         }
@@ -42825,7 +43012,7 @@ impl From<V8Propertyattribute> for cef_v8_propertyattribute_t {
 }
 impl Default for V8Propertyattribute {
     fn default() -> Self {
-        Self(cef_v8_propertyattribute_t::V8_PROPERTY_ATTRIBUTE_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -42941,7 +43128,7 @@ impl From<UrlrequestFlags> for cef_urlrequest_flags_t {
 }
 impl Default for UrlrequestFlags {
     fn default() -> Self {
-        Self(cef_urlrequest_flags_t::UR_FLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43347,7 +43534,7 @@ impl From<EventFlags> for cef_event_flags_t {
 }
 impl Default for EventFlags {
     fn default() -> Self {
-        Self(cef_event_flags_t::EVENTFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43405,7 +43592,7 @@ impl From<ContextMenuTypeFlags> for cef_context_menu_type_flags_t {
 }
 impl Default for ContextMenuTypeFlags {
     fn default() -> Self {
-        Self(cef_context_menu_type_flags_t::CM_TYPEFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43463,7 +43650,7 @@ impl From<ContextMenuMediaStateFlags> for cef_context_menu_media_state_flags_t {
 }
 impl Default for ContextMenuMediaStateFlags {
     fn default() -> Self {
-        Self(cef_context_menu_media_state_flags_t::CM_MEDIAFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43492,7 +43679,7 @@ impl From<ContextMenuEditStateFlags> for cef_context_menu_edit_state_flags_t {
 }
 impl Default for ContextMenuEditStateFlags {
     fn default() -> Self {
-        Self(cef_context_menu_edit_state_flags_t::CM_EDITFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43521,7 +43708,7 @@ impl From<QuickMenuEditStateFlags> for cef_quick_menu_edit_state_flags_t {
 }
 impl Default for QuickMenuEditStateFlags {
     fn default() -> Self {
-        Self(cef_quick_menu_edit_state_flags_t::QM_EDITFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -44768,7 +44955,7 @@ impl From<TouchHandleStateFlags> for cef_touch_handle_state_flags_t {
 }
 impl Default for TouchHandleStateFlags {
     fn default() -> Self {
-        Self(cef_touch_handle_state_flags_t::CEF_THS_FLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
