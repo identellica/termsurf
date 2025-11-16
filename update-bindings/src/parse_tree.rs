@@ -178,13 +178,19 @@ impl SignatureRef<'_> {
                                         count_ty.modifiers.as_slice(),
                                         elem_ty.modifiers.as_slice(),
                                     ) {
-                                        ([], [TypeModifier::ConstPtr, TypeModifier::MutPtr]) => {
+                                        ([], [TypeModifier::ConstPtr]) => {
                                             vec![TypeModifier::Slice]
+                                        }
+                                        ([], [TypeModifier::ConstPtr, TypeModifier::MutPtr]) => {
+                                            vec![TypeModifier::Slice, TypeModifier::MutPtr]
+                                        }
+                                        ([TypeModifier::MutPtr], [TypeModifier::MutPtr]) => {
+                                            vec![TypeModifier::MutSlice]
                                         }
                                         (
                                             [TypeModifier::MutPtr],
                                             [TypeModifier::MutPtr, TypeModifier::MutPtr],
-                                        ) => vec![TypeModifier::MutSlice],
+                                        ) => vec![TypeModifier::MutSlice, TypeModifier::MutPtr],
                                         _ => continue,
                                     };
                                     let Ok(slice_ty) = syn::parse2::<syn::Type>(elem_tokens) else {
@@ -585,7 +591,7 @@ impl SignatureRef<'_> {
                 slice_ty:
                     ModifiedType {
                         ty: slice_ty,
-                        ..
+                        modifiers: slice_modifiers,
                     }
             } => {
                 let out_count = format_ident!("out_{count_name}");
@@ -598,8 +604,29 @@ impl SignatureRef<'_> {
                 } else {
                     None
                 };
-                match count_modifiers.as_slice() {
-                    [] => Some(quote! {
+                match (count_modifiers.as_slice(), slice_modifiers.as_slice()) {
+                    ([], [TypeModifier::Slice]) => Some(quote! {
+                        let #arg_count = #arg_name
+                            .as_ref()
+                            .map(|arg| arg.len())
+                            .unwrap_or_default();
+                        let #vec_name = #arg_name
+                            .as_ref()
+                            .map(|arg| arg
+                                .iter()
+                                .map(|elem| {
+                                    #add_refs
+                                    elem.get_raw()
+                                })
+                                .collect::<Vec<_>>())
+                            .unwrap_or_default();
+                        let #arg_name = if #vec_name.is_empty() {
+                            std::ptr::null()
+                        } else {
+                            #vec_name.as_ptr()
+                        };
+                    }),
+                    ([], [TypeModifier::Slice, TypeModifier::MutPtr]) => Some(quote! {
                         let #arg_count = #arg_name
                             .as_ref()
                             .map(|arg| arg.len())
@@ -623,7 +650,30 @@ impl SignatureRef<'_> {
                             #vec_name.as_ptr()
                         };
                     }),
-                    [TypeModifier::MutPtr] => Some(quote! {
+                    ([TypeModifier::MutPtr], [TypeModifier::MutSlice]) => Some(quote! {
+                        let mut #out_count = #arg_name
+                            .as_ref()
+                            .map(|arg| arg.len())
+                            .unwrap_or_default();
+                        let #arg_count = &mut #out_count;
+                        let #out_name = #arg_name;
+                        let mut #vec_name = #out_name
+                            .as_ref()
+                            .map(|arg| arg
+                                .iter()
+                                .map(|elem| {
+                                    #add_refs
+                                    elem.get_raw()
+                                })
+                                .collect::<Vec<_>>())
+                            .unwrap_or_default();
+                        let #arg_name = if #vec_name.is_empty() {
+                            std::ptr::null_mut()
+                        } else {
+                            #vec_name.as_mut_ptr()
+                        };
+                    }),
+                    ([TypeModifier::MutPtr], [TypeModifier::MutSlice, TypeModifier::MutPtr]) => Some(quote! {
                         let mut #out_count = #arg_name
                             .as_ref()
                             .map(|arg| arg.len())
@@ -754,17 +804,32 @@ impl SignatureRef<'_> {
                         ..
                     },
                 slice_name,
+                slice_ty:
+                    ModifiedType {
+                        modifiers: slice_modifiers,
+                        ..
+                    },
                 ..
             } if matches!(count_modifiers.as_slice(), [TypeModifier::MutPtr]) => {
                 let out_count = format_ident!("out_{count_name}");
                 let out_name = format_ident!("out_{slice_name}");
                 let vec_name = format_ident!("vec_{slice_name}");
-                Some(quote! {
+                match slice_modifiers.as_slice() {
+                    [TypeModifier::MutSlice] => Some(quote! { elem.wrap_result() }),
+                    [TypeModifier::MutSlice, TypeModifier::MutPtr] => Some(quote! {
+                        if elem.is_null() {
+                            None
+                        } else {
+                            Some(elem.wrap_result())
+                        }
+                    }),
+                    _ => None,
+                }.map(|wrap_elem| quote! {
                     if let Some(#out_name) = #out_name {
                         *#out_name = #vec_name
                             .into_iter()
                             .take(#out_count)
-                            .map(|elem| if elem.is_null() { None } else { Some(elem.wrap_result()) })
+                            .map(|elem| #wrap_elem)
                             .collect();
                     }
                 })
@@ -968,7 +1033,7 @@ impl SignatureRef<'_> {
                                 let name = format_ident!("{name}");
 
                                 match modifiers {
-                                    [TypeModifier::Slice] => {
+                                    [TypeModifier::Slice, TypeModifier::MutPtr] => {
                                         Some(quote! {
                                             let #vec_name = unsafe { #arg_name.as_ref() }.map(|arg| {
                                                 let arg = unsafe { std::slice::from_raw_parts(std::ptr::from_ref(arg), #arg_count) };
@@ -985,7 +1050,7 @@ impl SignatureRef<'_> {
                                             let #arg_name = #vec_name.as_deref();
                                         })
                                     },
-                                    [TypeModifier::MutSlice] => {
+                                    [TypeModifier::MutSlice, TypeModifier::MutPtr] => {
                                         Some(quote! {
                                             let #out_count = unsafe { #arg_count.as_mut() };
                                             let #out_name = unsafe { #arg_name.as_mut() };
@@ -1038,7 +1103,21 @@ impl SignatureRef<'_> {
                             }
                         }
                     })
-                    .or(Some(quote! { let #arg_name = #arg_name.into_raw(); }))
+                    .or_else(|| {
+                        match modifiers {
+                            [TypeModifier::Slice] => Some(quote! {
+                                let #arg_name = if #arg_name.is_null() {
+                                    None
+                                } else {
+                                    let #arg_name = unsafe { std::slice::from_raw_parts(#arg_name, #arg_count) };
+                                    let #arg_name: Vec<_> = #arg_name.iter().map(|elem| elem.clone().into()).collect();
+                                    Some(#arg_name)
+                                };
+                                let #arg_name = #arg_name.as_deref();
+                            }),
+                            _ => Some(quote! { let #arg_name = #arg_name.into_raw(); })
+                        }
+                    })
             }
             MergedParam::Buffer {
                 slice_name,
@@ -1138,7 +1217,7 @@ impl SignatureRef<'_> {
                     _ => None,
                 };
                 let add_refs = match (slice_modifiers.as_slice(), tree.root(&slice_ty.to_token_stream().to_string())) {
-                    ([TypeModifier::MutSlice], BASE_REF_COUNTED) => {
+                    ([TypeModifier::MutSlice, TypeModifier::MutPtr], BASE_REF_COUNTED) => {
                         Some(quote! {
                             for elem in &mut #vec_name[..size] {
                                 if let Some(elem) = elem.as_ref() {
@@ -1395,11 +1474,17 @@ impl ModifiedType {
                             Some(quote! { Option<&mut Option<#name>> })
                         }
                         [TypeModifier::Slice] => Some(if is_sealed {
+                            quote! { Option<&[#name]> }
+                        } else {
+                            quote! { Option<&[impl #impl_trait]> }
+                        }),
+                        [TypeModifier::Slice, TypeModifier::MutPtr] => Some(if is_sealed {
                             quote! { Option<&[Option<#name>]> }
                         } else {
                             quote! { Option<&[Option<impl #impl_trait>]> }
                         }),
-                        [TypeModifier::MutSlice] => {
+                        [TypeModifier::MutSlice] => Some(quote! { Option<&mut Vec<#name>> }),
+                        [TypeModifier::MutSlice, TypeModifier::MutPtr] => {
                             Some(quote! { Option<&mut Vec<Option<#name>>> })
                         }
                         _ => None,
@@ -1413,8 +1498,12 @@ impl ModifiedType {
                         [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
                             Some(quote! { Option<&mut Option<#name>> })
                         }
-                        [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
-                        [TypeModifier::MutSlice] => {
+                        [TypeModifier::Slice] => Some(quote! { Option<&[#name]> }),
+                        [TypeModifier::Slice, TypeModifier::MutPtr] => {
+                            Some(quote! { Option<&[Option<#name>]> })
+                        }
+                        [TypeModifier::MutSlice] => Some(quote! { Option<&mut Vec<#name>> }),
+                        [TypeModifier::MutSlice, TypeModifier::MutPtr] => {
                             Some(quote! { Option<&mut Vec<Option<#name>>> })
                         }
                         _ => None,
@@ -1434,8 +1523,12 @@ impl ModifiedType {
                     [TypeModifier::MutPtr, TypeModifier::MutPtr] => {
                         Some(quote! { Option<&mut Option<#name>> })
                     }
-                    [TypeModifier::Slice] => Some(quote! { Option<&[Option<#name>]> }),
-                    [TypeModifier::MutSlice] => Some(quote! { Option<&mut Vec<Option<#name>>> }),
+                    [TypeModifier::Slice, TypeModifier::MutPtr] => {
+                        Some(quote! { &[Option<#name>] })
+                    }
+                    [TypeModifier::MutSlice, TypeModifier::MutPtr] => {
+                        Some(quote! { Option<&mut Vec<Option<#name>>> })
+                    }
                     _ => None,
                 }
             }
@@ -3319,6 +3412,12 @@ fn make_my_struct() -> {rust_name} {{
                 #[derive(Clone, Debug)]
                 pub struct #rust_name {
                     #(#fields_decl)*
+                }
+
+                impl #rust_name {
+                    fn get_raw(&self) -> #name_ident {
+                        self.clone().into()
+                    }
                 }
 
                 impl From<#name_ident> for #rust_name {
