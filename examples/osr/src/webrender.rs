@@ -171,8 +171,7 @@ wrap_render_handler! {
             &self,
             _browser: Option<&mut Browser>,
             type_: PaintElementType,
-            _dirty_rects_count: usize,
-            _dirty_rects: Option<&Rect>,
+            _dirty_rects: Option<&[Rect]>,
             info: Option<&AcceleratedPaintInfo>,
         ) {
             let Some(info) = info else { return };
@@ -273,8 +272,7 @@ wrap_render_handler! {
             &self,
             _browser: Option<&mut Browser>,
             _type_: PaintElementType,
-            _dirty_rects_count: usize,
-            _dirty_rects: Option<&Rect>,
+            _dirty_rects: Option<&[Rect]>,
             buffer: *const u8,
             width: ::std::os::raw::c_int,
             height: ::std::os::raw::c_int,

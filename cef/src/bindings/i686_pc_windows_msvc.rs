@@ -78,6 +78,11 @@ pub use crate::string::CefStringMultimap;
 pub struct Basetime {
     pub val: i64,
 }
+impl Basetime {
+    fn get_raw(&self) -> _cef_basetime_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_basetime_t> for Basetime {
     fn from(value: _cef_basetime_t) -> Self {
         Self { val: value.val }
@@ -105,6 +110,11 @@ pub struct Time {
     pub minute: ::std::os::raw::c_int,
     pub second: ::std::os::raw::c_int,
     pub millisecond: ::std::os::raw::c_int,
+}
+impl Time {
+    fn get_raw(&self) -> _cef_time_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_time_t> for Time {
     fn from(value: _cef_time_t) -> Self {
@@ -146,6 +156,11 @@ pub struct Point {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
 }
+impl Point {
+    fn get_raw(&self) -> _cef_point_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_point_t> for Point {
     fn from(value: _cef_point_t) -> Self {
         Self {
@@ -175,6 +190,11 @@ pub struct Rect {
     pub y: ::std::os::raw::c_int,
     pub width: ::std::os::raw::c_int,
     pub height: ::std::os::raw::c_int,
+}
+impl Rect {
+    fn get_raw(&self) -> _cef_rect_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_rect_t> for Rect {
     fn from(value: _cef_rect_t) -> Self {
@@ -208,6 +228,11 @@ pub struct Size {
     pub width: ::std::os::raw::c_int,
     pub height: ::std::os::raw::c_int,
 }
+impl Size {
+    fn get_raw(&self) -> _cef_size_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_size_t> for Size {
     fn from(value: _cef_size_t) -> Self {
         Self {
@@ -237,6 +262,11 @@ pub struct Insets {
     pub left: ::std::os::raw::c_int,
     pub bottom: ::std::os::raw::c_int,
     pub right: ::std::os::raw::c_int,
+}
+impl Insets {
+    fn get_raw(&self) -> _cef_insets_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_insets_t> for Insets {
     fn from(value: _cef_insets_t) -> Self {
@@ -280,6 +310,11 @@ pub struct AcceleratedPaintInfoCommon {
     pub has_region_capture_rect: u8,
     pub has_source_size: u8,
     pub has_capture_counter: u8,
+}
+impl AcceleratedPaintInfoCommon {
+    fn get_raw(&self) -> _cef_accelerated_paint_info_common_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
     fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
@@ -333,6 +368,11 @@ impl Default for AcceleratedPaintInfoCommon {
 pub struct MainArgs {
     pub instance: HINSTANCE,
 }
+impl MainArgs {
+    fn get_raw(&self) -> _cef_main_args_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_main_args_t> for MainArgs {
     fn from(value: _cef_main_args_t) -> Self {
         Self {
@@ -368,6 +408,11 @@ pub struct WindowInfo {
     pub external_begin_frame_enabled: ::std::os::raw::c_int,
     pub window: HWND,
     pub runtime_style: RuntimeStyle,
+}
+impl WindowInfo {
+    fn get_raw(&self) -> _cef_window_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_window_info_t> for WindowInfo {
     fn from(value: _cef_window_info_t) -> Self {
@@ -421,6 +466,11 @@ pub struct AcceleratedPaintInfo {
     pub shared_texture_handle: HANDLE,
     pub format: ColorType,
     pub extra: AcceleratedPaintInfoCommon,
+}
+impl AcceleratedPaintInfo {
+    fn get_raw(&self) -> _cef_accelerated_paint_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
@@ -484,6 +534,11 @@ pub struct Settings {
     pub chrome_policy_id: CefString,
     pub chrome_app_icon_id: ::std::os::raw::c_int,
     pub disable_signal_handlers: ::std::os::raw::c_int,
+}
+impl Settings {
+    fn get_raw(&self) -> _cef_settings_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_settings_t> for Settings {
     fn from(value: _cef_settings_t) -> Self {
@@ -576,6 +631,11 @@ pub struct RequestContextSettings {
     pub cookieable_schemes_list: CefString,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
 }
+impl RequestContextSettings {
+    fn get_raw(&self) -> _cef_request_context_settings_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_request_context_settings_t> for RequestContextSettings {
     fn from(value: _cef_request_context_settings_t) -> Self {
         Self {
@@ -640,6 +700,11 @@ pub struct BrowserSettings {
     pub background_color: u32,
     pub chrome_status_bubble: State,
     pub chrome_zoom_bubble: State,
+}
+impl BrowserSettings {
+    fn get_raw(&self) -> _cef_browser_settings_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_browser_settings_t> for BrowserSettings {
     fn from(value: _cef_browser_settings_t) -> Self {
@@ -733,6 +798,11 @@ pub struct Urlparts {
     pub query: CefString,
     pub fragment: CefString,
 }
+impl Urlparts {
+    fn get_raw(&self) -> _cef_urlparts_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_urlparts_t> for Urlparts {
     fn from(value: _cef_urlparts_t) -> Self {
         Self {
@@ -793,6 +863,11 @@ pub struct Cookie {
     pub same_site: CookieSameSite,
     pub priority: CookiePriority,
 }
+impl Cookie {
+    fn get_raw(&self) -> _cef_cookie_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_cookie_t> for Cookie {
     fn from(value: _cef_cookie_t) -> Self {
         Self {
@@ -846,6 +921,11 @@ pub struct DraggableRegion {
     pub bounds: Rect,
     pub draggable: ::std::os::raw::c_int,
 }
+impl DraggableRegion {
+    fn get_raw(&self) -> _cef_draggable_region_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_draggable_region_t> for DraggableRegion {
     fn from(value: _cef_draggable_region_t) -> Self {
         Self {
@@ -878,6 +958,11 @@ pub struct ScreenInfo {
     pub is_monochrome: ::std::os::raw::c_int,
     pub rect: Rect,
     pub available_rect: Rect,
+}
+impl ScreenInfo {
+    fn get_raw(&self) -> _cef_screen_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_screen_info_t> for ScreenInfo {
     fn from(value: _cef_screen_info_t) -> Self {
@@ -923,6 +1008,11 @@ pub struct LinuxWindowProperties {
     pub wm_class_name: CefString,
     pub wm_role_name: CefString,
 }
+impl LinuxWindowProperties {
+    fn get_raw(&self) -> _cef_linux_window_properties_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
     fn from(value: _cef_linux_window_properties_t) -> Self {
         Self {
@@ -961,6 +1051,11 @@ pub struct MouseEvent {
     pub y: ::std::os::raw::c_int,
     pub modifiers: u32,
 }
+impl MouseEvent {
+    fn get_raw(&self) -> _cef_mouse_event_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_mouse_event_t> for MouseEvent {
     fn from(value: _cef_mouse_event_t) -> Self {
         Self {
@@ -998,6 +1093,11 @@ pub struct TouchEvent {
     pub type_: TouchEventType,
     pub modifiers: u32,
     pub pointer_type: PointerType,
+}
+impl TouchEvent {
+    fn get_raw(&self) -> _cef_touch_event_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_touch_event_t> for TouchEvent {
     fn from(value: _cef_touch_event_t) -> Self {
@@ -1049,6 +1149,11 @@ pub struct KeyEvent {
     pub character: char16_t,
     pub unmodified_character: char16_t,
     pub focus_on_editable_field: ::std::os::raw::c_int,
+}
+impl KeyEvent {
+    fn get_raw(&self) -> _cef_key_event_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_key_event_t> for KeyEvent {
     fn from(value: _cef_key_event_t) -> Self {
@@ -1103,6 +1208,11 @@ pub struct PopupFeatures {
     pub height_set: ::std::os::raw::c_int,
     pub is_popup: ::std::os::raw::c_int,
 }
+impl PopupFeatures {
+    fn get_raw(&self) -> _cef_popup_features_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_popup_features_t> for PopupFeatures {
     fn from(value: _cef_popup_features_t) -> Self {
         Self {
@@ -1152,6 +1262,11 @@ pub struct CursorInfo {
     pub buffer: *mut ::std::os::raw::c_void,
     pub size: Size,
 }
+impl CursorInfo {
+    fn get_raw(&self) -> _cef_cursor_info_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_cursor_info_t> for CursorInfo {
     fn from(value: _cef_cursor_info_t) -> Self {
         Self {
@@ -1199,6 +1314,11 @@ pub struct PdfPrintSettings {
     pub footer_template: CefString,
     pub generate_tagged_pdf: ::std::os::raw::c_int,
     pub generate_document_outline: ::std::os::raw::c_int,
+}
+impl PdfPrintSettings {
+    fn get_raw(&self) -> _cef_pdf_print_settings_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_pdf_print_settings_t> for PdfPrintSettings {
     fn from(value: _cef_pdf_print_settings_t) -> Self {
@@ -1271,6 +1391,11 @@ pub struct BoxLayoutSettings {
     pub minimum_cross_axis_size: ::std::os::raw::c_int,
     pub default_flex: ::std::os::raw::c_int,
 }
+impl BoxLayoutSettings {
+    fn get_raw(&self) -> _cef_box_layout_settings_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_box_layout_settings_t> for BoxLayoutSettings {
     fn from(value: _cef_box_layout_settings_t) -> Self {
         Self {
@@ -1318,6 +1443,11 @@ pub struct Range {
     pub from: u32,
     pub to: u32,
 }
+impl Range {
+    fn get_raw(&self) -> _cef_range_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_range_t> for Range {
     fn from(value: _cef_range_t) -> Self {
         Self {
@@ -1349,6 +1479,11 @@ pub struct CompositionUnderline {
     pub background_color: u32,
     pub thick: ::std::os::raw::c_int,
     pub style: CompositionUnderlineStyle,
+}
+impl CompositionUnderline {
+    fn get_raw(&self) -> _cef_composition_underline_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_composition_underline_t> for CompositionUnderline {
     fn from(value: _cef_composition_underline_t) -> Self {
@@ -1391,6 +1526,11 @@ pub struct AudioParameters {
     pub sample_rate: ::std::os::raw::c_int,
     pub frames_per_buffer: ::std::os::raw::c_int,
 }
+impl AudioParameters {
+    fn get_raw(&self) -> _cef_audio_parameters_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_audio_parameters_t> for AudioParameters {
     fn from(value: _cef_audio_parameters_t) -> Self {
         Self {
@@ -1427,6 +1567,11 @@ pub struct MediaSinkDeviceInfo {
     pub ip_address: CefString,
     pub port: ::std::os::raw::c_int,
     pub model_name: CefString,
+}
+impl MediaSinkDeviceInfo {
+    fn get_raw(&self) -> _cef_media_sink_device_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_media_sink_device_info_t> for MediaSinkDeviceInfo {
     fn from(value: _cef_media_sink_device_info_t) -> Self {
@@ -1469,6 +1614,11 @@ pub struct TouchHandleState {
     pub mirror_horizontal: ::std::os::raw::c_int,
     pub origin: Point,
     pub alpha: f32,
+}
+impl TouchHandleState {
+    fn get_raw(&self) -> _cef_touch_handle_state_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_touch_handle_state_t> for TouchHandleState {
     fn from(value: _cef_touch_handle_state_t) -> Self {
@@ -1522,6 +1672,11 @@ pub struct TaskInfo {
     pub memory: i64,
     pub gpu_memory: i64,
     pub is_gpu_memory_inflated: ::std::os::raw::c_int,
+}
+impl TaskInfo {
+    fn get_raw(&self) -> _cef_task_info_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_task_info_t> for TaskInfo {
     fn from(value: _cef_task_info_t) -> Self {
@@ -1673,6 +1828,11 @@ pub struct DevToolsMessageObserver {
         ),
     >,
 }
+impl DevToolsMessageObserver {
+    fn get_raw(&self) -> _cef_dev_tools_message_observer_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_dev_tools_message_observer_t> for DevToolsMessageObserver {
     fn from(value: _cef_dev_tools_message_observer_t) -> Self {
         Self {
@@ -1797,6 +1957,11 @@ pub struct Value {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl Value {
+    fn get_raw(&self) -> _cef_value_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_value_t> for Value {
     fn from(value: _cef_value_t) -> Self {
         Self {
@@ -1901,6 +2066,11 @@ pub struct BinaryValue {
             data_offset: usize,
         ) -> usize,
     >,
+}
+impl BinaryValue {
+    fn get_raw(&self) -> _cef_binary_value_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_binary_value_t> for BinaryValue {
     fn from(value: _cef_binary_value_t) -> Self {
@@ -2109,6 +2279,11 @@ pub struct DictionaryValue {
             value: *mut _cef_list_value_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl DictionaryValue {
+    fn get_raw(&self) -> _cef_dictionary_value_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_dictionary_value_t> for DictionaryValue {
     fn from(value: _cef_dictionary_value_t) -> Self {
@@ -2344,6 +2519,11 @@ pub struct ListValue {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl ListValue {
+    fn get_raw(&self) -> _cef_list_value_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_list_value_t> for ListValue {
     fn from(value: _cef_list_value_t) -> Self {
         Self {
@@ -2515,6 +2695,11 @@ pub struct Image {
         ) -> *mut _cef_binary_value_t,
     >,
 }
+impl Image {
+    fn get_raw(&self) -> _cef_image_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_image_t> for Image {
     fn from(value: _cef_image_t) -> Self {
         Self {
@@ -2589,6 +2774,11 @@ pub struct ReadHandler {
         unsafe extern "stdcall" fn(self_: *mut _cef_read_handler_t) -> ::std::os::raw::c_int,
     >,
 }
+impl ReadHandler {
+    fn get_raw(&self) -> _cef_read_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_read_handler_t> for ReadHandler {
     fn from(value: _cef_read_handler_t) -> Self {
         Self {
@@ -2646,6 +2836,11 @@ pub struct StreamReader {
     pub may_block: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_stream_reader_t) -> ::std::os::raw::c_int,
     >,
+}
+impl StreamReader {
+    fn get_raw(&self) -> _cef_stream_reader_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_stream_reader_t> for StreamReader {
     fn from(value: _cef_stream_reader_t) -> Self {
@@ -2705,6 +2900,11 @@ pub struct WriteHandler {
         unsafe extern "stdcall" fn(self_: *mut _cef_write_handler_t) -> ::std::os::raw::c_int,
     >,
 }
+impl WriteHandler {
+    fn get_raw(&self) -> _cef_write_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_write_handler_t> for WriteHandler {
     fn from(value: _cef_write_handler_t) -> Self {
         Self {
@@ -2762,6 +2962,11 @@ pub struct StreamWriter {
     pub may_block: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_stream_writer_t) -> ::std::os::raw::c_int,
     >,
+}
+impl StreamWriter {
+    fn get_raw(&self) -> _cef_stream_writer_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_stream_writer_t> for StreamWriter {
     fn from(value: _cef_stream_writer_t) -> Self {
@@ -2890,6 +3095,11 @@ pub struct DragData {
         unsafe extern "stdcall" fn(self_: *mut _cef_drag_data_t) -> ::std::os::raw::c_int,
     >,
 }
+impl DragData {
+    fn get_raw(&self) -> _cef_drag_data_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_drag_data_t> for DragData {
     fn from(value: _cef_drag_data_t) -> Self {
         Self {
@@ -2975,6 +3185,11 @@ pub struct Domvisitor {
         ),
     >,
 }
+impl Domvisitor {
+    fn get_raw(&self) -> _cef_domvisitor_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_domvisitor_t> for Domvisitor {
     fn from(value: _cef_domvisitor_t) -> Self {
         Self {
@@ -3049,6 +3264,11 @@ pub struct Domdocument {
             partialURL: *const cef_string_t,
         ) -> cef_string_userfree_t,
     >,
+}
+impl Domdocument {
+    fn get_raw(&self) -> _cef_domdocument_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_domdocument_t> for Domdocument {
     fn from(value: _cef_domdocument_t) -> Self {
@@ -3196,6 +3416,11 @@ pub struct Domnode {
     pub get_element_bounds:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_domnode_t) -> cef_rect_t>,
 }
+impl Domnode {
+    fn get_raw(&self) -> _cef_domnode_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_domnode_t> for Domnode {
     fn from(value: _cef_domnode_t) -> Self {
         Self {
@@ -3286,6 +3511,11 @@ pub struct SharedMemoryRegion {
         ) -> *mut ::std::os::raw::c_void,
     >,
 }
+impl SharedMemoryRegion {
+    fn get_raw(&self) -> _cef_shared_memory_region_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_shared_memory_region_t> for SharedMemoryRegion {
     fn from(value: _cef_shared_memory_region_t) -> Self {
         Self {
@@ -3338,6 +3568,11 @@ pub struct ProcessMessage {
             self_: *mut _cef_process_message_t,
         ) -> *mut _cef_shared_memory_region_t,
     >,
+}
+impl ProcessMessage {
+    fn get_raw(&self) -> _cef_process_message_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_process_message_t> for ProcessMessage {
     fn from(value: _cef_process_message_t) -> Self {
@@ -3459,6 +3694,11 @@ pub struct Request {
     pub get_identifier:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_request_t) -> u64>,
 }
+impl Request {
+    fn get_raw(&self) -> _cef_request_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_request_t> for Request {
     fn from(value: _cef_request_t) -> Self {
         Self {
@@ -3557,6 +3797,11 @@ pub struct PostData {
     pub remove_elements:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_post_data_t)>,
 }
+impl PostData {
+    fn get_raw(&self) -> _cef_post_data_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_post_data_t> for PostData {
     fn from(value: _cef_post_data_t) -> Self {
         Self {
@@ -3632,6 +3877,11 @@ pub struct PostDataElement {
         ) -> usize,
     >,
 }
+impl PostDataElement {
+    fn get_raw(&self) -> _cef_post_data_element_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_post_data_element_t> for PostDataElement {
     fn from(value: _cef_post_data_element_t) -> Self {
         Self {
@@ -3675,6 +3925,11 @@ pub struct CefStringVisitor {
     pub visit: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_string_visitor_t, string: *const cef_string_t),
     >,
+}
+impl CefStringVisitor {
+    fn get_raw(&self) -> _cef_string_visitor_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_string_visitor_t> for CefStringVisitor {
     fn from(value: _cef_string_visitor_t) -> Self {
@@ -3776,6 +4031,11 @@ pub struct Frame {
             message: *mut _cef_process_message_t,
         ),
     >,
+}
+impl Frame {
+    fn get_raw(&self) -> _cef_frame_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_frame_t> for Frame {
     fn from(value: _cef_frame_t) -> Self {
@@ -3881,6 +4141,11 @@ pub struct X509CertPrincipal {
         ),
     >,
 }
+impl X509CertPrincipal {
+    fn get_raw(&self) -> _cef_x509_cert_principal_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_x509_cert_principal_t> for X509CertPrincipal {
     fn from(value: _cef_x509_cert_principal_t) -> Self {
         Self {
@@ -3962,6 +4227,11 @@ pub struct X509Certificate {
         ),
     >,
 }
+impl X509Certificate {
+    fn get_raw(&self) -> _cef_x509_certificate_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_x509_certificate_t> for X509Certificate {
     fn from(value: _cef_x509_certificate_t) -> Self {
         Self {
@@ -4021,6 +4291,11 @@ pub struct Sslstatus {
     pub get_x_509_certificate: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_sslstatus_t) -> *mut _cef_x509_certificate_t,
     >,
+}
+impl Sslstatus {
+    fn get_raw(&self) -> _cef_sslstatus_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_sslstatus_t> for Sslstatus {
     fn from(value: _cef_sslstatus_t) -> Self {
@@ -4086,6 +4361,11 @@ pub struct NavigationEntry {
     pub get_sslstatus: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_navigation_entry_t) -> *mut _cef_sslstatus_t,
     >,
+}
+impl NavigationEntry {
+    fn get_raw(&self) -> _cef_navigation_entry_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_navigation_entry_t> for NavigationEntry {
     fn from(value: _cef_navigation_entry_t) -> Self {
@@ -4178,6 +4458,11 @@ pub struct Callback {
     pub cont: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_callback_t)>,
     pub cancel: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_callback_t)>,
 }
+impl Callback {
+    fn get_raw(&self) -> _cef_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_callback_t> for Callback {
     fn from(value: _cef_callback_t) -> Self {
         Self {
@@ -4208,6 +4493,11 @@ pub struct CompletionCallback {
     pub base: BaseRefCounted,
     pub on_complete:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_completion_callback_t)>,
+}
+impl CompletionCallback {
+    fn get_raw(&self) -> _cef_completion_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_completion_callback_t> for CompletionCallback {
     fn from(value: _cef_completion_callback_t) -> Self {
@@ -4272,6 +4562,11 @@ pub struct CookieManager {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl CookieManager {
+    fn get_raw(&self) -> _cef_cookie_manager_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_cookie_manager_t> for CookieManager {
     fn from(value: _cef_cookie_manager_t) -> Self {
         Self {
@@ -4316,6 +4611,11 @@ pub struct CookieVisitor {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl CookieVisitor {
+    fn get_raw(&self) -> _cef_cookie_visitor_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_cookie_visitor_t> for CookieVisitor {
     fn from(value: _cef_cookie_visitor_t) -> Self {
         Self {
@@ -4349,6 +4649,11 @@ pub struct SetCookieCallback {
         ),
     >,
 }
+impl SetCookieCallback {
+    fn get_raw(&self) -> _cef_set_cookie_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_set_cookie_callback_t> for SetCookieCallback {
     fn from(value: _cef_set_cookie_callback_t) -> Self {
         Self {
@@ -4381,6 +4686,11 @@ pub struct DeleteCookiesCallback {
             num_deleted: ::std::os::raw::c_int,
         ),
     >,
+}
+impl DeleteCookiesCallback {
+    fn get_raw(&self) -> _cef_delete_cookies_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_delete_cookies_callback_t> for DeleteCookiesCallback {
     fn from(value: _cef_delete_cookies_callback_t) -> Self {
@@ -4432,6 +4742,11 @@ pub struct MediaRouter {
     >,
     pub notify_current_routes:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_media_router_t)>,
+}
+impl MediaRouter {
+    fn get_raw(&self) -> _cef_media_router_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_media_router_t> for MediaRouter {
     fn from(value: _cef_media_router_t) -> Self {
@@ -4497,6 +4812,11 @@ pub struct MediaObserver {
         ),
     >,
 }
+impl MediaObserver {
+    fn get_raw(&self) -> _cef_media_observer_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_media_observer_t> for MediaObserver {
     fn from(value: _cef_media_observer_t) -> Self {
         Self {
@@ -4548,6 +4868,11 @@ pub struct MediaRoute {
     pub terminate:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_media_route_t)>,
 }
+impl MediaRoute {
+    fn get_raw(&self) -> _cef_media_route_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_media_route_t> for MediaRoute {
     fn from(value: _cef_media_route_t) -> Self {
         Self {
@@ -4590,6 +4915,11 @@ pub struct MediaRouteCreateCallback {
             route: *mut _cef_media_route_t,
         ),
     >,
+}
+impl MediaRouteCreateCallback {
+    fn get_raw(&self) -> _cef_media_route_create_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_media_route_create_callback_t> for MediaRouteCreateCallback {
     fn from(value: _cef_media_route_create_callback_t) -> Self {
@@ -4645,6 +4975,11 @@ pub struct MediaSink {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl MediaSink {
+    fn get_raw(&self) -> _cef_media_sink_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_media_sink_t> for MediaSink {
     fn from(value: _cef_media_sink_t) -> Self {
         Self {
@@ -4690,6 +5025,11 @@ pub struct MediaSinkDeviceInfoCallback {
         ),
     >,
 }
+impl MediaSinkDeviceInfoCallback {
+    fn get_raw(&self) -> _cef_media_sink_device_info_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_media_sink_device_info_callback_t> for MediaSinkDeviceInfoCallback {
     fn from(value: _cef_media_sink_device_info_callback_t) -> Self {
         Self {
@@ -4725,6 +5065,11 @@ pub struct MediaSource {
     pub is_dial_source: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_media_source_t) -> ::std::os::raw::c_int,
     >,
+}
+impl MediaSource {
+    fn get_raw(&self) -> _cef_media_source_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_media_source_t> for MediaSource {
     fn from(value: _cef_media_source_t) -> Self {
@@ -4764,6 +5109,11 @@ pub struct PreferenceRegistrar {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl PreferenceRegistrar {
+    fn get_raw(&self) -> _cef_preference_registrar_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_preference_registrar_t> for PreferenceRegistrar {
     fn from(value: _cef_preference_registrar_t) -> Self {
         Self {
@@ -4796,6 +5146,11 @@ pub struct PreferenceObserver {
             name: *const cef_string_t,
         ),
     >,
+}
+impl PreferenceObserver {
+    fn get_raw(&self) -> _cef_preference_observer_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_preference_observer_t> for PreferenceObserver {
     fn from(value: _cef_preference_observer_t) -> Self {
@@ -4863,6 +5218,11 @@ pub struct PreferenceManager {
         ) -> *mut _cef_registration_t,
     >,
 }
+impl PreferenceManager {
+    fn get_raw(&self) -> _cef_preference_manager_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_preference_manager_t> for PreferenceManager {
     fn from(value: _cef_preference_manager_t) -> Self {
         Self {
@@ -4907,6 +5267,11 @@ pub struct ResolveCallback {
         ),
     >,
 }
+impl ResolveCallback {
+    fn get_raw(&self) -> _cef_resolve_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_resolve_callback_t> for ResolveCallback {
     fn from(value: _cef_resolve_callback_t) -> Self {
         Self {
@@ -4941,6 +5306,11 @@ pub struct SettingObserver {
             content_type: cef_content_setting_types_t,
         ),
     >,
+}
+impl SettingObserver {
+    fn get_raw(&self) -> _cef_setting_observer_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_setting_observer_t> for SettingObserver {
     fn from(value: _cef_setting_observer_t) -> Self {
@@ -5096,6 +5466,11 @@ pub struct RequestContext {
         ) -> *mut _cef_registration_t,
     >,
 }
+impl RequestContext {
+    fn get_raw(&self) -> _cef_request_context_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_request_context_t> for RequestContext {
     fn from(value: _cef_request_context_t) -> Self {
         Self {
@@ -5227,6 +5602,11 @@ pub struct Browser {
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_t, names: cef_string_list_t),
     >,
 }
+impl Browser {
+    fn get_raw(&self) -> _cef_browser_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_browser_t> for Browser {
     fn from(value: _cef_browser_t) -> Self {
         Self {
@@ -5300,6 +5680,11 @@ pub struct RunFileDialogCallback {
         ),
     >,
 }
+impl RunFileDialogCallback {
+    fn get_raw(&self) -> _cef_run_file_dialog_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_run_file_dialog_callback_t> for RunFileDialogCallback {
     fn from(value: _cef_run_file_dialog_callback_t) -> Self {
         Self {
@@ -5336,6 +5721,11 @@ pub struct NavigationEntryVisitor {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl NavigationEntryVisitor {
+    fn get_raw(&self) -> _cef_navigation_entry_visitor_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_navigation_entry_visitor_t> for NavigationEntryVisitor {
     fn from(value: _cef_navigation_entry_visitor_t) -> Self {
         Self {
@@ -5369,6 +5759,11 @@ pub struct PdfPrintCallback {
             ok: ::std::os::raw::c_int,
         ),
     >,
+}
+impl PdfPrintCallback {
+    fn get_raw(&self) -> _cef_pdf_print_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_pdf_print_callback_t> for PdfPrintCallback {
     fn from(value: _cef_pdf_print_callback_t) -> Self {
@@ -5404,6 +5799,11 @@ pub struct DownloadImageCallback {
             image: *mut _cef_image_t,
         ),
     >,
+}
+impl DownloadImageCallback {
+    fn get_raw(&self) -> _cef_download_image_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_download_image_callback_t> for DownloadImageCallback {
     fn from(value: _cef_download_image_callback_t) -> Self {
@@ -5753,6 +6153,11 @@ pub struct BrowserHost {
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> cef_runtime_style_t,
     >,
 }
+impl BrowserHost {
+    fn get_raw(&self) -> _cef_browser_host_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_browser_host_t> for BrowserHost {
     fn from(value: _cef_browser_host_t) -> Self {
         Self {
@@ -5948,6 +6353,11 @@ pub struct AudioHandler {
         ),
     >,
 }
+impl AudioHandler {
+    fn get_raw(&self) -> _cef_audio_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_audio_handler_t> for AudioHandler {
     fn from(value: _cef_audio_handler_t) -> Self {
         Self {
@@ -6016,6 +6426,11 @@ pub struct CommandHandler {
             button_type: cef_chrome_toolbar_button_type_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl CommandHandler {
+    fn get_raw(&self) -> _cef_command_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_command_handler_t> for CommandHandler {
     fn from(value: _cef_command_handler_t) -> Self {
@@ -6099,6 +6514,11 @@ pub struct MenuModelDelegate {
             label: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl MenuModelDelegate {
+    fn get_raw(&self) -> _cef_menu_model_delegate_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_menu_model_delegate_t> for MenuModelDelegate {
     fn from(value: _cef_menu_model_delegate_t) -> Self {
@@ -6513,6 +6933,11 @@ pub struct MenuModel {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl MenuModel {
+    fn get_raw(&self) -> _cef_menu_model_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_menu_model_t> for MenuModel {
     fn from(value: _cef_menu_model_t) -> Self {
         Self {
@@ -6660,6 +7085,11 @@ pub struct RunContextMenuCallback {
         unsafe extern "stdcall" fn(self_: *mut _cef_run_context_menu_callback_t),
     >,
 }
+impl RunContextMenuCallback {
+    fn get_raw(&self) -> _cef_run_context_menu_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_run_context_menu_callback_t> for RunContextMenuCallback {
     fn from(value: _cef_run_context_menu_callback_t) -> Self {
         Self {
@@ -6698,6 +7128,11 @@ pub struct RunQuickMenuCallback {
     pub cancel: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_run_quick_menu_callback_t),
     >,
+}
+impl RunQuickMenuCallback {
+    fn get_raw(&self) -> _cef_run_quick_menu_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_run_quick_menu_callback_t> for RunQuickMenuCallback {
     fn from(value: _cef_run_quick_menu_callback_t) -> Self {
@@ -6790,6 +7225,11 @@ pub struct ContextMenuHandler {
             frame: *mut _cef_frame_t,
         ),
     >,
+}
+impl ContextMenuHandler {
+    fn get_raw(&self) -> _cef_context_menu_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_context_menu_handler_t> for ContextMenuHandler {
     fn from(value: _cef_context_menu_handler_t) -> Self {
@@ -6901,6 +7341,11 @@ pub struct ContextMenuParams {
         unsafe extern "stdcall" fn(self_: *mut _cef_context_menu_params_t) -> ::std::os::raw::c_int,
     >,
 }
+impl ContextMenuParams {
+    fn get_raw(&self) -> _cef_context_menu_params_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_context_menu_params_t> for ContextMenuParams {
     fn from(value: _cef_context_menu_params_t) -> Self {
         Self {
@@ -6974,6 +7419,11 @@ pub struct FileDialogCallback {
     pub cancel:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_file_dialog_callback_t)>,
 }
+impl FileDialogCallback {
+    fn get_raw(&self) -> _cef_file_dialog_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_file_dialog_callback_t> for FileDialogCallback {
     fn from(value: _cef_file_dialog_callback_t) -> Self {
         Self {
@@ -7015,6 +7465,11 @@ pub struct DialogHandler {
             callback: *mut _cef_file_dialog_callback_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl DialogHandler {
+    fn get_raw(&self) -> _cef_dialog_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_dialog_handler_t> for DialogHandler {
     fn from(value: _cef_dialog_handler_t) -> Self {
@@ -7141,6 +7596,11 @@ pub struct DisplayHandler {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl DisplayHandler {
+    fn get_raw(&self) -> _cef_display_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_display_handler_t> for DisplayHandler {
     fn from(value: _cef_display_handler_t) -> Self {
         Self {
@@ -7247,6 +7707,11 @@ pub struct DownloadItem {
         unsafe extern "stdcall" fn(self_: *mut _cef_download_item_t) -> cef_string_userfree_t,
     >,
 }
+impl DownloadItem {
+    fn get_raw(&self) -> _cef_download_item_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_download_item_t> for DownloadItem {
     fn from(value: _cef_download_item_t) -> Self {
         Self {
@@ -7317,6 +7782,11 @@ pub struct BeforeDownloadCallback {
         ),
     >,
 }
+impl BeforeDownloadCallback {
+    fn get_raw(&self) -> _cef_before_download_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_before_download_callback_t> for BeforeDownloadCallback {
     fn from(value: _cef_before_download_callback_t) -> Self {
         Self {
@@ -7352,6 +7822,11 @@ pub struct DownloadItemCallback {
     pub resume: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_download_item_callback_t),
     >,
+}
+impl DownloadItemCallback {
+    fn get_raw(&self) -> _cef_download_item_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_download_item_callback_t> for DownloadItemCallback {
     fn from(value: _cef_download_item_callback_t) -> Self {
@@ -7409,6 +7884,11 @@ pub struct DownloadHandler {
         ),
     >,
 }
+impl DownloadHandler {
+    fn get_raw(&self) -> _cef_download_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_download_handler_t> for DownloadHandler {
     fn from(value: _cef_download_handler_t) -> Self {
         Self {
@@ -7457,6 +7937,11 @@ pub struct DragHandler {
         ),
     >,
 }
+impl DragHandler {
+    fn get_raw(&self) -> _cef_drag_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_drag_handler_t> for DragHandler {
     fn from(value: _cef_drag_handler_t) -> Self {
         Self {
@@ -7496,6 +7981,11 @@ pub struct FindHandler {
             finalUpdate: ::std::os::raw::c_int,
         ),
     >,
+}
+impl FindHandler {
+    fn get_raw(&self) -> _cef_find_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_find_handler_t> for FindHandler {
     fn from(value: _cef_find_handler_t) -> Self {
@@ -7540,6 +8030,11 @@ pub struct FocusHandler {
     pub on_got_focus: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_focus_handler_t, browser: *mut _cef_browser_t),
     >,
+}
+impl FocusHandler {
+    fn get_raw(&self) -> _cef_focus_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_focus_handler_t> for FocusHandler {
     fn from(value: _cef_focus_handler_t) -> Self {
@@ -7609,6 +8104,11 @@ pub struct FrameHandler {
         ),
     >,
 }
+impl FrameHandler {
+    fn get_raw(&self) -> _cef_frame_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_frame_handler_t> for FrameHandler {
     fn from(value: _cef_frame_handler_t) -> Self {
         Self {
@@ -7650,6 +8150,11 @@ pub struct JsdialogCallback {
             user_input: *const cef_string_t,
         ),
     >,
+}
+impl JsdialogCallback {
+    fn get_raw(&self) -> _cef_jsdialog_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_jsdialog_callback_t> for JsdialogCallback {
     fn from(value: _cef_jsdialog_callback_t) -> Self {
@@ -7711,6 +8216,11 @@ pub struct JsdialogHandler {
         ),
     >,
 }
+impl JsdialogHandler {
+    fn get_raw(&self) -> _cef_jsdialog_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_jsdialog_handler_t> for JsdialogHandler {
     fn from(value: _cef_jsdialog_handler_t) -> Self {
         Self {
@@ -7760,6 +8270,11 @@ pub struct KeyboardHandler {
             os_event: cef_event_handle_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl KeyboardHandler {
+    fn get_raw(&self) -> _cef_keyboard_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_keyboard_handler_t> for KeyboardHandler {
     fn from(value: _cef_keyboard_handler_t) -> Self {
@@ -7844,6 +8359,11 @@ pub struct LifeSpanHandler {
         ),
     >,
 }
+impl LifeSpanHandler {
+    fn get_raw(&self) -> _cef_life_span_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_life_span_handler_t> for LifeSpanHandler {
     fn from(value: _cef_life_span_handler_t) -> Self {
         Self {
@@ -7916,6 +8436,11 @@ pub struct LoadHandler {
         ),
     >,
 }
+impl LoadHandler {
+    fn get_raw(&self) -> _cef_load_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_load_handler_t> for LoadHandler {
     fn from(value: _cef_load_handler_t) -> Self {
         Self {
@@ -7957,6 +8482,11 @@ pub struct MediaAccessCallback {
     pub cancel:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_media_access_callback_t)>,
 }
+impl MediaAccessCallback {
+    fn get_raw(&self) -> _cef_media_access_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_media_access_callback_t> for MediaAccessCallback {
     fn from(value: _cef_media_access_callback_t) -> Self {
         Self {
@@ -7991,6 +8521,11 @@ pub struct PermissionPromptCallback {
             result: cef_permission_request_result_t,
         ),
     >,
+}
+impl PermissionPromptCallback {
+    fn get_raw(&self) -> _cef_permission_prompt_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_permission_prompt_callback_t> for PermissionPromptCallback {
     fn from(value: _cef_permission_prompt_callback_t) -> Self {
@@ -8046,6 +8581,11 @@ pub struct PermissionHandler {
             result: cef_permission_request_result_t,
         ),
     >,
+}
+impl PermissionHandler {
+    fn get_raw(&self) -> _cef_permission_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_permission_handler_t> for PermissionHandler {
     fn from(value: _cef_permission_handler_t) -> Self {
@@ -8169,6 +8709,11 @@ pub struct PrintSettings {
         unsafe extern "stdcall" fn(self_: *mut _cef_print_settings_t) -> cef_duplex_mode_t,
     >,
 }
+impl PrintSettings {
+    fn get_raw(&self) -> _cef_print_settings_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_print_settings_t> for PrintSettings {
     fn from(value: _cef_print_settings_t) -> Self {
         Self {
@@ -8246,6 +8791,11 @@ pub struct PrintDialogCallback {
     pub cancel:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_print_dialog_callback_t)>,
 }
+impl PrintDialogCallback {
+    fn get_raw(&self) -> _cef_print_dialog_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_print_dialog_callback_t> for PrintDialogCallback {
     fn from(value: _cef_print_dialog_callback_t) -> Self {
         Self {
@@ -8276,6 +8826,11 @@ pub struct PrintJobCallback {
     pub base: BaseRefCounted,
     pub cont:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_print_job_callback_t)>,
+}
+impl PrintJobCallback {
+    fn get_raw(&self) -> _cef_print_job_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_print_job_callback_t> for PrintJobCallback {
     fn from(value: _cef_print_job_callback_t) -> Self {
@@ -8342,6 +8897,11 @@ pub struct PrintHandler {
         ) -> cef_size_t,
     >,
 }
+impl PrintHandler {
+    fn get_raw(&self) -> _cef_print_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_print_handler_t> for PrintHandler {
     fn from(value: _cef_print_handler_t) -> Self {
         Self {
@@ -8390,6 +8950,11 @@ pub struct AccessibilityHandler {
             value: *mut _cef_value_t,
         ),
     >,
+}
+impl AccessibilityHandler {
+    fn get_raw(&self) -> _cef_accessibility_handler_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_accessibility_handler_t> for AccessibilityHandler {
     fn from(value: _cef_accessibility_handler_t) -> Self {
@@ -8556,6 +9121,11 @@ pub struct RenderHandler {
         ),
     >,
 }
+impl RenderHandler {
+    fn get_raw(&self) -> _cef_render_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_render_handler_t> for RenderHandler {
     fn from(value: _cef_render_handler_t) -> Self {
         Self {
@@ -8622,6 +9192,11 @@ pub struct AuthCallback {
         ),
     >,
     pub cancel: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_auth_callback_t)>,
+}
+impl AuthCallback {
+    fn get_raw(&self) -> _cef_auth_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_auth_callback_t> for AuthCallback {
     fn from(value: _cef_auth_callback_t) -> Self {
@@ -8711,6 +9286,11 @@ pub struct Response {
         unsafe extern "stdcall" fn(self_: *mut _cef_response_t, url: *const cef_string_t),
     >,
 }
+impl Response {
+    fn get_raw(&self) -> _cef_response_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_response_t> for Response {
     fn from(value: _cef_response_t) -> Self {
         Self {
@@ -8773,6 +9353,11 @@ pub struct ResourceSkipCallback {
         unsafe extern "stdcall" fn(self_: *mut _cef_resource_skip_callback_t, bytes_skipped: i64),
     >,
 }
+impl ResourceSkipCallback {
+    fn get_raw(&self) -> _cef_resource_skip_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_resource_skip_callback_t> for ResourceSkipCallback {
     fn from(value: _cef_resource_skip_callback_t) -> Self {
         Self {
@@ -8805,6 +9390,11 @@ pub struct ResourceReadCallback {
             bytes_read: ::std::os::raw::c_int,
         ),
     >,
+}
+impl ResourceReadCallback {
+    fn get_raw(&self) -> _cef_resource_read_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_resource_read_callback_t> for ResourceReadCallback {
     fn from(value: _cef_resource_read_callback_t) -> Self {
@@ -8884,6 +9474,11 @@ pub struct ResourceHandler {
     pub cancel:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_resource_handler_t)>,
 }
+impl ResourceHandler {
+    fn get_raw(&self) -> _cef_resource_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_resource_handler_t> for ResourceHandler {
     fn from(value: _cef_resource_handler_t) -> Self {
         Self {
@@ -8936,6 +9531,11 @@ pub struct ResponseFilter {
             data_out_written: *mut usize,
         ) -> cef_response_filter_status_t,
     >,
+}
+impl ResponseFilter {
+    fn get_raw(&self) -> _cef_response_filter_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_response_filter_t> for ResponseFilter {
     fn from(value: _cef_response_filter_t) -> Self {
@@ -9039,6 +9639,11 @@ pub struct ResourceRequestHandler {
         ),
     >,
 }
+impl ResourceRequestHandler {
+    fn get_raw(&self) -> _cef_resource_request_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_resource_request_handler_t> for ResourceRequestHandler {
     fn from(value: _cef_resource_request_handler_t) -> Self {
         Self {
@@ -9099,6 +9704,11 @@ pub struct CookieAccessFilter {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl CookieAccessFilter {
+    fn get_raw(&self) -> _cef_cookie_access_filter_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_cookie_access_filter_t> for CookieAccessFilter {
     fn from(value: _cef_cookie_access_filter_t) -> Self {
         Self {
@@ -9133,6 +9743,11 @@ pub struct Sslinfo {
     pub get_x_509_certificate: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_sslinfo_t) -> *mut _cef_x509_certificate_t,
     >,
+}
+impl Sslinfo {
+    fn get_raw(&self) -> _cef_sslinfo_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_sslinfo_t> for Sslinfo {
     fn from(value: _cef_sslinfo_t) -> Self {
@@ -9169,6 +9784,11 @@ pub struct UnresponsiveProcessCallback {
         unsafe extern "stdcall" fn(self_: *mut _cef_unresponsive_process_callback_t),
     >,
 }
+impl UnresponsiveProcessCallback {
+    fn get_raw(&self) -> _cef_unresponsive_process_callback_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_unresponsive_process_callback_t> for UnresponsiveProcessCallback {
     fn from(value: _cef_unresponsive_process_callback_t) -> Self {
         Self {
@@ -9203,6 +9823,11 @@ pub struct SelectClientCertificateCallback {
             cert: *mut _cef_x509_certificate_t,
         ),
     >,
+}
+impl SelectClientCertificateCallback {
+    fn get_raw(&self) -> _cef_select_client_certificate_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_select_client_certificate_callback_t> for SelectClientCertificateCallback {
     fn from(value: _cef_select_client_certificate_callback_t) -> Self {
@@ -9332,6 +9957,11 @@ pub struct RequestHandler {
         ),
     >,
 }
+impl RequestHandler {
+    fn get_raw(&self) -> _cef_request_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_request_handler_t> for RequestHandler {
     fn from(value: _cef_request_handler_t) -> Self {
         Self {
@@ -9441,6 +10071,11 @@ pub struct Client {
             message: *mut _cef_process_message_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl Client {
+    fn get_raw(&self) -> _cef_client_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_client_t> for Client {
     fn from(value: _cef_client_t) -> Self {
@@ -9583,6 +10218,11 @@ pub struct CommandLine {
         unsafe extern "stdcall" fn(self_: *mut _cef_command_line_t, name: *const cef_string_t),
     >,
 }
+impl CommandLine {
+    fn get_raw(&self) -> _cef_command_line_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_command_line_t> for CommandLine {
     fn from(value: _cef_command_line_t) -> Self {
         Self {
@@ -9668,6 +10308,11 @@ pub struct RequestContextHandler {
         ) -> *mut _cef_resource_request_handler_t,
     >,
 }
+impl RequestContextHandler {
+    fn get_raw(&self) -> _cef_request_context_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_request_context_handler_t> for RequestContextHandler {
     fn from(value: _cef_request_context_handler_t) -> Self {
         Self {
@@ -9733,6 +10378,11 @@ pub struct BrowserProcessHandler {
         ) -> *mut _cef_request_context_handler_t,
     >,
 }
+impl BrowserProcessHandler {
+    fn get_raw(&self) -> _cef_browser_process_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_browser_process_handler_t> for BrowserProcessHandler {
     fn from(value: _cef_browser_process_handler_t) -> Self {
         Self {
@@ -9772,6 +10422,11 @@ impl Default for BrowserProcessHandler {
 pub struct Task {
     pub base: BaseRefCounted,
     pub execute: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_task_t)>,
+}
+impl Task {
+    fn get_raw(&self) -> _cef_task_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_task_t> for Task {
     fn from(value: _cef_task_t) -> Self {
@@ -9827,6 +10482,11 @@ pub struct TaskRunner {
             delay_ms: i64,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl TaskRunner {
+    fn get_raw(&self) -> _cef_task_runner_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_task_runner_t> for TaskRunner {
     fn from(value: _cef_task_runner_t) -> Self {
@@ -9900,6 +10560,11 @@ pub struct V8Context {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl V8Context {
+    fn get_raw(&self) -> _cef_v8_context_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_v8_context_t> for V8Context {
     fn from(value: _cef_v8_context_t) -> Self {
         Self {
@@ -9954,6 +10619,11 @@ pub struct V8Handler {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl V8Handler {
+    fn get_raw(&self) -> _cef_v8_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_v8_handler_t> for V8Handler {
     fn from(value: _cef_v8_handler_t) -> Self {
         Self {
@@ -9998,6 +10668,11 @@ pub struct V8Accessor {
             exception: *mut cef_string_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl V8Accessor {
+    fn get_raw(&self) -> _cef_v8_accessor_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_v8_accessor_t> for V8Accessor {
     fn from(value: _cef_v8_accessor_t) -> Self {
@@ -10064,6 +10739,11 @@ pub struct V8Interceptor {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl V8Interceptor {
+    fn get_raw(&self) -> _cef_v8_interceptor_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_v8_interceptor_t> for V8Interceptor {
     fn from(value: _cef_v8_interceptor_t) -> Self {
         Self {
@@ -10121,6 +10801,11 @@ pub struct V8Exception {
         unsafe extern "stdcall" fn(self_: *mut _cef_v8_exception_t) -> ::std::os::raw::c_int,
     >,
 }
+impl V8Exception {
+    fn get_raw(&self) -> _cef_v8_exception_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_v8_exception_t> for V8Exception {
     fn from(value: _cef_v8_exception_t) -> Self {
         Self {
@@ -10167,6 +10852,11 @@ pub struct V8ArrayBufferReleaseCallback {
             buffer: *mut ::std::os::raw::c_void,
         ),
     >,
+}
+impl V8ArrayBufferReleaseCallback {
+    fn get_raw(&self) -> _cef_v8_array_buffer_release_callback_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_v8_array_buffer_release_callback_t> for V8ArrayBufferReleaseCallback {
     fn from(value: _cef_v8_array_buffer_release_callback_t) -> Self {
@@ -10412,6 +11102,11 @@ pub struct V8Value {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl V8Value {
+    fn get_raw(&self) -> _cef_v8_value_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_v8_value_t> for V8Value {
     fn from(value: _cef_v8_value_t) -> Self {
         Self {
@@ -10553,6 +11248,11 @@ pub struct V8StackTrace {
         ) -> *mut _cef_v8_stack_frame_t,
     >,
 }
+impl V8StackTrace {
+    fn get_raw(&self) -> _cef_v8_stack_trace_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_v8_stack_trace_t> for V8StackTrace {
     fn from(value: _cef_v8_stack_trace_t) -> Self {
         Self {
@@ -10607,6 +11307,11 @@ pub struct V8StackFrame {
     pub is_constructor: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_v8_stack_frame_t) -> ::std::os::raw::c_int,
     >,
+}
+impl V8StackFrame {
+    fn get_raw(&self) -> _cef_v8_stack_frame_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_v8_stack_frame_t> for V8StackFrame {
     fn from(value: _cef_v8_stack_frame_t) -> Self {
@@ -10713,6 +11418,11 @@ pub struct RenderProcessHandler {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl RenderProcessHandler {
+    fn get_raw(&self) -> _cef_render_process_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_render_process_handler_t> for RenderProcessHandler {
     fn from(value: _cef_render_process_handler_t) -> Self {
         Self {
@@ -10780,6 +11490,11 @@ pub struct ResourceBundleHandler {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl ResourceBundleHandler {
+    fn get_raw(&self) -> _cef_resource_bundle_handler_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_resource_bundle_handler_t> for ResourceBundleHandler {
     fn from(value: _cef_resource_bundle_handler_t) -> Self {
         Self {
@@ -10818,6 +11533,11 @@ pub struct SchemeRegistrar {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl SchemeRegistrar {
+    fn get_raw(&self) -> _cef_scheme_registrar_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_scheme_registrar_t> for SchemeRegistrar {
     fn from(value: _cef_scheme_registrar_t) -> Self {
         Self {
@@ -10853,6 +11573,11 @@ pub struct SchemeHandlerFactory {
             request: *mut _cef_request_t,
         ) -> *mut _cef_resource_handler_t,
     >,
+}
+impl SchemeHandlerFactory {
+    fn get_raw(&self) -> _cef_scheme_handler_factory_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_scheme_handler_factory_t> for SchemeHandlerFactory {
     fn from(value: _cef_scheme_handler_factory_t) -> Self {
@@ -10899,6 +11624,11 @@ pub struct App {
     pub get_render_process_handler: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_app_t) -> *mut _cef_render_process_handler_t,
     >,
+}
+impl App {
+    fn get_raw(&self) -> _cef_app_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_app_t> for App {
     fn from(value: _cef_app_t) -> Self {
@@ -10953,6 +11683,11 @@ pub struct Urlrequest {
         unsafe extern "stdcall" fn(self_: *mut _cef_urlrequest_t) -> ::std::os::raw::c_int,
     >,
     pub cancel: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_urlrequest_t)>,
+}
+impl Urlrequest {
+    fn get_raw(&self) -> _cef_urlrequest_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_urlrequest_t> for Urlrequest {
     fn from(value: _cef_urlrequest_t) -> Self {
@@ -11034,6 +11769,11 @@ pub struct UrlrequestClient {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl UrlrequestClient {
+    fn get_raw(&self) -> _cef_urlrequest_client_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_urlrequest_client_t> for UrlrequestClient {
     fn from(value: _cef_urlrequest_client_t) -> Self {
         Self {
@@ -11078,6 +11818,11 @@ pub struct Layout {
         unsafe extern "stdcall" fn(self_: *mut _cef_layout_t) -> ::std::os::raw::c_int,
     >,
 }
+impl Layout {
+    fn get_raw(&self) -> _cef_layout_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_layout_t> for Layout {
     fn from(value: _cef_layout_t) -> Self {
         Self {
@@ -11119,6 +11864,11 @@ pub struct BoxLayout {
         unsafe extern "stdcall" fn(self_: *mut _cef_box_layout_t, view: *mut _cef_view_t),
     >,
 }
+impl BoxLayout {
+    fn get_raw(&self) -> _cef_box_layout_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_box_layout_t> for BoxLayout {
     fn from(value: _cef_box_layout_t) -> Self {
         Self {
@@ -11147,6 +11897,11 @@ impl Default for BoxLayout {
 #[derive(Clone, Debug)]
 pub struct FillLayout {
     pub base: Layout,
+}
+impl FillLayout {
+    fn get_raw(&self) -> _cef_fill_layout_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_fill_layout_t> for FillLayout {
     fn from(value: _cef_fill_layout_t) -> Self {
@@ -11236,6 +11991,11 @@ pub struct ViewDelegate {
     pub on_theme_changed: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_view_delegate_t, view: *mut _cef_view_t),
     >,
+}
+impl ViewDelegate {
+    fn get_raw(&self) -> _cef_view_delegate_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_view_delegate_t> for ViewDelegate {
     fn from(value: _cef_view_delegate_t) -> Self {
@@ -11462,6 +12222,11 @@ pub struct View {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl View {
+    fn get_raw(&self) -> _cef_view_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_view_t> for View {
     fn from(value: _cef_view_t) -> Self {
         Self {
@@ -11609,6 +12374,11 @@ pub struct Button {
         unsafe extern "stdcall" fn(self_: *mut _cef_button_t, name: *const cef_string_t),
     >,
 }
+impl Button {
+    fn get_raw(&self) -> _cef_button_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_button_t> for Button {
     fn from(value: _cef_button_t) -> Self {
         Self {
@@ -11651,6 +12421,11 @@ pub struct ButtonDelegate {
     pub on_button_state_changed: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_button_delegate_t, button: *mut _cef_button_t),
     >,
+}
+impl ButtonDelegate {
+    fn get_raw(&self) -> _cef_button_delegate_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_button_delegate_t> for ButtonDelegate {
     fn from(value: _cef_button_delegate_t) -> Self {
@@ -11727,6 +12502,11 @@ pub struct LabelButton {
     pub set_maximum_size: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_label_button_t, size: *const cef_size_t),
     >,
+}
+impl LabelButton {
+    fn get_raw(&self) -> _cef_label_button_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_label_button_t> for LabelButton {
     fn from(value: _cef_label_button_t) -> Self {
@@ -11827,6 +12607,11 @@ pub struct MenuButtonDelegate {
         ),
     >,
 }
+impl MenuButtonDelegate {
+    fn get_raw(&self) -> _cef_menu_button_delegate_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_menu_button_delegate_t> for MenuButtonDelegate {
     fn from(value: _cef_menu_button_delegate_t) -> Self {
         Self {
@@ -11863,6 +12648,11 @@ pub struct MenuButton {
     >,
     pub trigger_menu:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_menu_button_t)>,
+}
+impl MenuButton {
+    fn get_raw(&self) -> _cef_menu_button_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_menu_button_t> for MenuButton {
     fn from(value: _cef_menu_button_t) -> Self {
@@ -11905,6 +12695,11 @@ pub struct TextfieldDelegate {
             textfield: *mut _cef_textfield_t,
         ),
     >,
+}
+impl TextfieldDelegate {
+    fn get_raw(&self) -> _cef_textfield_delegate_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_textfield_delegate_t> for TextfieldDelegate {
     fn from(value: _cef_textfield_delegate_t) -> Self {
@@ -12042,6 +12837,11 @@ pub struct Textfield {
     pub set_accessible_name: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, name: *const cef_string_t),
     >,
+}
+impl Textfield {
+    fn get_raw(&self) -> _cef_textfield_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_textfield_t> for Textfield {
     fn from(value: _cef_textfield_t) -> Self {
@@ -12189,6 +12989,11 @@ pub struct BrowserViewDelegate {
         ) -> ::std::os::raw::c_int,
     >,
 }
+impl BrowserViewDelegate {
+    fn get_raw(&self) -> _cef_browser_view_delegate_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_browser_view_delegate_t> for BrowserViewDelegate {
     fn from(value: _cef_browser_view_delegate_t) -> Self {
         Self {
@@ -12249,6 +13054,11 @@ pub struct BrowserView {
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> cef_runtime_style_t,
     >,
 }
+impl BrowserView {
+    fn get_raw(&self) -> _cef_browser_view_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_browser_view_t> for BrowserView {
     fn from(value: _cef_browser_view_t) -> Self {
         Self {
@@ -12302,6 +13112,11 @@ pub struct ScrollView {
     pub get_vertical_scrollbar_width: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
     >,
+}
+impl ScrollView {
+    fn get_raw(&self) -> _cef_scroll_view_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_scroll_view_t> for ScrollView {
     fn from(value: _cef_scroll_view_t) -> Self {
@@ -12358,6 +13173,11 @@ pub struct Display {
     pub get_rotation: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> ::std::os::raw::c_int,
     >,
+}
+impl Display {
+    fn get_raw(&self) -> _cef_display_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_display_t> for Display {
     fn from(value: _cef_display_t) -> Self {
@@ -12468,6 +13288,11 @@ pub struct OverlayController {
         unsafe extern "stdcall" fn(self_: *mut _cef_overlay_controller_t) -> ::std::os::raw::c_int,
     >,
 }
+impl OverlayController {
+    fn get_raw(&self) -> _cef_overlay_controller_t {
+        self.clone().into()
+    }
+}
 impl From<_cef_overlay_controller_t> for OverlayController {
     fn from(value: _cef_overlay_controller_t) -> Self {
         Self {
@@ -12530,6 +13355,11 @@ impl Default for OverlayController {
 #[derive(Clone, Debug)]
 pub struct PanelDelegate {
     pub base: ViewDelegate,
+}
+impl PanelDelegate {
+    fn get_raw(&self) -> _cef_panel_delegate_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_panel_delegate_t> for PanelDelegate {
     fn from(value: _cef_panel_delegate_t) -> Self {
@@ -12601,6 +13431,11 @@ pub struct Panel {
             index: ::std::os::raw::c_int,
         ) -> *mut _cef_view_t,
     >,
+}
+impl Panel {
+    fn get_raw(&self) -> _cef_panel_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_panel_t> for Panel {
     fn from(value: _cef_panel_t) -> Self {
@@ -12786,6 +13621,11 @@ pub struct WindowDelegate {
             properties: *mut _cef_linux_window_properties_t,
         ) -> ::std::os::raw::c_int,
     >,
+}
+impl WindowDelegate {
+    fn get_raw(&self) -> _cef_window_delegate_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_window_delegate_t> for WindowDelegate {
     fn from(value: _cef_window_delegate_t) -> Self {
@@ -13001,6 +13841,11 @@ pub struct Window {
     pub get_runtime_style: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_window_t) -> cef_runtime_style_t,
     >,
+}
+impl Window {
+    fn get_raw(&self) -> _cef_window_t {
+        self.clone().into()
+    }
 }
 impl From<_cef_window_t> for Window {
     fn from(value: _cef_window_t) -> Self {
@@ -13682,7 +14527,7 @@ impl From<V8Propertyattribute> for cef_v8_propertyattribute_t {
 }
 impl Default for V8Propertyattribute {
     fn default() -> Self {
-        Self(cef_v8_propertyattribute_t::V8_PROPERTY_ATTRIBUTE_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -13798,7 +14643,7 @@ impl From<UrlrequestFlags> for cef_urlrequest_flags_t {
 }
 impl Default for UrlrequestFlags {
     fn default() -> Self {
-        Self(cef_urlrequest_flags_t::UR_FLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -14204,7 +15049,7 @@ impl From<EventFlags> for cef_event_flags_t {
 }
 impl Default for EventFlags {
     fn default() -> Self {
-        Self(cef_event_flags_t::EVENTFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -14262,7 +15107,7 @@ impl From<ContextMenuTypeFlags> for cef_context_menu_type_flags_t {
 }
 impl Default for ContextMenuTypeFlags {
     fn default() -> Self {
-        Self(cef_context_menu_type_flags_t::CM_TYPEFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -14320,7 +15165,7 @@ impl From<ContextMenuMediaStateFlags> for cef_context_menu_media_state_flags_t {
 }
 impl Default for ContextMenuMediaStateFlags {
     fn default() -> Self {
-        Self(cef_context_menu_media_state_flags_t::CM_MEDIAFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -14349,7 +15194,7 @@ impl From<ContextMenuEditStateFlags> for cef_context_menu_edit_state_flags_t {
 }
 impl Default for ContextMenuEditStateFlags {
     fn default() -> Self {
-        Self(cef_context_menu_edit_state_flags_t::CM_EDITFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -14378,7 +15223,7 @@ impl From<QuickMenuEditStateFlags> for cef_quick_menu_edit_state_flags_t {
 }
 impl Default for QuickMenuEditStateFlags {
     fn default() -> Self {
-        Self(cef_quick_menu_edit_state_flags_t::QM_EDITFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -15625,7 +16470,7 @@ impl From<TouchHandleStateFlags> for cef_touch_handle_state_flags_t {
 }
 impl Default for TouchHandleStateFlags {
     fn default() -> Self {
-        Self(cef_touch_handle_state_flags_t::CEF_THS_FLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 

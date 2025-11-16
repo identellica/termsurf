@@ -2144,20 +2144,50 @@ pub enum cef_text_input_mode_t {
     CEF_TEXT_INPUT_MODE_SEARCH = 8,
     CEF_TEXT_INPUT_MODE_NUM_VALUES = 9,
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl cef_v8_propertyattribute_t {
+    #[doc = "\n Writeable, Enumerable, Configurable\n"]
+    pub const V8_PROPERTY_ATTRIBUTE_NONE: cef_v8_propertyattribute_t =
+        cef_v8_propertyattribute_t(0);
+    #[doc = "\n Not writeable\n"]
+    pub const V8_PROPERTY_ATTRIBUTE_READONLY: cef_v8_propertyattribute_t =
+        cef_v8_propertyattribute_t(1);
+    #[doc = "\n Not enumerable\n"]
+    pub const V8_PROPERTY_ATTRIBUTE_DONTENUM: cef_v8_propertyattribute_t =
+        cef_v8_propertyattribute_t(2);
+    #[doc = "\n Not configurable\n"]
+    pub const V8_PROPERTY_ATTRIBUTE_DONTDELETE: cef_v8_propertyattribute_t =
+        cef_v8_propertyattribute_t(4);
+}
+impl ::std::ops::BitOr<cef_v8_propertyattribute_t> for cef_v8_propertyattribute_t {
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_v8_propertyattribute_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_v8_propertyattribute_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_v8_propertyattribute_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_v8_propertyattribute_t> for cef_v8_propertyattribute_t {
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_v8_propertyattribute_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_v8_propertyattribute_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_v8_propertyattribute_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n V8 property attribute values.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_v8_propertyattribute_t {
-    #[doc = "\n Writeable, Enumerable, Configurable\n"]
-    V8_PROPERTY_ATTRIBUTE_NONE = 0,
-    #[doc = "\n Not writeable\n"]
-    V8_PROPERTY_ATTRIBUTE_READONLY = 1,
-    #[doc = "\n Not enumerable\n"]
-    V8_PROPERTY_ATTRIBUTE_DONTENUM = 2,
-    #[doc = "\n Not configurable\n"]
-    V8_PROPERTY_ATTRIBUTE_DONTDELETE = 4,
-}
+pub struct cef_v8_propertyattribute_t(pub ::std::os::raw::c_int);
 #[repr(i32)]
 #[non_exhaustive]
 #[doc = "\n Post data elements may represent either bytes or files.\n"]
@@ -2270,30 +2300,56 @@ pub enum cef_transition_type_t {
     #[doc = "\n General mask defining the bits used for the qualifiers.\n"]
     TT_QUALIFIER_MASK = -256,
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl cef_urlrequest_flags_t {
+    #[doc = "\n Default behavior.\n"]
+    pub const UR_FLAG_NONE: cef_urlrequest_flags_t = cef_urlrequest_flags_t(0);
+    #[doc = "\n If set the cache will be skipped when handling the request. Setting this\n value is equivalent to specifying the \"Cache-Control: no-cache\" request\n header. Setting this value in combination with UR_FLAG_ONLY_FROM_CACHE\n will cause the request to fail.\n"]
+    pub const UR_FLAG_SKIP_CACHE: cef_urlrequest_flags_t = cef_urlrequest_flags_t(1);
+    #[doc = "\n If set the request will fail if it cannot be served from the cache (or\n some equivalent local store). Setting this value is equivalent to\n specifying the \"Cache-Control: only-if-cached\" request header. Setting\n this value in combination with UR_FLAG_SKIP_CACHE or UR_FLAG_DISABLE_CACHE\n will cause the request to fail.\n"]
+    pub const UR_FLAG_ONLY_FROM_CACHE: cef_urlrequest_flags_t = cef_urlrequest_flags_t(2);
+    #[doc = "\n If set the cache will not be used at all. Setting this value is equivalent\n to specifying the \"Cache-Control: no-store\" request header. Setting this\n value in combination with UR_FLAG_ONLY_FROM_CACHE will cause the request\n to fail.\n"]
+    pub const UR_FLAG_DISABLE_CACHE: cef_urlrequest_flags_t = cef_urlrequest_flags_t(4);
+    #[doc = "\n If set user name, password, and cookies may be sent with the request, and\n cookies may be saved from the response.\n"]
+    pub const UR_FLAG_ALLOW_STORED_CREDENTIALS: cef_urlrequest_flags_t = cef_urlrequest_flags_t(8);
+    #[doc = "\n If set upload progress events will be generated when a request has a body.\n"]
+    pub const UR_FLAG_REPORT_UPLOAD_PROGRESS: cef_urlrequest_flags_t = cef_urlrequest_flags_t(16);
+    #[doc = "\n If set the CefURLRequestClient::OnDownloadData method will not be called.\n"]
+    pub const UR_FLAG_NO_DOWNLOAD_DATA: cef_urlrequest_flags_t = cef_urlrequest_flags_t(32);
+    #[doc = "\n If set 5XX redirect errors will be propagated to the observer instead of\n automatically re-tried. This currently only applies for requests\n originated in the browser process.\n"]
+    pub const UR_FLAG_NO_RETRY_ON_5XX: cef_urlrequest_flags_t = cef_urlrequest_flags_t(64);
+    #[doc = "\n If set 3XX responses will cause the fetch to halt immediately rather than\n continue through the redirect.\n"]
+    pub const UR_FLAG_STOP_ON_REDIRECT: cef_urlrequest_flags_t = cef_urlrequest_flags_t(128);
+}
+impl ::std::ops::BitOr<cef_urlrequest_flags_t> for cef_urlrequest_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_urlrequest_flags_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_urlrequest_flags_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_urlrequest_flags_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_urlrequest_flags_t> for cef_urlrequest_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_urlrequest_flags_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_urlrequest_flags_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_urlrequest_flags_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n Flags used to customize the behavior of CefURLRequest.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_urlrequest_flags_t {
-    #[doc = "\n Default behavior.\n"]
-    UR_FLAG_NONE = 0,
-    #[doc = "\n If set the cache will be skipped when handling the request. Setting this\n value is equivalent to specifying the \"Cache-Control: no-cache\" request\n header. Setting this value in combination with UR_FLAG_ONLY_FROM_CACHE\n will cause the request to fail.\n"]
-    UR_FLAG_SKIP_CACHE = 1,
-    #[doc = "\n If set the request will fail if it cannot be served from the cache (or\n some equivalent local store). Setting this value is equivalent to\n specifying the \"Cache-Control: only-if-cached\" request header. Setting\n this value in combination with UR_FLAG_SKIP_CACHE or UR_FLAG_DISABLE_CACHE\n will cause the request to fail.\n"]
-    UR_FLAG_ONLY_FROM_CACHE = 2,
-    #[doc = "\n If set the cache will not be used at all. Setting this value is equivalent\n to specifying the \"Cache-Control: no-store\" request header. Setting this\n value in combination with UR_FLAG_ONLY_FROM_CACHE will cause the request\n to fail.\n"]
-    UR_FLAG_DISABLE_CACHE = 4,
-    #[doc = "\n If set user name, password, and cookies may be sent with the request, and\n cookies may be saved from the response.\n"]
-    UR_FLAG_ALLOW_STORED_CREDENTIALS = 8,
-    #[doc = "\n If set upload progress events will be generated when a request has a body.\n"]
-    UR_FLAG_REPORT_UPLOAD_PROGRESS = 16,
-    #[doc = "\n If set the CefURLRequestClient::OnDownloadData method will not be called.\n"]
-    UR_FLAG_NO_DOWNLOAD_DATA = 32,
-    #[doc = "\n If set 5XX redirect errors will be propagated to the observer instead of\n automatically re-tried. This currently only applies for requests\n originated in the browser process.\n"]
-    UR_FLAG_NO_RETRY_ON_5XX = 64,
-    #[doc = "\n If set 3XX responses will cause the fetch to halt immediately rather than\n continue through the redirect.\n"]
-    UR_FLAG_STOP_ON_REDIRECT = 128,
-}
+pub struct cef_urlrequest_flags_t(pub ::std::os::raw::c_int);
 #[repr(i32)]
 #[non_exhaustive]
 #[doc = "\n Flags that represent CefURLRequest status.\n"]
@@ -2658,38 +2714,64 @@ pub enum cef_paint_element_type_t {
     PET_VIEW = 0,
     PET_POPUP = 1,
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl cef_event_flags_t {
+    pub const EVENTFLAG_NONE: cef_event_flags_t = cef_event_flags_t(0);
+    pub const EVENTFLAG_CAPS_LOCK_ON: cef_event_flags_t = cef_event_flags_t(1);
+    pub const EVENTFLAG_SHIFT_DOWN: cef_event_flags_t = cef_event_flags_t(2);
+    pub const EVENTFLAG_CONTROL_DOWN: cef_event_flags_t = cef_event_flags_t(4);
+    pub const EVENTFLAG_ALT_DOWN: cef_event_flags_t = cef_event_flags_t(8);
+    pub const EVENTFLAG_LEFT_MOUSE_BUTTON: cef_event_flags_t = cef_event_flags_t(16);
+    pub const EVENTFLAG_MIDDLE_MOUSE_BUTTON: cef_event_flags_t = cef_event_flags_t(32);
+    pub const EVENTFLAG_RIGHT_MOUSE_BUTTON: cef_event_flags_t = cef_event_flags_t(64);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_COMMAND_DOWN: cef_event_flags_t = cef_event_flags_t(128);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_NUM_LOCK_ON: cef_event_flags_t = cef_event_flags_t(256);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_IS_KEY_PAD: cef_event_flags_t = cef_event_flags_t(512);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_IS_LEFT: cef_event_flags_t = cef_event_flags_t(1024);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_IS_RIGHT: cef_event_flags_t = cef_event_flags_t(2048);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_ALTGR_DOWN: cef_event_flags_t = cef_event_flags_t(4096);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_IS_REPEAT: cef_event_flags_t = cef_event_flags_t(8192);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_PRECISION_SCROLLING_DELTA: cef_event_flags_t = cef_event_flags_t(16384);
+    #[doc = " Mac OS-X command key."]
+    pub const EVENTFLAG_SCROLL_BY_PAGE: cef_event_flags_t = cef_event_flags_t(32768);
+}
+impl ::std::ops::BitOr<cef_event_flags_t> for cef_event_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_event_flags_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_event_flags_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_event_flags_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_event_flags_t> for cef_event_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_event_flags_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_event_flags_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_event_flags_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n Supported event bit flags.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_event_flags_t {
-    EVENTFLAG_NONE = 0,
-    EVENTFLAG_CAPS_LOCK_ON = 1,
-    EVENTFLAG_SHIFT_DOWN = 2,
-    EVENTFLAG_CONTROL_DOWN = 4,
-    EVENTFLAG_ALT_DOWN = 8,
-    EVENTFLAG_LEFT_MOUSE_BUTTON = 16,
-    EVENTFLAG_MIDDLE_MOUSE_BUTTON = 32,
-    EVENTFLAG_RIGHT_MOUSE_BUTTON = 64,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_COMMAND_DOWN = 128,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_NUM_LOCK_ON = 256,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_IS_KEY_PAD = 512,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_IS_LEFT = 1024,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_IS_RIGHT = 2048,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_ALTGR_DOWN = 4096,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_IS_REPEAT = 8192,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_PRECISION_SCROLLING_DELTA = 16384,
-    #[doc = " Mac OS-X command key."]
-    EVENTFLAG_SCROLL_BY_PAGE = 32768,
-}
+pub struct cef_event_flags_t(pub ::std::os::raw::c_int);
 #[repr(i32)]
 #[non_exhaustive]
 #[doc = "\n Supported menu item types.\n"]
@@ -2702,26 +2784,54 @@ pub enum cef_menu_item_type_t {
     MENUITEMTYPE_SEPARATOR = 4,
     MENUITEMTYPE_SUBMENU = 5,
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl cef_context_menu_type_flags_t {
+    #[doc = "\n No node is selected.\n"]
+    pub const CM_TYPEFLAG_NONE: cef_context_menu_type_flags_t = cef_context_menu_type_flags_t(0);
+    #[doc = "\n The top page is selected.\n"]
+    pub const CM_TYPEFLAG_PAGE: cef_context_menu_type_flags_t = cef_context_menu_type_flags_t(1);
+    #[doc = "\n A subframe page is selected.\n"]
+    pub const CM_TYPEFLAG_FRAME: cef_context_menu_type_flags_t = cef_context_menu_type_flags_t(2);
+    #[doc = "\n A link is selected.\n"]
+    pub const CM_TYPEFLAG_LINK: cef_context_menu_type_flags_t = cef_context_menu_type_flags_t(4);
+    #[doc = "\n A media node is selected.\n"]
+    pub const CM_TYPEFLAG_MEDIA: cef_context_menu_type_flags_t = cef_context_menu_type_flags_t(8);
+    #[doc = "\n There is a textual or mixed selection that is selected.\n"]
+    pub const CM_TYPEFLAG_SELECTION: cef_context_menu_type_flags_t =
+        cef_context_menu_type_flags_t(16);
+    #[doc = "\n An editable element is selected.\n"]
+    pub const CM_TYPEFLAG_EDITABLE: cef_context_menu_type_flags_t =
+        cef_context_menu_type_flags_t(32);
+}
+impl ::std::ops::BitOr<cef_context_menu_type_flags_t> for cef_context_menu_type_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_context_menu_type_flags_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_context_menu_type_flags_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_context_menu_type_flags_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_context_menu_type_flags_t> for cef_context_menu_type_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_context_menu_type_flags_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_context_menu_type_flags_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_context_menu_type_flags_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n Supported context menu type flags.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_context_menu_type_flags_t {
-    #[doc = "\n No node is selected.\n"]
-    CM_TYPEFLAG_NONE = 0,
-    #[doc = "\n The top page is selected.\n"]
-    CM_TYPEFLAG_PAGE = 1,
-    #[doc = "\n A subframe page is selected.\n"]
-    CM_TYPEFLAG_FRAME = 2,
-    #[doc = "\n A link is selected.\n"]
-    CM_TYPEFLAG_LINK = 4,
-    #[doc = "\n A media node is selected.\n"]
-    CM_TYPEFLAG_MEDIA = 8,
-    #[doc = "\n There is a textual or mixed selection that is selected.\n"]
-    CM_TYPEFLAG_SELECTION = 16,
-    #[doc = "\n An editable element is selected.\n"]
-    CM_TYPEFLAG_EDITABLE = 32,
-}
+pub struct cef_context_menu_type_flags_t(pub ::std::os::raw::c_int);
 #[repr(i32)]
 #[non_exhaustive]
 #[doc = "\n Supported context menu media types. These constants match their equivalents\n in Chromium's ContextMenuDataMediaType and should not be renumbered.\n"]
@@ -2744,53 +2854,168 @@ pub enum cef_context_menu_media_type_t {
     #[doc = "\n A plugin node is selected.\n"]
     CM_MEDIATYPE_NUM_VALUES = 7,
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl cef_context_menu_media_state_flags_t {
+    pub const CM_MEDIAFLAG_NONE: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(0);
+    pub const CM_MEDIAFLAG_IN_ERROR: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(1);
+    pub const CM_MEDIAFLAG_PAUSED: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(2);
+    pub const CM_MEDIAFLAG_MUTED: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(4);
+    pub const CM_MEDIAFLAG_LOOP: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(8);
+    pub const CM_MEDIAFLAG_CAN_SAVE: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(16);
+    pub const CM_MEDIAFLAG_HAS_AUDIO: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(32);
+    pub const CM_MEDIAFLAG_CAN_TOGGLE_CONTROLS: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(64);
+    pub const CM_MEDIAFLAG_CONTROLS: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(128);
+    pub const CM_MEDIAFLAG_CAN_PRINT: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(256);
+    pub const CM_MEDIAFLAG_CAN_ROTATE: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(512);
+    pub const CM_MEDIAFLAG_CAN_PICTURE_IN_PICTURE: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(1024);
+    pub const CM_MEDIAFLAG_PICTURE_IN_PICTURE: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(2048);
+    pub const CM_MEDIAFLAG_CAN_LOOP: cef_context_menu_media_state_flags_t =
+        cef_context_menu_media_state_flags_t(4096);
+}
+impl ::std::ops::BitOr<cef_context_menu_media_state_flags_t>
+    for cef_context_menu_media_state_flags_t
+{
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_context_menu_media_state_flags_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_context_menu_media_state_flags_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_context_menu_media_state_flags_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_context_menu_media_state_flags_t>
+    for cef_context_menu_media_state_flags_t
+{
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_context_menu_media_state_flags_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_context_menu_media_state_flags_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_context_menu_media_state_flags_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n Supported context menu media state bit flags. These constants match their\n equivalents in Chromium's ContextMenuData::MediaFlags and should not be\n renumbered.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_context_menu_media_state_flags_t {
-    CM_MEDIAFLAG_NONE = 0,
-    CM_MEDIAFLAG_IN_ERROR = 1,
-    CM_MEDIAFLAG_PAUSED = 2,
-    CM_MEDIAFLAG_MUTED = 4,
-    CM_MEDIAFLAG_LOOP = 8,
-    CM_MEDIAFLAG_CAN_SAVE = 16,
-    CM_MEDIAFLAG_HAS_AUDIO = 32,
-    CM_MEDIAFLAG_CAN_TOGGLE_CONTROLS = 64,
-    CM_MEDIAFLAG_CONTROLS = 128,
-    CM_MEDIAFLAG_CAN_PRINT = 256,
-    CM_MEDIAFLAG_CAN_ROTATE = 512,
-    CM_MEDIAFLAG_CAN_PICTURE_IN_PICTURE = 1024,
-    CM_MEDIAFLAG_PICTURE_IN_PICTURE = 2048,
-    CM_MEDIAFLAG_CAN_LOOP = 4096,
+pub struct cef_context_menu_media_state_flags_t(pub ::std::os::raw::c_int);
+impl cef_context_menu_edit_state_flags_t {
+    pub const CM_EDITFLAG_NONE: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(0);
+    pub const CM_EDITFLAG_CAN_UNDO: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(1);
+    pub const CM_EDITFLAG_CAN_REDO: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(2);
+    pub const CM_EDITFLAG_CAN_CUT: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(4);
+    pub const CM_EDITFLAG_CAN_COPY: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(8);
+    pub const CM_EDITFLAG_CAN_PASTE: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(16);
+    pub const CM_EDITFLAG_CAN_DELETE: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(32);
+    pub const CM_EDITFLAG_CAN_SELECT_ALL: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(64);
+    pub const CM_EDITFLAG_CAN_TRANSLATE: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(128);
+    pub const CM_EDITFLAG_CAN_EDIT_RICHLY: cef_context_menu_edit_state_flags_t =
+        cef_context_menu_edit_state_flags_t(256);
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl ::std::ops::BitOr<cef_context_menu_edit_state_flags_t>
+    for cef_context_menu_edit_state_flags_t
+{
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_context_menu_edit_state_flags_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_context_menu_edit_state_flags_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_context_menu_edit_state_flags_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_context_menu_edit_state_flags_t>
+    for cef_context_menu_edit_state_flags_t
+{
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_context_menu_edit_state_flags_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_context_menu_edit_state_flags_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_context_menu_edit_state_flags_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n Supported context menu edit state bit flags. These constants match their\n equivalents in Chromium's ContextMenuDataEditFlags and should not be\n renumbered.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_context_menu_edit_state_flags_t {
-    CM_EDITFLAG_NONE = 0,
-    CM_EDITFLAG_CAN_UNDO = 1,
-    CM_EDITFLAG_CAN_REDO = 2,
-    CM_EDITFLAG_CAN_CUT = 4,
-    CM_EDITFLAG_CAN_COPY = 8,
-    CM_EDITFLAG_CAN_PASTE = 16,
-    CM_EDITFLAG_CAN_DELETE = 32,
-    CM_EDITFLAG_CAN_SELECT_ALL = 64,
-    CM_EDITFLAG_CAN_TRANSLATE = 128,
-    CM_EDITFLAG_CAN_EDIT_RICHLY = 256,
+pub struct cef_context_menu_edit_state_flags_t(pub ::std::os::raw::c_int);
+impl cef_quick_menu_edit_state_flags_t {
+    pub const QM_EDITFLAG_NONE: cef_quick_menu_edit_state_flags_t =
+        cef_quick_menu_edit_state_flags_t(0);
+    pub const QM_EDITFLAG_CAN_ELLIPSIS: cef_quick_menu_edit_state_flags_t =
+        cef_quick_menu_edit_state_flags_t(1);
+    pub const QM_EDITFLAG_CAN_CUT: cef_quick_menu_edit_state_flags_t =
+        cef_quick_menu_edit_state_flags_t(2);
+    pub const QM_EDITFLAG_CAN_COPY: cef_quick_menu_edit_state_flags_t =
+        cef_quick_menu_edit_state_flags_t(4);
+    pub const QM_EDITFLAG_CAN_PASTE: cef_quick_menu_edit_state_flags_t =
+        cef_quick_menu_edit_state_flags_t(8);
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl ::std::ops::BitOr<cef_quick_menu_edit_state_flags_t> for cef_quick_menu_edit_state_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_quick_menu_edit_state_flags_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_quick_menu_edit_state_flags_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_quick_menu_edit_state_flags_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_quick_menu_edit_state_flags_t> for cef_quick_menu_edit_state_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_quick_menu_edit_state_flags_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_quick_menu_edit_state_flags_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_quick_menu_edit_state_flags_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n Supported quick menu state bit flags.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_quick_menu_edit_state_flags_t {
-    QM_EDITFLAG_NONE = 0,
-    QM_EDITFLAG_CAN_ELLIPSIS = 1,
-    QM_EDITFLAG_CAN_CUT = 2,
-    QM_EDITFLAG_CAN_COPY = 4,
-    QM_EDITFLAG_CAN_PASTE = 8,
-}
+pub struct cef_quick_menu_edit_state_flags_t(pub ::std::os::raw::c_int);
 #[repr(i32)]
 #[non_exhaustive]
 #[doc = "\n Key event types.\n"]
@@ -3937,17 +4162,47 @@ pub enum cef_show_state_t {
     CEF_SHOW_STATE_HIDDEN = 4,
     CEF_SHOW_STATE_NUM_VALUES = 5,
 }
-#[repr(i32)]
-#[non_exhaustive]
+impl cef_touch_handle_state_flags_t {
+    pub const CEF_THS_FLAG_NONE: cef_touch_handle_state_flags_t = cef_touch_handle_state_flags_t(0);
+    pub const CEF_THS_FLAG_ENABLED: cef_touch_handle_state_flags_t =
+        cef_touch_handle_state_flags_t(1);
+    pub const CEF_THS_FLAG_ORIENTATION: cef_touch_handle_state_flags_t =
+        cef_touch_handle_state_flags_t(2);
+    pub const CEF_THS_FLAG_ORIGIN: cef_touch_handle_state_flags_t =
+        cef_touch_handle_state_flags_t(4);
+    pub const CEF_THS_FLAG_ALPHA: cef_touch_handle_state_flags_t =
+        cef_touch_handle_state_flags_t(8);
+}
+impl ::std::ops::BitOr<cef_touch_handle_state_flags_t> for cef_touch_handle_state_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitor(self, other: Self) -> Self {
+        cef_touch_handle_state_flags_t(self.0 | other.0)
+    }
+}
+impl ::std::ops::BitOrAssign for cef_touch_handle_state_flags_t {
+    #[inline]
+    fn bitor_assign(&mut self, rhs: cef_touch_handle_state_flags_t) {
+        self.0 |= rhs.0;
+    }
+}
+impl ::std::ops::BitAnd<cef_touch_handle_state_flags_t> for cef_touch_handle_state_flags_t {
+    type Output = Self;
+    #[inline]
+    fn bitand(self, other: Self) -> Self {
+        cef_touch_handle_state_flags_t(self.0 & other.0)
+    }
+}
+impl ::std::ops::BitAndAssign for cef_touch_handle_state_flags_t {
+    #[inline]
+    fn bitand_assign(&mut self, rhs: cef_touch_handle_state_flags_t) {
+        self.0 &= rhs.0;
+    }
+}
+#[repr(transparent)]
 #[doc = "\n Values indicating what state of the touch handle is set.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_touch_handle_state_flags_t {
-    CEF_THS_FLAG_NONE = 0,
-    CEF_THS_FLAG_ENABLED = 1,
-    CEF_THS_FLAG_ORIENTATION = 2,
-    CEF_THS_FLAG_ORIGIN = 4,
-    CEF_THS_FLAG_ALPHA = 8,
-}
+pub struct cef_touch_handle_state_flags_t(pub ::std::os::raw::c_int);
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _cef_touch_handle_state_t {
