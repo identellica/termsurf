@@ -13,8 +13,8 @@ pub mod format {
         format: cef_color_type_t,
     ) -> Result<wgpu::TextureFormat, TextureImportError> {
         match format {
-            cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => Ok(wgpu::TextureFormat::Bgra8UnormSrgb),
-            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => Ok(wgpu::TextureFormat::Rgba8UnormSrgb),
+            cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888 => Ok(wgpu::TextureFormat::Bgra8Unorm),
+            cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888 => Ok(wgpu::TextureFormat::Rgba8Unorm),
             _ => Err(TextureImportError::UnsupportedFormat { format }),
         }
     }
