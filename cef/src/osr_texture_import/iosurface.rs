@@ -108,8 +108,8 @@ impl IOSurfaceImporter {
         metal_desc.set_sample_count(texture_desc.sample_count as _);
         metal_desc.set_texture_type(MTLTextureType::D2);
         metal_desc.set_pixel_format(match texture_desc.format {
-            wgpu::TextureFormat::Rgba8UnormSrgb => MTLPixelFormat::RGBA8Unorm_sRGB,
-            wgpu::TextureFormat::Bgra8UnormSrgb => MTLPixelFormat::BGRA8Unorm_sRGB,
+            wgpu::TextureFormat::Rgba8Unorm => MTLPixelFormat::RGBA8Unorm,
+            wgpu::TextureFormat::Bgra8Unorm => MTLPixelFormat::BGRA8Unorm,
             _ => unimplemented!(),
         });
         metal_desc.set_usage(MTLTextureUsage::ShaderRead);
