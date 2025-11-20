@@ -23,14 +23,14 @@ pub const CEF_API_VERSION_LAST: i32 = 14200;
 pub const CEF_API_VERSION_EXPERIMENTAL: i32 = 999999;
 pub const CEF_API_VERSION_NEXT: i32 = 999998;
 pub const CEF_API_VERSION: i32 = 999999;
-pub const CEF_VERSION: &[u8; 42] = b"142.0.10+g29548e2+chromium-142.0.7444.135\0";
+pub const CEF_VERSION: &[u8; 42] = b"142.0.14+gceaf578+chromium-142.0.7444.163\0";
 pub const CEF_VERSION_MAJOR: i32 = 142;
 pub const CEF_VERSION_MINOR: i32 = 0;
-pub const CEF_VERSION_PATCH: i32 = 10;
+pub const CEF_VERSION_PATCH: i32 = 14;
 pub const CHROME_VERSION_MAJOR: i32 = 142;
 pub const CHROME_VERSION_MINOR: i32 = 0;
 pub const CHROME_VERSION_BUILD: i32 = 7444;
-pub const CHROME_VERSION_PATCH: i32 = 135;
+pub const CHROME_VERSION_PATCH: i32 = 163;
 unsafe extern "C" {
     #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n"]
     pub fn cef_api_hash(
@@ -1401,7 +1401,7 @@ pub type cef_request_context_settings_t = _cef_request_context_settings_t;
 pub struct _cef_browser_settings_t {
     #[doc = "\n Size of this structure.\n"]
     pub size: usize,
-    #[doc = "\n The maximum rate in frames per second (fps) that CefRenderHandler::OnPaint\n will be called for a windowless browser. The actual fps may be lower if\n the browser cannot generate frames at the requested rate. The minimum\n value is 1 and the maximum value is 60 (default 30). This value can also\n be changed dynamically via CefBrowserHost::SetWindowlessFrameRate.\n"]
+    #[doc = "\n The maximum rate in frames per second (fps) that CefRenderHandler::OnPaint\n will be called for a windowless browser. The actual fps may be lower if\n the browser cannot generate frames at the requested rate. The minimum\n value is 1 and the default value is 30. This value can also be changed\n dynamically via CefBrowserHost::SetWindowlessFrameRate.\n"]
     pub windowless_frame_rate: ::std::os::raw::c_int,
     #[doc = "\n Font settings.\n"]
     pub standard_font_family: cef_string_t,
@@ -8644,11 +8644,11 @@ pub struct _cef_browser_host_t {
     #[doc = "\n Notify the browser that the window hosting it is about to be moved or\n resized. This function is only used on Windows and Linux.\n"]
     pub notify_move_or_resize_started:
         ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_browser_host_t)>,
-    #[doc = "\n Returns the maximum rate in frames per second (fps) that\n cef_render_handler_t::OnPaint will be called for a windowless browser. The\n actual fps may be lower if the browser cannot generate frames at the\n requested rate. The minimum value is 1 and the maximum value is 60\n (default 30). This function can only be called on the UI thread.\n"]
+    #[doc = "\n Returns the maximum rate in frames per second (fps) that\n cef_render_handler_t::OnPaint will be called for a windowless browser. The\n actual fps may be lower if the browser cannot generate frames at the\n requested rate. The minimum value is 1 and the default value is 30. This\n function can only be called on the UI thread.\n"]
     pub get_windowless_frame_rate: ::std::option::Option<
         unsafe extern "C" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Set the maximum rate in frames per second (fps) that\n cef_render_handler_t:: OnPaint will be called for a windowless browser.\n The actual fps may be lower if the browser cannot generate frames at the\n requested rate. The minimum value is 1 and the maximum value is 60\n (default 30). Can also be set at browser creation via\n cef_browser_tSettings.windowless_frame_rate.\n"]
+    #[doc = "\n Set the maximum rate in frames per second (fps) that\n cef_render_handler_t:: OnPaint will be called for a windowless browser.\n The actual fps may be lower if the browser cannot generate frames at the\n requested rate. The minimum value is 1 and the default value is 30. Can\n also be set at browser creation via\n cef_browser_tSettings.windowless_frame_rate.\n"]
     pub set_windowless_frame_rate: ::std::option::Option<
         unsafe extern "C" fn(self_: *mut _cef_browser_host_t, frame_rate: ::std::os::raw::c_int),
     >,
