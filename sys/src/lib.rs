@@ -48,7 +48,7 @@ pub fn get_cef_dir() -> Option<PathBuf> {
             PathBuf::from(cef_path).canonicalize().ok()
         }
         Err(_) => {
-            let out_dir = PathBuf::from(env::var("OUT_DIR").ok()?);
+            let out_dir = PathBuf::from(env!("OUT_DIR"));
             let cef_dir = format!("cef_{OS}_{ARCH}");
             let cef_dir = out_dir.join(&cef_dir).canonicalize().ok()?;
             fs::exists(&cef_dir).ok()?.then_some(cef_dir)
