@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [142.4.1+142.0.15](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v142.4.0+142.0.15...cef-dll-sys-v142.4.1+142.0.15) - 2025-11-22
+
+### Fixed
+
+- use build-time OUT_DIR variable in get_cef_dir
+
 ## [142.4.0+142.0.15](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v142.3.1+142.0.14...cef-dll-sys-v142.4.0+142.0.15) - 2025-11-21
 
 ### Other
