@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [142.5.0+142.0.17](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v142.4.1+142.0.15...export-cef-dir-v142.5.0+142.0.17) - 2025-11-27
+
+### Other
+
+- *(release)* update CEF version to 142.0.17
+- *(deps)* update rust crate convert_case to 0.10
+
+## [142.4.1+142.0.15](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v142.4.0+142.0.15...export-cef-dir-v142.4.1+142.0.15) - 2025-11-22
+
+### Other
+
+- release v142.4.1+142.0.15
+
 ## [142.4.0+142.0.15](https://github.com/tauri-apps/cef-rs/compare/export-cef-dir-v142.3.0+142.0.14...export-cef-dir-v142.4.0+142.0.15) - 2025-11-21
 
 ### Other
