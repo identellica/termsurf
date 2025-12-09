@@ -3456,42 +3456,100 @@ fn make_my_struct() -> {rust_name} {{
         for (rust_name, e) in enum_names {
             let name = &e.name;
             writeln!(f, "\n/// See [`{name}`] for more documentation.")?;
-            let name = format_ident!("{name}");
+            let name_ident = format_ident!("{name}");
             let rust_name = format_ident!("{rust_name}");
+            let declare_values = e.ty.and_then(|ty| {
+                let values: Vec<_> = ty.variants.iter().map(|v| v.ident.to_string()).collect();
+                let values: Vec<Vec<_>> = values
+                    .iter()
+                    .map(|value| value.split("_").collect())
+                    .collect();
+
+                let mut skipped = 0;
+                while let Some(token) = values.first().and_then(|tokens| tokens.get(skipped)) {
+                    if values
+                        .iter()
+                        .skip(1)
+                        .all(|tokens| tokens.get(skipped) == Some(token))
+                    {
+                        skipped += 1;
+                    } else {
+                        break;
+                    }
+                }
+
+                let values = values
+                    .iter()
+                    .map(|tokens| {
+                        let v = tokens.join("_");
+                        let v_ident = format_ident!("{v}");
+                        let mut skipped = skipped;
+                        for skip in (0..=skipped).rev() {
+                            if let Some(token) =
+                                tokens.get(skip).and_then(|token| token.chars().next())
+                            {
+                                if token.is_uppercase() {
+                                    skipped = skip;
+                                    break;
+                                }
+                            }
+                        }
+                        let value = &tokens[skipped..].join("_");
+                        let value_ident = format_ident!("{value}");
+                        let comment = format!("See [`{name}::{v}`] for more documentation.");
+                        quote! {
+                            #[doc = #comment]
+                            pub const #value_ident: Self = Self(#name_ident::#v_ident);
+                        }
+                    })
+                    .collect::<Vec<_>>();
+
+                if values.is_empty() {
+                    None
+                } else {
+                    Some(quote! {
+                        impl #rust_name {
+                            #(#values)*
+                        }
+                    })
+                }
+            });
             let impl_default =
                 e.ty.and_then(|ty| ty.variants.first())
                     .map(|v| {
                         let v = &v.ident;
-                        quote! { Self(#name::#v) }
+                        quote! { Self(#name_ident::#v) }
                     })
                     .unwrap_or(quote! { unsafe { std::mem::zeroed() } });
             let wrapper = quote! {
                 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-                pub struct #rust_name(#name);
+                pub struct #rust_name(#name_ident);
 
-                impl AsRef<#name> for #rust_name {
-                    fn as_ref(&self) -> &#name {
+                impl AsRef<#name_ident> for #rust_name {
+                    fn as_ref(&self) -> &#name_ident {
                         &self.0
                     }
                 }
 
-                impl AsMut<#name> for #rust_name {
-                    fn as_mut(&mut self) -> &mut #name {
+                impl AsMut<#name_ident> for #rust_name {
+                    fn as_mut(&mut self) -> &mut #name_ident {
                         &mut self.0
                     }
                 }
 
-                impl From<#name> for #rust_name {
-                    fn from(value: #name) -> Self {
+                impl From<#name_ident> for #rust_name {
+                    fn from(value: #name_ident) -> Self {
                         Self(value)
                     }
                 }
 
-                impl From<#rust_name> for #name  {
+                impl From<#rust_name> for #name_ident  {
                     fn from(value: #rust_name) -> Self {
                         value.0
                     }
                 }
+
+                #declare_values
 
                 impl Default for #rust_name {
                     fn default() -> Self {
