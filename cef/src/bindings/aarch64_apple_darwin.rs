@@ -42459,6 +42459,378 @@ impl From<ContentSettingTypes> for cef_content_setting_types_t {
         value.0
     }
 }
+impl ContentSettingTypes {
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIES`] for more documentation."]
+    pub const COOKIES: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIES);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_IMAGES`] for more documentation."]
+    pub const IMAGES: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_IMAGES);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_JAVASCRIPT`] for more documentation."]
+    pub const JAVASCRIPT: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_JAVASCRIPT);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_POPUPS`] for more documentation."]
+    pub const POPUPS: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_POPUPS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_GEOLOCATION`] for more documentation."]
+    pub const GEOLOCATION: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_GEOLOCATION);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NOTIFICATIONS`] for more documentation."]
+    pub const NOTIFICATIONS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NOTIFICATIONS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_SELECT_CERTIFICATE`] for more documentation."]
+    pub const AUTO_SELECT_CERTIFICATE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_SELECT_CERTIFICATE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MIXEDSCRIPT`] for more documentation."]
+    pub const MIXEDSCRIPT: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MIXEDSCRIPT);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MEDIASTREAM_MIC`] for more documentation."]
+    pub const MEDIASTREAM_MIC: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MEDIASTREAM_MIC);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MEDIASTREAM_CAMERA`] for more documentation."]
+    pub const MEDIASTREAM_CAMERA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MEDIASTREAM_CAMERA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PROTOCOL_HANDLERS`] for more documentation."]
+    pub const PROTOCOL_HANDLERS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PROTOCOL_HANDLERS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DEPRECATED_PPAPI_BROKER`] for more documentation."]
+    pub const DEPRECATED_PPAPI_BROKER: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DEPRECATED_PPAPI_BROKER);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOMATIC_DOWNLOADS`] for more documentation."]
+    pub const AUTOMATIC_DOWNLOADS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOMATIC_DOWNLOADS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MIDI_SYSEX`] for more documentation."]
+    pub const MIDI_SYSEX: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MIDI_SYSEX);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SSL_CERT_DECISIONS`] for more documentation."]
+    pub const SSL_CERT_DECISIONS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SSL_CERT_DECISIONS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PROTECTED_MEDIA_IDENTIFIER`] for more documentation."]
+    pub const PROTECTED_MEDIA_IDENTIFIER: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PROTECTED_MEDIA_IDENTIFIER);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_APP_BANNER`] for more documentation."]
+    pub const APP_BANNER: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_APP_BANNER);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SITE_ENGAGEMENT`] for more documentation."]
+    pub const SITE_ENGAGEMENT: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SITE_ENGAGEMENT);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DURABLE_STORAGE`] for more documentation."]
+    pub const DURABLE_STORAGE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DURABLE_STORAGE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_USB_CHOOSER_DATA`] for more documentation."]
+    pub const USB_CHOOSER_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_USB_CHOOSER_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BLUETOOTH_GUARD`] for more documentation."]
+    pub const BLUETOOTH_GUARD: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BLUETOOTH_GUARD);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BACKGROUND_SYNC`] for more documentation."]
+    pub const BACKGROUND_SYNC: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BACKGROUND_SYNC);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOPLAY`] for more documentation."]
+    pub const AUTOPLAY: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOPLAY);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_IMPORTANT_SITE_INFO`] for more documentation."]
+    pub const IMPORTANT_SITE_INFO: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_IMPORTANT_SITE_INFO);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOBLOCKER_DATA`] for more documentation."]
+    pub const PERMISSION_AUTOBLOCKER_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOBLOCKER_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ADS`] for more documentation."]
+    pub const ADS: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ADS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ADS_DATA`] for more documentation."]
+    pub const ADS_DATA: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ADS_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MIDI`] for more documentation."]
+    pub const MIDI: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MIDI);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PASSWORD_PROTECTION`] for more documentation."]
+    pub const PASSWORD_PROTECTION: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PASSWORD_PROTECTION);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MEDIA_ENGAGEMENT`] for more documentation."]
+    pub const MEDIA_ENGAGEMENT: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_MEDIA_ENGAGEMENT);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SOUND`] for more documentation."]
+    pub const SOUND: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SOUND);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CLIENT_HINTS`] for more documentation."]
+    pub const CLIENT_HINTS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CLIENT_HINTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SENSORS`] for more documentation."]
+    pub const SENSORS: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SENSORS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DEPRECATED_ACCESSIBILITY_EVENTS`] for more documentation."]
+    pub const DEPRECATED_ACCESSIBILITY_EVENTS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DEPRECATED_ACCESSIBILITY_EVENTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PAYMENT_HANDLER`] for more documentation."]
+    pub const PAYMENT_HANDLER: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PAYMENT_HANDLER);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_USB_GUARD`] for more documentation."]
+    pub const USB_GUARD: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_USB_GUARD);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BACKGROUND_FETCH`] for more documentation."]
+    pub const BACKGROUND_FETCH: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BACKGROUND_FETCH);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INTENT_PICKER_DISPLAY`] for more documentation."]
+    pub const INTENT_PICKER_DISPLAY: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INTENT_PICKER_DISPLAY);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_IDLE_DETECTION`] for more documentation."]
+    pub const IDLE_DETECTION: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_IDLE_DETECTION);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SERIAL_GUARD`] for more documentation."]
+    pub const SERIAL_GUARD: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SERIAL_GUARD);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SERIAL_CHOOSER_DATA`] for more documentation."]
+    pub const SERIAL_CHOOSER_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SERIAL_CHOOSER_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERIODIC_BACKGROUND_SYNC`] for more documentation."]
+    pub const PERIODIC_BACKGROUND_SYNC: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERIODIC_BACKGROUND_SYNC);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BLUETOOTH_SCANNING`] for more documentation."]
+    pub const BLUETOOTH_SCANNING: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BLUETOOTH_SCANNING);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HID_GUARD`] for more documentation."]
+    pub const HID_GUARD: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HID_GUARD);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HID_CHOOSER_DATA`] for more documentation."]
+    pub const HID_CHOOSER_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HID_CHOOSER_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SCREEN`] for more documentation."]
+    pub const WAKE_LOCK_SCREEN: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SCREEN);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SYSTEM`] for more documentation."]
+    pub const WAKE_LOCK_SYSTEM: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SYSTEM);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_ACCESS`] for more documentation."]
+    pub const LEGACY_COOKIE_ACCESS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_ACCESS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_WRITE_GUARD`] for more documentation."]
+    pub const FILE_SYSTEM_WRITE_GUARD: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_WRITE_GUARD);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NFC`] for more documentation."]
+    pub const NFC: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NFC);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BLUETOOTH_CHOOSER_DATA`] for more documentation."]
+    pub const BLUETOOTH_CHOOSER_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_BLUETOOTH_CHOOSER_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CLIPBOARD_READ_WRITE`] for more documentation."]
+    pub const CLIPBOARD_READ_WRITE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CLIPBOARD_READ_WRITE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CLIPBOARD_SANITIZED_WRITE`] for more documentation."]
+    pub const CLIPBOARD_SANITIZED_WRITE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CLIPBOARD_SANITIZED_WRITE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SAFE_BROWSING_URL_CHECK_DATA`] for more documentation."]
+    pub const SAFE_BROWSING_URL_CHECK_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SAFE_BROWSING_URL_CHECK_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_VR`] for more documentation."]
+    pub const VR: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_VR);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AR`] for more documentation."]
+    pub const AR: Self = Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AR);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_READ_GUARD`] for more documentation."]
+    pub const FILE_SYSTEM_READ_GUARD: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_READ_GUARD);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_STORAGE_ACCESS`] for more documentation."]
+    pub const STORAGE_ACCESS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_STORAGE_ACCESS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CAMERA_PAN_TILT_ZOOM`] for more documentation."]
+    pub const CAMERA_PAN_TILT_ZOOM: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CAMERA_PAN_TILT_ZOOM);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WINDOW_MANAGEMENT`] for more documentation."]
+    pub const WINDOW_MANAGEMENT: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WINDOW_MANAGEMENT);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INSECURE_PRIVATE_NETWORK_DEPRECATED`] for more documentation."]
+    pub const INSECURE_PRIVATE_NETWORK_DEPRECATED: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INSECURE_PRIVATE_NETWORK_DEPRECATED,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LOCAL_FONTS`] for more documentation."]
+    pub const LOCAL_FONTS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LOCAL_FONTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOREVOCATION_DATA`] for more documentation."]
+    pub const PERMISSION_AUTOREVOCATION_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOREVOCATION_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_LAST_PICKED_DIRECTORY`] for more documentation."]
+    pub const FILE_SYSTEM_LAST_PICKED_DIRECTORY: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_LAST_PICKED_DIRECTORY,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DISPLAY_CAPTURE`] for more documentation."]
+    pub const DISPLAY_CAPTURE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DISPLAY_CAPTURE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_CHOOSER_DATA`] for more documentation."]
+    pub const FILE_SYSTEM_ACCESS_CHOOSER_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_CHOOSER_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_SHARING`] for more documentation."]
+    pub const FEDERATED_IDENTITY_SHARING: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_SHARING);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_JAVASCRIPT_JIT`] for more documentation."]
+    pub const JAVASCRIPT_JIT: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_JAVASCRIPT_JIT);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HTTP_ALLOWED`] for more documentation."]
+    pub const HTTP_ALLOWED: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HTTP_ALLOWED);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FORMFILL_METADATA`] for more documentation."]
+    pub const FORMFILL_METADATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FORMFILL_METADATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DEPRECATED_FEDERATED_IDENTITY_ACTIVE_SESSION`] for more documentation."]
+    pub const DEPRECATED_FEDERATED_IDENTITY_ACTIVE_SESSION : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_DEPRECATED_FEDERATED_IDENTITY_ACTIVE_SESSION) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_DARK_WEB_CONTENT`] for more documentation."]
+    pub const AUTO_DARK_WEB_CONTENT: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_DARK_WEB_CONTENT);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REQUEST_DESKTOP_SITE`] for more documentation."]
+    pub const REQUEST_DESKTOP_SITE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REQUEST_DESKTOP_SITE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_API`] for more documentation."]
+    pub const FEDERATED_IDENTITY_API: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_API);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NOTIFICATION_INTERACTIONS`] for more documentation."]
+    pub const NOTIFICATION_INTERACTIONS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NOTIFICATION_INTERACTIONS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REDUCED_ACCEPT_LANGUAGE`] for more documentation."]
+    pub const REDUCED_ACCEPT_LANGUAGE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REDUCED_ACCEPT_LANGUAGE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NOTIFICATION_PERMISSION_REVIEW`] for more documentation."]
+    pub const NOTIFICATION_PERMISSION_REVIEW: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NOTIFICATION_PERMISSION_REVIEW);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_GUARD_DEPRECATED`] for more documentation."]
+    pub const PRIVATE_NETWORK_GUARD_DEPRECATED: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_GUARD_DEPRECATED,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_CHOOSER_DATA_DEPRECATED`] for more documentation."]
+    pub const PRIVATE_NETWORK_CHOOSER_DATA_DEPRECATED : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_CHOOSER_DATA_DEPRECATED) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS`] for more documentation."]
+    pub const FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REVOKED_UNUSED_SITE_PERMISSIONS`] for more documentation."]
+    pub const REVOKED_UNUSED_SITE_PERMISSIONS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REVOKED_UNUSED_SITE_PERMISSIONS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_STORAGE_ACCESS`] for more documentation."]
+    pub const TOP_LEVEL_STORAGE_ACCESS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_STORAGE_ACCESS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_AUTO_REAUTHN_PERMISSION`] for more documentation."]
+    pub const FEDERATED_IDENTITY_AUTO_REAUTHN_PERMISSION : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_AUTO_REAUTHN_PERMISSION) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_REGISTRATION`] for more documentation."]
+    pub const FEDERATED_IDENTITY_IDENTITY_PROVIDER_REGISTRATION : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_REGISTRATION) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ANTI_ABUSE`] for more documentation."]
+    pub const ANTI_ABUSE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ANTI_ABUSE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING`] for more documentation."]
+    pub const THIRD_PARTY_STORAGE_PARTITIONING: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HTTPS_ENFORCED`] for more documentation."]
+    pub const HTTPS_ENFORCED: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HTTPS_ENFORCED);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ALL_SCREEN_CAPTURE`] for more documentation."]
+    pub const ALL_SCREEN_CAPTURE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ALL_SCREEN_CAPTURE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIE_CONTROLS_METADATA`] for more documentation."]
+    pub const COOKIE_CONTROLS_METADATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIE_CONTROLS_METADATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_HEURISTICS_GRANTS`] for more documentation."]
+    pub const TPCD_HEURISTICS_GRANTS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_HEURISTICS_GRANTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_METADATA_GRANTS`] for more documentation."]
+    pub const TPCD_METADATA_GRANTS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_METADATA_GRANTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_TRIAL`] for more documentation."]
+    pub const TPCD_TRIAL: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_TRIAL);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_TRIAL`] for more documentation."]
+    pub const TOP_LEVEL_TPCD_TRIAL: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_TRIAL);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL`] for more documentation."]
+    pub const TOP_LEVEL_TPCD_ORIGIN_TRIAL: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_PICTURE_IN_PICTURE`] for more documentation."]
+    pub const AUTO_PICTURE_IN_PICTURE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_PICTURE_IN_PICTURE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_EXTENDED_PERMISSION`] for more documentation."]
+    pub const FILE_SYSTEM_ACCESS_EXTENDED_PERMISSION : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_EXTENDED_PERMISSION) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_RESTORE_PERMISSION`] for more documentation."]
+    pub const FILE_SYSTEM_ACCESS_RESTORE_PERMISSION: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_RESTORE_PERMISSION,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CAPTURED_SURFACE_CONTROL`] for more documentation."]
+    pub const CAPTURED_SURFACE_CONTROL: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CAPTURED_SURFACE_CONTROL);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SMART_CARD_GUARD`] for more documentation."]
+    pub const SMART_CARD_GUARD: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SMART_CARD_GUARD);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SMART_CARD_DATA`] for more documentation."]
+    pub const SMART_CARD_DATA: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SMART_CARD_DATA);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WEB_PRINTING`] for more documentation."]
+    pub const WEB_PRINTING: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WEB_PRINTING);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOMATIC_FULLSCREEN`] for more documentation."]
+    pub const AUTOMATIC_FULLSCREEN: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTOMATIC_FULLSCREEN);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUB_APP_INSTALLATION_PROMPTS`] for more documentation."]
+    pub const SUB_APP_INSTALLATION_PROMPTS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUB_APP_INSTALLATION_PROMPTS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SPEAKER_SELECTION`] for more documentation."]
+    pub const SPEAKER_SELECTION: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SPEAKER_SELECTION);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DIRECT_SOCKETS`] for more documentation."]
+    pub const DIRECT_SOCKETS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DIRECT_SOCKETS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_KEYBOARD_LOCK`] for more documentation."]
+    pub const KEYBOARD_LOCK: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_KEYBOARD_LOCK);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_POINTER_LOCK`] for more documentation."]
+    pub const POINTER_LOCK: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_POINTER_LOCK);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS`] for more documentation."]
+    pub const REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION`] for more documentation."]
+    pub const TRACKING_PROTECTION: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DISPLAY_MEDIA_SYSTEM_AUDIO`] for more documentation."]
+    pub const DISPLAY_MEDIA_SYSTEM_AUDIO: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DISPLAY_MEDIA_SYSTEM_AUDIO);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_JAVASCRIPT_OPTIMIZER`] for more documentation."]
+    pub const JAVASCRIPT_OPTIMIZER: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_JAVASCRIPT_OPTIMIZER);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_STORAGE_ACCESS_HEADER_ORIGIN_TRIAL`] for more documentation."]
+    pub const STORAGE_ACCESS_HEADER_ORIGIN_TRIAL: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_STORAGE_ACCESS_HEADER_ORIGIN_TRIAL,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HAND_TRACKING`] for more documentation."]
+    pub const HAND_TRACKING: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_HAND_TRACKING);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WEB_APP_INSTALLATION`] for more documentation."]
+    pub const WEB_APP_INSTALLATION: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_WEB_APP_INSTALLATION);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DIRECT_SOCKETS_PRIVATE_NETWORK_ACCESS`] for more documentation."]
+    pub const DIRECT_SOCKETS_PRIVATE_NETWORK_ACCESS: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DIRECT_SOCKETS_PRIVATE_NETWORK_ACCESS,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_SCOPE`] for more documentation."]
+    pub const LEGACY_COOKIE_SCOPE: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_SCOPE);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ARE_SUSPICIOUS_NOTIFICATIONS_ALLOWLISTED_BY_USER`] for more documentation."]
+    pub const ARE_SUSPICIOUS_NOTIFICATIONS_ALLOWLISTED_BY_USER : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_ARE_SUSPICIOUS_NOTIFICATIONS_ALLOWLISTED_BY_USER) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CONTROLLED_FRAME`] for more documentation."]
+    pub const CONTROLLED_FRAME: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_CONTROLLED_FRAME);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_REVOKED_DISRUPTIVE_NOTIFICATION_PERMISSIONS`] for more documentation."]
+    pub const REVOKED_DISRUPTIVE_NOTIFICATION_PERMISSIONS : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_REVOKED_DISRUPTIVE_NOTIFICATION_PERMISSIONS) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LOCAL_NETWORK_ACCESS`] for more documentation."]
+    pub const LOCAL_NETWORK_ACCESS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_LOCAL_NETWORK_ACCESS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_ON_DEVICE_SPEECH_RECOGNITION_LANGUAGES_DOWNLOADED`] for more documentation."]
+    pub const ON_DEVICE_SPEECH_RECOGNITION_LANGUAGES_DOWNLOADED : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_ON_DEVICE_SPEECH_RECOGNITION_LANGUAGES_DOWNLOADED) ;
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INITIALIZED_TRANSLATIONS`] for more documentation."]
+    pub const INITIALIZED_TRANSLATIONS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_INITIALIZED_TRANSLATIONS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_NOTIFICATION_IDS`] for more documentation."]
+    pub const SUSPICIOUS_NOTIFICATION_IDS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_NOTIFICATION_IDS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_GEOLOCATION_WITH_OPTIONS`] for more documentation."]
+    pub const GEOLOCATION_WITH_OPTIONS: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_GEOLOCATION_WITH_OPTIONS);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DEVICE_ATTRIBUTES`] for more documentation."]
+    pub const DEVICE_ATTRIBUTES: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_DEVICE_ATTRIBUTES);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERMISSION_ACTIONS_HISTORY`] for more documentation."]
+    pub const PERMISSION_ACTIONS_HISTORY: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_PERMISSION_ACTIONS_HISTORY);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_NOTIFICATION_SHOW_ORIGINAL`] for more documentation."]
+    pub const SUSPICIOUS_NOTIFICATION_SHOW_ORIGINAL: Self = Self(
+        cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_SUSPICIOUS_NOTIFICATION_SHOW_ORIGINAL,
+    );
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NUM_VALUES);
+}
 impl Default for ContentSettingTypes {
     fn default() -> Self {
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIES)
@@ -42487,6 +42859,26 @@ impl From<ContentSettingValues> for cef_content_setting_values_t {
     fn from(value: ContentSettingValues) -> Self {
         value.0
     }
+}
+impl ContentSettingValues {
+    #[doc = "See [`cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_DEFAULT);
+    #[doc = "See [`cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_ALLOW`] for more documentation."]
+    pub const ALLOW: Self = Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_ALLOW);
+    #[doc = "See [`cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_BLOCK`] for more documentation."]
+    pub const BLOCK: Self = Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_BLOCK);
+    #[doc = "See [`cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_ASK`] for more documentation."]
+    pub const ASK: Self = Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_ASK);
+    #[doc = "See [`cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_SESSION_ONLY`] for more documentation."]
+    pub const SESSION_ONLY: Self =
+        Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_SESSION_ONLY);
+    #[doc = "See [`cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_DETECT_IMPORTANT_CONTENT_DEPRECATED`] for more documentation."]
+    pub const DETECT_IMPORTANT_CONTENT_DEPRECATED: Self = Self(
+        cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_DETECT_IMPORTANT_CONTENT_DEPRECATED,
+    );
+    #[doc = "See [`cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self =
+        Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_NUM_VALUES);
 }
 impl Default for ContentSettingValues {
     fn default() -> Self {
@@ -42517,6 +42909,14 @@ impl From<ColorType> for cef_color_type_t {
         value.0
     }
 }
+impl ColorType {
+    #[doc = "See [`cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888`] for more documentation."]
+    pub const RGBA_8888: Self = Self(cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888);
+    #[doc = "See [`cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888`] for more documentation."]
+    pub const BGRA_8888: Self = Self(cef_color_type_t::CEF_COLOR_TYPE_BGRA_8888);
+    #[doc = "See [`cef_color_type_t::CEF_COLOR_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_color_type_t::CEF_COLOR_TYPE_NUM_VALUES);
+}
 impl Default for ColorType {
     fn default() -> Self {
         Self(cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888)
@@ -42545,6 +42945,14 @@ impl From<RuntimeStyle> for cef_runtime_style_t {
     fn from(value: RuntimeStyle) -> Self {
         value.0
     }
+}
+impl RuntimeStyle {
+    #[doc = "See [`cef_runtime_style_t::CEF_RUNTIME_STYLE_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_runtime_style_t::CEF_RUNTIME_STYLE_DEFAULT);
+    #[doc = "See [`cef_runtime_style_t::CEF_RUNTIME_STYLE_CHROME`] for more documentation."]
+    pub const CHROME: Self = Self(cef_runtime_style_t::CEF_RUNTIME_STYLE_CHROME);
+    #[doc = "See [`cef_runtime_style_t::CEF_RUNTIME_STYLE_ALLOY`] for more documentation."]
+    pub const ALLOY: Self = Self(cef_runtime_style_t::CEF_RUNTIME_STYLE_ALLOY);
 }
 impl Default for RuntimeStyle {
     fn default() -> Self {
@@ -42575,6 +42983,22 @@ impl From<LogSeverity> for cef_log_severity_t {
         value.0
     }
 }
+impl LogSeverity {
+    #[doc = "See [`cef_log_severity_t::LOGSEVERITY_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_log_severity_t::LOGSEVERITY_DEFAULT);
+    #[doc = "See [`cef_log_severity_t::LOGSEVERITY_VERBOSE`] for more documentation."]
+    pub const VERBOSE: Self = Self(cef_log_severity_t::LOGSEVERITY_VERBOSE);
+    #[doc = "See [`cef_log_severity_t::LOGSEVERITY_INFO`] for more documentation."]
+    pub const INFO: Self = Self(cef_log_severity_t::LOGSEVERITY_INFO);
+    #[doc = "See [`cef_log_severity_t::LOGSEVERITY_WARNING`] for more documentation."]
+    pub const WARNING: Self = Self(cef_log_severity_t::LOGSEVERITY_WARNING);
+    #[doc = "See [`cef_log_severity_t::LOGSEVERITY_ERROR`] for more documentation."]
+    pub const ERROR: Self = Self(cef_log_severity_t::LOGSEVERITY_ERROR);
+    #[doc = "See [`cef_log_severity_t::LOGSEVERITY_FATAL`] for more documentation."]
+    pub const FATAL: Self = Self(cef_log_severity_t::LOGSEVERITY_FATAL);
+    #[doc = "See [`cef_log_severity_t::LOGSEVERITY_DISABLE`] for more documentation."]
+    pub const DISABLE: Self = Self(cef_log_severity_t::LOGSEVERITY_DISABLE);
+}
 impl Default for LogSeverity {
     fn default() -> Self {
         Self(cef_log_severity_t::LOGSEVERITY_DEFAULT)
@@ -42603,6 +43027,20 @@ impl From<LogItems> for cef_log_items_t {
     fn from(value: LogItems) -> Self {
         value.0
     }
+}
+impl LogItems {
+    #[doc = "See [`cef_log_items_t::LOG_ITEMS_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_log_items_t::LOG_ITEMS_DEFAULT);
+    #[doc = "See [`cef_log_items_t::LOG_ITEMS_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_log_items_t::LOG_ITEMS_NONE);
+    #[doc = "See [`cef_log_items_t::LOG_ITEMS_FLAG_PROCESS_ID`] for more documentation."]
+    pub const FLAG_PROCESS_ID: Self = Self(cef_log_items_t::LOG_ITEMS_FLAG_PROCESS_ID);
+    #[doc = "See [`cef_log_items_t::LOG_ITEMS_FLAG_THREAD_ID`] for more documentation."]
+    pub const FLAG_THREAD_ID: Self = Self(cef_log_items_t::LOG_ITEMS_FLAG_THREAD_ID);
+    #[doc = "See [`cef_log_items_t::LOG_ITEMS_FLAG_TIME_STAMP`] for more documentation."]
+    pub const FLAG_TIME_STAMP: Self = Self(cef_log_items_t::LOG_ITEMS_FLAG_TIME_STAMP);
+    #[doc = "See [`cef_log_items_t::LOG_ITEMS_FLAG_TICK_COUNT`] for more documentation."]
+    pub const FLAG_TICK_COUNT: Self = Self(cef_log_items_t::LOG_ITEMS_FLAG_TICK_COUNT);
 }
 impl Default for LogItems {
     fn default() -> Self {
@@ -42633,6 +43071,14 @@ impl From<State> for cef_state_t {
         value.0
     }
 }
+impl State {
+    #[doc = "See [`cef_state_t::STATE_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_state_t::STATE_DEFAULT);
+    #[doc = "See [`cef_state_t::STATE_ENABLED`] for more documentation."]
+    pub const ENABLED: Self = Self(cef_state_t::STATE_ENABLED);
+    #[doc = "See [`cef_state_t::STATE_DISABLED`] for more documentation."]
+    pub const DISABLED: Self = Self(cef_state_t::STATE_DISABLED);
+}
 impl Default for State {
     fn default() -> Self {
         Self(cef_state_t::STATE_DEFAULT)
@@ -42661,6 +43107,14 @@ impl From<ReturnValue> for cef_return_value_t {
     fn from(value: ReturnValue) -> Self {
         value.0
     }
+}
+impl ReturnValue {
+    #[doc = "See [`cef_return_value_t::RV_CANCEL`] for more documentation."]
+    pub const CANCEL: Self = Self(cef_return_value_t::RV_CANCEL);
+    #[doc = "See [`cef_return_value_t::RV_CONTINUE`] for more documentation."]
+    pub const CONTINUE: Self = Self(cef_return_value_t::RV_CONTINUE);
+    #[doc = "See [`cef_return_value_t::RV_CONTINUE_ASYNC`] for more documentation."]
+    pub const CONTINUE_ASYNC: Self = Self(cef_return_value_t::RV_CONTINUE_ASYNC);
 }
 impl Default for ReturnValue {
     fn default() -> Self {
@@ -42691,6 +43145,14 @@ impl From<CookiePriority> for cef_cookie_priority_t {
         value.0
     }
 }
+impl CookiePriority {
+    #[doc = "See [`cef_cookie_priority_t::CEF_COOKIE_PRIORITY_LOW`] for more documentation."]
+    pub const LOW: Self = Self(cef_cookie_priority_t::CEF_COOKIE_PRIORITY_LOW);
+    #[doc = "See [`cef_cookie_priority_t::CEF_COOKIE_PRIORITY_MEDIUM`] for more documentation."]
+    pub const MEDIUM: Self = Self(cef_cookie_priority_t::CEF_COOKIE_PRIORITY_MEDIUM);
+    #[doc = "See [`cef_cookie_priority_t::CEF_COOKIE_PRIORITY_HIGH`] for more documentation."]
+    pub const HIGH: Self = Self(cef_cookie_priority_t::CEF_COOKIE_PRIORITY_HIGH);
+}
 impl Default for CookiePriority {
     fn default() -> Self {
         Self(cef_cookie_priority_t::CEF_COOKIE_PRIORITY_LOW)
@@ -42719,6 +43181,19 @@ impl From<CookieSameSite> for cef_cookie_same_site_t {
     fn from(value: CookieSameSite) -> Self {
         value.0
     }
+}
+impl CookieSameSite {
+    #[doc = "See [`cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_UNSPECIFIED`] for more documentation."]
+    pub const UNSPECIFIED: Self = Self(cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_UNSPECIFIED);
+    #[doc = "See [`cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_NO_RESTRICTION`] for more documentation."]
+    pub const NO_RESTRICTION: Self =
+        Self(cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_NO_RESTRICTION);
+    #[doc = "See [`cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_LAX_MODE`] for more documentation."]
+    pub const LAX_MODE: Self = Self(cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_LAX_MODE);
+    #[doc = "See [`cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_STRICT_MODE`] for more documentation."]
+    pub const STRICT_MODE: Self = Self(cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_STRICT_MODE);
+    #[doc = "See [`cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_NUM_VALUES);
 }
 impl Default for CookieSameSite {
     fn default() -> Self {
@@ -42749,6 +43224,22 @@ impl From<TerminationStatus> for cef_termination_status_t {
         value.0
     }
 }
+impl TerminationStatus {
+    #[doc = "See [`cef_termination_status_t::TS_ABNORMAL_TERMINATION`] for more documentation."]
+    pub const ABNORMAL_TERMINATION: Self = Self(cef_termination_status_t::TS_ABNORMAL_TERMINATION);
+    #[doc = "See [`cef_termination_status_t::TS_PROCESS_WAS_KILLED`] for more documentation."]
+    pub const PROCESS_WAS_KILLED: Self = Self(cef_termination_status_t::TS_PROCESS_WAS_KILLED);
+    #[doc = "See [`cef_termination_status_t::TS_PROCESS_CRASHED`] for more documentation."]
+    pub const PROCESS_CRASHED: Self = Self(cef_termination_status_t::TS_PROCESS_CRASHED);
+    #[doc = "See [`cef_termination_status_t::TS_PROCESS_OOM`] for more documentation."]
+    pub const PROCESS_OOM: Self = Self(cef_termination_status_t::TS_PROCESS_OOM);
+    #[doc = "See [`cef_termination_status_t::TS_LAUNCH_FAILED`] for more documentation."]
+    pub const LAUNCH_FAILED: Self = Self(cef_termination_status_t::TS_LAUNCH_FAILED);
+    #[doc = "See [`cef_termination_status_t::TS_INTEGRITY_FAILURE`] for more documentation."]
+    pub const INTEGRITY_FAILURE: Self = Self(cef_termination_status_t::TS_INTEGRITY_FAILURE);
+    #[doc = "See [`cef_termination_status_t::TS_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_termination_status_t::TS_NUM_VALUES);
+}
 impl Default for TerminationStatus {
     fn default() -> Self {
         Self(cef_termination_status_t::TS_ABNORMAL_TERMINATION)
@@ -42777,6 +43268,28 @@ impl From<PathKey> for cef_path_key_t {
     fn from(value: PathKey) -> Self {
         value.0
     }
+}
+impl PathKey {
+    #[doc = "See [`cef_path_key_t::PK_DIR_CURRENT`] for more documentation."]
+    pub const DIR_CURRENT: Self = Self(cef_path_key_t::PK_DIR_CURRENT);
+    #[doc = "See [`cef_path_key_t::PK_DIR_EXE`] for more documentation."]
+    pub const DIR_EXE: Self = Self(cef_path_key_t::PK_DIR_EXE);
+    #[doc = "See [`cef_path_key_t::PK_DIR_MODULE`] for more documentation."]
+    pub const DIR_MODULE: Self = Self(cef_path_key_t::PK_DIR_MODULE);
+    #[doc = "See [`cef_path_key_t::PK_DIR_TEMP`] for more documentation."]
+    pub const DIR_TEMP: Self = Self(cef_path_key_t::PK_DIR_TEMP);
+    #[doc = "See [`cef_path_key_t::PK_FILE_EXE`] for more documentation."]
+    pub const FILE_EXE: Self = Self(cef_path_key_t::PK_FILE_EXE);
+    #[doc = "See [`cef_path_key_t::PK_FILE_MODULE`] for more documentation."]
+    pub const FILE_MODULE: Self = Self(cef_path_key_t::PK_FILE_MODULE);
+    #[doc = "See [`cef_path_key_t::PK_LOCAL_APP_DATA`] for more documentation."]
+    pub const LOCAL_APP_DATA: Self = Self(cef_path_key_t::PK_LOCAL_APP_DATA);
+    #[doc = "See [`cef_path_key_t::PK_USER_DATA`] for more documentation."]
+    pub const USER_DATA: Self = Self(cef_path_key_t::PK_USER_DATA);
+    #[doc = "See [`cef_path_key_t::PK_DIR_RESOURCES`] for more documentation."]
+    pub const DIR_RESOURCES: Self = Self(cef_path_key_t::PK_DIR_RESOURCES);
+    #[doc = "See [`cef_path_key_t::PK_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_path_key_t::PK_NUM_VALUES);
 }
 impl Default for PathKey {
     fn default() -> Self {
@@ -42807,6 +43320,12 @@ impl From<StorageType> for cef_storage_type_t {
         value.0
     }
 }
+impl StorageType {
+    #[doc = "See [`cef_storage_type_t::ST_LOCALSTORAGE`] for more documentation."]
+    pub const LOCALSTORAGE: Self = Self(cef_storage_type_t::ST_LOCALSTORAGE);
+    #[doc = "See [`cef_storage_type_t::ST_SESSIONSTORAGE`] for more documentation."]
+    pub const SESSIONSTORAGE: Self = Self(cef_storage_type_t::ST_SESSIONSTORAGE);
+}
 impl Default for StorageType {
     fn default() -> Self {
         Self(cef_storage_type_t::ST_LOCALSTORAGE)
@@ -42835,6 +43354,583 @@ impl From<Errorcode> for cef_errorcode_t {
     fn from(value: Errorcode) -> Self {
         value.0
     }
+}
+impl Errorcode {
+    #[doc = "See [`cef_errorcode_t::ERR_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_errorcode_t::ERR_NONE);
+    #[doc = "See [`cef_errorcode_t::ERR_IO_PENDING`] for more documentation."]
+    pub const IO_PENDING: Self = Self(cef_errorcode_t::ERR_IO_PENDING);
+    #[doc = "See [`cef_errorcode_t::ERR_FAILED`] for more documentation."]
+    pub const FAILED: Self = Self(cef_errorcode_t::ERR_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_ABORTED`] for more documentation."]
+    pub const ABORTED: Self = Self(cef_errorcode_t::ERR_ABORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_ARGUMENT`] for more documentation."]
+    pub const INVALID_ARGUMENT: Self = Self(cef_errorcode_t::ERR_INVALID_ARGUMENT);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_HANDLE`] for more documentation."]
+    pub const INVALID_HANDLE: Self = Self(cef_errorcode_t::ERR_INVALID_HANDLE);
+    #[doc = "See [`cef_errorcode_t::ERR_FILE_NOT_FOUND`] for more documentation."]
+    pub const FILE_NOT_FOUND: Self = Self(cef_errorcode_t::ERR_FILE_NOT_FOUND);
+    #[doc = "See [`cef_errorcode_t::ERR_TIMED_OUT`] for more documentation."]
+    pub const TIMED_OUT: Self = Self(cef_errorcode_t::ERR_TIMED_OUT);
+    #[doc = "See [`cef_errorcode_t::ERR_FILE_TOO_BIG`] for more documentation."]
+    pub const FILE_TOO_BIG: Self = Self(cef_errorcode_t::ERR_FILE_TOO_BIG);
+    #[doc = "See [`cef_errorcode_t::ERR_UNEXPECTED`] for more documentation."]
+    pub const UNEXPECTED: Self = Self(cef_errorcode_t::ERR_UNEXPECTED);
+    #[doc = "See [`cef_errorcode_t::ERR_ACCESS_DENIED`] for more documentation."]
+    pub const ACCESS_DENIED: Self = Self(cef_errorcode_t::ERR_ACCESS_DENIED);
+    #[doc = "See [`cef_errorcode_t::ERR_NOT_IMPLEMENTED`] for more documentation."]
+    pub const NOT_IMPLEMENTED: Self = Self(cef_errorcode_t::ERR_NOT_IMPLEMENTED);
+    #[doc = "See [`cef_errorcode_t::ERR_INSUFFICIENT_RESOURCES`] for more documentation."]
+    pub const INSUFFICIENT_RESOURCES: Self = Self(cef_errorcode_t::ERR_INSUFFICIENT_RESOURCES);
+    #[doc = "See [`cef_errorcode_t::ERR_OUT_OF_MEMORY`] for more documentation."]
+    pub const OUT_OF_MEMORY: Self = Self(cef_errorcode_t::ERR_OUT_OF_MEMORY);
+    #[doc = "See [`cef_errorcode_t::ERR_UPLOAD_FILE_CHANGED`] for more documentation."]
+    pub const UPLOAD_FILE_CHANGED: Self = Self(cef_errorcode_t::ERR_UPLOAD_FILE_CHANGED);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKET_NOT_CONNECTED`] for more documentation."]
+    pub const SOCKET_NOT_CONNECTED: Self = Self(cef_errorcode_t::ERR_SOCKET_NOT_CONNECTED);
+    #[doc = "See [`cef_errorcode_t::ERR_FILE_EXISTS`] for more documentation."]
+    pub const FILE_EXISTS: Self = Self(cef_errorcode_t::ERR_FILE_EXISTS);
+    #[doc = "See [`cef_errorcode_t::ERR_FILE_PATH_TOO_LONG`] for more documentation."]
+    pub const FILE_PATH_TOO_LONG: Self = Self(cef_errorcode_t::ERR_FILE_PATH_TOO_LONG);
+    #[doc = "See [`cef_errorcode_t::ERR_FILE_NO_SPACE`] for more documentation."]
+    pub const FILE_NO_SPACE: Self = Self(cef_errorcode_t::ERR_FILE_NO_SPACE);
+    #[doc = "See [`cef_errorcode_t::ERR_FILE_VIRUS_INFECTED`] for more documentation."]
+    pub const FILE_VIRUS_INFECTED: Self = Self(cef_errorcode_t::ERR_FILE_VIRUS_INFECTED);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_CLIENT`] for more documentation."]
+    pub const BLOCKED_BY_CLIENT: Self = Self(cef_errorcode_t::ERR_BLOCKED_BY_CLIENT);
+    #[doc = "See [`cef_errorcode_t::ERR_NETWORK_CHANGED`] for more documentation."]
+    pub const NETWORK_CHANGED: Self = Self(cef_errorcode_t::ERR_NETWORK_CHANGED);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_ADMINISTRATOR`] for more documentation."]
+    pub const BLOCKED_BY_ADMINISTRATOR: Self = Self(cef_errorcode_t::ERR_BLOCKED_BY_ADMINISTRATOR);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKET_IS_CONNECTED`] for more documentation."]
+    pub const SOCKET_IS_CONNECTED: Self = Self(cef_errorcode_t::ERR_SOCKET_IS_CONNECTED);
+    #[doc = "See [`cef_errorcode_t::ERR_UPLOAD_STREAM_REWIND_NOT_SUPPORTED`] for more documentation."]
+    pub const UPLOAD_STREAM_REWIND_NOT_SUPPORTED: Self =
+        Self(cef_errorcode_t::ERR_UPLOAD_STREAM_REWIND_NOT_SUPPORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_CONTEXT_SHUT_DOWN`] for more documentation."]
+    pub const CONTEXT_SHUT_DOWN: Self = Self(cef_errorcode_t::ERR_CONTEXT_SHUT_DOWN);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_RESPONSE`] for more documentation."]
+    pub const BLOCKED_BY_RESPONSE: Self = Self(cef_errorcode_t::ERR_BLOCKED_BY_RESPONSE);
+    #[doc = "See [`cef_errorcode_t::ERR_CLEARTEXT_NOT_PERMITTED`] for more documentation."]
+    pub const CLEARTEXT_NOT_PERMITTED: Self = Self(cef_errorcode_t::ERR_CLEARTEXT_NOT_PERMITTED);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_CSP`] for more documentation."]
+    pub const BLOCKED_BY_CSP: Self = Self(cef_errorcode_t::ERR_BLOCKED_BY_CSP);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_ORB`] for more documentation."]
+    pub const BLOCKED_BY_ORB: Self = Self(cef_errorcode_t::ERR_BLOCKED_BY_ORB);
+    #[doc = "See [`cef_errorcode_t::ERR_NETWORK_ACCESS_REVOKED`] for more documentation."]
+    pub const NETWORK_ACCESS_REVOKED: Self = Self(cef_errorcode_t::ERR_NETWORK_ACCESS_REVOKED);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_FINGERPRINTING_PROTECTION`] for more documentation."]
+    pub const BLOCKED_BY_FINGERPRINTING_PROTECTION: Self =
+        Self(cef_errorcode_t::ERR_BLOCKED_BY_FINGERPRINTING_PROTECTION);
+    #[doc = "See [`cef_errorcode_t::ERR_CONNECTION_CLOSED`] for more documentation."]
+    pub const CONNECTION_CLOSED: Self = Self(cef_errorcode_t::ERR_CONNECTION_CLOSED);
+    #[doc = "See [`cef_errorcode_t::ERR_CONNECTION_RESET`] for more documentation."]
+    pub const CONNECTION_RESET: Self = Self(cef_errorcode_t::ERR_CONNECTION_RESET);
+    #[doc = "See [`cef_errorcode_t::ERR_CONNECTION_REFUSED`] for more documentation."]
+    pub const CONNECTION_REFUSED: Self = Self(cef_errorcode_t::ERR_CONNECTION_REFUSED);
+    #[doc = "See [`cef_errorcode_t::ERR_CONNECTION_ABORTED`] for more documentation."]
+    pub const CONNECTION_ABORTED: Self = Self(cef_errorcode_t::ERR_CONNECTION_ABORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_CONNECTION_FAILED`] for more documentation."]
+    pub const CONNECTION_FAILED: Self = Self(cef_errorcode_t::ERR_CONNECTION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_NAME_NOT_RESOLVED`] for more documentation."]
+    pub const NAME_NOT_RESOLVED: Self = Self(cef_errorcode_t::ERR_NAME_NOT_RESOLVED);
+    #[doc = "See [`cef_errorcode_t::ERR_INTERNET_DISCONNECTED`] for more documentation."]
+    pub const INTERNET_DISCONNECTED: Self = Self(cef_errorcode_t::ERR_INTERNET_DISCONNECTED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_PROTOCOL_ERROR`] for more documentation."]
+    pub const SSL_PROTOCOL_ERROR: Self = Self(cef_errorcode_t::ERR_SSL_PROTOCOL_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_ADDRESS_INVALID`] for more documentation."]
+    pub const ADDRESS_INVALID: Self = Self(cef_errorcode_t::ERR_ADDRESS_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_ADDRESS_UNREACHABLE`] for more documentation."]
+    pub const ADDRESS_UNREACHABLE: Self = Self(cef_errorcode_t::ERR_ADDRESS_UNREACHABLE);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_CLIENT_AUTH_CERT_NEEDED`] for more documentation."]
+    pub const SSL_CLIENT_AUTH_CERT_NEEDED: Self =
+        Self(cef_errorcode_t::ERR_SSL_CLIENT_AUTH_CERT_NEEDED);
+    #[doc = "See [`cef_errorcode_t::ERR_TUNNEL_CONNECTION_FAILED`] for more documentation."]
+    pub const TUNNEL_CONNECTION_FAILED: Self = Self(cef_errorcode_t::ERR_TUNNEL_CONNECTION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_NO_SSL_VERSIONS_ENABLED`] for more documentation."]
+    pub const NO_SSL_VERSIONS_ENABLED: Self = Self(cef_errorcode_t::ERR_NO_SSL_VERSIONS_ENABLED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_VERSION_OR_CIPHER_MISMATCH`] for more documentation."]
+    pub const SSL_VERSION_OR_CIPHER_MISMATCH: Self =
+        Self(cef_errorcode_t::ERR_SSL_VERSION_OR_CIPHER_MISMATCH);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_RENEGOTIATION_REQUESTED`] for more documentation."]
+    pub const SSL_RENEGOTIATION_REQUESTED: Self =
+        Self(cef_errorcode_t::ERR_SSL_RENEGOTIATION_REQUESTED);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_AUTH_UNSUPPORTED`] for more documentation."]
+    pub const PROXY_AUTH_UNSUPPORTED: Self = Self(cef_errorcode_t::ERR_PROXY_AUTH_UNSUPPORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_BAD_SSL_CLIENT_AUTH_CERT`] for more documentation."]
+    pub const BAD_SSL_CLIENT_AUTH_CERT: Self = Self(cef_errorcode_t::ERR_BAD_SSL_CLIENT_AUTH_CERT);
+    #[doc = "See [`cef_errorcode_t::ERR_CONNECTION_TIMED_OUT`] for more documentation."]
+    pub const CONNECTION_TIMED_OUT: Self = Self(cef_errorcode_t::ERR_CONNECTION_TIMED_OUT);
+    #[doc = "See [`cef_errorcode_t::ERR_HOST_RESOLVER_QUEUE_TOO_LARGE`] for more documentation."]
+    pub const HOST_RESOLVER_QUEUE_TOO_LARGE: Self =
+        Self(cef_errorcode_t::ERR_HOST_RESOLVER_QUEUE_TOO_LARGE);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKS_CONNECTION_FAILED`] for more documentation."]
+    pub const SOCKS_CONNECTION_FAILED: Self = Self(cef_errorcode_t::ERR_SOCKS_CONNECTION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKS_CONNECTION_HOST_UNREACHABLE`] for more documentation."]
+    pub const SOCKS_CONNECTION_HOST_UNREACHABLE: Self =
+        Self(cef_errorcode_t::ERR_SOCKS_CONNECTION_HOST_UNREACHABLE);
+    #[doc = "See [`cef_errorcode_t::ERR_ALPN_NEGOTIATION_FAILED`] for more documentation."]
+    pub const ALPN_NEGOTIATION_FAILED: Self = Self(cef_errorcode_t::ERR_ALPN_NEGOTIATION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_NO_RENEGOTIATION`] for more documentation."]
+    pub const SSL_NO_RENEGOTIATION: Self = Self(cef_errorcode_t::ERR_SSL_NO_RENEGOTIATION);
+    #[doc = "See [`cef_errorcode_t::ERR_WINSOCK_UNEXPECTED_WRITTEN_BYTES`] for more documentation."]
+    pub const WINSOCK_UNEXPECTED_WRITTEN_BYTES: Self =
+        Self(cef_errorcode_t::ERR_WINSOCK_UNEXPECTED_WRITTEN_BYTES);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_DECOMPRESSION_FAILURE_ALERT`] for more documentation."]
+    pub const SSL_DECOMPRESSION_FAILURE_ALERT: Self =
+        Self(cef_errorcode_t::ERR_SSL_DECOMPRESSION_FAILURE_ALERT);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_BAD_RECORD_MAC_ALERT`] for more documentation."]
+    pub const SSL_BAD_RECORD_MAC_ALERT: Self = Self(cef_errorcode_t::ERR_SSL_BAD_RECORD_MAC_ALERT);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_AUTH_REQUESTED`] for more documentation."]
+    pub const PROXY_AUTH_REQUESTED: Self = Self(cef_errorcode_t::ERR_PROXY_AUTH_REQUESTED);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_CONNECTION_FAILED`] for more documentation."]
+    pub const PROXY_CONNECTION_FAILED: Self = Self(cef_errorcode_t::ERR_PROXY_CONNECTION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_MANDATORY_PROXY_CONFIGURATION_FAILED`] for more documentation."]
+    pub const MANDATORY_PROXY_CONFIGURATION_FAILED: Self =
+        Self(cef_errorcode_t::ERR_MANDATORY_PROXY_CONFIGURATION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_PRECONNECT_MAX_SOCKET_LIMIT`] for more documentation."]
+    pub const PRECONNECT_MAX_SOCKET_LIMIT: Self =
+        Self(cef_errorcode_t::ERR_PRECONNECT_MAX_SOCKET_LIMIT);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_CLIENT_AUTH_PRIVATE_KEY_ACCESS_DENIED`] for more documentation."]
+    pub const SSL_CLIENT_AUTH_PRIVATE_KEY_ACCESS_DENIED: Self =
+        Self(cef_errorcode_t::ERR_SSL_CLIENT_AUTH_PRIVATE_KEY_ACCESS_DENIED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_CLIENT_AUTH_CERT_NO_PRIVATE_KEY`] for more documentation."]
+    pub const SSL_CLIENT_AUTH_CERT_NO_PRIVATE_KEY: Self =
+        Self(cef_errorcode_t::ERR_SSL_CLIENT_AUTH_CERT_NO_PRIVATE_KEY);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_CERTIFICATE_INVALID`] for more documentation."]
+    pub const PROXY_CERTIFICATE_INVALID: Self =
+        Self(cef_errorcode_t::ERR_PROXY_CERTIFICATE_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_NAME_RESOLUTION_FAILED`] for more documentation."]
+    pub const NAME_RESOLUTION_FAILED: Self = Self(cef_errorcode_t::ERR_NAME_RESOLUTION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_NETWORK_ACCESS_DENIED`] for more documentation."]
+    pub const NETWORK_ACCESS_DENIED: Self = Self(cef_errorcode_t::ERR_NETWORK_ACCESS_DENIED);
+    #[doc = "See [`cef_errorcode_t::ERR_TEMPORARILY_THROTTLED`] for more documentation."]
+    pub const TEMPORARILY_THROTTLED: Self = Self(cef_errorcode_t::ERR_TEMPORARILY_THROTTLED);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTPS_PROXY_TUNNEL_RESPONSE_REDIRECT`] for more documentation."]
+    pub const HTTPS_PROXY_TUNNEL_RESPONSE_REDIRECT: Self =
+        Self(cef_errorcode_t::ERR_HTTPS_PROXY_TUNNEL_RESPONSE_REDIRECT);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_CLIENT_AUTH_SIGNATURE_FAILED`] for more documentation."]
+    pub const SSL_CLIENT_AUTH_SIGNATURE_FAILED: Self =
+        Self(cef_errorcode_t::ERR_SSL_CLIENT_AUTH_SIGNATURE_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_MSG_TOO_BIG`] for more documentation."]
+    pub const MSG_TOO_BIG: Self = Self(cef_errorcode_t::ERR_MSG_TOO_BIG);
+    #[doc = "See [`cef_errorcode_t::ERR_WS_PROTOCOL_ERROR`] for more documentation."]
+    pub const WS_PROTOCOL_ERROR: Self = Self(cef_errorcode_t::ERR_WS_PROTOCOL_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_ADDRESS_IN_USE`] for more documentation."]
+    pub const ADDRESS_IN_USE: Self = Self(cef_errorcode_t::ERR_ADDRESS_IN_USE);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_HANDSHAKE_NOT_COMPLETED`] for more documentation."]
+    pub const SSL_HANDSHAKE_NOT_COMPLETED: Self =
+        Self(cef_errorcode_t::ERR_SSL_HANDSHAKE_NOT_COMPLETED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_BAD_PEER_PUBLIC_KEY`] for more documentation."]
+    pub const SSL_BAD_PEER_PUBLIC_KEY: Self = Self(cef_errorcode_t::ERR_SSL_BAD_PEER_PUBLIC_KEY);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_PINNED_KEY_NOT_IN_CERT_CHAIN`] for more documentation."]
+    pub const SSL_PINNED_KEY_NOT_IN_CERT_CHAIN: Self =
+        Self(cef_errorcode_t::ERR_SSL_PINNED_KEY_NOT_IN_CERT_CHAIN);
+    #[doc = "See [`cef_errorcode_t::ERR_CLIENT_AUTH_CERT_TYPE_UNSUPPORTED`] for more documentation."]
+    pub const CLIENT_AUTH_CERT_TYPE_UNSUPPORTED: Self =
+        Self(cef_errorcode_t::ERR_CLIENT_AUTH_CERT_TYPE_UNSUPPORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_DECRYPT_ERROR_ALERT`] for more documentation."]
+    pub const SSL_DECRYPT_ERROR_ALERT: Self = Self(cef_errorcode_t::ERR_SSL_DECRYPT_ERROR_ALERT);
+    #[doc = "See [`cef_errorcode_t::ERR_WS_THROTTLE_QUEUE_TOO_LARGE`] for more documentation."]
+    pub const WS_THROTTLE_QUEUE_TOO_LARGE: Self =
+        Self(cef_errorcode_t::ERR_WS_THROTTLE_QUEUE_TOO_LARGE);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_SERVER_CERT_CHANGED`] for more documentation."]
+    pub const SSL_SERVER_CERT_CHANGED: Self = Self(cef_errorcode_t::ERR_SSL_SERVER_CERT_CHANGED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_UNRECOGNIZED_NAME_ALERT`] for more documentation."]
+    pub const SSL_UNRECOGNIZED_NAME_ALERT: Self =
+        Self(cef_errorcode_t::ERR_SSL_UNRECOGNIZED_NAME_ALERT);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKET_SET_RECEIVE_BUFFER_SIZE_ERROR`] for more documentation."]
+    pub const SOCKET_SET_RECEIVE_BUFFER_SIZE_ERROR: Self =
+        Self(cef_errorcode_t::ERR_SOCKET_SET_RECEIVE_BUFFER_SIZE_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKET_SET_SEND_BUFFER_SIZE_ERROR`] for more documentation."]
+    pub const SOCKET_SET_SEND_BUFFER_SIZE_ERROR: Self =
+        Self(cef_errorcode_t::ERR_SOCKET_SET_SEND_BUFFER_SIZE_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKET_RECEIVE_BUFFER_SIZE_UNCHANGEABLE`] for more documentation."]
+    pub const SOCKET_RECEIVE_BUFFER_SIZE_UNCHANGEABLE: Self =
+        Self(cef_errorcode_t::ERR_SOCKET_RECEIVE_BUFFER_SIZE_UNCHANGEABLE);
+    #[doc = "See [`cef_errorcode_t::ERR_SOCKET_SEND_BUFFER_SIZE_UNCHANGEABLE`] for more documentation."]
+    pub const SOCKET_SEND_BUFFER_SIZE_UNCHANGEABLE: Self =
+        Self(cef_errorcode_t::ERR_SOCKET_SEND_BUFFER_SIZE_UNCHANGEABLE);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_CLIENT_AUTH_CERT_BAD_FORMAT`] for more documentation."]
+    pub const SSL_CLIENT_AUTH_CERT_BAD_FORMAT: Self =
+        Self(cef_errorcode_t::ERR_SSL_CLIENT_AUTH_CERT_BAD_FORMAT);
+    #[doc = "See [`cef_errorcode_t::ERR_ICANN_NAME_COLLISION`] for more documentation."]
+    pub const ICANN_NAME_COLLISION: Self = Self(cef_errorcode_t::ERR_ICANN_NAME_COLLISION);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_SERVER_CERT_BAD_FORMAT`] for more documentation."]
+    pub const SSL_SERVER_CERT_BAD_FORMAT: Self =
+        Self(cef_errorcode_t::ERR_SSL_SERVER_CERT_BAD_FORMAT);
+    #[doc = "See [`cef_errorcode_t::ERR_CT_STH_PARSING_FAILED`] for more documentation."]
+    pub const CT_STH_PARSING_FAILED: Self = Self(cef_errorcode_t::ERR_CT_STH_PARSING_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_CT_STH_INCOMPLETE`] for more documentation."]
+    pub const CT_STH_INCOMPLETE: Self = Self(cef_errorcode_t::ERR_CT_STH_INCOMPLETE);
+    #[doc = "See [`cef_errorcode_t::ERR_UNABLE_TO_REUSE_CONNECTION_FOR_PROXY_AUTH`] for more documentation."]
+    pub const UNABLE_TO_REUSE_CONNECTION_FOR_PROXY_AUTH: Self =
+        Self(cef_errorcode_t::ERR_UNABLE_TO_REUSE_CONNECTION_FOR_PROXY_AUTH);
+    #[doc = "See [`cef_errorcode_t::ERR_CT_CONSISTENCY_PROOF_PARSING_FAILED`] for more documentation."]
+    pub const CT_CONSISTENCY_PROOF_PARSING_FAILED: Self =
+        Self(cef_errorcode_t::ERR_CT_CONSISTENCY_PROOF_PARSING_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_OBSOLETE_CIPHER`] for more documentation."]
+    pub const SSL_OBSOLETE_CIPHER: Self = Self(cef_errorcode_t::ERR_SSL_OBSOLETE_CIPHER);
+    #[doc = "See [`cef_errorcode_t::ERR_WS_UPGRADE`] for more documentation."]
+    pub const WS_UPGRADE: Self = Self(cef_errorcode_t::ERR_WS_UPGRADE);
+    #[doc = "See [`cef_errorcode_t::ERR_READ_IF_READY_NOT_IMPLEMENTED`] for more documentation."]
+    pub const READ_IF_READY_NOT_IMPLEMENTED: Self =
+        Self(cef_errorcode_t::ERR_READ_IF_READY_NOT_IMPLEMENTED);
+    #[doc = "See [`cef_errorcode_t::ERR_NO_BUFFER_SPACE`] for more documentation."]
+    pub const NO_BUFFER_SPACE: Self = Self(cef_errorcode_t::ERR_NO_BUFFER_SPACE);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_CLIENT_AUTH_NO_COMMON_ALGORITHMS`] for more documentation."]
+    pub const SSL_CLIENT_AUTH_NO_COMMON_ALGORITHMS: Self =
+        Self(cef_errorcode_t::ERR_SSL_CLIENT_AUTH_NO_COMMON_ALGORITHMS);
+    #[doc = "See [`cef_errorcode_t::ERR_EARLY_DATA_REJECTED`] for more documentation."]
+    pub const EARLY_DATA_REJECTED: Self = Self(cef_errorcode_t::ERR_EARLY_DATA_REJECTED);
+    #[doc = "See [`cef_errorcode_t::ERR_WRONG_VERSION_ON_EARLY_DATA`] for more documentation."]
+    pub const WRONG_VERSION_ON_EARLY_DATA: Self =
+        Self(cef_errorcode_t::ERR_WRONG_VERSION_ON_EARLY_DATA);
+    #[doc = "See [`cef_errorcode_t::ERR_TLS13_DOWNGRADE_DETECTED`] for more documentation."]
+    pub const TLS13_DOWNGRADE_DETECTED: Self = Self(cef_errorcode_t::ERR_TLS13_DOWNGRADE_DETECTED);
+    #[doc = "See [`cef_errorcode_t::ERR_SSL_KEY_USAGE_INCOMPATIBLE`] for more documentation."]
+    pub const SSL_KEY_USAGE_INCOMPATIBLE: Self =
+        Self(cef_errorcode_t::ERR_SSL_KEY_USAGE_INCOMPATIBLE);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_ECH_CONFIG_LIST`] for more documentation."]
+    pub const INVALID_ECH_CONFIG_LIST: Self = Self(cef_errorcode_t::ERR_INVALID_ECH_CONFIG_LIST);
+    #[doc = "See [`cef_errorcode_t::ERR_ECH_NOT_NEGOTIATED`] for more documentation."]
+    pub const ECH_NOT_NEGOTIATED: Self = Self(cef_errorcode_t::ERR_ECH_NOT_NEGOTIATED);
+    #[doc = "See [`cef_errorcode_t::ERR_ECH_FALLBACK_CERTIFICATE_INVALID`] for more documentation."]
+    pub const ECH_FALLBACK_CERTIFICATE_INVALID: Self =
+        Self(cef_errorcode_t::ERR_ECH_FALLBACK_CERTIFICATE_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_UNABLE_TO_CONNECT_TO_DESTINATION`] for more documentation."]
+    pub const PROXY_UNABLE_TO_CONNECT_TO_DESTINATION: Self =
+        Self(cef_errorcode_t::ERR_PROXY_UNABLE_TO_CONNECT_TO_DESTINATION);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID`] for more documentation."]
+    pub const CERT_COMMON_NAME_INVALID: Self = Self(cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_DATE_INVALID`] for more documentation."]
+    pub const CERT_DATE_INVALID: Self = Self(cef_errorcode_t::ERR_CERT_DATE_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_AUTHORITY_INVALID`] for more documentation."]
+    pub const CERT_AUTHORITY_INVALID: Self = Self(cef_errorcode_t::ERR_CERT_AUTHORITY_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_CONTAINS_ERRORS`] for more documentation."]
+    pub const CERT_CONTAINS_ERRORS: Self = Self(cef_errorcode_t::ERR_CERT_CONTAINS_ERRORS);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_NO_REVOCATION_MECHANISM`] for more documentation."]
+    pub const CERT_NO_REVOCATION_MECHANISM: Self =
+        Self(cef_errorcode_t::ERR_CERT_NO_REVOCATION_MECHANISM);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_UNABLE_TO_CHECK_REVOCATION`] for more documentation."]
+    pub const CERT_UNABLE_TO_CHECK_REVOCATION: Self =
+        Self(cef_errorcode_t::ERR_CERT_UNABLE_TO_CHECK_REVOCATION);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_REVOKED`] for more documentation."]
+    pub const CERT_REVOKED: Self = Self(cef_errorcode_t::ERR_CERT_REVOKED);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_INVALID`] for more documentation."]
+    pub const CERT_INVALID: Self = Self(cef_errorcode_t::ERR_CERT_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_WEAK_SIGNATURE_ALGORITHM`] for more documentation."]
+    pub const CERT_WEAK_SIGNATURE_ALGORITHM: Self =
+        Self(cef_errorcode_t::ERR_CERT_WEAK_SIGNATURE_ALGORITHM);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_NON_UNIQUE_NAME`] for more documentation."]
+    pub const CERT_NON_UNIQUE_NAME: Self = Self(cef_errorcode_t::ERR_CERT_NON_UNIQUE_NAME);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_WEAK_KEY`] for more documentation."]
+    pub const CERT_WEAK_KEY: Self = Self(cef_errorcode_t::ERR_CERT_WEAK_KEY);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_NAME_CONSTRAINT_VIOLATION`] for more documentation."]
+    pub const CERT_NAME_CONSTRAINT_VIOLATION: Self =
+        Self(cef_errorcode_t::ERR_CERT_NAME_CONSTRAINT_VIOLATION);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_VALIDITY_TOO_LONG`] for more documentation."]
+    pub const CERT_VALIDITY_TOO_LONG: Self = Self(cef_errorcode_t::ERR_CERT_VALIDITY_TOO_LONG);
+    #[doc = "See [`cef_errorcode_t::ERR_CERTIFICATE_TRANSPARENCY_REQUIRED`] for more documentation."]
+    pub const CERTIFICATE_TRANSPARENCY_REQUIRED: Self =
+        Self(cef_errorcode_t::ERR_CERTIFICATE_TRANSPARENCY_REQUIRED);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_KNOWN_INTERCEPTION_BLOCKED`] for more documentation."]
+    pub const CERT_KNOWN_INTERCEPTION_BLOCKED: Self =
+        Self(cef_errorcode_t::ERR_CERT_KNOWN_INTERCEPTION_BLOCKED);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_SELF_SIGNED_LOCAL_NETWORK`] for more documentation."]
+    pub const CERT_SELF_SIGNED_LOCAL_NETWORK: Self =
+        Self(cef_errorcode_t::ERR_CERT_SELF_SIGNED_LOCAL_NETWORK);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_END`] for more documentation."]
+    pub const CERT_END: Self = Self(cef_errorcode_t::ERR_CERT_END);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_URL`] for more documentation."]
+    pub const INVALID_URL: Self = Self(cef_errorcode_t::ERR_INVALID_URL);
+    #[doc = "See [`cef_errorcode_t::ERR_DISALLOWED_URL_SCHEME`] for more documentation."]
+    pub const DISALLOWED_URL_SCHEME: Self = Self(cef_errorcode_t::ERR_DISALLOWED_URL_SCHEME);
+    #[doc = "See [`cef_errorcode_t::ERR_UNKNOWN_URL_SCHEME`] for more documentation."]
+    pub const UNKNOWN_URL_SCHEME: Self = Self(cef_errorcode_t::ERR_UNKNOWN_URL_SCHEME);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_REDIRECT`] for more documentation."]
+    pub const INVALID_REDIRECT: Self = Self(cef_errorcode_t::ERR_INVALID_REDIRECT);
+    #[doc = "See [`cef_errorcode_t::ERR_TOO_MANY_REDIRECTS`] for more documentation."]
+    pub const TOO_MANY_REDIRECTS: Self = Self(cef_errorcode_t::ERR_TOO_MANY_REDIRECTS);
+    #[doc = "See [`cef_errorcode_t::ERR_UNSAFE_REDIRECT`] for more documentation."]
+    pub const UNSAFE_REDIRECT: Self = Self(cef_errorcode_t::ERR_UNSAFE_REDIRECT);
+    #[doc = "See [`cef_errorcode_t::ERR_UNSAFE_PORT`] for more documentation."]
+    pub const UNSAFE_PORT: Self = Self(cef_errorcode_t::ERR_UNSAFE_PORT);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_RESPONSE`] for more documentation."]
+    pub const INVALID_RESPONSE: Self = Self(cef_errorcode_t::ERR_INVALID_RESPONSE);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_CHUNKED_ENCODING`] for more documentation."]
+    pub const INVALID_CHUNKED_ENCODING: Self = Self(cef_errorcode_t::ERR_INVALID_CHUNKED_ENCODING);
+    #[doc = "See [`cef_errorcode_t::ERR_METHOD_NOT_SUPPORTED`] for more documentation."]
+    pub const METHOD_NOT_SUPPORTED: Self = Self(cef_errorcode_t::ERR_METHOD_NOT_SUPPORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_UNEXPECTED_PROXY_AUTH`] for more documentation."]
+    pub const UNEXPECTED_PROXY_AUTH: Self = Self(cef_errorcode_t::ERR_UNEXPECTED_PROXY_AUTH);
+    #[doc = "See [`cef_errorcode_t::ERR_EMPTY_RESPONSE`] for more documentation."]
+    pub const EMPTY_RESPONSE: Self = Self(cef_errorcode_t::ERR_EMPTY_RESPONSE);
+    #[doc = "See [`cef_errorcode_t::ERR_RESPONSE_HEADERS_TOO_BIG`] for more documentation."]
+    pub const RESPONSE_HEADERS_TOO_BIG: Self = Self(cef_errorcode_t::ERR_RESPONSE_HEADERS_TOO_BIG);
+    #[doc = "See [`cef_errorcode_t::ERR_PAC_SCRIPT_FAILED`] for more documentation."]
+    pub const PAC_SCRIPT_FAILED: Self = Self(cef_errorcode_t::ERR_PAC_SCRIPT_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_REQUEST_RANGE_NOT_SATISFIABLE`] for more documentation."]
+    pub const REQUEST_RANGE_NOT_SATISFIABLE: Self =
+        Self(cef_errorcode_t::ERR_REQUEST_RANGE_NOT_SATISFIABLE);
+    #[doc = "See [`cef_errorcode_t::ERR_MALFORMED_IDENTITY`] for more documentation."]
+    pub const MALFORMED_IDENTITY: Self = Self(cef_errorcode_t::ERR_MALFORMED_IDENTITY);
+    #[doc = "See [`cef_errorcode_t::ERR_CONTENT_DECODING_FAILED`] for more documentation."]
+    pub const CONTENT_DECODING_FAILED: Self = Self(cef_errorcode_t::ERR_CONTENT_DECODING_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_NETWORK_IO_SUSPENDED`] for more documentation."]
+    pub const NETWORK_IO_SUSPENDED: Self = Self(cef_errorcode_t::ERR_NETWORK_IO_SUSPENDED);
+    #[doc = "See [`cef_errorcode_t::ERR_SYN_REPLY_NOT_RECEIVED`] for more documentation."]
+    pub const SYN_REPLY_NOT_RECEIVED: Self = Self(cef_errorcode_t::ERR_SYN_REPLY_NOT_RECEIVED);
+    #[doc = "See [`cef_errorcode_t::ERR_ENCODING_CONVERSION_FAILED`] for more documentation."]
+    pub const ENCODING_CONVERSION_FAILED: Self =
+        Self(cef_errorcode_t::ERR_ENCODING_CONVERSION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_UNRECOGNIZED_FTP_DIRECTORY_LISTING_FORMAT`] for more documentation."]
+    pub const UNRECOGNIZED_FTP_DIRECTORY_LISTING_FORMAT: Self =
+        Self(cef_errorcode_t::ERR_UNRECOGNIZED_FTP_DIRECTORY_LISTING_FORMAT);
+    #[doc = "See [`cef_errorcode_t::ERR_NO_SUPPORTED_PROXIES`] for more documentation."]
+    pub const NO_SUPPORTED_PROXIES: Self = Self(cef_errorcode_t::ERR_NO_SUPPORTED_PROXIES);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_PROTOCOL_ERROR`] for more documentation."]
+    pub const HTTP2_PROTOCOL_ERROR: Self = Self(cef_errorcode_t::ERR_HTTP2_PROTOCOL_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_AUTH_CREDENTIALS`] for more documentation."]
+    pub const INVALID_AUTH_CREDENTIALS: Self = Self(cef_errorcode_t::ERR_INVALID_AUTH_CREDENTIALS);
+    #[doc = "See [`cef_errorcode_t::ERR_UNSUPPORTED_AUTH_SCHEME`] for more documentation."]
+    pub const UNSUPPORTED_AUTH_SCHEME: Self = Self(cef_errorcode_t::ERR_UNSUPPORTED_AUTH_SCHEME);
+    #[doc = "See [`cef_errorcode_t::ERR_ENCODING_DETECTION_FAILED`] for more documentation."]
+    pub const ENCODING_DETECTION_FAILED: Self =
+        Self(cef_errorcode_t::ERR_ENCODING_DETECTION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_MISSING_AUTH_CREDENTIALS`] for more documentation."]
+    pub const MISSING_AUTH_CREDENTIALS: Self = Self(cef_errorcode_t::ERR_MISSING_AUTH_CREDENTIALS);
+    #[doc = "See [`cef_errorcode_t::ERR_UNEXPECTED_SECURITY_LIBRARY_STATUS`] for more documentation."]
+    pub const UNEXPECTED_SECURITY_LIBRARY_STATUS: Self =
+        Self(cef_errorcode_t::ERR_UNEXPECTED_SECURITY_LIBRARY_STATUS);
+    #[doc = "See [`cef_errorcode_t::ERR_MISCONFIGURED_AUTH_ENVIRONMENT`] for more documentation."]
+    pub const MISCONFIGURED_AUTH_ENVIRONMENT: Self =
+        Self(cef_errorcode_t::ERR_MISCONFIGURED_AUTH_ENVIRONMENT);
+    #[doc = "See [`cef_errorcode_t::ERR_UNDOCUMENTED_SECURITY_LIBRARY_STATUS`] for more documentation."]
+    pub const UNDOCUMENTED_SECURITY_LIBRARY_STATUS: Self =
+        Self(cef_errorcode_t::ERR_UNDOCUMENTED_SECURITY_LIBRARY_STATUS);
+    #[doc = "See [`cef_errorcode_t::ERR_RESPONSE_BODY_TOO_BIG_TO_DRAIN`] for more documentation."]
+    pub const RESPONSE_BODY_TOO_BIG_TO_DRAIN: Self =
+        Self(cef_errorcode_t::ERR_RESPONSE_BODY_TOO_BIG_TO_DRAIN);
+    #[doc = "See [`cef_errorcode_t::ERR_RESPONSE_HEADERS_MULTIPLE_CONTENT_LENGTH`] for more documentation."]
+    pub const RESPONSE_HEADERS_MULTIPLE_CONTENT_LENGTH: Self =
+        Self(cef_errorcode_t::ERR_RESPONSE_HEADERS_MULTIPLE_CONTENT_LENGTH);
+    #[doc = "See [`cef_errorcode_t::ERR_INCOMPLETE_HTTP2_HEADERS`] for more documentation."]
+    pub const INCOMPLETE_HTTP2_HEADERS: Self = Self(cef_errorcode_t::ERR_INCOMPLETE_HTTP2_HEADERS);
+    #[doc = "See [`cef_errorcode_t::ERR_PAC_NOT_IN_DHCP`] for more documentation."]
+    pub const PAC_NOT_IN_DHCP: Self = Self(cef_errorcode_t::ERR_PAC_NOT_IN_DHCP);
+    #[doc = "See [`cef_errorcode_t::ERR_RESPONSE_HEADERS_MULTIPLE_CONTENT_DISPOSITION`] for more documentation."]
+    pub const RESPONSE_HEADERS_MULTIPLE_CONTENT_DISPOSITION: Self =
+        Self(cef_errorcode_t::ERR_RESPONSE_HEADERS_MULTIPLE_CONTENT_DISPOSITION);
+    #[doc = "See [`cef_errorcode_t::ERR_RESPONSE_HEADERS_MULTIPLE_LOCATION`] for more documentation."]
+    pub const RESPONSE_HEADERS_MULTIPLE_LOCATION: Self =
+        Self(cef_errorcode_t::ERR_RESPONSE_HEADERS_MULTIPLE_LOCATION);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_SERVER_REFUSED_STREAM`] for more documentation."]
+    pub const HTTP2_SERVER_REFUSED_STREAM: Self =
+        Self(cef_errorcode_t::ERR_HTTP2_SERVER_REFUSED_STREAM);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_PING_FAILED`] for more documentation."]
+    pub const HTTP2_PING_FAILED: Self = Self(cef_errorcode_t::ERR_HTTP2_PING_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_CONTENT_LENGTH_MISMATCH`] for more documentation."]
+    pub const CONTENT_LENGTH_MISMATCH: Self = Self(cef_errorcode_t::ERR_CONTENT_LENGTH_MISMATCH);
+    #[doc = "See [`cef_errorcode_t::ERR_INCOMPLETE_CHUNKED_ENCODING`] for more documentation."]
+    pub const INCOMPLETE_CHUNKED_ENCODING: Self =
+        Self(cef_errorcode_t::ERR_INCOMPLETE_CHUNKED_ENCODING);
+    #[doc = "See [`cef_errorcode_t::ERR_QUIC_PROTOCOL_ERROR`] for more documentation."]
+    pub const QUIC_PROTOCOL_ERROR: Self = Self(cef_errorcode_t::ERR_QUIC_PROTOCOL_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_RESPONSE_HEADERS_TRUNCATED`] for more documentation."]
+    pub const RESPONSE_HEADERS_TRUNCATED: Self =
+        Self(cef_errorcode_t::ERR_RESPONSE_HEADERS_TRUNCATED);
+    #[doc = "See [`cef_errorcode_t::ERR_QUIC_HANDSHAKE_FAILED`] for more documentation."]
+    pub const QUIC_HANDSHAKE_FAILED: Self = Self(cef_errorcode_t::ERR_QUIC_HANDSHAKE_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_INADEQUATE_TRANSPORT_SECURITY`] for more documentation."]
+    pub const HTTP2_INADEQUATE_TRANSPORT_SECURITY: Self =
+        Self(cef_errorcode_t::ERR_HTTP2_INADEQUATE_TRANSPORT_SECURITY);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_FLOW_CONTROL_ERROR`] for more documentation."]
+    pub const HTTP2_FLOW_CONTROL_ERROR: Self = Self(cef_errorcode_t::ERR_HTTP2_FLOW_CONTROL_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_FRAME_SIZE_ERROR`] for more documentation."]
+    pub const HTTP2_FRAME_SIZE_ERROR: Self = Self(cef_errorcode_t::ERR_HTTP2_FRAME_SIZE_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_COMPRESSION_ERROR`] for more documentation."]
+    pub const HTTP2_COMPRESSION_ERROR: Self = Self(cef_errorcode_t::ERR_HTTP2_COMPRESSION_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_AUTH_REQUESTED_WITH_NO_CONNECTION`] for more documentation."]
+    pub const PROXY_AUTH_REQUESTED_WITH_NO_CONNECTION: Self =
+        Self(cef_errorcode_t::ERR_PROXY_AUTH_REQUESTED_WITH_NO_CONNECTION);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP_1_1_REQUIRED`] for more documentation."]
+    pub const HTTP_1_1_REQUIRED: Self = Self(cef_errorcode_t::ERR_HTTP_1_1_REQUIRED);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_HTTP_1_1_REQUIRED`] for more documentation."]
+    pub const PROXY_HTTP_1_1_REQUIRED: Self = Self(cef_errorcode_t::ERR_PROXY_HTTP_1_1_REQUIRED);
+    #[doc = "See [`cef_errorcode_t::ERR_PAC_SCRIPT_TERMINATED`] for more documentation."]
+    pub const PAC_SCRIPT_TERMINATED: Self = Self(cef_errorcode_t::ERR_PAC_SCRIPT_TERMINATED);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_REQUIRED`] for more documentation."]
+    pub const PROXY_REQUIRED: Self = Self(cef_errorcode_t::ERR_PROXY_REQUIRED);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_HTTP_RESPONSE`] for more documentation."]
+    pub const INVALID_HTTP_RESPONSE: Self = Self(cef_errorcode_t::ERR_INVALID_HTTP_RESPONSE);
+    #[doc = "See [`cef_errorcode_t::ERR_CONTENT_DECODING_INIT_FAILED`] for more documentation."]
+    pub const CONTENT_DECODING_INIT_FAILED: Self =
+        Self(cef_errorcode_t::ERR_CONTENT_DECODING_INIT_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_RST_STREAM_NO_ERROR_RECEIVED`] for more documentation."]
+    pub const HTTP2_RST_STREAM_NO_ERROR_RECEIVED: Self =
+        Self(cef_errorcode_t::ERR_HTTP2_RST_STREAM_NO_ERROR_RECEIVED);
+    #[doc = "See [`cef_errorcode_t::ERR_TOO_MANY_RETRIES`] for more documentation."]
+    pub const TOO_MANY_RETRIES: Self = Self(cef_errorcode_t::ERR_TOO_MANY_RETRIES);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP2_STREAM_CLOSED`] for more documentation."]
+    pub const HTTP2_STREAM_CLOSED: Self = Self(cef_errorcode_t::ERR_HTTP2_STREAM_CLOSED);
+    #[doc = "See [`cef_errorcode_t::ERR_HTTP_RESPONSE_CODE_FAILURE`] for more documentation."]
+    pub const HTTP_RESPONSE_CODE_FAILURE: Self =
+        Self(cef_errorcode_t::ERR_HTTP_RESPONSE_CODE_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_QUIC_CERT_ROOT_NOT_KNOWN`] for more documentation."]
+    pub const QUIC_CERT_ROOT_NOT_KNOWN: Self = Self(cef_errorcode_t::ERR_QUIC_CERT_ROOT_NOT_KNOWN);
+    #[doc = "See [`cef_errorcode_t::ERR_QUIC_GOAWAY_REQUEST_CAN_BE_RETRIED`] for more documentation."]
+    pub const QUIC_GOAWAY_REQUEST_CAN_BE_RETRIED: Self =
+        Self(cef_errorcode_t::ERR_QUIC_GOAWAY_REQUEST_CAN_BE_RETRIED);
+    #[doc = "See [`cef_errorcode_t::ERR_TOO_MANY_ACCEPT_CH_RESTARTS`] for more documentation."]
+    pub const TOO_MANY_ACCEPT_CH_RESTARTS: Self =
+        Self(cef_errorcode_t::ERR_TOO_MANY_ACCEPT_CH_RESTARTS);
+    #[doc = "See [`cef_errorcode_t::ERR_INCONSISTENT_IP_ADDRESS_SPACE`] for more documentation."]
+    pub const INCONSISTENT_IP_ADDRESS_SPACE: Self =
+        Self(cef_errorcode_t::ERR_INCONSISTENT_IP_ADDRESS_SPACE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_POLICY`] for more documentation."]
+    pub const CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_POLICY: Self =
+        Self(cef_errorcode_t::ERR_CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_POLICY);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_CHECKS`] for more documentation."]
+    pub const BLOCKED_BY_PRIVATE_NETWORK_ACCESS_CHECKS: Self =
+        Self(cef_errorcode_t::ERR_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_CHECKS);
+    #[doc = "See [`cef_errorcode_t::ERR_ZSTD_WINDOW_SIZE_TOO_BIG`] for more documentation."]
+    pub const ZSTD_WINDOW_SIZE_TOO_BIG: Self = Self(cef_errorcode_t::ERR_ZSTD_WINDOW_SIZE_TOO_BIG);
+    #[doc = "See [`cef_errorcode_t::ERR_DICTIONARY_LOAD_FAILED`] for more documentation."]
+    pub const DICTIONARY_LOAD_FAILED: Self = Self(cef_errorcode_t::ERR_DICTIONARY_LOAD_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_UNEXPECTED_CONTENT_DICTIONARY_HEADER`] for more documentation."]
+    pub const UNEXPECTED_CONTENT_DICTIONARY_HEADER: Self =
+        Self(cef_errorcode_t::ERR_UNEXPECTED_CONTENT_DICTIONARY_HEADER);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_MISS`] for more documentation."]
+    pub const CACHE_MISS: Self = Self(cef_errorcode_t::ERR_CACHE_MISS);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_READ_FAILURE`] for more documentation."]
+    pub const CACHE_READ_FAILURE: Self = Self(cef_errorcode_t::ERR_CACHE_READ_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_WRITE_FAILURE`] for more documentation."]
+    pub const CACHE_WRITE_FAILURE: Self = Self(cef_errorcode_t::ERR_CACHE_WRITE_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_OPERATION_NOT_SUPPORTED`] for more documentation."]
+    pub const CACHE_OPERATION_NOT_SUPPORTED: Self =
+        Self(cef_errorcode_t::ERR_CACHE_OPERATION_NOT_SUPPORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_OPEN_FAILURE`] for more documentation."]
+    pub const CACHE_OPEN_FAILURE: Self = Self(cef_errorcode_t::ERR_CACHE_OPEN_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_CREATE_FAILURE`] for more documentation."]
+    pub const CACHE_CREATE_FAILURE: Self = Self(cef_errorcode_t::ERR_CACHE_CREATE_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_RACE`] for more documentation."]
+    pub const CACHE_RACE: Self = Self(cef_errorcode_t::ERR_CACHE_RACE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_CHECKSUM_READ_FAILURE`] for more documentation."]
+    pub const CACHE_CHECKSUM_READ_FAILURE: Self =
+        Self(cef_errorcode_t::ERR_CACHE_CHECKSUM_READ_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_CHECKSUM_MISMATCH`] for more documentation."]
+    pub const CACHE_CHECKSUM_MISMATCH: Self = Self(cef_errorcode_t::ERR_CACHE_CHECKSUM_MISMATCH);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_LOCK_TIMEOUT`] for more documentation."]
+    pub const CACHE_LOCK_TIMEOUT: Self = Self(cef_errorcode_t::ERR_CACHE_LOCK_TIMEOUT);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_AUTH_FAILURE_AFTER_READ`] for more documentation."]
+    pub const CACHE_AUTH_FAILURE_AFTER_READ: Self =
+        Self(cef_errorcode_t::ERR_CACHE_AUTH_FAILURE_AFTER_READ);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_ENTRY_NOT_SUITABLE`] for more documentation."]
+    pub const CACHE_ENTRY_NOT_SUITABLE: Self = Self(cef_errorcode_t::ERR_CACHE_ENTRY_NOT_SUITABLE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_DOOM_FAILURE`] for more documentation."]
+    pub const CACHE_DOOM_FAILURE: Self = Self(cef_errorcode_t::ERR_CACHE_DOOM_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHE_OPEN_OR_CREATE_FAILURE`] for more documentation."]
+    pub const CACHE_OPEN_OR_CREATE_FAILURE: Self =
+        Self(cef_errorcode_t::ERR_CACHE_OPEN_OR_CREATE_FAILURE);
+    #[doc = "See [`cef_errorcode_t::ERR_INSECURE_RESPONSE`] for more documentation."]
+    pub const INSECURE_RESPONSE: Self = Self(cef_errorcode_t::ERR_INSECURE_RESPONSE);
+    #[doc = "See [`cef_errorcode_t::ERR_NO_PRIVATE_KEY_FOR_CERT`] for more documentation."]
+    pub const NO_PRIVATE_KEY_FOR_CERT: Self = Self(cef_errorcode_t::ERR_NO_PRIVATE_KEY_FOR_CERT);
+    #[doc = "See [`cef_errorcode_t::ERR_ADD_USER_CERT_FAILED`] for more documentation."]
+    pub const ADD_USER_CERT_FAILED: Self = Self(cef_errorcode_t::ERR_ADD_USER_CERT_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_SIGNED_EXCHANGE`] for more documentation."]
+    pub const INVALID_SIGNED_EXCHANGE: Self = Self(cef_errorcode_t::ERR_INVALID_SIGNED_EXCHANGE);
+    #[doc = "See [`cef_errorcode_t::ERR_INVALID_WEB_BUNDLE`] for more documentation."]
+    pub const INVALID_WEB_BUNDLE: Self = Self(cef_errorcode_t::ERR_INVALID_WEB_BUNDLE);
+    #[doc = "See [`cef_errorcode_t::ERR_TRUST_TOKEN_OPERATION_FAILED`] for more documentation."]
+    pub const TRUST_TOKEN_OPERATION_FAILED: Self =
+        Self(cef_errorcode_t::ERR_TRUST_TOKEN_OPERATION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_TRUST_TOKEN_OPERATION_SUCCESS_WITHOUT_SENDING_REQUEST`] for more documentation."]
+    pub const TRUST_TOKEN_OPERATION_SUCCESS_WITHOUT_SENDING_REQUEST: Self =
+        Self(cef_errorcode_t::ERR_TRUST_TOKEN_OPERATION_SUCCESS_WITHOUT_SENDING_REQUEST);
+    #[doc = "See [`cef_errorcode_t::ERR_PKCS12_IMPORT_BAD_PASSWORD`] for more documentation."]
+    pub const PKCS12_IMPORT_BAD_PASSWORD: Self =
+        Self(cef_errorcode_t::ERR_PKCS12_IMPORT_BAD_PASSWORD);
+    #[doc = "See [`cef_errorcode_t::ERR_PKCS12_IMPORT_FAILED`] for more documentation."]
+    pub const PKCS12_IMPORT_FAILED: Self = Self(cef_errorcode_t::ERR_PKCS12_IMPORT_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_IMPORT_CA_CERT_NOT_CA`] for more documentation."]
+    pub const IMPORT_CA_CERT_NOT_CA: Self = Self(cef_errorcode_t::ERR_IMPORT_CA_CERT_NOT_CA);
+    #[doc = "See [`cef_errorcode_t::ERR_IMPORT_CERT_ALREADY_EXISTS`] for more documentation."]
+    pub const IMPORT_CERT_ALREADY_EXISTS: Self =
+        Self(cef_errorcode_t::ERR_IMPORT_CERT_ALREADY_EXISTS);
+    #[doc = "See [`cef_errorcode_t::ERR_IMPORT_CA_CERT_FAILED`] for more documentation."]
+    pub const IMPORT_CA_CERT_FAILED: Self = Self(cef_errorcode_t::ERR_IMPORT_CA_CERT_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_IMPORT_SERVER_CERT_FAILED`] for more documentation."]
+    pub const IMPORT_SERVER_CERT_FAILED: Self =
+        Self(cef_errorcode_t::ERR_IMPORT_SERVER_CERT_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_PKCS12_IMPORT_INVALID_MAC`] for more documentation."]
+    pub const PKCS12_IMPORT_INVALID_MAC: Self =
+        Self(cef_errorcode_t::ERR_PKCS12_IMPORT_INVALID_MAC);
+    #[doc = "See [`cef_errorcode_t::ERR_PKCS12_IMPORT_INVALID_FILE`] for more documentation."]
+    pub const PKCS12_IMPORT_INVALID_FILE: Self =
+        Self(cef_errorcode_t::ERR_PKCS12_IMPORT_INVALID_FILE);
+    #[doc = "See [`cef_errorcode_t::ERR_PKCS12_IMPORT_UNSUPPORTED`] for more documentation."]
+    pub const PKCS12_IMPORT_UNSUPPORTED: Self =
+        Self(cef_errorcode_t::ERR_PKCS12_IMPORT_UNSUPPORTED);
+    #[doc = "See [`cef_errorcode_t::ERR_KEY_GENERATION_FAILED`] for more documentation."]
+    pub const KEY_GENERATION_FAILED: Self = Self(cef_errorcode_t::ERR_KEY_GENERATION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_PRIVATE_KEY_EXPORT_FAILED`] for more documentation."]
+    pub const PRIVATE_KEY_EXPORT_FAILED: Self =
+        Self(cef_errorcode_t::ERR_PRIVATE_KEY_EXPORT_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_SELF_SIGNED_CERT_GENERATION_FAILED`] for more documentation."]
+    pub const SELF_SIGNED_CERT_GENERATION_FAILED: Self =
+        Self(cef_errorcode_t::ERR_SELF_SIGNED_CERT_GENERATION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_DATABASE_CHANGED`] for more documentation."]
+    pub const CERT_DATABASE_CHANGED: Self = Self(cef_errorcode_t::ERR_CERT_DATABASE_CHANGED);
+    #[doc = "See [`cef_errorcode_t::ERR_CERT_VERIFIER_CHANGED`] for more documentation."]
+    pub const CERT_VERIFIER_CHANGED: Self = Self(cef_errorcode_t::ERR_CERT_VERIFIER_CHANGED);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_MALFORMED_RESPONSE`] for more documentation."]
+    pub const DNS_MALFORMED_RESPONSE: Self = Self(cef_errorcode_t::ERR_DNS_MALFORMED_RESPONSE);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_SERVER_REQUIRES_TCP`] for more documentation."]
+    pub const DNS_SERVER_REQUIRES_TCP: Self = Self(cef_errorcode_t::ERR_DNS_SERVER_REQUIRES_TCP);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_SERVER_FAILED`] for more documentation."]
+    pub const DNS_SERVER_FAILED: Self = Self(cef_errorcode_t::ERR_DNS_SERVER_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_TIMED_OUT`] for more documentation."]
+    pub const DNS_TIMED_OUT: Self = Self(cef_errorcode_t::ERR_DNS_TIMED_OUT);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_CACHE_MISS`] for more documentation."]
+    pub const DNS_CACHE_MISS: Self = Self(cef_errorcode_t::ERR_DNS_CACHE_MISS);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_SEARCH_EMPTY`] for more documentation."]
+    pub const DNS_SEARCH_EMPTY: Self = Self(cef_errorcode_t::ERR_DNS_SEARCH_EMPTY);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_SORT_ERROR`] for more documentation."]
+    pub const DNS_SORT_ERROR: Self = Self(cef_errorcode_t::ERR_DNS_SORT_ERROR);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_SECURE_RESOLVER_HOSTNAME_RESOLUTION_FAILED`] for more documentation."]
+    pub const DNS_SECURE_RESOLVER_HOSTNAME_RESOLUTION_FAILED: Self =
+        Self(cef_errorcode_t::ERR_DNS_SECURE_RESOLVER_HOSTNAME_RESOLUTION_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_NAME_HTTPS_ONLY`] for more documentation."]
+    pub const DNS_NAME_HTTPS_ONLY: Self = Self(cef_errorcode_t::ERR_DNS_NAME_HTTPS_ONLY);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_REQUEST_CANCELLED`] for more documentation."]
+    pub const DNS_REQUEST_CANCELLED: Self = Self(cef_errorcode_t::ERR_DNS_REQUEST_CANCELLED);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_NO_MATCHING_SUPPORTED_ALPN`] for more documentation."]
+    pub const DNS_NO_MATCHING_SUPPORTED_ALPN: Self =
+        Self(cef_errorcode_t::ERR_DNS_NO_MATCHING_SUPPORTED_ALPN);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_SECURE_PROBE_RECORD_INVALID`] for more documentation."]
+    pub const DNS_SECURE_PROBE_RECORD_INVALID: Self =
+        Self(cef_errorcode_t::ERR_DNS_SECURE_PROBE_RECORD_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOB_INVALID_CONSTRUCTION_ARGUMENTS`] for more documentation."]
+    pub const BLOB_INVALID_CONSTRUCTION_ARGUMENTS: Self =
+        Self(cef_errorcode_t::ERR_BLOB_INVALID_CONSTRUCTION_ARGUMENTS);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOB_OUT_OF_MEMORY`] for more documentation."]
+    pub const BLOB_OUT_OF_MEMORY: Self = Self(cef_errorcode_t::ERR_BLOB_OUT_OF_MEMORY);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOB_FILE_WRITE_FAILED`] for more documentation."]
+    pub const BLOB_FILE_WRITE_FAILED: Self = Self(cef_errorcode_t::ERR_BLOB_FILE_WRITE_FAILED);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOB_SOURCE_DIED_IN_TRANSIT`] for more documentation."]
+    pub const BLOB_SOURCE_DIED_IN_TRANSIT: Self =
+        Self(cef_errorcode_t::ERR_BLOB_SOURCE_DIED_IN_TRANSIT);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOB_DEREFERENCED_WHILE_BUILDING`] for more documentation."]
+    pub const BLOB_DEREFERENCED_WHILE_BUILDING: Self =
+        Self(cef_errorcode_t::ERR_BLOB_DEREFERENCED_WHILE_BUILDING);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOB_REFERENCED_BLOB_BROKEN`] for more documentation."]
+    pub const BLOB_REFERENCED_BLOB_BROKEN: Self =
+        Self(cef_errorcode_t::ERR_BLOB_REFERENCED_BLOB_BROKEN);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOB_REFERENCED_FILE_UNAVAILABLE`] for more documentation."]
+    pub const BLOB_REFERENCED_FILE_UNAVAILABLE: Self =
+        Self(cef_errorcode_t::ERR_BLOB_REFERENCED_FILE_UNAVAILABLE);
 }
 impl Default for Errorcode {
     fn default() -> Self {
@@ -42865,6 +43961,51 @@ impl From<CertStatus> for cef_cert_status_t {
         value.0
     }
 }
+impl CertStatus {
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_cert_status_t::CERT_STATUS_NONE);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_COMMON_NAME_INVALID`] for more documentation."]
+    pub const COMMON_NAME_INVALID: Self = Self(cef_cert_status_t::CERT_STATUS_COMMON_NAME_INVALID);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_DATE_INVALID`] for more documentation."]
+    pub const DATE_INVALID: Self = Self(cef_cert_status_t::CERT_STATUS_DATE_INVALID);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_AUTHORITY_INVALID`] for more documentation."]
+    pub const AUTHORITY_INVALID: Self = Self(cef_cert_status_t::CERT_STATUS_AUTHORITY_INVALID);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_NO_REVOCATION_MECHANISM`] for more documentation."]
+    pub const NO_REVOCATION_MECHANISM: Self =
+        Self(cef_cert_status_t::CERT_STATUS_NO_REVOCATION_MECHANISM);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_UNABLE_TO_CHECK_REVOCATION`] for more documentation."]
+    pub const UNABLE_TO_CHECK_REVOCATION: Self =
+        Self(cef_cert_status_t::CERT_STATUS_UNABLE_TO_CHECK_REVOCATION);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_REVOKED`] for more documentation."]
+    pub const REVOKED: Self = Self(cef_cert_status_t::CERT_STATUS_REVOKED);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_INVALID`] for more documentation."]
+    pub const INVALID: Self = Self(cef_cert_status_t::CERT_STATUS_INVALID);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_WEAK_SIGNATURE_ALGORITHM`] for more documentation."]
+    pub const WEAK_SIGNATURE_ALGORITHM: Self =
+        Self(cef_cert_status_t::CERT_STATUS_WEAK_SIGNATURE_ALGORITHM);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_NON_UNIQUE_NAME`] for more documentation."]
+    pub const NON_UNIQUE_NAME: Self = Self(cef_cert_status_t::CERT_STATUS_NON_UNIQUE_NAME);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_WEAK_KEY`] for more documentation."]
+    pub const WEAK_KEY: Self = Self(cef_cert_status_t::CERT_STATUS_WEAK_KEY);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_PINNED_KEY_MISSING`] for more documentation."]
+    pub const PINNED_KEY_MISSING: Self = Self(cef_cert_status_t::CERT_STATUS_PINNED_KEY_MISSING);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_NAME_CONSTRAINT_VIOLATION`] for more documentation."]
+    pub const NAME_CONSTRAINT_VIOLATION: Self =
+        Self(cef_cert_status_t::CERT_STATUS_NAME_CONSTRAINT_VIOLATION);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_VALIDITY_TOO_LONG`] for more documentation."]
+    pub const VALIDITY_TOO_LONG: Self = Self(cef_cert_status_t::CERT_STATUS_VALIDITY_TOO_LONG);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_IS_EV`] for more documentation."]
+    pub const IS_EV: Self = Self(cef_cert_status_t::CERT_STATUS_IS_EV);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_REV_CHECKING_ENABLED`] for more documentation."]
+    pub const REV_CHECKING_ENABLED: Self =
+        Self(cef_cert_status_t::CERT_STATUS_REV_CHECKING_ENABLED);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_SHA1_SIGNATURE_PRESENT`] for more documentation."]
+    pub const SHA1_SIGNATURE_PRESENT: Self =
+        Self(cef_cert_status_t::CERT_STATUS_SHA1_SIGNATURE_PRESENT);
+    #[doc = "See [`cef_cert_status_t::CERT_STATUS_CT_COMPLIANCE_FAILED`] for more documentation."]
+    pub const CT_COMPLIANCE_FAILED: Self =
+        Self(cef_cert_status_t::CERT_STATUS_CT_COMPLIANCE_FAILED);
+}
 impl Default for CertStatus {
     fn default() -> Self {
         Self(cef_cert_status_t::CERT_STATUS_NONE)
@@ -42894,6 +44035,89 @@ impl From<Resultcode> for cef_resultcode_t {
         value.0
     }
 }
+impl Resultcode {
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT`] for more documentation."]
+    pub const NORMAL_EXIT: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_KILLED`] for more documentation."]
+    pub const KILLED: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_KILLED);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_HUNG`] for more documentation."]
+    pub const HUNG: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_HUNG);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_KILLED_BAD_MESSAGE`] for more documentation."]
+    pub const KILLED_BAD_MESSAGE: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_KILLED_BAD_MESSAGE);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_GPU_DEAD_ON_ARRIVAL`] for more documentation."]
+    pub const GPU_DEAD_ON_ARRIVAL: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_GPU_DEAD_ON_ARRIVAL);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_CHROME_FIRST`] for more documentation."]
+    pub const CHROME_FIRST: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_CHROME_FIRST);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_BAD_PROCESS_TYPE`] for more documentation."]
+    pub const BAD_PROCESS_TYPE: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_BAD_PROCESS_TYPE);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_MISSING_DATA`] for more documentation."]
+    pub const MISSING_DATA: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_MISSING_DATA);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_UNSUPPORTED_PARAM`] for more documentation."]
+    pub const UNSUPPORTED_PARAM: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_UNSUPPORTED_PARAM);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_PROFILE_IN_USE`] for more documentation."]
+    pub const PROFILE_IN_USE: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_PROFILE_IN_USE);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_PACK_EXTENSION_ERROR`] for more documentation."]
+    pub const PACK_EXTENSION_ERROR: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_PACK_EXTENSION_ERROR);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT_PROCESS_NOTIFIED`] for more documentation."]
+    pub const NORMAL_EXIT_PROCESS_NOTIFIED: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT_PROCESS_NOTIFIED);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_INVALID_SANDBOX_STATE`] for more documentation."]
+    pub const INVALID_SANDBOX_STATE: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_INVALID_SANDBOX_STATE);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_CLOUD_POLICY_ENROLLMENT_FAILED`] for more documentation."]
+    pub const CLOUD_POLICY_ENROLLMENT_FAILED: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_CLOUD_POLICY_ENROLLMENT_FAILED);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_GPU_EXIT_ON_CONTEXT_LOST`] for more documentation."]
+    pub const GPU_EXIT_ON_CONTEXT_LOST: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_GPU_EXIT_ON_CONTEXT_LOST);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT_PACK_EXTENSION_SUCCESS`] for more documentation."]
+    pub const NORMAL_EXIT_PACK_EXTENSION_SUCCESS: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT_PACK_EXTENSION_SUCCESS);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SYSTEM_RESOURCE_EXHAUSTED`] for more documentation."]
+    pub const SYSTEM_RESOURCE_EXHAUSTED: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SYSTEM_RESOURCE_EXHAUSTED);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT_AUTO_DE_ELEVATED`] for more documentation."]
+    pub const NORMAL_EXIT_AUTO_DE_ELEVATED: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT_AUTO_DE_ELEVATED);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_TERMINATED_BY_OTHER_PROCESS_ON_COMMIT_FAILURE`] for more documentation."]
+    pub const TERMINATED_BY_OTHER_PROCESS_ON_COMMIT_FAILURE: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_TERMINATED_BY_OTHER_PROCESS_ON_COMMIT_FAILURE);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_CHROME_LAST`] for more documentation."]
+    pub const CHROME_LAST: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_CHROME_LAST);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_FIRST`] for more documentation."]
+    pub const SANDBOX_FATAL_FIRST: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_FIRST);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_DROPTOKEN`] for more documentation."]
+    pub const SANDBOX_FATAL_DROPTOKEN: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_DROPTOKEN);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_FLUSHANDLES`] for more documentation."]
+    pub const SANDBOX_FATAL_FLUSHANDLES: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_FLUSHANDLES);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_CACHEDISABLE`] for more documentation."]
+    pub const SANDBOX_FATAL_CACHEDISABLE: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_CACHEDISABLE);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_CLOSEHANDLES`] for more documentation."]
+    pub const SANDBOX_FATAL_CLOSEHANDLES: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_CLOSEHANDLES);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_MITIGATION`] for more documentation."]
+    pub const SANDBOX_FATAL_MITIGATION: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_MITIGATION);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_MEMORY_EXCEEDED`] for more documentation."]
+    pub const SANDBOX_FATAL_MEMORY_EXCEEDED: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_MEMORY_EXCEEDED);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_WARMUP`] for more documentation."]
+    pub const SANDBOX_FATAL_WARMUP: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_WARMUP);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_BROKER_SHUTDOWN_HUNG`] for more documentation."]
+    pub const SANDBOX_FATAL_BROKER_SHUTDOWN_HUNG: Self =
+        Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_BROKER_SHUTDOWN_HUNG);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_LAST`] for more documentation."]
+    pub const SANDBOX_FATAL_LAST: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_SANDBOX_FATAL_LAST);
+    #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_NUM_VALUES);
+}
 impl Default for Resultcode {
     fn default() -> Self {
         Self(cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT)
@@ -42922,6 +44146,37 @@ impl From<WindowOpenDisposition> for cef_window_open_disposition_t {
     fn from(value: WindowOpenDisposition) -> Self {
         value.0
     }
+}
+impl WindowOpenDisposition {
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_window_open_disposition_t::CEF_WOD_UNKNOWN);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_CURRENT_TAB`] for more documentation."]
+    pub const CURRENT_TAB: Self = Self(cef_window_open_disposition_t::CEF_WOD_CURRENT_TAB);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_SINGLETON_TAB`] for more documentation."]
+    pub const SINGLETON_TAB: Self = Self(cef_window_open_disposition_t::CEF_WOD_SINGLETON_TAB);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NEW_FOREGROUND_TAB`] for more documentation."]
+    pub const NEW_FOREGROUND_TAB: Self =
+        Self(cef_window_open_disposition_t::CEF_WOD_NEW_FOREGROUND_TAB);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NEW_BACKGROUND_TAB`] for more documentation."]
+    pub const NEW_BACKGROUND_TAB: Self =
+        Self(cef_window_open_disposition_t::CEF_WOD_NEW_BACKGROUND_TAB);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NEW_POPUP`] for more documentation."]
+    pub const NEW_POPUP: Self = Self(cef_window_open_disposition_t::CEF_WOD_NEW_POPUP);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NEW_WINDOW`] for more documentation."]
+    pub const NEW_WINDOW: Self = Self(cef_window_open_disposition_t::CEF_WOD_NEW_WINDOW);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_SAVE_TO_DISK`] for more documentation."]
+    pub const SAVE_TO_DISK: Self = Self(cef_window_open_disposition_t::CEF_WOD_SAVE_TO_DISK);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_OFF_THE_RECORD`] for more documentation."]
+    pub const OFF_THE_RECORD: Self = Self(cef_window_open_disposition_t::CEF_WOD_OFF_THE_RECORD);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_IGNORE_ACTION`] for more documentation."]
+    pub const IGNORE_ACTION: Self = Self(cef_window_open_disposition_t::CEF_WOD_IGNORE_ACTION);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_SWITCH_TO_TAB`] for more documentation."]
+    pub const SWITCH_TO_TAB: Self = Self(cef_window_open_disposition_t::CEF_WOD_SWITCH_TO_TAB);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NEW_PICTURE_IN_PICTURE`] for more documentation."]
+    pub const NEW_PICTURE_IN_PICTURE: Self =
+        Self(cef_window_open_disposition_t::CEF_WOD_NEW_PICTURE_IN_PICTURE);
+    #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_window_open_disposition_t::CEF_WOD_NUM_VALUES);
 }
 impl Default for WindowOpenDisposition {
     fn default() -> Self {
@@ -42981,6 +44236,28 @@ impl From<TextInputMode> for cef_text_input_mode_t {
         value.0
     }
 }
+impl TextInputMode {
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_DEFAULT);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NONE);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_TEXT`] for more documentation."]
+    pub const TEXT: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_TEXT);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_TEL`] for more documentation."]
+    pub const TEL: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_TEL);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_URL`] for more documentation."]
+    pub const URL: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_URL);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_EMAIL`] for more documentation."]
+    pub const EMAIL: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_EMAIL);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NUMERIC`] for more documentation."]
+    pub const NUMERIC: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NUMERIC);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_DECIMAL`] for more documentation."]
+    pub const DECIMAL: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_DECIMAL);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_SEARCH`] for more documentation."]
+    pub const SEARCH: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_SEARCH);
+    #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NUM_VALUES);
+}
 impl Default for TextInputMode {
     fn default() -> Self {
         Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_DEFAULT)
@@ -43039,6 +44316,16 @@ impl From<PostdataelementType> for cef_postdataelement_type_t {
         value.0
     }
 }
+impl PostdataelementType {
+    #[doc = "See [`cef_postdataelement_type_t::PDE_TYPE_EMPTY`] for more documentation."]
+    pub const EMPTY: Self = Self(cef_postdataelement_type_t::PDE_TYPE_EMPTY);
+    #[doc = "See [`cef_postdataelement_type_t::PDE_TYPE_BYTES`] for more documentation."]
+    pub const BYTES: Self = Self(cef_postdataelement_type_t::PDE_TYPE_BYTES);
+    #[doc = "See [`cef_postdataelement_type_t::PDE_TYPE_FILE`] for more documentation."]
+    pub const FILE: Self = Self(cef_postdataelement_type_t::PDE_TYPE_FILE);
+    #[doc = "See [`cef_postdataelement_type_t::PDE_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_postdataelement_type_t::PDE_TYPE_NUM_VALUES);
+}
 impl Default for PostdataelementType {
     fn default() -> Self {
         Self(cef_postdataelement_type_t::PDE_TYPE_EMPTY)
@@ -43068,6 +44355,52 @@ impl From<ResourceType> for cef_resource_type_t {
         value.0
     }
 }
+impl ResourceType {
+    #[doc = "See [`cef_resource_type_t::RT_MAIN_FRAME`] for more documentation."]
+    pub const MAIN_FRAME: Self = Self(cef_resource_type_t::RT_MAIN_FRAME);
+    #[doc = "See [`cef_resource_type_t::RT_SUB_FRAME`] for more documentation."]
+    pub const SUB_FRAME: Self = Self(cef_resource_type_t::RT_SUB_FRAME);
+    #[doc = "See [`cef_resource_type_t::RT_STYLESHEET`] for more documentation."]
+    pub const STYLESHEET: Self = Self(cef_resource_type_t::RT_STYLESHEET);
+    #[doc = "See [`cef_resource_type_t::RT_SCRIPT`] for more documentation."]
+    pub const SCRIPT: Self = Self(cef_resource_type_t::RT_SCRIPT);
+    #[doc = "See [`cef_resource_type_t::RT_IMAGE`] for more documentation."]
+    pub const IMAGE: Self = Self(cef_resource_type_t::RT_IMAGE);
+    #[doc = "See [`cef_resource_type_t::RT_FONT_RESOURCE`] for more documentation."]
+    pub const FONT_RESOURCE: Self = Self(cef_resource_type_t::RT_FONT_RESOURCE);
+    #[doc = "See [`cef_resource_type_t::RT_SUB_RESOURCE`] for more documentation."]
+    pub const SUB_RESOURCE: Self = Self(cef_resource_type_t::RT_SUB_RESOURCE);
+    #[doc = "See [`cef_resource_type_t::RT_OBJECT`] for more documentation."]
+    pub const OBJECT: Self = Self(cef_resource_type_t::RT_OBJECT);
+    #[doc = "See [`cef_resource_type_t::RT_MEDIA`] for more documentation."]
+    pub const MEDIA: Self = Self(cef_resource_type_t::RT_MEDIA);
+    #[doc = "See [`cef_resource_type_t::RT_WORKER`] for more documentation."]
+    pub const WORKER: Self = Self(cef_resource_type_t::RT_WORKER);
+    #[doc = "See [`cef_resource_type_t::RT_SHARED_WORKER`] for more documentation."]
+    pub const SHARED_WORKER: Self = Self(cef_resource_type_t::RT_SHARED_WORKER);
+    #[doc = "See [`cef_resource_type_t::RT_PREFETCH`] for more documentation."]
+    pub const PREFETCH: Self = Self(cef_resource_type_t::RT_PREFETCH);
+    #[doc = "See [`cef_resource_type_t::RT_FAVICON`] for more documentation."]
+    pub const FAVICON: Self = Self(cef_resource_type_t::RT_FAVICON);
+    #[doc = "See [`cef_resource_type_t::RT_XHR`] for more documentation."]
+    pub const XHR: Self = Self(cef_resource_type_t::RT_XHR);
+    #[doc = "See [`cef_resource_type_t::RT_PING`] for more documentation."]
+    pub const PING: Self = Self(cef_resource_type_t::RT_PING);
+    #[doc = "See [`cef_resource_type_t::RT_SERVICE_WORKER`] for more documentation."]
+    pub const SERVICE_WORKER: Self = Self(cef_resource_type_t::RT_SERVICE_WORKER);
+    #[doc = "See [`cef_resource_type_t::RT_CSP_REPORT`] for more documentation."]
+    pub const CSP_REPORT: Self = Self(cef_resource_type_t::RT_CSP_REPORT);
+    #[doc = "See [`cef_resource_type_t::RT_PLUGIN_RESOURCE`] for more documentation."]
+    pub const PLUGIN_RESOURCE: Self = Self(cef_resource_type_t::RT_PLUGIN_RESOURCE);
+    #[doc = "See [`cef_resource_type_t::RT_NAVIGATION_PRELOAD_MAIN_FRAME`] for more documentation."]
+    pub const NAVIGATION_PRELOAD_MAIN_FRAME: Self =
+        Self(cef_resource_type_t::RT_NAVIGATION_PRELOAD_MAIN_FRAME);
+    #[doc = "See [`cef_resource_type_t::RT_NAVIGATION_PRELOAD_SUB_FRAME`] for more documentation."]
+    pub const NAVIGATION_PRELOAD_SUB_FRAME: Self =
+        Self(cef_resource_type_t::RT_NAVIGATION_PRELOAD_SUB_FRAME);
+    #[doc = "See [`cef_resource_type_t::RT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_resource_type_t::RT_NUM_VALUES);
+}
 impl Default for ResourceType {
     fn default() -> Self {
         Self(cef_resource_type_t::RT_MAIN_FRAME)
@@ -43096,6 +44429,56 @@ impl From<TransitionType> for cef_transition_type_t {
     fn from(value: TransitionType) -> Self {
         value.0
     }
+}
+impl TransitionType {
+    #[doc = "See [`cef_transition_type_t::TT_LINK`] for more documentation."]
+    pub const LINK: Self = Self(cef_transition_type_t::TT_LINK);
+    #[doc = "See [`cef_transition_type_t::TT_EXPLICIT`] for more documentation."]
+    pub const EXPLICIT: Self = Self(cef_transition_type_t::TT_EXPLICIT);
+    #[doc = "See [`cef_transition_type_t::TT_AUTO_BOOKMARK`] for more documentation."]
+    pub const AUTO_BOOKMARK: Self = Self(cef_transition_type_t::TT_AUTO_BOOKMARK);
+    #[doc = "See [`cef_transition_type_t::TT_AUTO_SUBFRAME`] for more documentation."]
+    pub const AUTO_SUBFRAME: Self = Self(cef_transition_type_t::TT_AUTO_SUBFRAME);
+    #[doc = "See [`cef_transition_type_t::TT_MANUAL_SUBFRAME`] for more documentation."]
+    pub const MANUAL_SUBFRAME: Self = Self(cef_transition_type_t::TT_MANUAL_SUBFRAME);
+    #[doc = "See [`cef_transition_type_t::TT_GENERATED`] for more documentation."]
+    pub const GENERATED: Self = Self(cef_transition_type_t::TT_GENERATED);
+    #[doc = "See [`cef_transition_type_t::TT_AUTO_TOPLEVEL`] for more documentation."]
+    pub const AUTO_TOPLEVEL: Self = Self(cef_transition_type_t::TT_AUTO_TOPLEVEL);
+    #[doc = "See [`cef_transition_type_t::TT_FORM_SUBMIT`] for more documentation."]
+    pub const FORM_SUBMIT: Self = Self(cef_transition_type_t::TT_FORM_SUBMIT);
+    #[doc = "See [`cef_transition_type_t::TT_RELOAD`] for more documentation."]
+    pub const RELOAD: Self = Self(cef_transition_type_t::TT_RELOAD);
+    #[doc = "See [`cef_transition_type_t::TT_KEYWORD`] for more documentation."]
+    pub const KEYWORD: Self = Self(cef_transition_type_t::TT_KEYWORD);
+    #[doc = "See [`cef_transition_type_t::TT_KEYWORD_GENERATED`] for more documentation."]
+    pub const KEYWORD_GENERATED: Self = Self(cef_transition_type_t::TT_KEYWORD_GENERATED);
+    #[doc = "See [`cef_transition_type_t::TT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_transition_type_t::TT_NUM_VALUES);
+    #[doc = "See [`cef_transition_type_t::TT_SOURCE_MASK`] for more documentation."]
+    pub const SOURCE_MASK: Self = Self(cef_transition_type_t::TT_SOURCE_MASK);
+    #[doc = "See [`cef_transition_type_t::TT_BLOCKED_FLAG`] for more documentation."]
+    pub const BLOCKED_FLAG: Self = Self(cef_transition_type_t::TT_BLOCKED_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_FORWARD_BACK_FLAG`] for more documentation."]
+    pub const FORWARD_BACK_FLAG: Self = Self(cef_transition_type_t::TT_FORWARD_BACK_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_DIRECT_LOAD_FLAG`] for more documentation."]
+    pub const DIRECT_LOAD_FLAG: Self = Self(cef_transition_type_t::TT_DIRECT_LOAD_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_HOME_PAGE_FLAG`] for more documentation."]
+    pub const HOME_PAGE_FLAG: Self = Self(cef_transition_type_t::TT_HOME_PAGE_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_FROM_API_FLAG`] for more documentation."]
+    pub const FROM_API_FLAG: Self = Self(cef_transition_type_t::TT_FROM_API_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_CHAIN_START_FLAG`] for more documentation."]
+    pub const CHAIN_START_FLAG: Self = Self(cef_transition_type_t::TT_CHAIN_START_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_CHAIN_END_FLAG`] for more documentation."]
+    pub const CHAIN_END_FLAG: Self = Self(cef_transition_type_t::TT_CHAIN_END_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_CLIENT_REDIRECT_FLAG`] for more documentation."]
+    pub const CLIENT_REDIRECT_FLAG: Self = Self(cef_transition_type_t::TT_CLIENT_REDIRECT_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_SERVER_REDIRECT_FLAG`] for more documentation."]
+    pub const SERVER_REDIRECT_FLAG: Self = Self(cef_transition_type_t::TT_SERVER_REDIRECT_FLAG);
+    #[doc = "See [`cef_transition_type_t::TT_IS_REDIRECT_MASK`] for more documentation."]
+    pub const IS_REDIRECT_MASK: Self = Self(cef_transition_type_t::TT_IS_REDIRECT_MASK);
+    #[doc = "See [`cef_transition_type_t::TT_QUALIFIER_MASK`] for more documentation."]
+    pub const QUALIFIER_MASK: Self = Self(cef_transition_type_t::TT_QUALIFIER_MASK);
 }
 impl Default for TransitionType {
     fn default() -> Self {
@@ -43155,6 +44538,20 @@ impl From<UrlrequestStatus> for cef_urlrequest_status_t {
         value.0
     }
 }
+impl UrlrequestStatus {
+    #[doc = "See [`cef_urlrequest_status_t::UR_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_urlrequest_status_t::UR_UNKNOWN);
+    #[doc = "See [`cef_urlrequest_status_t::UR_SUCCESS`] for more documentation."]
+    pub const SUCCESS: Self = Self(cef_urlrequest_status_t::UR_SUCCESS);
+    #[doc = "See [`cef_urlrequest_status_t::UR_IO_PENDING`] for more documentation."]
+    pub const IO_PENDING: Self = Self(cef_urlrequest_status_t::UR_IO_PENDING);
+    #[doc = "See [`cef_urlrequest_status_t::UR_CANCELED`] for more documentation."]
+    pub const CANCELED: Self = Self(cef_urlrequest_status_t::UR_CANCELED);
+    #[doc = "See [`cef_urlrequest_status_t::UR_FAILED`] for more documentation."]
+    pub const FAILED: Self = Self(cef_urlrequest_status_t::UR_FAILED);
+    #[doc = "See [`cef_urlrequest_status_t::UR_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_urlrequest_status_t::UR_NUM_VALUES);
+}
 impl Default for UrlrequestStatus {
     fn default() -> Self {
         Self(cef_urlrequest_status_t::UR_UNKNOWN)
@@ -43183,6 +44580,12 @@ impl From<ProcessId> for cef_process_id_t {
     fn from(value: ProcessId) -> Self {
         value.0
     }
+}
+impl ProcessId {
+    #[doc = "See [`cef_process_id_t::PID_BROWSER`] for more documentation."]
+    pub const BROWSER: Self = Self(cef_process_id_t::PID_BROWSER);
+    #[doc = "See [`cef_process_id_t::PID_RENDERER`] for more documentation."]
+    pub const RENDERER: Self = Self(cef_process_id_t::PID_RENDERER);
 }
 impl Default for ProcessId {
     fn default() -> Self {
@@ -43213,6 +44616,24 @@ impl From<ThreadId> for cef_thread_id_t {
         value.0
     }
 }
+impl ThreadId {
+    #[doc = "See [`cef_thread_id_t::TID_UI`] for more documentation."]
+    pub const UI: Self = Self(cef_thread_id_t::TID_UI);
+    #[doc = "See [`cef_thread_id_t::TID_FILE_BACKGROUND`] for more documentation."]
+    pub const FILE_BACKGROUND: Self = Self(cef_thread_id_t::TID_FILE_BACKGROUND);
+    #[doc = "See [`cef_thread_id_t::TID_FILE_USER_VISIBLE`] for more documentation."]
+    pub const FILE_USER_VISIBLE: Self = Self(cef_thread_id_t::TID_FILE_USER_VISIBLE);
+    #[doc = "See [`cef_thread_id_t::TID_FILE_USER_BLOCKING`] for more documentation."]
+    pub const FILE_USER_BLOCKING: Self = Self(cef_thread_id_t::TID_FILE_USER_BLOCKING);
+    #[doc = "See [`cef_thread_id_t::TID_PROCESS_LAUNCHER`] for more documentation."]
+    pub const PROCESS_LAUNCHER: Self = Self(cef_thread_id_t::TID_PROCESS_LAUNCHER);
+    #[doc = "See [`cef_thread_id_t::TID_IO`] for more documentation."]
+    pub const IO: Self = Self(cef_thread_id_t::TID_IO);
+    #[doc = "See [`cef_thread_id_t::TID_RENDERER`] for more documentation."]
+    pub const RENDERER: Self = Self(cef_thread_id_t::TID_RENDERER);
+    #[doc = "See [`cef_thread_id_t::TID_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_thread_id_t::TID_NUM_VALUES);
+}
 impl Default for ThreadId {
     fn default() -> Self {
         Self(cef_thread_id_t::TID_UI)
@@ -43241,6 +44662,18 @@ impl From<ThreadPriority> for cef_thread_priority_t {
     fn from(value: ThreadPriority) -> Self {
         value.0
     }
+}
+impl ThreadPriority {
+    #[doc = "See [`cef_thread_priority_t::TP_BACKGROUND`] for more documentation."]
+    pub const BACKGROUND: Self = Self(cef_thread_priority_t::TP_BACKGROUND);
+    #[doc = "See [`cef_thread_priority_t::TP_NORMAL`] for more documentation."]
+    pub const NORMAL: Self = Self(cef_thread_priority_t::TP_NORMAL);
+    #[doc = "See [`cef_thread_priority_t::TP_DISPLAY`] for more documentation."]
+    pub const DISPLAY: Self = Self(cef_thread_priority_t::TP_DISPLAY);
+    #[doc = "See [`cef_thread_priority_t::TP_REALTIME_AUDIO`] for more documentation."]
+    pub const REALTIME_AUDIO: Self = Self(cef_thread_priority_t::TP_REALTIME_AUDIO);
+    #[doc = "See [`cef_thread_priority_t::TP_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_thread_priority_t::TP_NUM_VALUES);
 }
 impl Default for ThreadPriority {
     fn default() -> Self {
@@ -43271,6 +44704,16 @@ impl From<MessageLoopType> for cef_message_loop_type_t {
         value.0
     }
 }
+impl MessageLoopType {
+    #[doc = "See [`cef_message_loop_type_t::ML_TYPE_DEFAULT`] for more documentation."]
+    pub const TYPE_DEFAULT: Self = Self(cef_message_loop_type_t::ML_TYPE_DEFAULT);
+    #[doc = "See [`cef_message_loop_type_t::ML_TYPE_UI`] for more documentation."]
+    pub const TYPE_UI: Self = Self(cef_message_loop_type_t::ML_TYPE_UI);
+    #[doc = "See [`cef_message_loop_type_t::ML_TYPE_IO`] for more documentation."]
+    pub const TYPE_IO: Self = Self(cef_message_loop_type_t::ML_TYPE_IO);
+    #[doc = "See [`cef_message_loop_type_t::ML_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_message_loop_type_t::ML_NUM_VALUES);
+}
 impl Default for MessageLoopType {
     fn default() -> Self {
         Self(cef_message_loop_type_t::ML_TYPE_DEFAULT)
@@ -43299,6 +44742,14 @@ impl From<ComInitMode> for cef_com_init_mode_t {
     fn from(value: ComInitMode) -> Self {
         value.0
     }
+}
+impl ComInitMode {
+    #[doc = "See [`cef_com_init_mode_t::COM_INIT_MODE_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_com_init_mode_t::COM_INIT_MODE_NONE);
+    #[doc = "See [`cef_com_init_mode_t::COM_INIT_MODE_STA`] for more documentation."]
+    pub const STA: Self = Self(cef_com_init_mode_t::COM_INIT_MODE_STA);
+    #[doc = "See [`cef_com_init_mode_t::COM_INIT_MODE_MTA`] for more documentation."]
+    pub const MTA: Self = Self(cef_com_init_mode_t::COM_INIT_MODE_MTA);
 }
 impl Default for ComInitMode {
     fn default() -> Self {
@@ -43329,6 +44780,28 @@ impl From<ValueType> for cef_value_type_t {
         value.0
     }
 }
+impl ValueType {
+    #[doc = "See [`cef_value_type_t::VTYPE_INVALID`] for more documentation."]
+    pub const INVALID: Self = Self(cef_value_type_t::VTYPE_INVALID);
+    #[doc = "See [`cef_value_type_t::VTYPE_NULL`] for more documentation."]
+    pub const NULL: Self = Self(cef_value_type_t::VTYPE_NULL);
+    #[doc = "See [`cef_value_type_t::VTYPE_BOOL`] for more documentation."]
+    pub const BOOL: Self = Self(cef_value_type_t::VTYPE_BOOL);
+    #[doc = "See [`cef_value_type_t::VTYPE_INT`] for more documentation."]
+    pub const INT: Self = Self(cef_value_type_t::VTYPE_INT);
+    #[doc = "See [`cef_value_type_t::VTYPE_DOUBLE`] for more documentation."]
+    pub const DOUBLE: Self = Self(cef_value_type_t::VTYPE_DOUBLE);
+    #[doc = "See [`cef_value_type_t::VTYPE_STRING`] for more documentation."]
+    pub const STRING: Self = Self(cef_value_type_t::VTYPE_STRING);
+    #[doc = "See [`cef_value_type_t::VTYPE_BINARY`] for more documentation."]
+    pub const BINARY: Self = Self(cef_value_type_t::VTYPE_BINARY);
+    #[doc = "See [`cef_value_type_t::VTYPE_DICTIONARY`] for more documentation."]
+    pub const DICTIONARY: Self = Self(cef_value_type_t::VTYPE_DICTIONARY);
+    #[doc = "See [`cef_value_type_t::VTYPE_LIST`] for more documentation."]
+    pub const LIST: Self = Self(cef_value_type_t::VTYPE_LIST);
+    #[doc = "See [`cef_value_type_t::VTYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_value_type_t::VTYPE_NUM_VALUES);
+}
 impl Default for ValueType {
     fn default() -> Self {
         Self(cef_value_type_t::VTYPE_INVALID)
@@ -43357,6 +44830,16 @@ impl From<JsdialogType> for cef_jsdialog_type_t {
     fn from(value: JsdialogType) -> Self {
         value.0
     }
+}
+impl JsdialogType {
+    #[doc = "See [`cef_jsdialog_type_t::JSDIALOGTYPE_ALERT`] for more documentation."]
+    pub const ALERT: Self = Self(cef_jsdialog_type_t::JSDIALOGTYPE_ALERT);
+    #[doc = "See [`cef_jsdialog_type_t::JSDIALOGTYPE_CONFIRM`] for more documentation."]
+    pub const CONFIRM: Self = Self(cef_jsdialog_type_t::JSDIALOGTYPE_CONFIRM);
+    #[doc = "See [`cef_jsdialog_type_t::JSDIALOGTYPE_PROMPT`] for more documentation."]
+    pub const PROMPT: Self = Self(cef_jsdialog_type_t::JSDIALOGTYPE_PROMPT);
+    #[doc = "See [`cef_jsdialog_type_t::JSDIALOGTYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_jsdialog_type_t::JSDIALOGTYPE_NUM_VALUES);
 }
 impl Default for JsdialogType {
     fn default() -> Self {
@@ -43387,6 +44870,62 @@ impl From<MenuId> for cef_menu_id_t {
         value.0
     }
 }
+impl MenuId {
+    #[doc = "See [`cef_menu_id_t::MENU_ID_BACK`] for more documentation."]
+    pub const BACK: Self = Self(cef_menu_id_t::MENU_ID_BACK);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_FORWARD`] for more documentation."]
+    pub const FORWARD: Self = Self(cef_menu_id_t::MENU_ID_FORWARD);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_RELOAD`] for more documentation."]
+    pub const RELOAD: Self = Self(cef_menu_id_t::MENU_ID_RELOAD);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_RELOAD_NOCACHE`] for more documentation."]
+    pub const RELOAD_NOCACHE: Self = Self(cef_menu_id_t::MENU_ID_RELOAD_NOCACHE);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_STOPLOAD`] for more documentation."]
+    pub const STOPLOAD: Self = Self(cef_menu_id_t::MENU_ID_STOPLOAD);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_UNDO`] for more documentation."]
+    pub const UNDO: Self = Self(cef_menu_id_t::MENU_ID_UNDO);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_REDO`] for more documentation."]
+    pub const REDO: Self = Self(cef_menu_id_t::MENU_ID_REDO);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_CUT`] for more documentation."]
+    pub const CUT: Self = Self(cef_menu_id_t::MENU_ID_CUT);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_COPY`] for more documentation."]
+    pub const COPY: Self = Self(cef_menu_id_t::MENU_ID_COPY);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_PASTE`] for more documentation."]
+    pub const PASTE: Self = Self(cef_menu_id_t::MENU_ID_PASTE);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_PASTE_MATCH_STYLE`] for more documentation."]
+    pub const PASTE_MATCH_STYLE: Self = Self(cef_menu_id_t::MENU_ID_PASTE_MATCH_STYLE);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_DELETE`] for more documentation."]
+    pub const DELETE: Self = Self(cef_menu_id_t::MENU_ID_DELETE);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_SELECT_ALL`] for more documentation."]
+    pub const SELECT_ALL: Self = Self(cef_menu_id_t::MENU_ID_SELECT_ALL);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_FIND`] for more documentation."]
+    pub const FIND: Self = Self(cef_menu_id_t::MENU_ID_FIND);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_PRINT`] for more documentation."]
+    pub const PRINT: Self = Self(cef_menu_id_t::MENU_ID_PRINT);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_VIEW_SOURCE`] for more documentation."]
+    pub const VIEW_SOURCE: Self = Self(cef_menu_id_t::MENU_ID_VIEW_SOURCE);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_0`] for more documentation."]
+    pub const SPELLCHECK_SUGGESTION_0: Self = Self(cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_0);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_1`] for more documentation."]
+    pub const SPELLCHECK_SUGGESTION_1: Self = Self(cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_1);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_2`] for more documentation."]
+    pub const SPELLCHECK_SUGGESTION_2: Self = Self(cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_2);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_3`] for more documentation."]
+    pub const SPELLCHECK_SUGGESTION_3: Self = Self(cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_3);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_4`] for more documentation."]
+    pub const SPELLCHECK_SUGGESTION_4: Self = Self(cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_4);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_NO_SPELLING_SUGGESTIONS`] for more documentation."]
+    pub const NO_SPELLING_SUGGESTIONS: Self = Self(cef_menu_id_t::MENU_ID_NO_SPELLING_SUGGESTIONS);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_ADD_TO_DICTIONARY`] for more documentation."]
+    pub const ADD_TO_DICTIONARY: Self = Self(cef_menu_id_t::MENU_ID_ADD_TO_DICTIONARY);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_CUSTOM_FIRST`] for more documentation."]
+    pub const CUSTOM_FIRST: Self = Self(cef_menu_id_t::MENU_ID_CUSTOM_FIRST);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_CUSTOM_LAST`] for more documentation."]
+    pub const CUSTOM_LAST: Self = Self(cef_menu_id_t::MENU_ID_CUSTOM_LAST);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_USER_FIRST`] for more documentation."]
+    pub const USER_FIRST: Self = Self(cef_menu_id_t::MENU_ID_USER_FIRST);
+    #[doc = "See [`cef_menu_id_t::MENU_ID_USER_LAST`] for more documentation."]
+    pub const USER_LAST: Self = Self(cef_menu_id_t::MENU_ID_USER_LAST);
+}
 impl Default for MenuId {
     fn default() -> Self {
         Self(cef_menu_id_t::MENU_ID_BACK)
@@ -43415,6 +44954,14 @@ impl From<MouseButtonType> for cef_mouse_button_type_t {
     fn from(value: MouseButtonType) -> Self {
         value.0
     }
+}
+impl MouseButtonType {
+    #[doc = "See [`cef_mouse_button_type_t::MBT_LEFT`] for more documentation."]
+    pub const LEFT: Self = Self(cef_mouse_button_type_t::MBT_LEFT);
+    #[doc = "See [`cef_mouse_button_type_t::MBT_MIDDLE`] for more documentation."]
+    pub const MIDDLE: Self = Self(cef_mouse_button_type_t::MBT_MIDDLE);
+    #[doc = "See [`cef_mouse_button_type_t::MBT_RIGHT`] for more documentation."]
+    pub const RIGHT: Self = Self(cef_mouse_button_type_t::MBT_RIGHT);
 }
 impl Default for MouseButtonType {
     fn default() -> Self {
@@ -43445,6 +44992,16 @@ impl From<TouchEventType> for cef_touch_event_type_t {
         value.0
     }
 }
+impl TouchEventType {
+    #[doc = "See [`cef_touch_event_type_t::CEF_TET_RELEASED`] for more documentation."]
+    pub const RELEASED: Self = Self(cef_touch_event_type_t::CEF_TET_RELEASED);
+    #[doc = "See [`cef_touch_event_type_t::CEF_TET_PRESSED`] for more documentation."]
+    pub const PRESSED: Self = Self(cef_touch_event_type_t::CEF_TET_PRESSED);
+    #[doc = "See [`cef_touch_event_type_t::CEF_TET_MOVED`] for more documentation."]
+    pub const MOVED: Self = Self(cef_touch_event_type_t::CEF_TET_MOVED);
+    #[doc = "See [`cef_touch_event_type_t::CEF_TET_CANCELLED`] for more documentation."]
+    pub const CANCELLED: Self = Self(cef_touch_event_type_t::CEF_TET_CANCELLED);
+}
 impl Default for TouchEventType {
     fn default() -> Self {
         Self(cef_touch_event_type_t::CEF_TET_RELEASED)
@@ -43474,6 +45031,18 @@ impl From<PointerType> for cef_pointer_type_t {
         value.0
     }
 }
+impl PointerType {
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH`] for more documentation."]
+    pub const TOUCH: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_MOUSE`] for more documentation."]
+    pub const MOUSE: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_MOUSE);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_PEN`] for more documentation."]
+    pub const PEN: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_PEN);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_ERASER`] for more documentation."]
+    pub const ERASER: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_ERASER);
+    #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN);
+}
 impl Default for PointerType {
     fn default() -> Self {
         Self(cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH)
@@ -43502,6 +45071,12 @@ impl From<PaintElementType> for cef_paint_element_type_t {
     fn from(value: PaintElementType) -> Self {
         value.0
     }
+}
+impl PaintElementType {
+    #[doc = "See [`cef_paint_element_type_t::PET_VIEW`] for more documentation."]
+    pub const VIEW: Self = Self(cef_paint_element_type_t::PET_VIEW);
+    #[doc = "See [`cef_paint_element_type_t::PET_POPUP`] for more documentation."]
+    pub const POPUP: Self = Self(cef_paint_element_type_t::PET_POPUP);
 }
 impl Default for PaintElementType {
     fn default() -> Self {
@@ -43561,6 +45136,20 @@ impl From<MenuItemType> for cef_menu_item_type_t {
         value.0
     }
 }
+impl MenuItemType {
+    #[doc = "See [`cef_menu_item_type_t::MENUITEMTYPE_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_NONE);
+    #[doc = "See [`cef_menu_item_type_t::MENUITEMTYPE_COMMAND`] for more documentation."]
+    pub const COMMAND: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_COMMAND);
+    #[doc = "See [`cef_menu_item_type_t::MENUITEMTYPE_CHECK`] for more documentation."]
+    pub const CHECK: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_CHECK);
+    #[doc = "See [`cef_menu_item_type_t::MENUITEMTYPE_RADIO`] for more documentation."]
+    pub const RADIO: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_RADIO);
+    #[doc = "See [`cef_menu_item_type_t::MENUITEMTYPE_SEPARATOR`] for more documentation."]
+    pub const SEPARATOR: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_SEPARATOR);
+    #[doc = "See [`cef_menu_item_type_t::MENUITEMTYPE_SUBMENU`] for more documentation."]
+    pub const SUBMENU: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_SUBMENU);
+}
 impl Default for MenuItemType {
     fn default() -> Self {
         Self(cef_menu_item_type_t::MENUITEMTYPE_NONE)
@@ -43618,6 +45207,24 @@ impl From<ContextMenuMediaType> for cef_context_menu_media_type_t {
     fn from(value: ContextMenuMediaType) -> Self {
         value.0
     }
+}
+impl ContextMenuMediaType {
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_NONE);
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_IMAGE`] for more documentation."]
+    pub const IMAGE: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_IMAGE);
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_VIDEO`] for more documentation."]
+    pub const VIDEO: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_VIDEO);
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_AUDIO`] for more documentation."]
+    pub const AUDIO: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_AUDIO);
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_CANVAS`] for more documentation."]
+    pub const CANVAS: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_CANVAS);
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_FILE`] for more documentation."]
+    pub const FILE: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_FILE);
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_PLUGIN`] for more documentation."]
+    pub const PLUGIN: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_PLUGIN);
+    #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_NUM_VALUES);
 }
 impl Default for ContextMenuMediaType {
     fn default() -> Self {
@@ -43735,6 +45342,16 @@ impl From<KeyEventType> for cef_key_event_type_t {
         value.0
     }
 }
+impl KeyEventType {
+    #[doc = "See [`cef_key_event_type_t::KEYEVENT_RAWKEYDOWN`] for more documentation."]
+    pub const RAWKEYDOWN: Self = Self(cef_key_event_type_t::KEYEVENT_RAWKEYDOWN);
+    #[doc = "See [`cef_key_event_type_t::KEYEVENT_KEYDOWN`] for more documentation."]
+    pub const KEYDOWN: Self = Self(cef_key_event_type_t::KEYEVENT_KEYDOWN);
+    #[doc = "See [`cef_key_event_type_t::KEYEVENT_KEYUP`] for more documentation."]
+    pub const KEYUP: Self = Self(cef_key_event_type_t::KEYEVENT_KEYUP);
+    #[doc = "See [`cef_key_event_type_t::KEYEVENT_CHAR`] for more documentation."]
+    pub const CHAR: Self = Self(cef_key_event_type_t::KEYEVENT_CHAR);
+}
 impl Default for KeyEventType {
     fn default() -> Self {
         Self(cef_key_event_type_t::KEYEVENT_RAWKEYDOWN)
@@ -43763,6 +45380,14 @@ impl From<FocusSource> for cef_focus_source_t {
     fn from(value: FocusSource) -> Self {
         value.0
     }
+}
+impl FocusSource {
+    #[doc = "See [`cef_focus_source_t::FOCUS_SOURCE_NAVIGATION`] for more documentation."]
+    pub const NAVIGATION: Self = Self(cef_focus_source_t::FOCUS_SOURCE_NAVIGATION);
+    #[doc = "See [`cef_focus_source_t::FOCUS_SOURCE_SYSTEM`] for more documentation."]
+    pub const SYSTEM: Self = Self(cef_focus_source_t::FOCUS_SOURCE_SYSTEM);
+    #[doc = "See [`cef_focus_source_t::FOCUS_SOURCE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_focus_source_t::FOCUS_SOURCE_NUM_VALUES);
 }
 impl Default for FocusSource {
     fn default() -> Self {
@@ -43793,6 +45418,22 @@ impl From<NavigationType> for cef_navigation_type_t {
         value.0
     }
 }
+impl NavigationType {
+    #[doc = "See [`cef_navigation_type_t::NAVIGATION_LINK_CLICKED`] for more documentation."]
+    pub const LINK_CLICKED: Self = Self(cef_navigation_type_t::NAVIGATION_LINK_CLICKED);
+    #[doc = "See [`cef_navigation_type_t::NAVIGATION_FORM_SUBMITTED`] for more documentation."]
+    pub const FORM_SUBMITTED: Self = Self(cef_navigation_type_t::NAVIGATION_FORM_SUBMITTED);
+    #[doc = "See [`cef_navigation_type_t::NAVIGATION_BACK_FORWARD`] for more documentation."]
+    pub const BACK_FORWARD: Self = Self(cef_navigation_type_t::NAVIGATION_BACK_FORWARD);
+    #[doc = "See [`cef_navigation_type_t::NAVIGATION_RELOAD`] for more documentation."]
+    pub const RELOAD: Self = Self(cef_navigation_type_t::NAVIGATION_RELOAD);
+    #[doc = "See [`cef_navigation_type_t::NAVIGATION_FORM_RESUBMITTED`] for more documentation."]
+    pub const FORM_RESUBMITTED: Self = Self(cef_navigation_type_t::NAVIGATION_FORM_RESUBMITTED);
+    #[doc = "See [`cef_navigation_type_t::NAVIGATION_OTHER`] for more documentation."]
+    pub const OTHER: Self = Self(cef_navigation_type_t::NAVIGATION_OTHER);
+    #[doc = "See [`cef_navigation_type_t::NAVIGATION_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_navigation_type_t::NAVIGATION_NUM_VALUES);
+}
 impl Default for NavigationType {
     fn default() -> Self {
         Self(cef_navigation_type_t::NAVIGATION_LINK_CLICKED)
@@ -43821,6 +45462,20 @@ impl From<XmlEncodingType> for cef_xml_encoding_type_t {
     fn from(value: XmlEncodingType) -> Self {
         value.0
     }
+}
+impl XmlEncodingType {
+    #[doc = "See [`cef_xml_encoding_type_t::XML_ENCODING_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_NONE);
+    #[doc = "See [`cef_xml_encoding_type_t::XML_ENCODING_UTF8`] for more documentation."]
+    pub const UTF8: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_UTF8);
+    #[doc = "See [`cef_xml_encoding_type_t::XML_ENCODING_UTF16LE`] for more documentation."]
+    pub const UTF16LE: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_UTF16LE);
+    #[doc = "See [`cef_xml_encoding_type_t::XML_ENCODING_UTF16BE`] for more documentation."]
+    pub const UTF16BE: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_UTF16BE);
+    #[doc = "See [`cef_xml_encoding_type_t::XML_ENCODING_ASCII`] for more documentation."]
+    pub const ASCII: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_ASCII);
+    #[doc = "See [`cef_xml_encoding_type_t::XML_ENCODING_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_NUM_VALUES);
 }
 impl Default for XmlEncodingType {
     fn default() -> Self {
@@ -43851,6 +45506,33 @@ impl From<XmlNodeType> for cef_xml_node_type_t {
         value.0
     }
 }
+impl XmlNodeType {
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_UNSUPPORTED`] for more documentation."]
+    pub const UNSUPPORTED: Self = Self(cef_xml_node_type_t::XML_NODE_UNSUPPORTED);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_PROCESSING_INSTRUCTION`] for more documentation."]
+    pub const PROCESSING_INSTRUCTION: Self =
+        Self(cef_xml_node_type_t::XML_NODE_PROCESSING_INSTRUCTION);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_DOCUMENT_TYPE`] for more documentation."]
+    pub const DOCUMENT_TYPE: Self = Self(cef_xml_node_type_t::XML_NODE_DOCUMENT_TYPE);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_ELEMENT_START`] for more documentation."]
+    pub const ELEMENT_START: Self = Self(cef_xml_node_type_t::XML_NODE_ELEMENT_START);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_ELEMENT_END`] for more documentation."]
+    pub const ELEMENT_END: Self = Self(cef_xml_node_type_t::XML_NODE_ELEMENT_END);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_ATTRIBUTE`] for more documentation."]
+    pub const ATTRIBUTE: Self = Self(cef_xml_node_type_t::XML_NODE_ATTRIBUTE);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_TEXT`] for more documentation."]
+    pub const TEXT: Self = Self(cef_xml_node_type_t::XML_NODE_TEXT);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_CDATA`] for more documentation."]
+    pub const CDATA: Self = Self(cef_xml_node_type_t::XML_NODE_CDATA);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_ENTITY_REFERENCE`] for more documentation."]
+    pub const ENTITY_REFERENCE: Self = Self(cef_xml_node_type_t::XML_NODE_ENTITY_REFERENCE);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_WHITESPACE`] for more documentation."]
+    pub const WHITESPACE: Self = Self(cef_xml_node_type_t::XML_NODE_WHITESPACE);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_COMMENT`] for more documentation."]
+    pub const COMMENT: Self = Self(cef_xml_node_type_t::XML_NODE_COMMENT);
+    #[doc = "See [`cef_xml_node_type_t::XML_NODE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_xml_node_type_t::XML_NODE_NUM_VALUES);
+}
 impl Default for XmlNodeType {
     fn default() -> Self {
         Self(cef_xml_node_type_t::XML_NODE_UNSUPPORTED)
@@ -43879,6 +45561,18 @@ impl From<DomDocumentType> for cef_dom_document_type_t {
     fn from(value: DomDocumentType) -> Self {
         value.0
     }
+}
+impl DomDocumentType {
+    #[doc = "See [`cef_dom_document_type_t::DOM_DOCUMENT_TYPE_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_dom_document_type_t::DOM_DOCUMENT_TYPE_UNKNOWN);
+    #[doc = "See [`cef_dom_document_type_t::DOM_DOCUMENT_TYPE_HTML`] for more documentation."]
+    pub const HTML: Self = Self(cef_dom_document_type_t::DOM_DOCUMENT_TYPE_HTML);
+    #[doc = "See [`cef_dom_document_type_t::DOM_DOCUMENT_TYPE_XHTML`] for more documentation."]
+    pub const XHTML: Self = Self(cef_dom_document_type_t::DOM_DOCUMENT_TYPE_XHTML);
+    #[doc = "See [`cef_dom_document_type_t::DOM_DOCUMENT_TYPE_PLUGIN`] for more documentation."]
+    pub const PLUGIN: Self = Self(cef_dom_document_type_t::DOM_DOCUMENT_TYPE_PLUGIN);
+    #[doc = "See [`cef_dom_document_type_t::DOM_DOCUMENT_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_dom_document_type_t::DOM_DOCUMENT_TYPE_NUM_VALUES);
 }
 impl Default for DomDocumentType {
     fn default() -> Self {
@@ -43909,6 +45603,45 @@ impl From<DomEventCategory> for cef_dom_event_category_t {
         value.0
     }
 }
+impl DomEventCategory {
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_UNKNOWN);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_UI`] for more documentation."]
+    pub const UI: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_UI);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_MOUSE`] for more documentation."]
+    pub const MOUSE: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_MOUSE);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_MUTATION`] for more documentation."]
+    pub const MUTATION: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_MUTATION);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_KEYBOARD`] for more documentation."]
+    pub const KEYBOARD: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_KEYBOARD);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_TEXT`] for more documentation."]
+    pub const TEXT: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_TEXT);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_COMPOSITION`] for more documentation."]
+    pub const COMPOSITION: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_COMPOSITION);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_DRAG`] for more documentation."]
+    pub const DRAG: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_DRAG);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_CLIPBOARD`] for more documentation."]
+    pub const CLIPBOARD: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_CLIPBOARD);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_MESSAGE`] for more documentation."]
+    pub const MESSAGE: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_MESSAGE);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_WHEEL`] for more documentation."]
+    pub const WHEEL: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_WHEEL);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_BEFORE_TEXT_INSERTED`] for more documentation."]
+    pub const BEFORE_TEXT_INSERTED: Self =
+        Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_BEFORE_TEXT_INSERTED);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_OVERFLOW`] for more documentation."]
+    pub const OVERFLOW: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_OVERFLOW);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_PAGE_TRANSITION`] for more documentation."]
+    pub const PAGE_TRANSITION: Self =
+        Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_PAGE_TRANSITION);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_POPSTATE`] for more documentation."]
+    pub const POPSTATE: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_POPSTATE);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_PROGRESS`] for more documentation."]
+    pub const PROGRESS: Self = Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_PROGRESS);
+    #[doc = "See [`cef_dom_event_category_t::DOM_EVENT_CATEGORY_XMLHTTPREQUEST_PROGRESS`] for more documentation."]
+    pub const XMLHTTPREQUEST_PROGRESS: Self =
+        Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_XMLHTTPREQUEST_PROGRESS);
+}
 impl Default for DomEventCategory {
     fn default() -> Self {
         Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_UNKNOWN)
@@ -43937,6 +45670,18 @@ impl From<DomEventPhase> for cef_dom_event_phase_t {
     fn from(value: DomEventPhase) -> Self {
         value.0
     }
+}
+impl DomEventPhase {
+    #[doc = "See [`cef_dom_event_phase_t::DOM_EVENT_PHASE_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_dom_event_phase_t::DOM_EVENT_PHASE_UNKNOWN);
+    #[doc = "See [`cef_dom_event_phase_t::DOM_EVENT_PHASE_CAPTURING`] for more documentation."]
+    pub const CAPTURING: Self = Self(cef_dom_event_phase_t::DOM_EVENT_PHASE_CAPTURING);
+    #[doc = "See [`cef_dom_event_phase_t::DOM_EVENT_PHASE_AT_TARGET`] for more documentation."]
+    pub const AT_TARGET: Self = Self(cef_dom_event_phase_t::DOM_EVENT_PHASE_AT_TARGET);
+    #[doc = "See [`cef_dom_event_phase_t::DOM_EVENT_PHASE_BUBBLING`] for more documentation."]
+    pub const BUBBLING: Self = Self(cef_dom_event_phase_t::DOM_EVENT_PHASE_BUBBLING);
+    #[doc = "See [`cef_dom_event_phase_t::DOM_EVENT_PHASE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_dom_event_phase_t::DOM_EVENT_PHASE_NUM_VALUES);
 }
 impl Default for DomEventPhase {
     fn default() -> Self {
@@ -43967,6 +45712,31 @@ impl From<DomNodeType> for cef_dom_node_type_t {
         value.0
     }
 }
+impl DomNodeType {
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_UNSUPPORTED`] for more documentation."]
+    pub const UNSUPPORTED: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_UNSUPPORTED);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_ELEMENT`] for more documentation."]
+    pub const ELEMENT: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_ELEMENT);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_ATTRIBUTE`] for more documentation."]
+    pub const ATTRIBUTE: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_ATTRIBUTE);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_TEXT`] for more documentation."]
+    pub const TEXT: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_TEXT);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_CDATA_SECTION`] for more documentation."]
+    pub const CDATA_SECTION: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_CDATA_SECTION);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_PROCESSING_INSTRUCTIONS`] for more documentation."]
+    pub const PROCESSING_INSTRUCTIONS: Self =
+        Self(cef_dom_node_type_t::DOM_NODE_TYPE_PROCESSING_INSTRUCTIONS);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_COMMENT`] for more documentation."]
+    pub const COMMENT: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_COMMENT);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_DOCUMENT`] for more documentation."]
+    pub const DOCUMENT: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_DOCUMENT);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_DOCUMENT_TYPE`] for more documentation."]
+    pub const DOCUMENT_TYPE: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_DOCUMENT_TYPE);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_DOCUMENT_FRAGMENT`] for more documentation."]
+    pub const DOCUMENT_FRAGMENT: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_DOCUMENT_FRAGMENT);
+    #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_NUM_VALUES);
+}
 impl Default for DomNodeType {
     fn default() -> Self {
         Self(cef_dom_node_type_t::DOM_NODE_TYPE_UNSUPPORTED)
@@ -43995,6 +45765,103 @@ impl From<DomFormControlType> for cef_dom_form_control_type_t {
     fn from(value: DomFormControlType) -> Self {
         value.0
     }
+}
+impl DomFormControlType {
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_UNSUPPORTED`] for more documentation."]
+    pub const UNSUPPORTED: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_UNSUPPORTED);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_BUTTON`] for more documentation."]
+    pub const BUTTON_BUTTON: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_BUTTON);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_SUBMIT`] for more documentation."]
+    pub const BUTTON_SUBMIT: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_SUBMIT);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_RESET`] for more documentation."]
+    pub const BUTTON_RESET: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_RESET);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_POPOVER`] for more documentation."]
+    pub const BUTTON_POPOVER: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_BUTTON_POPOVER);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_FIELDSET`] for more documentation."]
+    pub const FIELDSET: Self = Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_FIELDSET);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_BUTTON`] for more documentation."]
+    pub const INPUT_BUTTON: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_BUTTON);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_CHECKBOX`] for more documentation."]
+    pub const INPUT_CHECKBOX: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_CHECKBOX);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_COLOR`] for more documentation."]
+    pub const INPUT_COLOR: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_COLOR);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_DATE`] for more documentation."]
+    pub const INPUT_DATE: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_DATE);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_DATETIME_LOCAL`] for more documentation."]
+    pub const INPUT_DATETIME_LOCAL: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_DATETIME_LOCAL);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_EMAIL`] for more documentation."]
+    pub const INPUT_EMAIL: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_EMAIL);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_FILE`] for more documentation."]
+    pub const INPUT_FILE: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_FILE);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_HIDDEN`] for more documentation."]
+    pub const INPUT_HIDDEN: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_HIDDEN);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_IMAGE`] for more documentation."]
+    pub const INPUT_IMAGE: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_IMAGE);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_MONTH`] for more documentation."]
+    pub const INPUT_MONTH: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_MONTH);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_NUMBER`] for more documentation."]
+    pub const INPUT_NUMBER: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_NUMBER);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_PASSWORD`] for more documentation."]
+    pub const INPUT_PASSWORD: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_PASSWORD);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_RADIO`] for more documentation."]
+    pub const INPUT_RADIO: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_RADIO);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_RANGE`] for more documentation."]
+    pub const INPUT_RANGE: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_RANGE);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_RESET`] for more documentation."]
+    pub const INPUT_RESET: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_RESET);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_SEARCH`] for more documentation."]
+    pub const INPUT_SEARCH: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_SEARCH);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_SUBMIT`] for more documentation."]
+    pub const INPUT_SUBMIT: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_SUBMIT);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_TELEPHONE`] for more documentation."]
+    pub const INPUT_TELEPHONE: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_TELEPHONE);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_TEXT`] for more documentation."]
+    pub const INPUT_TEXT: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_TEXT);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_TIME`] for more documentation."]
+    pub const INPUT_TIME: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_TIME);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_URL`] for more documentation."]
+    pub const INPUT_URL: Self = Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_URL);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_WEEK`] for more documentation."]
+    pub const INPUT_WEEK: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_INPUT_WEEK);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_OUTPUT`] for more documentation."]
+    pub const OUTPUT: Self = Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_OUTPUT);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_SELECT_ONE`] for more documentation."]
+    pub const SELECT_ONE: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_SELECT_ONE);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_SELECT_MULTIPLE`] for more documentation."]
+    pub const SELECT_MULTIPLE: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_SELECT_MULTIPLE);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_TEXT_AREA`] for more documentation."]
+    pub const TEXT_AREA: Self = Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_TEXT_AREA);
+    #[doc = "See [`cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self =
+        Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_NUM_VALUES);
 }
 impl Default for DomFormControlType {
     fn default() -> Self {
@@ -44025,6 +45892,18 @@ impl From<FileDialogMode> for cef_file_dialog_mode_t {
         value.0
     }
 }
+impl FileDialogMode {
+    #[doc = "See [`cef_file_dialog_mode_t::FILE_DIALOG_OPEN`] for more documentation."]
+    pub const OPEN: Self = Self(cef_file_dialog_mode_t::FILE_DIALOG_OPEN);
+    #[doc = "See [`cef_file_dialog_mode_t::FILE_DIALOG_OPEN_MULTIPLE`] for more documentation."]
+    pub const OPEN_MULTIPLE: Self = Self(cef_file_dialog_mode_t::FILE_DIALOG_OPEN_MULTIPLE);
+    #[doc = "See [`cef_file_dialog_mode_t::FILE_DIALOG_OPEN_FOLDER`] for more documentation."]
+    pub const OPEN_FOLDER: Self = Self(cef_file_dialog_mode_t::FILE_DIALOG_OPEN_FOLDER);
+    #[doc = "See [`cef_file_dialog_mode_t::FILE_DIALOG_SAVE`] for more documentation."]
+    pub const SAVE: Self = Self(cef_file_dialog_mode_t::FILE_DIALOG_SAVE);
+    #[doc = "See [`cef_file_dialog_mode_t::FILE_DIALOG_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_file_dialog_mode_t::FILE_DIALOG_NUM_VALUES);
+}
 impl Default for FileDialogMode {
     fn default() -> Self {
         Self(cef_file_dialog_mode_t::FILE_DIALOG_OPEN)
@@ -44053,6 +45932,57 @@ impl From<ColorModel> for cef_color_model_t {
     fn from(value: ColorModel) -> Self {
         value.0
     }
+}
+impl ColorModel {
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_color_model_t::COLOR_MODEL_UNKNOWN);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_GRAY`] for more documentation."]
+    pub const GRAY: Self = Self(cef_color_model_t::COLOR_MODEL_GRAY);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_COLOR`] for more documentation."]
+    pub const COLOR: Self = Self(cef_color_model_t::COLOR_MODEL_COLOR);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_CMYK`] for more documentation."]
+    pub const CMYK: Self = Self(cef_color_model_t::COLOR_MODEL_CMYK);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_CMY`] for more documentation."]
+    pub const CMY: Self = Self(cef_color_model_t::COLOR_MODEL_CMY);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_KCMY`] for more documentation."]
+    pub const KCMY: Self = Self(cef_color_model_t::COLOR_MODEL_KCMY);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_CMY_K`] for more documentation."]
+    pub const CMY_K: Self = Self(cef_color_model_t::COLOR_MODEL_CMY_K);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_BLACK`] for more documentation."]
+    pub const BLACK: Self = Self(cef_color_model_t::COLOR_MODEL_BLACK);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_GRAYSCALE`] for more documentation."]
+    pub const GRAYSCALE: Self = Self(cef_color_model_t::COLOR_MODEL_GRAYSCALE);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_RGB`] for more documentation."]
+    pub const RGB: Self = Self(cef_color_model_t::COLOR_MODEL_RGB);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_RGB16`] for more documentation."]
+    pub const RGB16: Self = Self(cef_color_model_t::COLOR_MODEL_RGB16);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_RGBA`] for more documentation."]
+    pub const RGBA: Self = Self(cef_color_model_t::COLOR_MODEL_RGBA);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_COLORMODE_COLOR`] for more documentation."]
+    pub const COLORMODE_COLOR: Self = Self(cef_color_model_t::COLOR_MODEL_COLORMODE_COLOR);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_COLORMODE_MONOCHROME`] for more documentation."]
+    pub const COLORMODE_MONOCHROME: Self =
+        Self(cef_color_model_t::COLOR_MODEL_COLORMODE_MONOCHROME);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_HP_COLOR_COLOR`] for more documentation."]
+    pub const HP_COLOR_COLOR: Self = Self(cef_color_model_t::COLOR_MODEL_HP_COLOR_COLOR);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_HP_COLOR_BLACK`] for more documentation."]
+    pub const HP_COLOR_BLACK: Self = Self(cef_color_model_t::COLOR_MODEL_HP_COLOR_BLACK);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_PRINTOUTMODE_NORMAL`] for more documentation."]
+    pub const PRINTOUTMODE_NORMAL: Self = Self(cef_color_model_t::COLOR_MODEL_PRINTOUTMODE_NORMAL);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_PRINTOUTMODE_NORMAL_GRAY`] for more documentation."]
+    pub const PRINTOUTMODE_NORMAL_GRAY: Self =
+        Self(cef_color_model_t::COLOR_MODEL_PRINTOUTMODE_NORMAL_GRAY);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_PROCESSCOLORMODEL_CMYK`] for more documentation."]
+    pub const PROCESSCOLORMODEL_CMYK: Self =
+        Self(cef_color_model_t::COLOR_MODEL_PROCESSCOLORMODEL_CMYK);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_PROCESSCOLORMODEL_GREYSCALE`] for more documentation."]
+    pub const PROCESSCOLORMODEL_GREYSCALE: Self =
+        Self(cef_color_model_t::COLOR_MODEL_PROCESSCOLORMODEL_GREYSCALE);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_PROCESSCOLORMODEL_RGB`] for more documentation."]
+    pub const PROCESSCOLORMODEL_RGB: Self =
+        Self(cef_color_model_t::COLOR_MODEL_PROCESSCOLORMODEL_RGB);
+    #[doc = "See [`cef_color_model_t::COLOR_MODEL_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_color_model_t::COLOR_MODEL_NUM_VALUES);
 }
 impl Default for ColorModel {
     fn default() -> Self {
@@ -44083,6 +46013,18 @@ impl From<DuplexMode> for cef_duplex_mode_t {
         value.0
     }
 }
+impl DuplexMode {
+    #[doc = "See [`cef_duplex_mode_t::DUPLEX_MODE_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_duplex_mode_t::DUPLEX_MODE_UNKNOWN);
+    #[doc = "See [`cef_duplex_mode_t::DUPLEX_MODE_SIMPLEX`] for more documentation."]
+    pub const SIMPLEX: Self = Self(cef_duplex_mode_t::DUPLEX_MODE_SIMPLEX);
+    #[doc = "See [`cef_duplex_mode_t::DUPLEX_MODE_LONG_EDGE`] for more documentation."]
+    pub const LONG_EDGE: Self = Self(cef_duplex_mode_t::DUPLEX_MODE_LONG_EDGE);
+    #[doc = "See [`cef_duplex_mode_t::DUPLEX_MODE_SHORT_EDGE`] for more documentation."]
+    pub const SHORT_EDGE: Self = Self(cef_duplex_mode_t::DUPLEX_MODE_SHORT_EDGE);
+    #[doc = "See [`cef_duplex_mode_t::DUPLEX_MODE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_duplex_mode_t::DUPLEX_MODE_NUM_VALUES);
+}
 impl Default for DuplexMode {
     fn default() -> Self {
         Self(cef_duplex_mode_t::DUPLEX_MODE_UNKNOWN)
@@ -44111,6 +46053,111 @@ impl From<CursorType> for cef_cursor_type_t {
     fn from(value: CursorType) -> Self {
         value.0
     }
+}
+impl CursorType {
+    #[doc = "See [`cef_cursor_type_t::CT_POINTER`] for more documentation."]
+    pub const POINTER: Self = Self(cef_cursor_type_t::CT_POINTER);
+    #[doc = "See [`cef_cursor_type_t::CT_CROSS`] for more documentation."]
+    pub const CROSS: Self = Self(cef_cursor_type_t::CT_CROSS);
+    #[doc = "See [`cef_cursor_type_t::CT_HAND`] for more documentation."]
+    pub const HAND: Self = Self(cef_cursor_type_t::CT_HAND);
+    #[doc = "See [`cef_cursor_type_t::CT_IBEAM`] for more documentation."]
+    pub const IBEAM: Self = Self(cef_cursor_type_t::CT_IBEAM);
+    #[doc = "See [`cef_cursor_type_t::CT_WAIT`] for more documentation."]
+    pub const WAIT: Self = Self(cef_cursor_type_t::CT_WAIT);
+    #[doc = "See [`cef_cursor_type_t::CT_HELP`] for more documentation."]
+    pub const HELP: Self = Self(cef_cursor_type_t::CT_HELP);
+    #[doc = "See [`cef_cursor_type_t::CT_EASTRESIZE`] for more documentation."]
+    pub const EASTRESIZE: Self = Self(cef_cursor_type_t::CT_EASTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHRESIZE`] for more documentation."]
+    pub const NORTHRESIZE: Self = Self(cef_cursor_type_t::CT_NORTHRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHEASTRESIZE`] for more documentation."]
+    pub const NORTHEASTRESIZE: Self = Self(cef_cursor_type_t::CT_NORTHEASTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHWESTRESIZE`] for more documentation."]
+    pub const NORTHWESTRESIZE: Self = Self(cef_cursor_type_t::CT_NORTHWESTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_SOUTHRESIZE`] for more documentation."]
+    pub const SOUTHRESIZE: Self = Self(cef_cursor_type_t::CT_SOUTHRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_SOUTHEASTRESIZE`] for more documentation."]
+    pub const SOUTHEASTRESIZE: Self = Self(cef_cursor_type_t::CT_SOUTHEASTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_SOUTHWESTRESIZE`] for more documentation."]
+    pub const SOUTHWESTRESIZE: Self = Self(cef_cursor_type_t::CT_SOUTHWESTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_WESTRESIZE`] for more documentation."]
+    pub const WESTRESIZE: Self = Self(cef_cursor_type_t::CT_WESTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHSOUTHRESIZE`] for more documentation."]
+    pub const NORTHSOUTHRESIZE: Self = Self(cef_cursor_type_t::CT_NORTHSOUTHRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_EASTWESTRESIZE`] for more documentation."]
+    pub const EASTWESTRESIZE: Self = Self(cef_cursor_type_t::CT_EASTWESTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHEASTSOUTHWESTRESIZE`] for more documentation."]
+    pub const NORTHEASTSOUTHWESTRESIZE: Self = Self(cef_cursor_type_t::CT_NORTHEASTSOUTHWESTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHWESTSOUTHEASTRESIZE`] for more documentation."]
+    pub const NORTHWESTSOUTHEASTRESIZE: Self = Self(cef_cursor_type_t::CT_NORTHWESTSOUTHEASTRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_COLUMNRESIZE`] for more documentation."]
+    pub const COLUMNRESIZE: Self = Self(cef_cursor_type_t::CT_COLUMNRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_ROWRESIZE`] for more documentation."]
+    pub const ROWRESIZE: Self = Self(cef_cursor_type_t::CT_ROWRESIZE);
+    #[doc = "See [`cef_cursor_type_t::CT_MIDDLEPANNING`] for more documentation."]
+    pub const MIDDLEPANNING: Self = Self(cef_cursor_type_t::CT_MIDDLEPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_EASTPANNING`] for more documentation."]
+    pub const EASTPANNING: Self = Self(cef_cursor_type_t::CT_EASTPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHPANNING`] for more documentation."]
+    pub const NORTHPANNING: Self = Self(cef_cursor_type_t::CT_NORTHPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHEASTPANNING`] for more documentation."]
+    pub const NORTHEASTPANNING: Self = Self(cef_cursor_type_t::CT_NORTHEASTPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_NORTHWESTPANNING`] for more documentation."]
+    pub const NORTHWESTPANNING: Self = Self(cef_cursor_type_t::CT_NORTHWESTPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_SOUTHPANNING`] for more documentation."]
+    pub const SOUTHPANNING: Self = Self(cef_cursor_type_t::CT_SOUTHPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_SOUTHEASTPANNING`] for more documentation."]
+    pub const SOUTHEASTPANNING: Self = Self(cef_cursor_type_t::CT_SOUTHEASTPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_SOUTHWESTPANNING`] for more documentation."]
+    pub const SOUTHWESTPANNING: Self = Self(cef_cursor_type_t::CT_SOUTHWESTPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_WESTPANNING`] for more documentation."]
+    pub const WESTPANNING: Self = Self(cef_cursor_type_t::CT_WESTPANNING);
+    #[doc = "See [`cef_cursor_type_t::CT_MOVE`] for more documentation."]
+    pub const MOVE: Self = Self(cef_cursor_type_t::CT_MOVE);
+    #[doc = "See [`cef_cursor_type_t::CT_VERTICALTEXT`] for more documentation."]
+    pub const VERTICALTEXT: Self = Self(cef_cursor_type_t::CT_VERTICALTEXT);
+    #[doc = "See [`cef_cursor_type_t::CT_CELL`] for more documentation."]
+    pub const CELL: Self = Self(cef_cursor_type_t::CT_CELL);
+    #[doc = "See [`cef_cursor_type_t::CT_CONTEXTMENU`] for more documentation."]
+    pub const CONTEXTMENU: Self = Self(cef_cursor_type_t::CT_CONTEXTMENU);
+    #[doc = "See [`cef_cursor_type_t::CT_ALIAS`] for more documentation."]
+    pub const ALIAS: Self = Self(cef_cursor_type_t::CT_ALIAS);
+    #[doc = "See [`cef_cursor_type_t::CT_PROGRESS`] for more documentation."]
+    pub const PROGRESS: Self = Self(cef_cursor_type_t::CT_PROGRESS);
+    #[doc = "See [`cef_cursor_type_t::CT_NODROP`] for more documentation."]
+    pub const NODROP: Self = Self(cef_cursor_type_t::CT_NODROP);
+    #[doc = "See [`cef_cursor_type_t::CT_COPY`] for more documentation."]
+    pub const COPY: Self = Self(cef_cursor_type_t::CT_COPY);
+    #[doc = "See [`cef_cursor_type_t::CT_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_cursor_type_t::CT_NONE);
+    #[doc = "See [`cef_cursor_type_t::CT_NOTALLOWED`] for more documentation."]
+    pub const NOTALLOWED: Self = Self(cef_cursor_type_t::CT_NOTALLOWED);
+    #[doc = "See [`cef_cursor_type_t::CT_ZOOMIN`] for more documentation."]
+    pub const ZOOMIN: Self = Self(cef_cursor_type_t::CT_ZOOMIN);
+    #[doc = "See [`cef_cursor_type_t::CT_ZOOMOUT`] for more documentation."]
+    pub const ZOOMOUT: Self = Self(cef_cursor_type_t::CT_ZOOMOUT);
+    #[doc = "See [`cef_cursor_type_t::CT_GRAB`] for more documentation."]
+    pub const GRAB: Self = Self(cef_cursor_type_t::CT_GRAB);
+    #[doc = "See [`cef_cursor_type_t::CT_GRABBING`] for more documentation."]
+    pub const GRABBING: Self = Self(cef_cursor_type_t::CT_GRABBING);
+    #[doc = "See [`cef_cursor_type_t::CT_MIDDLE_PANNING_VERTICAL`] for more documentation."]
+    pub const MIDDLE_PANNING_VERTICAL: Self = Self(cef_cursor_type_t::CT_MIDDLE_PANNING_VERTICAL);
+    #[doc = "See [`cef_cursor_type_t::CT_MIDDLE_PANNING_HORIZONTAL`] for more documentation."]
+    pub const MIDDLE_PANNING_HORIZONTAL: Self =
+        Self(cef_cursor_type_t::CT_MIDDLE_PANNING_HORIZONTAL);
+    #[doc = "See [`cef_cursor_type_t::CT_CUSTOM`] for more documentation."]
+    pub const CUSTOM: Self = Self(cef_cursor_type_t::CT_CUSTOM);
+    #[doc = "See [`cef_cursor_type_t::CT_DND_NONE`] for more documentation."]
+    pub const DND_NONE: Self = Self(cef_cursor_type_t::CT_DND_NONE);
+    #[doc = "See [`cef_cursor_type_t::CT_DND_MOVE`] for more documentation."]
+    pub const DND_MOVE: Self = Self(cef_cursor_type_t::CT_DND_MOVE);
+    #[doc = "See [`cef_cursor_type_t::CT_DND_COPY`] for more documentation."]
+    pub const DND_COPY: Self = Self(cef_cursor_type_t::CT_DND_COPY);
+    #[doc = "See [`cef_cursor_type_t::CT_DND_LINK`] for more documentation."]
+    pub const DND_LINK: Self = Self(cef_cursor_type_t::CT_DND_LINK);
+    #[doc = "See [`cef_cursor_type_t::CT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_cursor_type_t::CT_NUM_VALUES);
 }
 impl Default for CursorType {
     fn default() -> Self {
@@ -44141,6 +46188,22 @@ impl From<UriUnescapeRule> for cef_uri_unescape_rule_t {
         value.0
     }
 }
+impl UriUnescapeRule {
+    #[doc = "See [`cef_uri_unescape_rule_t::UU_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_uri_unescape_rule_t::UU_NONE);
+    #[doc = "See [`cef_uri_unescape_rule_t::UU_NORMAL`] for more documentation."]
+    pub const NORMAL: Self = Self(cef_uri_unescape_rule_t::UU_NORMAL);
+    #[doc = "See [`cef_uri_unescape_rule_t::UU_SPACES`] for more documentation."]
+    pub const SPACES: Self = Self(cef_uri_unescape_rule_t::UU_SPACES);
+    #[doc = "See [`cef_uri_unescape_rule_t::UU_PATH_SEPARATORS`] for more documentation."]
+    pub const PATH_SEPARATORS: Self = Self(cef_uri_unescape_rule_t::UU_PATH_SEPARATORS);
+    #[doc = "See [`cef_uri_unescape_rule_t::UU_URL_SPECIAL_CHARS_EXCEPT_PATH_SEPARATORS`] for more documentation."]
+    pub const URL_SPECIAL_CHARS_EXCEPT_PATH_SEPARATORS: Self =
+        Self(cef_uri_unescape_rule_t::UU_URL_SPECIAL_CHARS_EXCEPT_PATH_SEPARATORS);
+    #[doc = "See [`cef_uri_unescape_rule_t::UU_REPLACE_PLUS_WITH_SPACE`] for more documentation."]
+    pub const REPLACE_PLUS_WITH_SPACE: Self =
+        Self(cef_uri_unescape_rule_t::UU_REPLACE_PLUS_WITH_SPACE);
+}
 impl Default for UriUnescapeRule {
     fn default() -> Self {
         Self(cef_uri_unescape_rule_t::UU_NONE)
@@ -44169,6 +46232,13 @@ impl From<JsonParserOptions> for cef_json_parser_options_t {
     fn from(value: JsonParserOptions) -> Self {
         value.0
     }
+}
+impl JsonParserOptions {
+    #[doc = "See [`cef_json_parser_options_t::JSON_PARSER_RFC`] for more documentation."]
+    pub const RFC: Self = Self(cef_json_parser_options_t::JSON_PARSER_RFC);
+    #[doc = "See [`cef_json_parser_options_t::JSON_PARSER_ALLOW_TRAILING_COMMAS`] for more documentation."]
+    pub const ALLOW_TRAILING_COMMAS: Self =
+        Self(cef_json_parser_options_t::JSON_PARSER_ALLOW_TRAILING_COMMAS);
 }
 impl Default for JsonParserOptions {
     fn default() -> Self {
@@ -44199,6 +46269,18 @@ impl From<JsonWriterOptions> for cef_json_writer_options_t {
         value.0
     }
 }
+impl JsonWriterOptions {
+    #[doc = "See [`cef_json_writer_options_t::JSON_WRITER_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_json_writer_options_t::JSON_WRITER_DEFAULT);
+    #[doc = "See [`cef_json_writer_options_t::JSON_WRITER_OMIT_BINARY_VALUES`] for more documentation."]
+    pub const OMIT_BINARY_VALUES: Self =
+        Self(cef_json_writer_options_t::JSON_WRITER_OMIT_BINARY_VALUES);
+    #[doc = "See [`cef_json_writer_options_t::JSON_WRITER_OMIT_DOUBLE_TYPE_PRESERVATION`] for more documentation."]
+    pub const OMIT_DOUBLE_TYPE_PRESERVATION: Self =
+        Self(cef_json_writer_options_t::JSON_WRITER_OMIT_DOUBLE_TYPE_PRESERVATION);
+    #[doc = "See [`cef_json_writer_options_t::JSON_WRITER_PRETTY_PRINT`] for more documentation."]
+    pub const PRETTY_PRINT: Self = Self(cef_json_writer_options_t::JSON_WRITER_PRETTY_PRINT);
+}
 impl Default for JsonWriterOptions {
     fn default() -> Self {
         Self(cef_json_writer_options_t::JSON_WRITER_DEFAULT)
@@ -44227,6 +46309,14 @@ impl From<PdfPrintMarginType> for cef_pdf_print_margin_type_t {
     fn from(value: PdfPrintMarginType) -> Self {
         value.0
     }
+}
+impl PdfPrintMarginType {
+    #[doc = "See [`cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_DEFAULT`] for more documentation."]
+    pub const DEFAULT: Self = Self(cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_DEFAULT);
+    #[doc = "See [`cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_NONE);
+    #[doc = "See [`cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_CUSTOM`] for more documentation."]
+    pub const CUSTOM: Self = Self(cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_CUSTOM);
 }
 impl Default for PdfPrintMarginType {
     fn default() -> Self {
@@ -44257,6 +46347,30 @@ impl From<ScaleFactor> for cef_scale_factor_t {
         value.0
     }
 }
+impl ScaleFactor {
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_scale_factor_t::SCALE_FACTOR_NONE);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_100P`] for more documentation."]
+    pub const FACTOR_100P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_100P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_125P`] for more documentation."]
+    pub const FACTOR_125P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_125P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_133P`] for more documentation."]
+    pub const FACTOR_133P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_133P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_140P`] for more documentation."]
+    pub const FACTOR_140P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_140P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_150P`] for more documentation."]
+    pub const FACTOR_150P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_150P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_180P`] for more documentation."]
+    pub const FACTOR_180P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_180P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_200P`] for more documentation."]
+    pub const FACTOR_200P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_200P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_250P`] for more documentation."]
+    pub const FACTOR_250P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_250P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_300P`] for more documentation."]
+    pub const FACTOR_300P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_300P);
+    #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_scale_factor_t::SCALE_FACTOR_NUM_VALUES);
+}
 impl Default for ScaleFactor {
     fn default() -> Self {
         Self(cef_scale_factor_t::SCALE_FACTOR_NONE)
@@ -44285,6 +46399,33 @@ impl From<ReferrerPolicy> for cef_referrer_policy_t {
     fn from(value: ReferrerPolicy) -> Self {
         value.0
     }
+}
+impl ReferrerPolicy {
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE`] for more documentation."]
+    pub const CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE: Self = Self(
+        cef_referrer_policy_t::REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE,
+    );
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_REDUCE_REFERRER_GRANULARITY_ON_TRANSITION_CROSS_ORIGIN`] for more documentation."]
+    pub const REDUCE_REFERRER_GRANULARITY_ON_TRANSITION_CROSS_ORIGIN : Self = Self (cef_referrer_policy_t :: REFERRER_POLICY_REDUCE_REFERRER_GRANULARITY_ON_TRANSITION_CROSS_ORIGIN) ;
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_ORIGIN_ONLY_ON_TRANSITION_CROSS_ORIGIN`] for more documentation."]
+    pub const ORIGIN_ONLY_ON_TRANSITION_CROSS_ORIGIN: Self =
+        Self(cef_referrer_policy_t::REFERRER_POLICY_ORIGIN_ONLY_ON_TRANSITION_CROSS_ORIGIN);
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_NEVER_CLEAR_REFERRER`] for more documentation."]
+    pub const NEVER_CLEAR_REFERRER: Self =
+        Self(cef_referrer_policy_t::REFERRER_POLICY_NEVER_CLEAR_REFERRER);
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_ORIGIN`] for more documentation."]
+    pub const ORIGIN: Self = Self(cef_referrer_policy_t::REFERRER_POLICY_ORIGIN);
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_CROSS_ORIGIN`] for more documentation."]
+    pub const CLEAR_REFERRER_ON_TRANSITION_CROSS_ORIGIN: Self =
+        Self(cef_referrer_policy_t::REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_CROSS_ORIGIN);
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_ORIGIN_CLEAR_ON_TRANSITION_FROM_SECURE_TO_INSECURE`] for more documentation."]
+    pub const ORIGIN_CLEAR_ON_TRANSITION_FROM_SECURE_TO_INSECURE: Self = Self(
+        cef_referrer_policy_t::REFERRER_POLICY_ORIGIN_CLEAR_ON_TRANSITION_FROM_SECURE_TO_INSECURE,
+    );
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_NO_REFERRER`] for more documentation."]
+    pub const NO_REFERRER: Self = Self(cef_referrer_policy_t::REFERRER_POLICY_NO_REFERRER);
+    #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_referrer_policy_t::REFERRER_POLICY_NUM_VALUES);
 }
 impl Default for ReferrerPolicy {
     fn default() -> Self {
@@ -44315,6 +46456,15 @@ impl From<ResponseFilterStatus> for cef_response_filter_status_t {
         value.0
     }
 }
+impl ResponseFilterStatus {
+    #[doc = "See [`cef_response_filter_status_t::RESPONSE_FILTER_NEED_MORE_DATA`] for more documentation."]
+    pub const NEED_MORE_DATA: Self =
+        Self(cef_response_filter_status_t::RESPONSE_FILTER_NEED_MORE_DATA);
+    #[doc = "See [`cef_response_filter_status_t::RESPONSE_FILTER_DONE`] for more documentation."]
+    pub const DONE: Self = Self(cef_response_filter_status_t::RESPONSE_FILTER_DONE);
+    #[doc = "See [`cef_response_filter_status_t::RESPONSE_FILTER_ERROR`] for more documentation."]
+    pub const ERROR: Self = Self(cef_response_filter_status_t::RESPONSE_FILTER_ERROR);
+}
 impl Default for ResponseFilterStatus {
     fn default() -> Self {
         Self(cef_response_filter_status_t::RESPONSE_FILTER_NEED_MORE_DATA)
@@ -44343,6 +46493,14 @@ impl From<AlphaType> for cef_alpha_type_t {
     fn from(value: AlphaType) -> Self {
         value.0
     }
+}
+impl AlphaType {
+    #[doc = "See [`cef_alpha_type_t::CEF_ALPHA_TYPE_OPAQUE`] for more documentation."]
+    pub const OPAQUE: Self = Self(cef_alpha_type_t::CEF_ALPHA_TYPE_OPAQUE);
+    #[doc = "See [`cef_alpha_type_t::CEF_ALPHA_TYPE_PREMULTIPLIED`] for more documentation."]
+    pub const PREMULTIPLIED: Self = Self(cef_alpha_type_t::CEF_ALPHA_TYPE_PREMULTIPLIED);
+    #[doc = "See [`cef_alpha_type_t::CEF_ALPHA_TYPE_POSTMULTIPLIED`] for more documentation."]
+    pub const POSTMULTIPLIED: Self = Self(cef_alpha_type_t::CEF_ALPHA_TYPE_POSTMULTIPLIED);
 }
 impl Default for AlphaType {
     fn default() -> Self {
@@ -44373,6 +46531,20 @@ impl From<TextStyle> for cef_text_style_t {
         value.0
     }
 }
+impl TextStyle {
+    #[doc = "See [`cef_text_style_t::CEF_TEXT_STYLE_BOLD`] for more documentation."]
+    pub const BOLD: Self = Self(cef_text_style_t::CEF_TEXT_STYLE_BOLD);
+    #[doc = "See [`cef_text_style_t::CEF_TEXT_STYLE_ITALIC`] for more documentation."]
+    pub const ITALIC: Self = Self(cef_text_style_t::CEF_TEXT_STYLE_ITALIC);
+    #[doc = "See [`cef_text_style_t::CEF_TEXT_STYLE_STRIKE`] for more documentation."]
+    pub const STRIKE: Self = Self(cef_text_style_t::CEF_TEXT_STYLE_STRIKE);
+    #[doc = "See [`cef_text_style_t::CEF_TEXT_STYLE_DIAGONAL_STRIKE`] for more documentation."]
+    pub const DIAGONAL_STRIKE: Self = Self(cef_text_style_t::CEF_TEXT_STYLE_DIAGONAL_STRIKE);
+    #[doc = "See [`cef_text_style_t::CEF_TEXT_STYLE_UNDERLINE`] for more documentation."]
+    pub const UNDERLINE: Self = Self(cef_text_style_t::CEF_TEXT_STYLE_UNDERLINE);
+    #[doc = "See [`cef_text_style_t::CEF_TEXT_STYLE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_text_style_t::CEF_TEXT_STYLE_NUM_VALUES);
+}
 impl Default for TextStyle {
     fn default() -> Self {
         Self(cef_text_style_t::CEF_TEXT_STYLE_BOLD)
@@ -44401,6 +46573,18 @@ impl From<AxisAlignment> for cef_axis_alignment_t {
     fn from(value: AxisAlignment) -> Self {
         value.0
     }
+}
+impl AxisAlignment {
+    #[doc = "See [`cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_START`] for more documentation."]
+    pub const START: Self = Self(cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_START);
+    #[doc = "See [`cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_CENTER`] for more documentation."]
+    pub const CENTER: Self = Self(cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_CENTER);
+    #[doc = "See [`cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_END`] for more documentation."]
+    pub const END: Self = Self(cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_END);
+    #[doc = "See [`cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_STRETCH`] for more documentation."]
+    pub const STRETCH: Self = Self(cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_STRETCH);
+    #[doc = "See [`cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_NUM_VALUES);
 }
 impl Default for AxisAlignment {
     fn default() -> Self {
@@ -44431,6 +46615,18 @@ impl From<ButtonState> for cef_button_state_t {
         value.0
     }
 }
+impl ButtonState {
+    #[doc = "See [`cef_button_state_t::CEF_BUTTON_STATE_NORMAL`] for more documentation."]
+    pub const NORMAL: Self = Self(cef_button_state_t::CEF_BUTTON_STATE_NORMAL);
+    #[doc = "See [`cef_button_state_t::CEF_BUTTON_STATE_HOVERED`] for more documentation."]
+    pub const HOVERED: Self = Self(cef_button_state_t::CEF_BUTTON_STATE_HOVERED);
+    #[doc = "See [`cef_button_state_t::CEF_BUTTON_STATE_PRESSED`] for more documentation."]
+    pub const PRESSED: Self = Self(cef_button_state_t::CEF_BUTTON_STATE_PRESSED);
+    #[doc = "See [`cef_button_state_t::CEF_BUTTON_STATE_DISABLED`] for more documentation."]
+    pub const DISABLED: Self = Self(cef_button_state_t::CEF_BUTTON_STATE_DISABLED);
+    #[doc = "See [`cef_button_state_t::CEF_BUTTON_STATE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_button_state_t::CEF_BUTTON_STATE_NUM_VALUES);
+}
 impl Default for ButtonState {
     fn default() -> Self {
         Self(cef_button_state_t::CEF_BUTTON_STATE_NORMAL)
@@ -44459,6 +46655,14 @@ impl From<HorizontalAlignment> for cef_horizontal_alignment_t {
     fn from(value: HorizontalAlignment) -> Self {
         value.0
     }
+}
+impl HorizontalAlignment {
+    #[doc = "See [`cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_LEFT`] for more documentation."]
+    pub const LEFT: Self = Self(cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_LEFT);
+    #[doc = "See [`cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_CENTER`] for more documentation."]
+    pub const CENTER: Self = Self(cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_CENTER);
+    #[doc = "See [`cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_RIGHT`] for more documentation."]
+    pub const RIGHT: Self = Self(cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_RIGHT);
 }
 impl Default for HorizontalAlignment {
     fn default() -> Self {
@@ -44489,6 +46693,16 @@ impl From<MenuAnchorPosition> for cef_menu_anchor_position_t {
         value.0
     }
 }
+impl MenuAnchorPosition {
+    #[doc = "See [`cef_menu_anchor_position_t::CEF_MENU_ANCHOR_TOPLEFT`] for more documentation."]
+    pub const TOPLEFT: Self = Self(cef_menu_anchor_position_t::CEF_MENU_ANCHOR_TOPLEFT);
+    #[doc = "See [`cef_menu_anchor_position_t::CEF_MENU_ANCHOR_TOPRIGHT`] for more documentation."]
+    pub const TOPRIGHT: Self = Self(cef_menu_anchor_position_t::CEF_MENU_ANCHOR_TOPRIGHT);
+    #[doc = "See [`cef_menu_anchor_position_t::CEF_MENU_ANCHOR_BOTTOMCENTER`] for more documentation."]
+    pub const BOTTOMCENTER: Self = Self(cef_menu_anchor_position_t::CEF_MENU_ANCHOR_BOTTOMCENTER);
+    #[doc = "See [`cef_menu_anchor_position_t::CEF_MENU_ANCHOR_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_menu_anchor_position_t::CEF_MENU_ANCHOR_NUM_VALUES);
+}
 impl Default for MenuAnchorPosition {
     fn default() -> Self {
         Self(cef_menu_anchor_position_t::CEF_MENU_ANCHOR_TOPLEFT)
@@ -44517,6 +46731,24 @@ impl From<MenuColorType> for cef_menu_color_type_t {
     fn from(value: MenuColorType) -> Self {
         value.0
     }
+}
+impl MenuColorType {
+    #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_TEXT`] for more documentation."]
+    pub const TEXT: Self = Self(cef_menu_color_type_t::CEF_MENU_COLOR_TEXT);
+    #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_TEXT_HOVERED`] for more documentation."]
+    pub const TEXT_HOVERED: Self = Self(cef_menu_color_type_t::CEF_MENU_COLOR_TEXT_HOVERED);
+    #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_TEXT_ACCELERATOR`] for more documentation."]
+    pub const TEXT_ACCELERATOR: Self = Self(cef_menu_color_type_t::CEF_MENU_COLOR_TEXT_ACCELERATOR);
+    #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_TEXT_ACCELERATOR_HOVERED`] for more documentation."]
+    pub const TEXT_ACCELERATOR_HOVERED: Self =
+        Self(cef_menu_color_type_t::CEF_MENU_COLOR_TEXT_ACCELERATOR_HOVERED);
+    #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_BACKGROUND`] for more documentation."]
+    pub const BACKGROUND: Self = Self(cef_menu_color_type_t::CEF_MENU_COLOR_BACKGROUND);
+    #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_BACKGROUND_HOVERED`] for more documentation."]
+    pub const BACKGROUND_HOVERED: Self =
+        Self(cef_menu_color_type_t::CEF_MENU_COLOR_BACKGROUND_HOVERED);
+    #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_menu_color_type_t::CEF_MENU_COLOR_NUM_VALUES);
 }
 impl Default for MenuColorType {
     fn default() -> Self {
@@ -44547,6 +46779,26 @@ impl From<SslVersion> for cef_ssl_version_t {
         value.0
     }
 }
+impl SslVersion {
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_UNKNOWN);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_SSL2`] for more documentation."]
+    pub const SSL2: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_SSL2);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_SSL3`] for more documentation."]
+    pub const SSL3: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_SSL3);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1`] for more documentation."]
+    pub const TLS1: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1_1`] for more documentation."]
+    pub const TLS1_1: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1_1);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1_2`] for more documentation."]
+    pub const TLS1_2: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1_2);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1_3`] for more documentation."]
+    pub const TLS1_3: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_TLS1_3);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_QUIC`] for more documentation."]
+    pub const QUIC: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_QUIC);
+    #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_NUM_VALUES);
+}
 impl Default for SslVersion {
     fn default() -> Self {
         Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_UNKNOWN)
@@ -44575,6 +46827,16 @@ impl From<SslContentStatus> for cef_ssl_content_status_t {
     fn from(value: SslContentStatus) -> Self {
         value.0
     }
+}
+impl SslContentStatus {
+    #[doc = "See [`cef_ssl_content_status_t::SSL_CONTENT_NORMAL_CONTENT`] for more documentation."]
+    pub const NORMAL_CONTENT: Self = Self(cef_ssl_content_status_t::SSL_CONTENT_NORMAL_CONTENT);
+    #[doc = "See [`cef_ssl_content_status_t::SSL_CONTENT_DISPLAYED_INSECURE_CONTENT`] for more documentation."]
+    pub const DISPLAYED_INSECURE_CONTENT: Self =
+        Self(cef_ssl_content_status_t::SSL_CONTENT_DISPLAYED_INSECURE_CONTENT);
+    #[doc = "See [`cef_ssl_content_status_t::SSL_CONTENT_RAN_INSECURE_CONTENT`] for more documentation."]
+    pub const RAN_INSECURE_CONTENT: Self =
+        Self(cef_ssl_content_status_t::SSL_CONTENT_RAN_INSECURE_CONTENT);
 }
 impl Default for SslContentStatus {
     fn default() -> Self {
@@ -44605,6 +46867,25 @@ impl From<SchemeOptions> for cef_scheme_options_t {
         value.0
     }
 }
+impl SchemeOptions {
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_NONE);
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_STANDARD`] for more documentation."]
+    pub const STANDARD: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_STANDARD);
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_LOCAL`] for more documentation."]
+    pub const LOCAL: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_LOCAL);
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_DISPLAY_ISOLATED`] for more documentation."]
+    pub const DISPLAY_ISOLATED: Self =
+        Self(cef_scheme_options_t::CEF_SCHEME_OPTION_DISPLAY_ISOLATED);
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_SECURE`] for more documentation."]
+    pub const SECURE: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_SECURE);
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_CORS_ENABLED`] for more documentation."]
+    pub const CORS_ENABLED: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_CORS_ENABLED);
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_CSP_BYPASSING`] for more documentation."]
+    pub const CSP_BYPASSING: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_CSP_BYPASSING);
+    #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_FETCH_ENABLED`] for more documentation."]
+    pub const FETCH_ENABLED: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_FETCH_ENABLED);
+}
 impl Default for SchemeOptions {
     fn default() -> Self {
         Self(cef_scheme_options_t::CEF_SCHEME_OPTION_NONE)
@@ -44633,6 +46914,18 @@ impl From<CompositionUnderlineStyle> for cef_composition_underline_style_t {
     fn from(value: CompositionUnderlineStyle) -> Self {
         value.0
     }
+}
+impl CompositionUnderlineStyle {
+    #[doc = "See [`cef_composition_underline_style_t::CEF_CUS_SOLID`] for more documentation."]
+    pub const SOLID: Self = Self(cef_composition_underline_style_t::CEF_CUS_SOLID);
+    #[doc = "See [`cef_composition_underline_style_t::CEF_CUS_DOT`] for more documentation."]
+    pub const DOT: Self = Self(cef_composition_underline_style_t::CEF_CUS_DOT);
+    #[doc = "See [`cef_composition_underline_style_t::CEF_CUS_DASH`] for more documentation."]
+    pub const DASH: Self = Self(cef_composition_underline_style_t::CEF_CUS_DASH);
+    #[doc = "See [`cef_composition_underline_style_t::CEF_CUS_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_composition_underline_style_t::CEF_CUS_NONE);
+    #[doc = "See [`cef_composition_underline_style_t::CEF_CUS_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_composition_underline_style_t::CEF_CUS_NUM_VALUES);
 }
 impl Default for CompositionUnderlineStyle {
     fn default() -> Self {
@@ -44663,6 +46956,87 @@ impl From<ChannelLayout> for cef_channel_layout_t {
         value.0
     }
 }
+impl ChannelLayout {
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_NONE`] for more documentation."]
+    pub const LAYOUT_NONE: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_NONE);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_UNSUPPORTED`] for more documentation."]
+    pub const LAYOUT_UNSUPPORTED: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_UNSUPPORTED);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_MONO`] for more documentation."]
+    pub const LAYOUT_MONO: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_MONO);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_STEREO`] for more documentation."]
+    pub const LAYOUT_STEREO: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_STEREO);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_2_1`] for more documentation."]
+    pub const LAYOUT_2_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_2_1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_SURROUND`] for more documentation."]
+    pub const LAYOUT_SURROUND: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_SURROUND);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_4_0`] for more documentation."]
+    pub const LAYOUT_4_0: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_4_0);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_2_2`] for more documentation."]
+    pub const LAYOUT_2_2: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_2_2);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_QUAD`] for more documentation."]
+    pub const LAYOUT_QUAD: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_QUAD);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_0`] for more documentation."]
+    pub const LAYOUT_5_0: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_0);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1`] for more documentation."]
+    pub const LAYOUT_5_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_0_BACK`] for more documentation."]
+    pub const LAYOUT_5_0_BACK: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_0_BACK);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1_BACK`] for more documentation."]
+    pub const LAYOUT_5_1_BACK: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1_BACK);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_0`] for more documentation."]
+    pub const LAYOUT_7_0: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_0);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1`] for more documentation."]
+    pub const LAYOUT_7_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1_WIDE`] for more documentation."]
+    pub const LAYOUT_7_1_WIDE: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1_WIDE);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_STEREO_DOWNMIX`] for more documentation."]
+    pub const LAYOUT_STEREO_DOWNMIX: Self =
+        Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_STEREO_DOWNMIX);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_2POINT1`] for more documentation."]
+    pub const LAYOUT_2POINT1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_2POINT1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_3_1`] for more documentation."]
+    pub const LAYOUT_3_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_3_1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_4_1`] for more documentation."]
+    pub const LAYOUT_4_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_4_1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_0`] for more documentation."]
+    pub const LAYOUT_6_0: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_0);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_0_FRONT`] for more documentation."]
+    pub const LAYOUT_6_0_FRONT: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_0_FRONT);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_HEXAGONAL`] for more documentation."]
+    pub const LAYOUT_HEXAGONAL: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_HEXAGONAL);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_1`] for more documentation."]
+    pub const LAYOUT_6_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_1_BACK`] for more documentation."]
+    pub const LAYOUT_6_1_BACK: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_1_BACK);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_1_FRONT`] for more documentation."]
+    pub const LAYOUT_6_1_FRONT: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_6_1_FRONT);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_0_FRONT`] for more documentation."]
+    pub const LAYOUT_7_0_FRONT: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_0_FRONT);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1_WIDE_BACK`] for more documentation."]
+    pub const LAYOUT_7_1_WIDE_BACK: Self =
+        Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_7_1_WIDE_BACK);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_OCTAGONAL`] for more documentation."]
+    pub const LAYOUT_OCTAGONAL: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_OCTAGONAL);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_DISCRETE`] for more documentation."]
+    pub const LAYOUT_DISCRETE: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_DISCRETE);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_STEREO_AND_KEYBOARD_MIC`] for more documentation."]
+    pub const LAYOUT_STEREO_AND_KEYBOARD_MIC: Self =
+        Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_STEREO_AND_KEYBOARD_MIC);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_4_1_QUAD_SIDE`] for more documentation."]
+    pub const LAYOUT_4_1_QUAD_SIDE: Self =
+        Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_4_1_QUAD_SIDE);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_BITSTREAM`] for more documentation."]
+    pub const LAYOUT_BITSTREAM: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_BITSTREAM);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX`] for more documentation."]
+    pub const LAYOUT_5_1_4_DOWNMIX: Self =
+        Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_1_1`] for more documentation."]
+    pub const LAYOUT_1_1: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_1_1);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_LAYOUT_3_1_BACK`] for more documentation."]
+    pub const LAYOUT_3_1_BACK: Self = Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_3_1_BACK);
+    #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_channel_layout_t::CEF_CHANNEL_NUM_VALUES);
+}
 impl Default for ChannelLayout {
     fn default() -> Self {
         Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_NONE)
@@ -44691,6 +47065,49 @@ impl From<MediaRouteCreateResult> for cef_media_route_create_result_t {
     fn from(value: MediaRouteCreateResult) -> Self {
         value.0
     }
+}
+impl MediaRouteCreateResult {
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_UNKNOWN_ERROR`] for more documentation."]
+    pub const UNKNOWN_ERROR: Self = Self(cef_media_route_create_result_t::CEF_MRCR_UNKNOWN_ERROR);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_OK`] for more documentation."]
+    pub const OK: Self = Self(cef_media_route_create_result_t::CEF_MRCR_OK);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_TIMED_OUT`] for more documentation."]
+    pub const TIMED_OUT: Self = Self(cef_media_route_create_result_t::CEF_MRCR_TIMED_OUT);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_ROUTE_NOT_FOUND`] for more documentation."]
+    pub const ROUTE_NOT_FOUND: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_ROUTE_NOT_FOUND);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_SINK_NOT_FOUND`] for more documentation."]
+    pub const SINK_NOT_FOUND: Self = Self(cef_media_route_create_result_t::CEF_MRCR_SINK_NOT_FOUND);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_INVALID_ORIGIN`] for more documentation."]
+    pub const INVALID_ORIGIN: Self = Self(cef_media_route_create_result_t::CEF_MRCR_INVALID_ORIGIN);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_OFF_THE_RECORD_MISMATCH_DEPRECATED`] for more documentation."]
+    pub const OFF_THE_RECORD_MISMATCH_DEPRECATED: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_OFF_THE_RECORD_MISMATCH_DEPRECATED);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_NO_SUPPORTED_PROVIDER`] for more documentation."]
+    pub const NO_SUPPORTED_PROVIDER: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_NO_SUPPORTED_PROVIDER);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_CANCELLED`] for more documentation."]
+    pub const CANCELLED: Self = Self(cef_media_route_create_result_t::CEF_MRCR_CANCELLED);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_ROUTE_ALREADY_EXISTS`] for more documentation."]
+    pub const ROUTE_ALREADY_EXISTS: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_ROUTE_ALREADY_EXISTS);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_DESKTOP_PICKER_FAILED`] for more documentation."]
+    pub const DESKTOP_PICKER_FAILED: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_DESKTOP_PICKER_FAILED);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_ROUTE_ALREADY_TERMINATED`] for more documentation."]
+    pub const ROUTE_ALREADY_TERMINATED: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_ROUTE_ALREADY_TERMINATED);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_REDUNDANT_REQUEST`] for more documentation."]
+    pub const REDUNDANT_REQUEST: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_REDUNDANT_REQUEST);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_USER_NOT_ALLOWED`] for more documentation."]
+    pub const USER_NOT_ALLOWED: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_USER_NOT_ALLOWED);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_NOTIFICATION_DISABLED`] for more documentation."]
+    pub const NOTIFICATION_DISABLED: Self =
+        Self(cef_media_route_create_result_t::CEF_MRCR_NOTIFICATION_DISABLED);
+    #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_media_route_create_result_t::CEF_MRCR_NUM_VALUES);
 }
 impl Default for MediaRouteCreateResult {
     fn default() -> Self {
@@ -44721,6 +47138,20 @@ impl From<MediaRouteConnectionState> for cef_media_route_connection_state_t {
         value.0
     }
 }
+impl MediaRouteConnectionState {
+    #[doc = "See [`cef_media_route_connection_state_t::CEF_MRCS_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_UNKNOWN);
+    #[doc = "See [`cef_media_route_connection_state_t::CEF_MRCS_CONNECTING`] for more documentation."]
+    pub const CONNECTING: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_CONNECTING);
+    #[doc = "See [`cef_media_route_connection_state_t::CEF_MRCS_CONNECTED`] for more documentation."]
+    pub const CONNECTED: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_CONNECTED);
+    #[doc = "See [`cef_media_route_connection_state_t::CEF_MRCS_CLOSED`] for more documentation."]
+    pub const CLOSED: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_CLOSED);
+    #[doc = "See [`cef_media_route_connection_state_t::CEF_MRCS_TERMINATED`] for more documentation."]
+    pub const TERMINATED: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_TERMINATED);
+    #[doc = "See [`cef_media_route_connection_state_t::CEF_MRCS_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_NUM_VALUES);
+}
 impl Default for MediaRouteConnectionState {
     fn default() -> Self {
         Self(cef_media_route_connection_state_t::CEF_MRCS_UNKNOWN)
@@ -44749,6 +47180,26 @@ impl From<MediaSinkIconType> for cef_media_sink_icon_type_t {
     fn from(value: MediaSinkIconType) -> Self {
         value.0
     }
+}
+impl MediaSinkIconType {
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_CAST`] for more documentation."]
+    pub const CAST: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_CAST);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_CAST_AUDIO_GROUP`] for more documentation."]
+    pub const CAST_AUDIO_GROUP: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_CAST_AUDIO_GROUP);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_CAST_AUDIO`] for more documentation."]
+    pub const CAST_AUDIO: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_CAST_AUDIO);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_MEETING`] for more documentation."]
+    pub const MEETING: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_MEETING);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_HANGOUT`] for more documentation."]
+    pub const HANGOUT: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_HANGOUT);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_EDUCATION`] for more documentation."]
+    pub const EDUCATION: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_EDUCATION);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_WIRED_DISPLAY`] for more documentation."]
+    pub const WIRED_DISPLAY: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_WIRED_DISPLAY);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_GENERIC`] for more documentation."]
+    pub const GENERIC: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_GENERIC);
+    #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_NUM_VALUES);
 }
 impl Default for MediaSinkIconType {
     fn default() -> Self {
@@ -44779,6 +47230,26 @@ impl From<TextFieldCommands> for cef_text_field_commands_t {
         value.0
     }
 }
+impl TextFieldCommands {
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_text_field_commands_t::CEF_TFC_UNKNOWN);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_CUT`] for more documentation."]
+    pub const CUT: Self = Self(cef_text_field_commands_t::CEF_TFC_CUT);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_COPY`] for more documentation."]
+    pub const COPY: Self = Self(cef_text_field_commands_t::CEF_TFC_COPY);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_PASTE`] for more documentation."]
+    pub const PASTE: Self = Self(cef_text_field_commands_t::CEF_TFC_PASTE);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_SELECT_ALL`] for more documentation."]
+    pub const SELECT_ALL: Self = Self(cef_text_field_commands_t::CEF_TFC_SELECT_ALL);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_SELECT_WORD`] for more documentation."]
+    pub const SELECT_WORD: Self = Self(cef_text_field_commands_t::CEF_TFC_SELECT_WORD);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_UNDO`] for more documentation."]
+    pub const UNDO: Self = Self(cef_text_field_commands_t::CEF_TFC_UNDO);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_DELETE`] for more documentation."]
+    pub const DELETE: Self = Self(cef_text_field_commands_t::CEF_TFC_DELETE);
+    #[doc = "See [`cef_text_field_commands_t::CEF_TFC_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_text_field_commands_t::CEF_TFC_NUM_VALUES);
+}
 impl Default for TextFieldCommands {
     fn default() -> Self {
         Self(cef_text_field_commands_t::CEF_TFC_UNKNOWN)
@@ -44807,6 +47278,18 @@ impl From<ChromeToolbarType> for cef_chrome_toolbar_type_t {
     fn from(value: ChromeToolbarType) -> Self {
         value.0
     }
+}
+impl ChromeToolbarType {
+    #[doc = "See [`cef_chrome_toolbar_type_t::CEF_CTT_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_chrome_toolbar_type_t::CEF_CTT_UNKNOWN);
+    #[doc = "See [`cef_chrome_toolbar_type_t::CEF_CTT_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_chrome_toolbar_type_t::CEF_CTT_NONE);
+    #[doc = "See [`cef_chrome_toolbar_type_t::CEF_CTT_NORMAL`] for more documentation."]
+    pub const NORMAL: Self = Self(cef_chrome_toolbar_type_t::CEF_CTT_NORMAL);
+    #[doc = "See [`cef_chrome_toolbar_type_t::CEF_CTT_LOCATION`] for more documentation."]
+    pub const LOCATION: Self = Self(cef_chrome_toolbar_type_t::CEF_CTT_LOCATION);
+    #[doc = "See [`cef_chrome_toolbar_type_t::CEF_CTT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_chrome_toolbar_type_t::CEF_CTT_NUM_VALUES);
 }
 impl Default for ChromeToolbarType {
     fn default() -> Self {
@@ -44837,6 +47320,107 @@ impl From<ChromePageActionIconType> for cef_chrome_page_action_icon_type_t {
         value.0
     }
 }
+impl ChromePageActionIconType {
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_BOOKMARK_STAR`] for more documentation."]
+    pub const BOOKMARK_STAR: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_BOOKMARK_STAR);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_CLICK_TO_CALL`] for more documentation."]
+    pub const CLICK_TO_CALL: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_CLICK_TO_CALL);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_COOKIE_CONTROLS`] for more documentation."]
+    pub const COOKIE_CONTROLS: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_COOKIE_CONTROLS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_FILE_SYSTEM_ACCESS`] for more documentation."]
+    pub const FILE_SYSTEM_ACCESS: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_FILE_SYSTEM_ACCESS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_FIND`] for more documentation."]
+    pub const FIND: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_FIND);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_MEMORY_SAVER`] for more documentation."]
+    pub const MEMORY_SAVER: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_MEMORY_SAVER);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_INTENT_PICKER`] for more documentation."]
+    pub const INTENT_PICKER: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_INTENT_PICKER);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_LOCAL_CARD_MIGRATION`] for more documentation."]
+    pub const LOCAL_CARD_MIGRATION: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_LOCAL_CARD_MIGRATION);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_MANAGE_PASSWORDS`] for more documentation."]
+    pub const MANAGE_PASSWORDS: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_MANAGE_PASSWORDS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_PAYMENTS_OFFER_NOTIFICATION`] for more documentation."]
+    pub const PAYMENTS_OFFER_NOTIFICATION: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_PAYMENTS_OFFER_NOTIFICATION);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_PRICE_TRACKING`] for more documentation."]
+    pub const PRICE_TRACKING: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_PRICE_TRACKING);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_PWA_INSTALL`] for more documentation."]
+    pub const PWA_INSTALL: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_PWA_INSTALL);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_QR_CODE_GENERATOR_DEPRECATED`] for more documentation."]
+    pub const QR_CODE_GENERATOR_DEPRECATED: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_QR_CODE_GENERATOR_DEPRECATED);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_READER_MODE_DEPRECATED`] for more documentation."]
+    pub const READER_MODE_DEPRECATED: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_READER_MODE_DEPRECATED);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_SAVE_AUTOFILL_ADDRESS`] for more documentation."]
+    pub const SAVE_AUTOFILL_ADDRESS: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_SAVE_AUTOFILL_ADDRESS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_SAVE_CARD`] for more documentation."]
+    pub const SAVE_CARD: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_SAVE_CARD);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_SEND_TAB_TO_SELF_DEPRECATED`] for more documentation."]
+    pub const SEND_TAB_TO_SELF_DEPRECATED: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_SEND_TAB_TO_SELF_DEPRECATED);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_SHARING_HUB`] for more documentation."]
+    pub const SHARING_HUB: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_SHARING_HUB);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_SIDE_SEARCH_DEPRECATED`] for more documentation."]
+    pub const SIDE_SEARCH_DEPRECATED: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_SIDE_SEARCH_DEPRECATED);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_SMS_REMOTE_FETCHER`] for more documentation."]
+    pub const SMS_REMOTE_FETCHER: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_SMS_REMOTE_FETCHER);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_TRANSLATE`] for more documentation."]
+    pub const TRANSLATE: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_TRANSLATE);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_VIRTUAL_CARD_ENROLL`] for more documentation."]
+    pub const VIRTUAL_CARD_ENROLL: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_VIRTUAL_CARD_ENROLL);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_VIRTUAL_CARD_INFORMATION`] for more documentation."]
+    pub const VIRTUAL_CARD_INFORMATION: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_VIRTUAL_CARD_INFORMATION);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_ZOOM`] for more documentation."]
+    pub const ZOOM: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_ZOOM);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_SAVE_IBAN`] for more documentation."]
+    pub const SAVE_IBAN: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_SAVE_IBAN);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_MANDATORY_REAUTH`] for more documentation."]
+    pub const MANDATORY_REAUTH: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_MANDATORY_REAUTH);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_PRICE_INSIGHTS`] for more documentation."]
+    pub const PRICE_INSIGHTS: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_PRICE_INSIGHTS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_READ_ANYTHING_DEPRECATED`] for more documentation."]
+    pub const READ_ANYTHING_DEPRECATED: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_READ_ANYTHING_DEPRECATED);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_PRODUCT_SPECIFICATIONS`] for more documentation."]
+    pub const PRODUCT_SPECIFICATIONS: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_PRODUCT_SPECIFICATIONS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_LENS_OVERLAY`] for more documentation."]
+    pub const LENS_OVERLAY: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_LENS_OVERLAY);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_DISCOUNTS`] for more documentation."]
+    pub const DISCOUNTS: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_DISCOUNTS);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_OPTIMIZATION_GUIDE`] for more documentation."]
+    pub const OPTIMIZATION_GUIDE: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_OPTIMIZATION_GUIDE);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_COLLABORATION_MESSAGING`] for more documentation."]
+    pub const COLLABORATION_MESSAGING: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_COLLABORATION_MESSAGING);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_CHANGE_PASSWORD`] for more documentation."]
+    pub const CHANGE_PASSWORD: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_CHANGE_PASSWORD);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_LENS_OVERLAY_HOMEWORK`] for more documentation."]
+    pub const LENS_OVERLAY_HOMEWORK: Self =
+        Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_LENS_OVERLAY_HOMEWORK);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_AI_MODE`] for more documentation."]
+    pub const AI_MODE: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_AI_MODE);
+    #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES);
+}
 impl Default for ChromePageActionIconType {
     fn default() -> Self {
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_BOOKMARK_STAR)
@@ -44865,6 +47449,30 @@ impl From<ChromeToolbarButtonType> for cef_chrome_toolbar_button_type_t {
     fn from(value: ChromeToolbarButtonType) -> Self {
         value.0
     }
+}
+impl ChromeToolbarButtonType {
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_CAST_DEPRECATED`] for more documentation."]
+    pub const CAST_DEPRECATED: Self =
+        Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_CAST_DEPRECATED);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_DOWNLOAD_DEPRECATED`] for more documentation."]
+    pub const DOWNLOAD_DEPRECATED: Self =
+        Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_DOWNLOAD_DEPRECATED);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_SEND_TAB_TO_SELF_DEPRECATED`] for more documentation."]
+    pub const SEND_TAB_TO_SELF_DEPRECATED: Self =
+        Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_SEND_TAB_TO_SELF_DEPRECATED);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_SIDE_PANEL_DEPRECATED`] for more documentation."]
+    pub const SIDE_PANEL_DEPRECATED: Self =
+        Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_SIDE_PANEL_DEPRECATED);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_MEDIA`] for more documentation."]
+    pub const MEDIA: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_MEDIA);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_TAB_SEARCH`] for more documentation."]
+    pub const TAB_SEARCH: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_TAB_SEARCH);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_BATTERY_SAVER`] for more documentation."]
+    pub const BATTERY_SAVER: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_BATTERY_SAVER);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_AVATAR`] for more documentation."]
+    pub const AVATAR: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_AVATAR);
+    #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_NUM_VALUES);
 }
 impl Default for ChromeToolbarButtonType {
     fn default() -> Self {
@@ -44895,6 +47503,20 @@ impl From<DockingMode> for cef_docking_mode_t {
         value.0
     }
 }
+impl DockingMode {
+    #[doc = "See [`cef_docking_mode_t::CEF_DOCKING_MODE_TOP_LEFT`] for more documentation."]
+    pub const TOP_LEFT: Self = Self(cef_docking_mode_t::CEF_DOCKING_MODE_TOP_LEFT);
+    #[doc = "See [`cef_docking_mode_t::CEF_DOCKING_MODE_TOP_RIGHT`] for more documentation."]
+    pub const TOP_RIGHT: Self = Self(cef_docking_mode_t::CEF_DOCKING_MODE_TOP_RIGHT);
+    #[doc = "See [`cef_docking_mode_t::CEF_DOCKING_MODE_BOTTOM_LEFT`] for more documentation."]
+    pub const BOTTOM_LEFT: Self = Self(cef_docking_mode_t::CEF_DOCKING_MODE_BOTTOM_LEFT);
+    #[doc = "See [`cef_docking_mode_t::CEF_DOCKING_MODE_BOTTOM_RIGHT`] for more documentation."]
+    pub const BOTTOM_RIGHT: Self = Self(cef_docking_mode_t::CEF_DOCKING_MODE_BOTTOM_RIGHT);
+    #[doc = "See [`cef_docking_mode_t::CEF_DOCKING_MODE_CUSTOM`] for more documentation."]
+    pub const CUSTOM: Self = Self(cef_docking_mode_t::CEF_DOCKING_MODE_CUSTOM);
+    #[doc = "See [`cef_docking_mode_t::CEF_DOCKING_MODE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_docking_mode_t::CEF_DOCKING_MODE_NUM_VALUES);
+}
 impl Default for DockingMode {
     fn default() -> Self {
         Self(cef_docking_mode_t::CEF_DOCKING_MODE_TOP_LEFT)
@@ -44923,6 +47545,20 @@ impl From<ShowState> for cef_show_state_t {
     fn from(value: ShowState) -> Self {
         value.0
     }
+}
+impl ShowState {
+    #[doc = "See [`cef_show_state_t::CEF_SHOW_STATE_NORMAL`] for more documentation."]
+    pub const NORMAL: Self = Self(cef_show_state_t::CEF_SHOW_STATE_NORMAL);
+    #[doc = "See [`cef_show_state_t::CEF_SHOW_STATE_MINIMIZED`] for more documentation."]
+    pub const MINIMIZED: Self = Self(cef_show_state_t::CEF_SHOW_STATE_MINIMIZED);
+    #[doc = "See [`cef_show_state_t::CEF_SHOW_STATE_MAXIMIZED`] for more documentation."]
+    pub const MAXIMIZED: Self = Self(cef_show_state_t::CEF_SHOW_STATE_MAXIMIZED);
+    #[doc = "See [`cef_show_state_t::CEF_SHOW_STATE_FULLSCREEN`] for more documentation."]
+    pub const FULLSCREEN: Self = Self(cef_show_state_t::CEF_SHOW_STATE_FULLSCREEN);
+    #[doc = "See [`cef_show_state_t::CEF_SHOW_STATE_HIDDEN`] for more documentation."]
+    pub const HIDDEN: Self = Self(cef_show_state_t::CEF_SHOW_STATE_HIDDEN);
+    #[doc = "See [`cef_show_state_t::CEF_SHOW_STATE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_show_state_t::CEF_SHOW_STATE_NUM_VALUES);
 }
 impl Default for ShowState {
     fn default() -> Self {
@@ -44982,6 +47618,22 @@ impl From<MediaAccessPermissionTypes> for cef_media_access_permission_types_t {
         value.0
     }
 }
+impl MediaAccessPermissionTypes {
+    #[doc = "See [`cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_NONE);
+    #[doc = "See [`cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DEVICE_AUDIO_CAPTURE`] for more documentation."]
+    pub const DEVICE_AUDIO_CAPTURE: Self =
+        Self(cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DEVICE_AUDIO_CAPTURE);
+    #[doc = "See [`cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DEVICE_VIDEO_CAPTURE`] for more documentation."]
+    pub const DEVICE_VIDEO_CAPTURE: Self =
+        Self(cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DEVICE_VIDEO_CAPTURE);
+    #[doc = "See [`cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DESKTOP_AUDIO_CAPTURE`] for more documentation."]
+    pub const DESKTOP_AUDIO_CAPTURE: Self =
+        Self(cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DESKTOP_AUDIO_CAPTURE);
+    #[doc = "See [`cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DESKTOP_VIDEO_CAPTURE`] for more documentation."]
+    pub const DESKTOP_VIDEO_CAPTURE: Self =
+        Self(cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DESKTOP_VIDEO_CAPTURE);
+}
 impl Default for MediaAccessPermissionTypes {
     fn default() -> Self {
         Self(cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_NONE)
@@ -45010,6 +47662,87 @@ impl From<PermissionRequestTypes> for cef_permission_request_types_t {
     fn from(value: PermissionRequestTypes) -> Self {
         value.0
     }
+}
+impl PermissionRequestTypes {
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_NONE`] for more documentation."]
+    pub const NONE: Self = Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_NONE);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_AR_SESSION`] for more documentation."]
+    pub const AR_SESSION: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_AR_SESSION);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_CAMERA_PAN_TILT_ZOOM`] for more documentation."]
+    pub const CAMERA_PAN_TILT_ZOOM: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_CAMERA_PAN_TILT_ZOOM);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_CAMERA_STREAM`] for more documentation."]
+    pub const CAMERA_STREAM: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_CAMERA_STREAM);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_CAPTURED_SURFACE_CONTROL`] for more documentation."]
+    pub const CAPTURED_SURFACE_CONTROL: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_CAPTURED_SURFACE_CONTROL);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_CLIPBOARD`] for more documentation."]
+    pub const CLIPBOARD: Self = Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_CLIPBOARD);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_TOP_LEVEL_STORAGE_ACCESS`] for more documentation."]
+    pub const TOP_LEVEL_STORAGE_ACCESS: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_TOP_LEVEL_STORAGE_ACCESS);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_DISK_QUOTA`] for more documentation."]
+    pub const DISK_QUOTA: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_DISK_QUOTA);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_LOCAL_FONTS`] for more documentation."]
+    pub const LOCAL_FONTS: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_LOCAL_FONTS);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_GEOLOCATION`] for more documentation."]
+    pub const GEOLOCATION: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_GEOLOCATION);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_HAND_TRACKING`] for more documentation."]
+    pub const HAND_TRACKING: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_HAND_TRACKING);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_IDENTITY_PROVIDER`] for more documentation."]
+    pub const IDENTITY_PROVIDER: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_IDENTITY_PROVIDER);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_IDLE_DETECTION`] for more documentation."]
+    pub const IDLE_DETECTION: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_IDLE_DETECTION);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_MIC_STREAM`] for more documentation."]
+    pub const MIC_STREAM: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_MIC_STREAM);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_MIDI_SYSEX`] for more documentation."]
+    pub const MIDI_SYSEX: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_MIDI_SYSEX);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_MULTIPLE_DOWNLOADS`] for more documentation."]
+    pub const MULTIPLE_DOWNLOADS: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_MULTIPLE_DOWNLOADS);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_NOTIFICATIONS`] for more documentation."]
+    pub const NOTIFICATIONS: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_NOTIFICATIONS);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_KEYBOARD_LOCK`] for more documentation."]
+    pub const KEYBOARD_LOCK: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_KEYBOARD_LOCK);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_POINTER_LOCK`] for more documentation."]
+    pub const POINTER_LOCK: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_POINTER_LOCK);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_PROTECTED_MEDIA_IDENTIFIER`] for more documentation."]
+    pub const PROTECTED_MEDIA_IDENTIFIER: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_PROTECTED_MEDIA_IDENTIFIER);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_REGISTER_PROTOCOL_HANDLER`] for more documentation."]
+    pub const REGISTER_PROTOCOL_HANDLER: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_REGISTER_PROTOCOL_HANDLER);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_STORAGE_ACCESS`] for more documentation."]
+    pub const STORAGE_ACCESS: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_STORAGE_ACCESS);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_VR_SESSION`] for more documentation."]
+    pub const VR_SESSION: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_VR_SESSION);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_WEB_APP_INSTALLATION`] for more documentation."]
+    pub const WEB_APP_INSTALLATION: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_WEB_APP_INSTALLATION);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT`] for more documentation."]
+    pub const WINDOW_MANAGEMENT: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_FILE_SYSTEM_ACCESS`] for more documentation."]
+    pub const FILE_SYSTEM_ACCESS: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_FILE_SYSTEM_ACCESS);
+    #[doc = "See [`cef_permission_request_types_t::CEF_PERMISSION_TYPE_LOCAL_NETWORK_ACCESS`] for more documentation."]
+    pub const LOCAL_NETWORK_ACCESS: Self =
+        Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_LOCAL_NETWORK_ACCESS);
 }
 impl Default for PermissionRequestTypes {
     fn default() -> Self {
@@ -45040,6 +47773,19 @@ impl From<PermissionRequestResult> for cef_permission_request_result_t {
         value.0
     }
 }
+impl PermissionRequestResult {
+    #[doc = "See [`cef_permission_request_result_t::CEF_PERMISSION_RESULT_ACCEPT`] for more documentation."]
+    pub const ACCEPT: Self = Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_ACCEPT);
+    #[doc = "See [`cef_permission_request_result_t::CEF_PERMISSION_RESULT_DENY`] for more documentation."]
+    pub const DENY: Self = Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_DENY);
+    #[doc = "See [`cef_permission_request_result_t::CEF_PERMISSION_RESULT_DISMISS`] for more documentation."]
+    pub const DISMISS: Self = Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_DISMISS);
+    #[doc = "See [`cef_permission_request_result_t::CEF_PERMISSION_RESULT_IGNORE`] for more documentation."]
+    pub const IGNORE: Self = Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_IGNORE);
+    #[doc = "See [`cef_permission_request_result_t::CEF_PERMISSION_RESULT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self =
+        Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_NUM_VALUES);
+}
 impl Default for PermissionRequestResult {
     fn default() -> Self {
         Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_ACCEPT)
@@ -45068,6 +47814,16 @@ impl From<TestCertType> for cef_test_cert_type_t {
     fn from(value: TestCertType) -> Self {
         value.0
     }
+}
+impl TestCertType {
+    #[doc = "See [`cef_test_cert_type_t::CEF_TEST_CERT_OK_IP`] for more documentation."]
+    pub const OK_IP: Self = Self(cef_test_cert_type_t::CEF_TEST_CERT_OK_IP);
+    #[doc = "See [`cef_test_cert_type_t::CEF_TEST_CERT_OK_DOMAIN`] for more documentation."]
+    pub const OK_DOMAIN: Self = Self(cef_test_cert_type_t::CEF_TEST_CERT_OK_DOMAIN);
+    #[doc = "See [`cef_test_cert_type_t::CEF_TEST_CERT_EXPIRED`] for more documentation."]
+    pub const EXPIRED: Self = Self(cef_test_cert_type_t::CEF_TEST_CERT_EXPIRED);
+    #[doc = "See [`cef_test_cert_type_t::CEF_TEST_CERT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_test_cert_type_t::CEF_TEST_CERT_NUM_VALUES);
 }
 impl Default for TestCertType {
     fn default() -> Self {
@@ -45098,6 +47854,15 @@ impl From<PreferencesType> for cef_preferences_type_t {
         value.0
     }
 }
+impl PreferencesType {
+    #[doc = "See [`cef_preferences_type_t::CEF_PREFERENCES_TYPE_GLOBAL`] for more documentation."]
+    pub const GLOBAL: Self = Self(cef_preferences_type_t::CEF_PREFERENCES_TYPE_GLOBAL);
+    #[doc = "See [`cef_preferences_type_t::CEF_PREFERENCES_TYPE_REQUEST_CONTEXT`] for more documentation."]
+    pub const REQUEST_CONTEXT: Self =
+        Self(cef_preferences_type_t::CEF_PREFERENCES_TYPE_REQUEST_CONTEXT);
+    #[doc = "See [`cef_preferences_type_t::CEF_PREFERENCES_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_preferences_type_t::CEF_PREFERENCES_TYPE_NUM_VALUES);
+}
 impl Default for PreferencesType {
     fn default() -> Self {
         Self(cef_preferences_type_t::CEF_PREFERENCES_TYPE_GLOBAL)
@@ -45126,6 +47891,100 @@ impl From<DownloadInterruptReason> for cef_download_interrupt_reason_t {
     fn from(value: DownloadInterruptReason) -> Self {
         value.0
     }
+}
+impl DownloadInterruptReason {
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NONE`] for more documentation."]
+    pub const NONE: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NONE);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_FAILED`] for more documentation."]
+    pub const FILE_FAILED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_FAILED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_ACCESS_DENIED`] for more documentation."]
+    pub const FILE_ACCESS_DENIED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_ACCESS_DENIED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_NO_SPACE`] for more documentation."]
+    pub const FILE_NO_SPACE: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_NO_SPACE);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_NAME_TOO_LONG`] for more documentation."]
+    pub const FILE_NAME_TOO_LONG: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_NAME_TOO_LONG);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_TOO_LARGE`] for more documentation."]
+    pub const FILE_TOO_LARGE: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_TOO_LARGE);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_VIRUS_INFECTED`] for more documentation."]
+    pub const FILE_VIRUS_INFECTED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_VIRUS_INFECTED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_TRANSIENT_ERROR`] for more documentation."]
+    pub const FILE_TRANSIENT_ERROR: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_TRANSIENT_ERROR);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_BLOCKED`] for more documentation."]
+    pub const FILE_BLOCKED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_BLOCKED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_SECURITY_CHECK_FAILED`] for more documentation."]
+    pub const FILE_SECURITY_CHECK_FAILED: Self = Self(
+        cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_SECURITY_CHECK_FAILED,
+    );
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_TOO_SHORT`] for more documentation."]
+    pub const FILE_TOO_SHORT: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_TOO_SHORT);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_HASH_MISMATCH`] for more documentation."]
+    pub const FILE_HASH_MISMATCH: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_HASH_MISMATCH);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_SAME_AS_SOURCE`] for more documentation."]
+    pub const FILE_SAME_AS_SOURCE: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_FILE_SAME_AS_SOURCE);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_FAILED`] for more documentation."]
+    pub const NETWORK_FAILED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_FAILED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_TIMEOUT`] for more documentation."]
+    pub const NETWORK_TIMEOUT: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_TIMEOUT);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_DISCONNECTED`] for more documentation."]
+    pub const NETWORK_DISCONNECTED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_DISCONNECTED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_SERVER_DOWN`] for more documentation."]
+    pub const NETWORK_SERVER_DOWN: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_SERVER_DOWN);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_INVALID_REQUEST`] for more documentation."]
+    pub const NETWORK_INVALID_REQUEST: Self = Self(
+        cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NETWORK_INVALID_REQUEST,
+    );
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_FAILED`] for more documentation."]
+    pub const SERVER_FAILED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_FAILED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_NO_RANGE`] for more documentation."]
+    pub const SERVER_NO_RANGE: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_NO_RANGE);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_BAD_CONTENT`] for more documentation."]
+    pub const SERVER_BAD_CONTENT: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_BAD_CONTENT);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_UNAUTHORIZED`] for more documentation."]
+    pub const SERVER_UNAUTHORIZED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_UNAUTHORIZED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_CERT_PROBLEM`] for more documentation."]
+    pub const SERVER_CERT_PROBLEM: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_CERT_PROBLEM);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_FORBIDDEN`] for more documentation."]
+    pub const SERVER_FORBIDDEN: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_FORBIDDEN);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_UNREACHABLE`] for more documentation."]
+    pub const SERVER_UNREACHABLE: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_UNREACHABLE);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_CONTENT_LENGTH_MISMATCH`] for more documentation."]
+    pub const SERVER_CONTENT_LENGTH_MISMATCH : Self = Self (cef_download_interrupt_reason_t :: CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_CONTENT_LENGTH_MISMATCH) ;
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_CROSS_ORIGIN_REDIRECT`] for more documentation."]
+    pub const SERVER_CROSS_ORIGIN_REDIRECT: Self = Self(
+        cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_SERVER_CROSS_ORIGIN_REDIRECT,
+    );
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_USER_CANCELED`] for more documentation."]
+    pub const USER_CANCELED: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_USER_CANCELED);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_USER_SHUTDOWN`] for more documentation."]
+    pub const USER_SHUTDOWN: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_USER_SHUTDOWN);
+    #[doc = "See [`cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_CRASH`] for more documentation."]
+    pub const CRASH: Self =
+        Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_CRASH);
 }
 impl Default for DownloadInterruptReason {
     fn default() -> Self {
@@ -45156,6 +48015,12 @@ impl From<GestureCommand> for cef_gesture_command_t {
         value.0
     }
 }
+impl GestureCommand {
+    #[doc = "See [`cef_gesture_command_t::CEF_GESTURE_COMMAND_BACK`] for more documentation."]
+    pub const BACK: Self = Self(cef_gesture_command_t::CEF_GESTURE_COMMAND_BACK);
+    #[doc = "See [`cef_gesture_command_t::CEF_GESTURE_COMMAND_FORWARD`] for more documentation."]
+    pub const FORWARD: Self = Self(cef_gesture_command_t::CEF_GESTURE_COMMAND_FORWARD);
+}
 impl Default for GestureCommand {
     fn default() -> Self {
         Self(cef_gesture_command_t::CEF_GESTURE_COMMAND_BACK)
@@ -45184,6 +48049,14 @@ impl From<ZoomCommand> for cef_zoom_command_t {
     fn from(value: ZoomCommand) -> Self {
         value.0
     }
+}
+impl ZoomCommand {
+    #[doc = "See [`cef_zoom_command_t::CEF_ZOOM_COMMAND_OUT`] for more documentation."]
+    pub const OUT: Self = Self(cef_zoom_command_t::CEF_ZOOM_COMMAND_OUT);
+    #[doc = "See [`cef_zoom_command_t::CEF_ZOOM_COMMAND_RESET`] for more documentation."]
+    pub const RESET: Self = Self(cef_zoom_command_t::CEF_ZOOM_COMMAND_RESET);
+    #[doc = "See [`cef_zoom_command_t::CEF_ZOOM_COMMAND_IN`] for more documentation."]
+    pub const IN: Self = Self(cef_zoom_command_t::CEF_ZOOM_COMMAND_IN);
 }
 impl Default for ZoomCommand {
     fn default() -> Self {
@@ -45214,6 +48087,24 @@ impl From<ColorVariant> for cef_color_variant_t {
         value.0
     }
 }
+impl ColorVariant {
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_SYSTEM`] for more documentation."]
+    pub const SYSTEM: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_SYSTEM);
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_LIGHT`] for more documentation."]
+    pub const LIGHT: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_LIGHT);
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_DARK`] for more documentation."]
+    pub const DARK: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_DARK);
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_TONAL_SPOT`] for more documentation."]
+    pub const TONAL_SPOT: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_TONAL_SPOT);
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_NEUTRAL`] for more documentation."]
+    pub const NEUTRAL: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_NEUTRAL);
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_VIBRANT`] for more documentation."]
+    pub const VIBRANT: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_VIBRANT);
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_EXPRESSIVE`] for more documentation."]
+    pub const EXPRESSIVE: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_EXPRESSIVE);
+    #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_NUM_VALUES);
+}
 impl Default for ColorVariant {
     fn default() -> Self {
         Self(cef_color_variant_t::CEF_COLOR_VARIANT_SYSTEM)
@@ -45242,6 +48133,36 @@ impl From<TaskType> for cef_task_type_t {
     fn from(value: TaskType) -> Self {
         value.0
     }
+}
+impl TaskType {
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_UNKNOWN`] for more documentation."]
+    pub const UNKNOWN: Self = Self(cef_task_type_t::CEF_TASK_TYPE_UNKNOWN);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_BROWSER`] for more documentation."]
+    pub const BROWSER: Self = Self(cef_task_type_t::CEF_TASK_TYPE_BROWSER);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_GPU`] for more documentation."]
+    pub const GPU: Self = Self(cef_task_type_t::CEF_TASK_TYPE_GPU);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_ZYGOTE`] for more documentation."]
+    pub const ZYGOTE: Self = Self(cef_task_type_t::CEF_TASK_TYPE_ZYGOTE);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_UTILITY`] for more documentation."]
+    pub const UTILITY: Self = Self(cef_task_type_t::CEF_TASK_TYPE_UTILITY);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_RENDERER`] for more documentation."]
+    pub const RENDERER: Self = Self(cef_task_type_t::CEF_TASK_TYPE_RENDERER);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_EXTENSION`] for more documentation."]
+    pub const EXTENSION: Self = Self(cef_task_type_t::CEF_TASK_TYPE_EXTENSION);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_GUEST`] for more documentation."]
+    pub const GUEST: Self = Self(cef_task_type_t::CEF_TASK_TYPE_GUEST);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_PLUGIN_DEPRECATED`] for more documentation."]
+    pub const PLUGIN_DEPRECATED: Self = Self(cef_task_type_t::CEF_TASK_TYPE_PLUGIN_DEPRECATED);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_SANDBOX_HELPER`] for more documentation."]
+    pub const SANDBOX_HELPER: Self = Self(cef_task_type_t::CEF_TASK_TYPE_SANDBOX_HELPER);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_DEDICATED_WORKER`] for more documentation."]
+    pub const DEDICATED_WORKER: Self = Self(cef_task_type_t::CEF_TASK_TYPE_DEDICATED_WORKER);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_SHARED_WORKER`] for more documentation."]
+    pub const SHARED_WORKER: Self = Self(cef_task_type_t::CEF_TASK_TYPE_SHARED_WORKER);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_SERVICE_WORKER`] for more documentation."]
+    pub const SERVICE_WORKER: Self = Self(cef_task_type_t::CEF_TASK_TYPE_SERVICE_WORKER);
+    #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_NUM_VALUES`] for more documentation."]
+    pub const NUM_VALUES: Self = Self(cef_task_type_t::CEF_TASK_TYPE_NUM_VALUES);
 }
 impl Default for TaskType {
     fn default() -> Self {
