@@ -3458,6 +3458,60 @@ fn make_my_struct() -> {rust_name} {{
             writeln!(f, "\n/// See [`{name}`] for more documentation.")?;
             let name = format_ident!("{name}");
             let rust_name = format_ident!("{rust_name}");
+            let declare_values = e.ty.and_then(|ty| {
+                let values: Vec<_> = ty.variants.iter().map(|v| v.ident.to_string()).collect();
+                let values: Vec<Vec<_>> = values
+                    .iter()
+                    .map(|value| value.split("_").collect())
+                    .collect();
+
+                let mut skipped = 0;
+                while let Some(token) = values.first().and_then(|tokens| tokens.get(skipped)) {
+                    if values
+                        .iter()
+                        .skip(1)
+                        .all(|tokens| tokens.get(skipped) == Some(token))
+                    {
+                        skipped += 1;
+                    } else {
+                        break;
+                    }
+                }
+
+                let values = values
+                    .iter()
+                    .map(|tokens| {
+                        let v = tokens.join("_");
+                        let v = format_ident!("{v}");
+                        let mut skipped = skipped;
+                        for skip in (0..=skipped).rev() {
+                            if let Some(token) =
+                                tokens.get(skip).and_then(|token| token.chars().next())
+                            {
+                                if token.is_uppercase() {
+                                    skipped = skip;
+                                    break;
+                                }
+                            }
+                        }
+                        let value = &tokens[skipped..].join("_");
+                        let value = format_ident!("{value}");
+                        quote! {
+                            pub const #value: Self = Self(#name::#v);
+                        }
+                    })
+                    .collect::<Vec<_>>();
+
+                if values.is_empty() {
+                    None
+                } else {
+                    Some(quote! {
+                        impl #rust_name {
+                            #(#values)*
+                        }
+                    })
+                }
+            });
             let impl_default =
                 e.ty.and_then(|ty| ty.variants.first())
                     .map(|v| {
@@ -3492,6 +3546,8 @@ fn make_my_struct() -> {rust_name} {{
                         value.0
                     }
                 }
+
+                #declare_values
 
                 impl Default for #rust_name {
                     fn default() -> Self {
