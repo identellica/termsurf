@@ -42794,12 +42794,11 @@ impl ContentSettingTypes {
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_TRIAL`] for more documentation."]
     pub const TPCD_TRIAL: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TPCD_TRIAL);
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_TRIAL`] for more documentation."]
-    pub const TOP_LEVEL_TPCD_TRIAL: Self =
-        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_TRIAL);
-    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL`] for more documentation."]
-    pub const TOP_LEVEL_TPCD_ORIGIN_TRIAL: Self =
-        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_TRIAL_DEPRECATED`] for more documentation."]
+    pub const TOP_LEVEL_TPCD_TRIAL_DEPRECATED: Self =
+        Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_TRIAL_DEPRECATED);
+    #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL_DEPRECATED`] for more documentation."]
+    pub const TOP_LEVEL_TPCD_ORIGIN_TRIAL_DEPRECATED : Self = Self (cef_content_setting_types_t :: CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL_DEPRECATED) ;
     #[doc = "See [`cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_PICTURE_IN_PICTURE`] for more documentation."]
     pub const AUTO_PICTURE_IN_PICTURE: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_AUTO_PICTURE_IN_PICTURE);
@@ -43672,6 +43671,12 @@ impl Errorcode {
     #[doc = "See [`cef_errorcode_t::ERR_PROXY_UNABLE_TO_CONNECT_TO_DESTINATION`] for more documentation."]
     pub const PROXY_UNABLE_TO_CONNECT_TO_DESTINATION: Self =
         Self(cef_errorcode_t::ERR_PROXY_UNABLE_TO_CONNECT_TO_DESTINATION);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_DELEGATE_CANCELED_CONNECT_REQUEST`] for more documentation."]
+    pub const PROXY_DELEGATE_CANCELED_CONNECT_REQUEST: Self =
+        Self(cef_errorcode_t::ERR_PROXY_DELEGATE_CANCELED_CONNECT_REQUEST);
+    #[doc = "See [`cef_errorcode_t::ERR_PROXY_DELEGATE_CANCELED_CONNECT_RESPONSE`] for more documentation."]
+    pub const PROXY_DELEGATE_CANCELED_CONNECT_RESPONSE: Self =
+        Self(cef_errorcode_t::ERR_PROXY_DELEGATE_CANCELED_CONNECT_RESPONSE);
     #[doc = "See [`cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID`] for more documentation."]
     pub const CERT_COMMON_NAME_INVALID: Self = Self(cef_errorcode_t::ERR_CERT_COMMON_NAME_INVALID);
     #[doc = "See [`cef_errorcode_t::ERR_CERT_DATE_INVALID`] for more documentation."]
@@ -43859,12 +43864,12 @@ impl Errorcode {
     #[doc = "See [`cef_errorcode_t::ERR_INCONSISTENT_IP_ADDRESS_SPACE`] for more documentation."]
     pub const INCONSISTENT_IP_ADDRESS_SPACE: Self =
         Self(cef_errorcode_t::ERR_INCONSISTENT_IP_ADDRESS_SPACE);
-    #[doc = "See [`cef_errorcode_t::ERR_CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_POLICY`] for more documentation."]
-    pub const CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_POLICY: Self =
-        Self(cef_errorcode_t::ERR_CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_POLICY);
-    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_CHECKS`] for more documentation."]
-    pub const BLOCKED_BY_PRIVATE_NETWORK_ACCESS_CHECKS: Self =
-        Self(cef_errorcode_t::ERR_BLOCKED_BY_PRIVATE_NETWORK_ACCESS_CHECKS);
+    #[doc = "See [`cef_errorcode_t::ERR_CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_LOCAL_NETWORK_ACCESS_POLICY`] for more documentation."]
+    pub const CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_LOCAL_NETWORK_ACCESS_POLICY: Self =
+        Self(cef_errorcode_t::ERR_CACHED_IP_ADDRESS_SPACE_BLOCKED_BY_LOCAL_NETWORK_ACCESS_POLICY);
+    #[doc = "See [`cef_errorcode_t::ERR_BLOCKED_BY_LOCAL_NETWORK_ACCESS_CHECKS`] for more documentation."]
+    pub const BLOCKED_BY_LOCAL_NETWORK_ACCESS_CHECKS: Self =
+        Self(cef_errorcode_t::ERR_BLOCKED_BY_LOCAL_NETWORK_ACCESS_CHECKS);
     #[doc = "See [`cef_errorcode_t::ERR_ZSTD_WINDOW_SIZE_TOO_BIG`] for more documentation."]
     pub const ZSTD_WINDOW_SIZE_TOO_BIG: Self = Self(cef_errorcode_t::ERR_ZSTD_WINDOW_SIZE_TOO_BIG);
     #[doc = "See [`cef_errorcode_t::ERR_DICTIONARY_LOAD_FAILED`] for more documentation."]
@@ -43983,6 +43988,9 @@ impl Errorcode {
     #[doc = "See [`cef_errorcode_t::ERR_DNS_SECURE_PROBE_RECORD_INVALID`] for more documentation."]
     pub const DNS_SECURE_PROBE_RECORD_INVALID: Self =
         Self(cef_errorcode_t::ERR_DNS_SECURE_PROBE_RECORD_INVALID);
+    #[doc = "See [`cef_errorcode_t::ERR_DNS_CACHE_INVALIDATION_IN_PROGRESS`] for more documentation."]
+    pub const DNS_CACHE_INVALIDATION_IN_PROGRESS: Self =
+        Self(cef_errorcode_t::ERR_DNS_CACHE_INVALIDATION_IN_PROGRESS);
     #[doc = "See [`cef_errorcode_t::ERR_BLOB_INVALID_CONSTRUCTION_ARGUMENTS`] for more documentation."]
     pub const BLOB_INVALID_CONSTRUCTION_ARGUMENTS: Self =
         Self(cef_errorcode_t::ERR_BLOB_INVALID_CONSTRUCTION_ARGUMENTS);
