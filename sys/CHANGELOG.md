@@ -7,10 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [143.0.0+143.0.9](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v142.5.1+142.0.17...cef-dll-sys-v143.0.0+143.0.9) - 2025-12-11
+
+### Other
+
+- *(release)* update CEF version to 143.0.9
+
+## [142.5.1+142.0.17](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v142.5.0+142.0.17...cef-dll-sys-v142.5.1+142.0.17) - 2025-12-09
+
+### Other
+
+- release v142.5.1+142.0.17
+
 ## [142.5.0+142.0.17](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v142.4.1+142.0.15...cef-dll-sys-v142.5.0+142.0.17) - 2025-11-27
 
 ### Other
 
+- update bindings
 - *(release)* update CEF version to 142.0.17
 - *(deps)* update rust crate convert_case to 0.10
 
