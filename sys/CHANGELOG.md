@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Other
 
 - *(release)* update CEF version to 143.0.10
+- Wrap more C API headers
 
 ## [143.0.0+143.0.9](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v142.5.1+142.0.17...cef-dll-sys-v143.0.0+143.0.9) - 2025-12-11
 
