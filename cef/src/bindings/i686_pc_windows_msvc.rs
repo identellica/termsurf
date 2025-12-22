@@ -55,6 +55,12 @@ pub type SharedTextureHandle = HANDLE;
 /// See [`u32`] for more documentation.
 pub type Color = u32;
 
+/// See [`DWORD`] for more documentation.
+pub type PlatformThreadId = DWORD;
+
+/// See [`DWORD`] for more documentation.
+pub type PlatformThreadHandle = DWORD;
+
 /// See [`_cef_string_wide_t`] for more documentation.
 pub use crate::string::CefStringWide;
 
@@ -1784,85 +1790,6 @@ impl From<BaseScoped> for *mut _cef_base_scoped_t {
     }
 }
 
-/// See [`_cef_dev_tools_message_observer_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct DevToolsMessageObserver {
-    pub base: BaseRefCounted,
-    pub on_dev_tools_message: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-            message: *const ::std::os::raw::c_void,
-            message_size: usize,
-        ) -> ::std::os::raw::c_int,
-    >,
-    pub on_dev_tools_method_result: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-            message_id: ::std::os::raw::c_int,
-            success: ::std::os::raw::c_int,
-            result: *const ::std::os::raw::c_void,
-            result_size: usize,
-        ),
-    >,
-    pub on_dev_tools_event: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-            method: *const cef_string_t,
-            params: *const ::std::os::raw::c_void,
-            params_size: usize,
-        ),
-    >,
-    pub on_dev_tools_agent_attached: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-    pub on_dev_tools_agent_detached: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-}
-impl DevToolsMessageObserver {
-    fn get_raw(&self) -> _cef_dev_tools_message_observer_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_dev_tools_message_observer_t> for DevToolsMessageObserver {
-    fn from(value: _cef_dev_tools_message_observer_t) -> Self {
-        Self {
-            base: value.base.into(),
-            on_dev_tools_message: value.on_dev_tools_message,
-            on_dev_tools_method_result: value.on_dev_tools_method_result,
-            on_dev_tools_event: value.on_dev_tools_event,
-            on_dev_tools_agent_attached: value.on_dev_tools_agent_attached,
-            on_dev_tools_agent_detached: value.on_dev_tools_agent_detached,
-        }
-    }
-}
-impl From<DevToolsMessageObserver> for _cef_dev_tools_message_observer_t {
-    fn from(value: DevToolsMessageObserver) -> Self {
-        Self {
-            base: value.base.into(),
-            on_dev_tools_message: value.on_dev_tools_message,
-            on_dev_tools_method_result: value.on_dev_tools_method_result,
-            on_dev_tools_event: value.on_dev_tools_event,
-            on_dev_tools_agent_attached: value.on_dev_tools_agent_attached,
-            on_dev_tools_agent_detached: value.on_dev_tools_agent_detached,
-        }
-    }
-}
-impl Default for DevToolsMessageObserver {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
 /// See [`_cef_value_t`] for more documentation.
 #[derive(Clone, Debug)]
 pub struct Value {
@@ -2595,6 +2522,131 @@ impl From<ListValue> for _cef_list_value_t {
     }
 }
 impl Default for ListValue {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_accessibility_handler_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct AccessibilityHandler {
+    pub base: BaseRefCounted,
+    pub on_accessibility_tree_change: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_accessibility_handler_t,
+            value: *mut _cef_value_t,
+        ),
+    >,
+    pub on_accessibility_location_change: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_accessibility_handler_t,
+            value: *mut _cef_value_t,
+        ),
+    >,
+}
+impl AccessibilityHandler {
+    fn get_raw(&self) -> _cef_accessibility_handler_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_accessibility_handler_t> for AccessibilityHandler {
+    fn from(value: _cef_accessibility_handler_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_accessibility_tree_change: value.on_accessibility_tree_change,
+            on_accessibility_location_change: value.on_accessibility_location_change,
+        }
+    }
+}
+impl From<AccessibilityHandler> for _cef_accessibility_handler_t {
+    fn from(value: AccessibilityHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_accessibility_tree_change: value.on_accessibility_tree_change,
+            on_accessibility_location_change: value.on_accessibility_location_change,
+        }
+    }
+}
+impl Default for AccessibilityHandler {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_dev_tools_message_observer_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct DevToolsMessageObserver {
+    pub base: BaseRefCounted,
+    pub on_dev_tools_message: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+            message: *const ::std::os::raw::c_void,
+            message_size: usize,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub on_dev_tools_method_result: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+            message_id: ::std::os::raw::c_int,
+            success: ::std::os::raw::c_int,
+            result: *const ::std::os::raw::c_void,
+            result_size: usize,
+        ),
+    >,
+    pub on_dev_tools_event: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+            method: *const cef_string_t,
+            params: *const ::std::os::raw::c_void,
+            params_size: usize,
+        ),
+    >,
+    pub on_dev_tools_agent_attached: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+    pub on_dev_tools_agent_detached: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+}
+impl DevToolsMessageObserver {
+    fn get_raw(&self) -> _cef_dev_tools_message_observer_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_dev_tools_message_observer_t> for DevToolsMessageObserver {
+    fn from(value: _cef_dev_tools_message_observer_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_dev_tools_message: value.on_dev_tools_message,
+            on_dev_tools_method_result: value.on_dev_tools_method_result,
+            on_dev_tools_event: value.on_dev_tools_event,
+            on_dev_tools_agent_attached: value.on_dev_tools_agent_attached,
+            on_dev_tools_agent_detached: value.on_dev_tools_agent_detached,
+        }
+    }
+}
+impl From<DevToolsMessageObserver> for _cef_dev_tools_message_observer_t {
+    fn from(value: DevToolsMessageObserver) -> Self {
+        Self {
+            base: value.base.into(),
+            on_dev_tools_message: value.on_dev_tools_message,
+            on_dev_tools_method_result: value.on_dev_tools_method_result,
+            on_dev_tools_event: value.on_dev_tools_event,
+            on_dev_tools_agent_attached: value.on_dev_tools_agent_attached,
+            on_dev_tools_agent_detached: value.on_dev_tools_agent_detached,
+        }
+    }
+}
+impl Default for DevToolsMessageObserver {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -8934,52 +8986,6 @@ impl Default for PrintHandler {
     }
 }
 
-/// See [`_cef_accessibility_handler_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct AccessibilityHandler {
-    pub base: BaseRefCounted,
-    pub on_accessibility_tree_change: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_accessibility_handler_t,
-            value: *mut _cef_value_t,
-        ),
-    >,
-    pub on_accessibility_location_change: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_accessibility_handler_t,
-            value: *mut _cef_value_t,
-        ),
-    >,
-}
-impl AccessibilityHandler {
-    fn get_raw(&self) -> _cef_accessibility_handler_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_accessibility_handler_t> for AccessibilityHandler {
-    fn from(value: _cef_accessibility_handler_t) -> Self {
-        Self {
-            base: value.base.into(),
-            on_accessibility_tree_change: value.on_accessibility_tree_change,
-            on_accessibility_location_change: value.on_accessibility_location_change,
-        }
-    }
-}
-impl From<AccessibilityHandler> for _cef_accessibility_handler_t {
-    fn from(value: AccessibilityHandler) -> Self {
-        Self {
-            base: value.base.into(),
-            on_accessibility_tree_change: value.on_accessibility_tree_change,
-            on_accessibility_location_change: value.on_accessibility_location_change,
-        }
-    }
-}
-impl Default for AccessibilityHandler {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
 /// See [`_cef_render_handler_t`] for more documentation.
 #[derive(Clone, Debug)]
 pub struct RenderHandler {
@@ -11660,6 +11666,427 @@ impl Default for App {
     }
 }
 
+/// See [`_cef_resource_bundle_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct ResourceBundle {
+    pub base: BaseRefCounted,
+    pub get_localized_string: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_resource_bundle_t,
+            string_id: ::std::os::raw::c_int,
+        ) -> cef_string_userfree_t,
+    >,
+    pub get_data_resource: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_resource_bundle_t,
+            resource_id: ::std::os::raw::c_int,
+        ) -> *mut _cef_binary_value_t,
+    >,
+    pub get_data_resource_for_scale: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_resource_bundle_t,
+            resource_id: ::std::os::raw::c_int,
+            scale_factor: cef_scale_factor_t,
+        ) -> *mut _cef_binary_value_t,
+    >,
+}
+impl ResourceBundle {
+    fn get_raw(&self) -> _cef_resource_bundle_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_resource_bundle_t> for ResourceBundle {
+    fn from(value: _cef_resource_bundle_t) -> Self {
+        Self {
+            base: value.base.into(),
+            get_localized_string: value.get_localized_string,
+            get_data_resource: value.get_data_resource,
+            get_data_resource_for_scale: value.get_data_resource_for_scale,
+        }
+    }
+}
+impl From<ResourceBundle> for _cef_resource_bundle_t {
+    fn from(value: ResourceBundle) -> Self {
+        Self {
+            base: value.base.into(),
+            get_localized_string: value.get_localized_string,
+            get_data_resource: value.get_data_resource,
+            get_data_resource_for_scale: value.get_data_resource_for_scale,
+        }
+    }
+}
+impl Default for ResourceBundle {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_server_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct Server {
+    pub base: BaseRefCounted,
+    pub get_task_runner: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_t) -> *mut _cef_task_runner_t,
+    >,
+    pub shutdown: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_server_t)>,
+    pub is_running: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_address: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_t) -> cef_string_userfree_t,
+    >,
+    pub has_connection: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_t) -> ::std::os::raw::c_int,
+    >,
+    pub is_valid_connection: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub send_http_200_response: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            content_type: *const cef_string_t,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+    pub send_http_404_response: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_t, connection_id: ::std::os::raw::c_int),
+    >,
+    pub send_http_500_response: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            error_message: *const cef_string_t,
+        ),
+    >,
+    pub send_http_response: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            response_code: ::std::os::raw::c_int,
+            content_type: *const cef_string_t,
+            content_length: i64,
+            extra_headers: cef_string_multimap_t,
+        ),
+    >,
+    pub send_raw_data: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+    pub close_connection: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_t, connection_id: ::std::os::raw::c_int),
+    >,
+    pub send_web_socket_message: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+}
+impl Server {
+    fn get_raw(&self) -> _cef_server_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_server_t> for Server {
+    fn from(value: _cef_server_t) -> Self {
+        Self {
+            base: value.base.into(),
+            get_task_runner: value.get_task_runner,
+            shutdown: value.shutdown,
+            is_running: value.is_running,
+            get_address: value.get_address,
+            has_connection: value.has_connection,
+            is_valid_connection: value.is_valid_connection,
+            send_http_200_response: value.send_http200_response,
+            send_http_404_response: value.send_http404_response,
+            send_http_500_response: value.send_http500_response,
+            send_http_response: value.send_http_response,
+            send_raw_data: value.send_raw_data,
+            close_connection: value.close_connection,
+            send_web_socket_message: value.send_web_socket_message,
+        }
+    }
+}
+impl From<Server> for _cef_server_t {
+    fn from(value: Server) -> Self {
+        Self {
+            base: value.base.into(),
+            get_task_runner: value.get_task_runner,
+            shutdown: value.shutdown,
+            is_running: value.is_running,
+            get_address: value.get_address,
+            has_connection: value.has_connection,
+            is_valid_connection: value.is_valid_connection,
+            send_http200_response: value.send_http_200_response,
+            send_http404_response: value.send_http_404_response,
+            send_http500_response: value.send_http_500_response,
+            send_http_response: value.send_http_response,
+            send_raw_data: value.send_raw_data,
+            close_connection: value.close_connection,
+            send_web_socket_message: value.send_web_socket_message,
+        }
+    }
+}
+impl Default for Server {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_server_handler_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct ServerHandler {
+    pub base: BaseRefCounted,
+    pub on_server_created: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_handler_t, server: *mut _cef_server_t),
+    >,
+    pub on_server_destroyed: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_server_handler_t, server: *mut _cef_server_t),
+    >,
+    pub on_client_connected: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ),
+    >,
+    pub on_client_disconnected: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ),
+    >,
+    pub on_http_request: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            client_address: *const cef_string_t,
+            request: *mut _cef_request_t,
+        ),
+    >,
+    pub on_web_socket_request: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            client_address: *const cef_string_t,
+            request: *mut _cef_request_t,
+            callback: *mut _cef_callback_t,
+        ),
+    >,
+    pub on_web_socket_connected: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ),
+    >,
+    pub on_web_socket_message: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+}
+impl ServerHandler {
+    fn get_raw(&self) -> _cef_server_handler_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_server_handler_t> for ServerHandler {
+    fn from(value: _cef_server_handler_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_server_created: value.on_server_created,
+            on_server_destroyed: value.on_server_destroyed,
+            on_client_connected: value.on_client_connected,
+            on_client_disconnected: value.on_client_disconnected,
+            on_http_request: value.on_http_request,
+            on_web_socket_request: value.on_web_socket_request,
+            on_web_socket_connected: value.on_web_socket_connected,
+            on_web_socket_message: value.on_web_socket_message,
+        }
+    }
+}
+impl From<ServerHandler> for _cef_server_handler_t {
+    fn from(value: ServerHandler) -> Self {
+        Self {
+            base: value.base.into(),
+            on_server_created: value.on_server_created,
+            on_server_destroyed: value.on_server_destroyed,
+            on_client_connected: value.on_client_connected,
+            on_client_disconnected: value.on_client_disconnected,
+            on_http_request: value.on_http_request,
+            on_web_socket_request: value.on_web_socket_request,
+            on_web_socket_connected: value.on_web_socket_connected,
+            on_web_socket_message: value.on_web_socket_message,
+        }
+    }
+}
+impl Default for ServerHandler {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_shared_process_message_builder_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct SharedProcessMessageBuilder {
+    pub base: BaseRefCounted,
+    pub is_valid: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_shared_process_message_builder_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub size: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_shared_process_message_builder_t) -> usize,
+    >,
+    pub memory: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_shared_process_message_builder_t,
+        ) -> *mut ::std::os::raw::c_void,
+    >,
+    pub build: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_shared_process_message_builder_t,
+        ) -> *mut _cef_process_message_t,
+    >,
+}
+impl SharedProcessMessageBuilder {
+    fn get_raw(&self) -> _cef_shared_process_message_builder_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_shared_process_message_builder_t> for SharedProcessMessageBuilder {
+    fn from(value: _cef_shared_process_message_builder_t) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            size: value.size,
+            memory: value.memory,
+            build: value.build,
+        }
+    }
+}
+impl From<SharedProcessMessageBuilder> for _cef_shared_process_message_builder_t {
+    fn from(value: SharedProcessMessageBuilder) -> Self {
+        Self {
+            base: value.base.into(),
+            is_valid: value.is_valid,
+            size: value.size,
+            memory: value.memory,
+            build: value.build,
+        }
+    }
+}
+impl Default for SharedProcessMessageBuilder {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_thread_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct Thread {
+    pub base: BaseRefCounted,
+    pub get_task_runner: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_thread_t) -> *mut _cef_task_runner_t,
+    >,
+    pub get_platform_thread_id: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_thread_t) -> cef_platform_thread_id_t,
+    >,
+    pub stop: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_thread_t)>,
+    pub is_running: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_thread_t) -> ::std::os::raw::c_int,
+    >,
+}
+impl Thread {
+    fn get_raw(&self) -> _cef_thread_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_thread_t> for Thread {
+    fn from(value: _cef_thread_t) -> Self {
+        Self {
+            base: value.base.into(),
+            get_task_runner: value.get_task_runner,
+            get_platform_thread_id: value.get_platform_thread_id,
+            stop: value.stop,
+            is_running: value.is_running,
+        }
+    }
+}
+impl From<Thread> for _cef_thread_t {
+    fn from(value: Thread) -> Self {
+        Self {
+            base: value.base.into(),
+            get_task_runner: value.get_task_runner,
+            get_platform_thread_id: value.get_platform_thread_id,
+            stop: value.stop,
+            is_running: value.is_running,
+        }
+    }
+}
+impl Default for Thread {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_end_tracing_callback_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct EndTracingCallback {
+    pub base: BaseRefCounted,
+    pub on_end_tracing_complete: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_end_tracing_callback_t,
+            tracing_file: *const cef_string_t,
+        ),
+    >,
+}
+impl EndTracingCallback {
+    fn get_raw(&self) -> _cef_end_tracing_callback_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_end_tracing_callback_t> for EndTracingCallback {
+    fn from(value: _cef_end_tracing_callback_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_end_tracing_complete: value.on_end_tracing_complete,
+        }
+    }
+}
+impl From<EndTracingCallback> for _cef_end_tracing_callback_t {
+    fn from(value: EndTracingCallback) -> Self {
+        Self {
+            base: value.base.into(),
+            on_end_tracing_complete: value.on_end_tracing_complete,
+        }
+    }
+}
+impl Default for EndTracingCallback {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [`_cef_urlrequest_t`] for more documentation.
 #[derive(Clone, Debug)]
 pub struct Urlrequest {
@@ -11804,6 +12231,352 @@ impl Default for UrlrequestClient {
     }
 }
 
+/// See [`_cef_waitable_event_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct WaitableEvent {
+    pub base: BaseRefCounted,
+    pub reset: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_waitable_event_t)>,
+    pub signal:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_waitable_event_t)>,
+    pub is_signaled: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_waitable_event_t) -> ::std::os::raw::c_int,
+    >,
+    pub wait: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_waitable_event_t)>,
+    pub timed_wait: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_waitable_event_t,
+            max_ms: i64,
+        ) -> ::std::os::raw::c_int,
+    >,
+}
+impl WaitableEvent {
+    fn get_raw(&self) -> _cef_waitable_event_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_waitable_event_t> for WaitableEvent {
+    fn from(value: _cef_waitable_event_t) -> Self {
+        Self {
+            base: value.base.into(),
+            reset: value.reset,
+            signal: value.signal,
+            is_signaled: value.is_signaled,
+            wait: value.wait,
+            timed_wait: value.timed_wait,
+        }
+    }
+}
+impl From<WaitableEvent> for _cef_waitable_event_t {
+    fn from(value: WaitableEvent) -> Self {
+        Self {
+            base: value.base.into(),
+            reset: value.reset,
+            signal: value.signal,
+            is_signaled: value.is_signaled,
+            wait: value.wait,
+            timed_wait: value.timed_wait,
+        }
+    }
+}
+impl Default for WaitableEvent {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_xml_reader_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct XmlReader {
+    pub base: BaseRefCounted,
+    pub move_to_next_node: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub close: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub has_error: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_error: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_type: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_xml_node_type_t,
+    >,
+    pub get_depth: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_local_name: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_prefix: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_qualified_name: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_namespace_uri: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_base_uri: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_xml_lang: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub is_empty_element: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub has_value: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_value: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub has_attributes: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_attribute_count:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> usize>,
+    pub get_attribute_byindex: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_xml_reader_t,
+            index: ::std::os::raw::c_int,
+        ) -> cef_string_userfree_t,
+    >,
+    pub get_attribute_byqname: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_xml_reader_t,
+            qualifiedName: *const cef_string_t,
+        ) -> cef_string_userfree_t,
+    >,
+    pub get_attribute_bylname: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_xml_reader_t,
+            localName: *const cef_string_t,
+            namespaceURI: *const cef_string_t,
+        ) -> cef_string_userfree_t,
+    >,
+    pub get_inner_xml: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_outer_xml: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_line_number: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_attribute_byindex: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_xml_reader_t,
+            index: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_attribute_byqname: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_xml_reader_t,
+            qualifiedName: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_attribute_bylname: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_xml_reader_t,
+            localName: *const cef_string_t,
+            namespaceURI: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_first_attribute: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_next_attribute: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_carrying_element: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+}
+impl XmlReader {
+    fn get_raw(&self) -> _cef_xml_reader_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_xml_reader_t> for XmlReader {
+    fn from(value: _cef_xml_reader_t) -> Self {
+        Self {
+            base: value.base.into(),
+            move_to_next_node: value.move_to_next_node,
+            close: value.close,
+            has_error: value.has_error,
+            get_error: value.get_error,
+            get_type: value.get_type,
+            get_depth: value.get_depth,
+            get_local_name: value.get_local_name,
+            get_prefix: value.get_prefix,
+            get_qualified_name: value.get_qualified_name,
+            get_namespace_uri: value.get_namespace_uri,
+            get_base_uri: value.get_base_uri,
+            get_xml_lang: value.get_xml_lang,
+            is_empty_element: value.is_empty_element,
+            has_value: value.has_value,
+            get_value: value.get_value,
+            has_attributes: value.has_attributes,
+            get_attribute_count: value.get_attribute_count,
+            get_attribute_byindex: value.get_attribute_byindex,
+            get_attribute_byqname: value.get_attribute_byqname,
+            get_attribute_bylname: value.get_attribute_bylname,
+            get_inner_xml: value.get_inner_xml,
+            get_outer_xml: value.get_outer_xml,
+            get_line_number: value.get_line_number,
+            move_to_attribute_byindex: value.move_to_attribute_byindex,
+            move_to_attribute_byqname: value.move_to_attribute_byqname,
+            move_to_attribute_bylname: value.move_to_attribute_bylname,
+            move_to_first_attribute: value.move_to_first_attribute,
+            move_to_next_attribute: value.move_to_next_attribute,
+            move_to_carrying_element: value.move_to_carrying_element,
+        }
+    }
+}
+impl From<XmlReader> for _cef_xml_reader_t {
+    fn from(value: XmlReader) -> Self {
+        Self {
+            base: value.base.into(),
+            move_to_next_node: value.move_to_next_node,
+            close: value.close,
+            has_error: value.has_error,
+            get_error: value.get_error,
+            get_type: value.get_type,
+            get_depth: value.get_depth,
+            get_local_name: value.get_local_name,
+            get_prefix: value.get_prefix,
+            get_qualified_name: value.get_qualified_name,
+            get_namespace_uri: value.get_namespace_uri,
+            get_base_uri: value.get_base_uri,
+            get_xml_lang: value.get_xml_lang,
+            is_empty_element: value.is_empty_element,
+            has_value: value.has_value,
+            get_value: value.get_value,
+            has_attributes: value.has_attributes,
+            get_attribute_count: value.get_attribute_count,
+            get_attribute_byindex: value.get_attribute_byindex,
+            get_attribute_byqname: value.get_attribute_byqname,
+            get_attribute_bylname: value.get_attribute_bylname,
+            get_inner_xml: value.get_inner_xml,
+            get_outer_xml: value.get_outer_xml,
+            get_line_number: value.get_line_number,
+            move_to_attribute_byindex: value.move_to_attribute_byindex,
+            move_to_attribute_byqname: value.move_to_attribute_byqname,
+            move_to_attribute_bylname: value.move_to_attribute_bylname,
+            move_to_first_attribute: value.move_to_first_attribute,
+            move_to_next_attribute: value.move_to_next_attribute,
+            move_to_carrying_element: value.move_to_carrying_element,
+        }
+    }
+}
+impl Default for XmlReader {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_zip_reader_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct ZipReader {
+    pub base: BaseRefCounted,
+    pub move_to_first_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_next_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_zip_reader_t,
+            fileName: *const cef_string_t,
+            caseSensitive: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub close: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_file_name: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_file_size:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    pub get_file_last_modified: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> cef_basetime_t,
+    >,
+    pub open_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_zip_reader_t,
+            password: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub close_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub read_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_zip_reader_t,
+            buffer: *mut ::std::os::raw::c_void,
+            bufferSize: usize,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub tell:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    pub eof: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+}
+impl ZipReader {
+    fn get_raw(&self) -> _cef_zip_reader_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_zip_reader_t> for ZipReader {
+    fn from(value: _cef_zip_reader_t) -> Self {
+        Self {
+            base: value.base.into(),
+            move_to_first_file: value.move_to_first_file,
+            move_to_next_file: value.move_to_next_file,
+            move_to_file: value.move_to_file,
+            close: value.close,
+            get_file_name: value.get_file_name,
+            get_file_size: value.get_file_size,
+            get_file_last_modified: value.get_file_last_modified,
+            open_file: value.open_file,
+            close_file: value.close_file,
+            read_file: value.read_file,
+            tell: value.tell,
+            eof: value.eof,
+        }
+    }
+}
+impl From<ZipReader> for _cef_zip_reader_t {
+    fn from(value: ZipReader) -> Self {
+        Self {
+            base: value.base.into(),
+            move_to_first_file: value.move_to_first_file,
+            move_to_next_file: value.move_to_next_file,
+            move_to_file: value.move_to_file,
+            close: value.close,
+            get_file_name: value.get_file_name,
+            get_file_size: value.get_file_size,
+            get_file_last_modified: value.get_file_last_modified,
+            open_file: value.open_file,
+            close_file: value.close_file,
+            read_file: value.read_file,
+            tell: value.tell,
+            eof: value.eof,
+        }
+    }
+}
+impl Default for ZipReader {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [`_cef_layout_t`] for more documentation.
 #[derive(Clone, Debug)]
 pub struct Layout {
@@ -11888,36 +12661,6 @@ impl From<BoxLayout> for _cef_box_layout_t {
     }
 }
 impl Default for BoxLayout {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`_cef_fill_layout_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct FillLayout {
-    pub base: Layout,
-}
-impl FillLayout {
-    fn get_raw(&self) -> _cef_fill_layout_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_fill_layout_t> for FillLayout {
-    fn from(value: _cef_fill_layout_t) -> Self {
-        Self {
-            base: value.base.into(),
-        }
-    }
-}
-impl From<FillLayout> for _cef_fill_layout_t {
-    fn from(value: FillLayout) -> Self {
-        Self {
-            base: value.base.into(),
-        }
-    }
-}
-impl Default for FillLayout {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -12034,6 +12777,115 @@ impl From<ViewDelegate> for _cef_view_delegate_t {
     }
 }
 impl Default for ViewDelegate {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_browser_view_delegate_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct BrowserViewDelegate {
+    pub base: ViewDelegate,
+    pub on_browser_created: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+    pub on_browser_destroyed: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+    pub get_delegate_for_popup_browser_view: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            settings: *const _cef_browser_settings_t,
+            client: *mut _cef_client_t,
+            is_devtools: ::std::os::raw::c_int,
+        ) -> *mut _cef_browser_view_delegate_t,
+    >,
+    pub on_popup_browser_view_created: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            popup_browser_view: *mut _cef_browser_view_t,
+            is_devtools: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_chrome_toolbar_type: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> cef_chrome_toolbar_type_t,
+    >,
+    pub use_frameless_window_for_picture_in_picture: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub on_gesture_command: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            gesture_command: cef_gesture_command_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_browser_runtime_style: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_delegate_t) -> cef_runtime_style_t,
+    >,
+    pub allow_move_for_picture_in_picture: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+}
+impl BrowserViewDelegate {
+    fn get_raw(&self) -> _cef_browser_view_delegate_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_browser_view_delegate_t> for BrowserViewDelegate {
+    fn from(value: _cef_browser_view_delegate_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_browser_created: value.on_browser_created,
+            on_browser_destroyed: value.on_browser_destroyed,
+            get_delegate_for_popup_browser_view: value.get_delegate_for_popup_browser_view,
+            on_popup_browser_view_created: value.on_popup_browser_view_created,
+            get_chrome_toolbar_type: value.get_chrome_toolbar_type,
+            use_frameless_window_for_picture_in_picture: value
+                .use_frameless_window_for_picture_in_picture,
+            on_gesture_command: value.on_gesture_command,
+            get_browser_runtime_style: value.get_browser_runtime_style,
+            allow_move_for_picture_in_picture: value.allow_move_for_picture_in_picture,
+        }
+    }
+}
+impl From<BrowserViewDelegate> for _cef_browser_view_delegate_t {
+    fn from(value: BrowserViewDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            on_browser_created: value.on_browser_created,
+            on_browser_destroyed: value.on_browser_destroyed,
+            get_delegate_for_popup_browser_view: value.get_delegate_for_popup_browser_view,
+            on_popup_browser_view_created: value.on_popup_browser_view_created,
+            get_chrome_toolbar_type: value.get_chrome_toolbar_type,
+            use_frameless_window_for_picture_in_picture: value
+                .use_frameless_window_for_picture_in_picture,
+            on_gesture_command: value.on_gesture_command,
+            get_browser_runtime_style: value.get_browser_runtime_style,
+            allow_move_for_picture_in_picture: value.allow_move_for_picture_in_picture,
+        }
+    }
+}
+impl Default for BrowserViewDelegate {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -12351,6 +13203,59 @@ impl Default for View {
     }
 }
 
+/// See [`_cef_browser_view_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct BrowserView {
+    pub base: View,
+    pub get_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_browser_t,
+    >,
+    pub get_chrome_toolbar: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_view_t,
+    >,
+    pub set_prefer_accelerators: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_browser_view_t,
+            prefer_accelerators: ::std::os::raw::c_int,
+        ),
+    >,
+    pub get_runtime_style: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> cef_runtime_style_t,
+    >,
+}
+impl BrowserView {
+    fn get_raw(&self) -> _cef_browser_view_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_browser_view_t> for BrowserView {
+    fn from(value: _cef_browser_view_t) -> Self {
+        Self {
+            base: value.base.into(),
+            get_browser: value.get_browser,
+            get_chrome_toolbar: value.get_chrome_toolbar,
+            set_prefer_accelerators: value.set_prefer_accelerators,
+            get_runtime_style: value.get_runtime_style,
+        }
+    }
+}
+impl From<BrowserView> for _cef_browser_view_t {
+    fn from(value: BrowserView) -> Self {
+        Self {
+            base: value.base.into(),
+            get_browser: value.get_browser,
+            get_chrome_toolbar: value.get_chrome_toolbar,
+            set_prefer_accelerators: value.set_prefer_accelerators,
+            get_runtime_style: value.get_runtime_style,
+        }
+    }
+}
+impl Default for BrowserView {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [`_cef_button_t`] for more documentation.
 #[derive(Clone, Debug)]
 pub struct Button {
@@ -12446,6 +13351,97 @@ impl From<ButtonDelegate> for _cef_button_delegate_t {
     }
 }
 impl Default for ButtonDelegate {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_display_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct Display {
+    pub base: BaseRefCounted,
+    pub get_id:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> i64>,
+    pub get_device_scale_factor:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> f32>,
+    pub convert_point_to_pixels: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
+    >,
+    pub convert_point_from_pixels: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
+    >,
+    pub get_bounds:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
+    pub get_work_area:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
+    pub get_rotation: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> ::std::os::raw::c_int,
+    >,
+}
+impl Display {
+    fn get_raw(&self) -> _cef_display_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_display_t> for Display {
+    fn from(value: _cef_display_t) -> Self {
+        Self {
+            base: value.base.into(),
+            get_id: value.get_id,
+            get_device_scale_factor: value.get_device_scale_factor,
+            convert_point_to_pixels: value.convert_point_to_pixels,
+            convert_point_from_pixels: value.convert_point_from_pixels,
+            get_bounds: value.get_bounds,
+            get_work_area: value.get_work_area,
+            get_rotation: value.get_rotation,
+        }
+    }
+}
+impl From<Display> for _cef_display_t {
+    fn from(value: Display) -> Self {
+        Self {
+            base: value.base.into(),
+            get_id: value.get_id,
+            get_device_scale_factor: value.get_device_scale_factor,
+            convert_point_to_pixels: value.convert_point_to_pixels,
+            convert_point_from_pixels: value.convert_point_from_pixels,
+            get_bounds: value.get_bounds,
+            get_work_area: value.get_work_area,
+            get_rotation: value.get_rotation,
+        }
+    }
+}
+impl Default for Display {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_fill_layout_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct FillLayout {
+    pub base: Layout,
+}
+impl FillLayout {
+    fn get_raw(&self) -> _cef_fill_layout_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_fill_layout_t> for FillLayout {
+    fn from(value: _cef_fill_layout_t) -> Self {
+        Self {
+            base: value.base.into(),
+        }
+    }
+}
+impl From<FillLayout> for _cef_fill_layout_t {
+    fn from(value: FillLayout) -> Self {
+        Self {
+            base: value.base.into(),
+        }
+    }
+}
+impl Default for FillLayout {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -12673,541 +13669,6 @@ impl From<MenuButton> for _cef_menu_button_t {
     }
 }
 impl Default for MenuButton {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`_cef_textfield_delegate_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct TextfieldDelegate {
-    pub base: ViewDelegate,
-    pub on_key_event: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_textfield_delegate_t,
-            textfield: *mut _cef_textfield_t,
-            event: *const cef_key_event_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    pub on_after_user_action: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_textfield_delegate_t,
-            textfield: *mut _cef_textfield_t,
-        ),
-    >,
-}
-impl TextfieldDelegate {
-    fn get_raw(&self) -> _cef_textfield_delegate_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_textfield_delegate_t> for TextfieldDelegate {
-    fn from(value: _cef_textfield_delegate_t) -> Self {
-        Self {
-            base: value.base.into(),
-            on_key_event: value.on_key_event,
-            on_after_user_action: value.on_after_user_action,
-        }
-    }
-}
-impl From<TextfieldDelegate> for _cef_textfield_delegate_t {
-    fn from(value: TextfieldDelegate) -> Self {
-        Self {
-            base: value.base.into(),
-            on_key_event: value.on_key_event,
-            on_after_user_action: value.on_after_user_action,
-        }
-    }
-}
-impl Default for TextfieldDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`_cef_textfield_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct Textfield {
-    pub base: View,
-    pub set_password_input: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_textfield_t,
-            password_input: ::std::os::raw::c_int,
-        ),
-    >,
-    pub is_password_input: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
-    >,
-    pub set_read_only: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, read_only: ::std::os::raw::c_int),
-    >,
-    pub is_read_only: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
-    >,
-    pub get_text: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
-    >,
-    pub set_text: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    pub append_text: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    pub insert_or_replace_text: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    pub has_selection: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
-    >,
-    pub get_selected_text: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
-    >,
-    pub select_all: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, reversed: ::std::os::raw::c_int),
-    >,
-    pub clear_selection:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t)>,
-    pub get_selected_range: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_range_t,
-    >,
-    pub select_range: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, range: *const cef_range_t),
-    >,
-    pub get_cursor_position:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> usize>,
-    pub set_text_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    pub get_text_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_color_t,
-    >,
-    pub set_selection_text_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    pub get_selection_text_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_color_t,
-    >,
-    pub set_selection_background_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    pub get_selection_background_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_color_t,
-    >,
-    pub set_font_list: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, font_list: *const cef_string_t),
-    >,
-    pub apply_text_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_textfield_t,
-            color: cef_color_t,
-            range: *const cef_range_t,
-        ),
-    >,
-    pub apply_text_style: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_textfield_t,
-            style: cef_text_style_t,
-            add: ::std::os::raw::c_int,
-            range: *const cef_range_t,
-        ),
-    >,
-    pub is_command_enabled: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_textfield_t,
-            command_id: cef_text_field_commands_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    pub execute_command: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_textfield_t,
-            command_id: cef_text_field_commands_t,
-        ),
-    >,
-    pub clear_edit_history:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t)>,
-    pub set_placeholder_text: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    pub get_placeholder_text: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
-    >,
-    pub set_placeholder_text_color: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    pub set_accessible_name: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, name: *const cef_string_t),
-    >,
-}
-impl Textfield {
-    fn get_raw(&self) -> _cef_textfield_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_textfield_t> for Textfield {
-    fn from(value: _cef_textfield_t) -> Self {
-        Self {
-            base: value.base.into(),
-            set_password_input: value.set_password_input,
-            is_password_input: value.is_password_input,
-            set_read_only: value.set_read_only,
-            is_read_only: value.is_read_only,
-            get_text: value.get_text,
-            set_text: value.set_text,
-            append_text: value.append_text,
-            insert_or_replace_text: value.insert_or_replace_text,
-            has_selection: value.has_selection,
-            get_selected_text: value.get_selected_text,
-            select_all: value.select_all,
-            clear_selection: value.clear_selection,
-            get_selected_range: value.get_selected_range,
-            select_range: value.select_range,
-            get_cursor_position: value.get_cursor_position,
-            set_text_color: value.set_text_color,
-            get_text_color: value.get_text_color,
-            set_selection_text_color: value.set_selection_text_color,
-            get_selection_text_color: value.get_selection_text_color,
-            set_selection_background_color: value.set_selection_background_color,
-            get_selection_background_color: value.get_selection_background_color,
-            set_font_list: value.set_font_list,
-            apply_text_color: value.apply_text_color,
-            apply_text_style: value.apply_text_style,
-            is_command_enabled: value.is_command_enabled,
-            execute_command: value.execute_command,
-            clear_edit_history: value.clear_edit_history,
-            set_placeholder_text: value.set_placeholder_text,
-            get_placeholder_text: value.get_placeholder_text,
-            set_placeholder_text_color: value.set_placeholder_text_color,
-            set_accessible_name: value.set_accessible_name,
-        }
-    }
-}
-impl From<Textfield> for _cef_textfield_t {
-    fn from(value: Textfield) -> Self {
-        Self {
-            base: value.base.into(),
-            set_password_input: value.set_password_input,
-            is_password_input: value.is_password_input,
-            set_read_only: value.set_read_only,
-            is_read_only: value.is_read_only,
-            get_text: value.get_text,
-            set_text: value.set_text,
-            append_text: value.append_text,
-            insert_or_replace_text: value.insert_or_replace_text,
-            has_selection: value.has_selection,
-            get_selected_text: value.get_selected_text,
-            select_all: value.select_all,
-            clear_selection: value.clear_selection,
-            get_selected_range: value.get_selected_range,
-            select_range: value.select_range,
-            get_cursor_position: value.get_cursor_position,
-            set_text_color: value.set_text_color,
-            get_text_color: value.get_text_color,
-            set_selection_text_color: value.set_selection_text_color,
-            get_selection_text_color: value.get_selection_text_color,
-            set_selection_background_color: value.set_selection_background_color,
-            get_selection_background_color: value.get_selection_background_color,
-            set_font_list: value.set_font_list,
-            apply_text_color: value.apply_text_color,
-            apply_text_style: value.apply_text_style,
-            is_command_enabled: value.is_command_enabled,
-            execute_command: value.execute_command,
-            clear_edit_history: value.clear_edit_history,
-            set_placeholder_text: value.set_placeholder_text,
-            get_placeholder_text: value.get_placeholder_text,
-            set_placeholder_text_color: value.set_placeholder_text_color,
-            set_accessible_name: value.set_accessible_name,
-        }
-    }
-}
-impl Default for Textfield {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`_cef_browser_view_delegate_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct BrowserViewDelegate {
-    pub base: ViewDelegate,
-    pub on_browser_created: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-    pub on_browser_destroyed: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-    pub get_delegate_for_popup_browser_view: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            settings: *const _cef_browser_settings_t,
-            client: *mut _cef_client_t,
-            is_devtools: ::std::os::raw::c_int,
-        ) -> *mut _cef_browser_view_delegate_t,
-    >,
-    pub on_popup_browser_view_created: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            popup_browser_view: *mut _cef_browser_view_t,
-            is_devtools: ::std::os::raw::c_int,
-        ) -> ::std::os::raw::c_int,
-    >,
-    pub get_chrome_toolbar_type: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-        ) -> cef_chrome_toolbar_type_t,
-    >,
-    pub use_frameless_window_for_picture_in_picture: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    pub on_gesture_command: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            gesture_command: cef_gesture_command_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    pub get_browser_runtime_style: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_delegate_t) -> cef_runtime_style_t,
-    >,
-    pub allow_move_for_picture_in_picture: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-}
-impl BrowserViewDelegate {
-    fn get_raw(&self) -> _cef_browser_view_delegate_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_browser_view_delegate_t> for BrowserViewDelegate {
-    fn from(value: _cef_browser_view_delegate_t) -> Self {
-        Self {
-            base: value.base.into(),
-            on_browser_created: value.on_browser_created,
-            on_browser_destroyed: value.on_browser_destroyed,
-            get_delegate_for_popup_browser_view: value.get_delegate_for_popup_browser_view,
-            on_popup_browser_view_created: value.on_popup_browser_view_created,
-            get_chrome_toolbar_type: value.get_chrome_toolbar_type,
-            use_frameless_window_for_picture_in_picture: value
-                .use_frameless_window_for_picture_in_picture,
-            on_gesture_command: value.on_gesture_command,
-            get_browser_runtime_style: value.get_browser_runtime_style,
-            allow_move_for_picture_in_picture: value.allow_move_for_picture_in_picture,
-        }
-    }
-}
-impl From<BrowserViewDelegate> for _cef_browser_view_delegate_t {
-    fn from(value: BrowserViewDelegate) -> Self {
-        Self {
-            base: value.base.into(),
-            on_browser_created: value.on_browser_created,
-            on_browser_destroyed: value.on_browser_destroyed,
-            get_delegate_for_popup_browser_view: value.get_delegate_for_popup_browser_view,
-            on_popup_browser_view_created: value.on_popup_browser_view_created,
-            get_chrome_toolbar_type: value.get_chrome_toolbar_type,
-            use_frameless_window_for_picture_in_picture: value
-                .use_frameless_window_for_picture_in_picture,
-            on_gesture_command: value.on_gesture_command,
-            get_browser_runtime_style: value.get_browser_runtime_style,
-            allow_move_for_picture_in_picture: value.allow_move_for_picture_in_picture,
-        }
-    }
-}
-impl Default for BrowserViewDelegate {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`_cef_browser_view_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct BrowserView {
-    pub base: View,
-    pub get_browser: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_browser_t,
-    >,
-    pub get_chrome_toolbar: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_view_t,
-    >,
-    pub set_prefer_accelerators: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_browser_view_t,
-            prefer_accelerators: ::std::os::raw::c_int,
-        ),
-    >,
-    pub get_runtime_style: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> cef_runtime_style_t,
-    >,
-}
-impl BrowserView {
-    fn get_raw(&self) -> _cef_browser_view_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_browser_view_t> for BrowserView {
-    fn from(value: _cef_browser_view_t) -> Self {
-        Self {
-            base: value.base.into(),
-            get_browser: value.get_browser,
-            get_chrome_toolbar: value.get_chrome_toolbar,
-            set_prefer_accelerators: value.set_prefer_accelerators,
-            get_runtime_style: value.get_runtime_style,
-        }
-    }
-}
-impl From<BrowserView> for _cef_browser_view_t {
-    fn from(value: BrowserView) -> Self {
-        Self {
-            base: value.base.into(),
-            get_browser: value.get_browser,
-            get_chrome_toolbar: value.get_chrome_toolbar,
-            set_prefer_accelerators: value.set_prefer_accelerators,
-            get_runtime_style: value.get_runtime_style,
-        }
-    }
-}
-impl Default for BrowserView {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`_cef_scroll_view_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct ScrollView {
-    pub base: View,
-    pub set_content_view: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t, view: *mut _cef_view_t),
-    >,
-    pub get_content_view: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> *mut _cef_view_t,
-    >,
-    pub get_visible_content_rect: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> cef_rect_t,
-    >,
-    pub has_horizontal_scrollbar: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-    pub get_horizontal_scrollbar_height: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-    pub has_vertical_scrollbar: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-    pub get_vertical_scrollbar_width: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-}
-impl ScrollView {
-    fn get_raw(&self) -> _cef_scroll_view_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_scroll_view_t> for ScrollView {
-    fn from(value: _cef_scroll_view_t) -> Self {
-        Self {
-            base: value.base.into(),
-            set_content_view: value.set_content_view,
-            get_content_view: value.get_content_view,
-            get_visible_content_rect: value.get_visible_content_rect,
-            has_horizontal_scrollbar: value.has_horizontal_scrollbar,
-            get_horizontal_scrollbar_height: value.get_horizontal_scrollbar_height,
-            has_vertical_scrollbar: value.has_vertical_scrollbar,
-            get_vertical_scrollbar_width: value.get_vertical_scrollbar_width,
-        }
-    }
-}
-impl From<ScrollView> for _cef_scroll_view_t {
-    fn from(value: ScrollView) -> Self {
-        Self {
-            base: value.base.into(),
-            set_content_view: value.set_content_view,
-            get_content_view: value.get_content_view,
-            get_visible_content_rect: value.get_visible_content_rect,
-            has_horizontal_scrollbar: value.has_horizontal_scrollbar,
-            get_horizontal_scrollbar_height: value.get_horizontal_scrollbar_height,
-            has_vertical_scrollbar: value.has_vertical_scrollbar,
-            get_vertical_scrollbar_width: value.get_vertical_scrollbar_width,
-        }
-    }
-}
-impl Default for ScrollView {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [`_cef_display_t`] for more documentation.
-#[derive(Clone, Debug)]
-pub struct Display {
-    pub base: BaseRefCounted,
-    pub get_id:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> i64>,
-    pub get_device_scale_factor:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> f32>,
-    pub convert_point_to_pixels: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
-    >,
-    pub convert_point_from_pixels: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
-    >,
-    pub get_bounds:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
-    pub get_work_area:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
-    pub get_rotation: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_display_t) -> ::std::os::raw::c_int,
-    >,
-}
-impl Display {
-    fn get_raw(&self) -> _cef_display_t {
-        self.clone().into()
-    }
-}
-impl From<_cef_display_t> for Display {
-    fn from(value: _cef_display_t) -> Self {
-        Self {
-            base: value.base.into(),
-            get_id: value.get_id,
-            get_device_scale_factor: value.get_device_scale_factor,
-            convert_point_to_pixels: value.convert_point_to_pixels,
-            convert_point_from_pixels: value.convert_point_from_pixels,
-            get_bounds: value.get_bounds,
-            get_work_area: value.get_work_area,
-            get_rotation: value.get_rotation,
-        }
-    }
-}
-impl From<Display> for _cef_display_t {
-    fn from(value: Display) -> Self {
-        Self {
-            base: value.base.into(),
-            get_id: value.get_id,
-            get_device_scale_factor: value.get_device_scale_factor,
-            convert_point_to_pixels: value.convert_point_to_pixels,
-            convert_point_from_pixels: value.convert_point_from_pixels,
-            get_bounds: value.get_bounds,
-            get_work_area: value.get_work_area,
-            get_rotation: value.get_rotation,
-        }
-    }
-}
-impl Default for Display {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -13476,6 +13937,318 @@ impl From<Panel> for _cef_panel_t {
     }
 }
 impl Default for Panel {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_scroll_view_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct ScrollView {
+    pub base: View,
+    pub set_content_view: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t, view: *mut _cef_view_t),
+    >,
+    pub get_content_view: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> *mut _cef_view_t,
+    >,
+    pub get_visible_content_rect: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> cef_rect_t,
+    >,
+    pub has_horizontal_scrollbar: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_horizontal_scrollbar_height: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+    pub has_vertical_scrollbar: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_vertical_scrollbar_width: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+}
+impl ScrollView {
+    fn get_raw(&self) -> _cef_scroll_view_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_scroll_view_t> for ScrollView {
+    fn from(value: _cef_scroll_view_t) -> Self {
+        Self {
+            base: value.base.into(),
+            set_content_view: value.set_content_view,
+            get_content_view: value.get_content_view,
+            get_visible_content_rect: value.get_visible_content_rect,
+            has_horizontal_scrollbar: value.has_horizontal_scrollbar,
+            get_horizontal_scrollbar_height: value.get_horizontal_scrollbar_height,
+            has_vertical_scrollbar: value.has_vertical_scrollbar,
+            get_vertical_scrollbar_width: value.get_vertical_scrollbar_width,
+        }
+    }
+}
+impl From<ScrollView> for _cef_scroll_view_t {
+    fn from(value: ScrollView) -> Self {
+        Self {
+            base: value.base.into(),
+            set_content_view: value.set_content_view,
+            get_content_view: value.get_content_view,
+            get_visible_content_rect: value.get_visible_content_rect,
+            has_horizontal_scrollbar: value.has_horizontal_scrollbar,
+            get_horizontal_scrollbar_height: value.get_horizontal_scrollbar_height,
+            has_vertical_scrollbar: value.has_vertical_scrollbar,
+            get_vertical_scrollbar_width: value.get_vertical_scrollbar_width,
+        }
+    }
+}
+impl Default for ScrollView {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_textfield_delegate_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct TextfieldDelegate {
+    pub base: ViewDelegate,
+    pub on_key_event: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_textfield_delegate_t,
+            textfield: *mut _cef_textfield_t,
+            event: *const cef_key_event_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub on_after_user_action: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_textfield_delegate_t,
+            textfield: *mut _cef_textfield_t,
+        ),
+    >,
+}
+impl TextfieldDelegate {
+    fn get_raw(&self) -> _cef_textfield_delegate_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_textfield_delegate_t> for TextfieldDelegate {
+    fn from(value: _cef_textfield_delegate_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_key_event: value.on_key_event,
+            on_after_user_action: value.on_after_user_action,
+        }
+    }
+}
+impl From<TextfieldDelegate> for _cef_textfield_delegate_t {
+    fn from(value: TextfieldDelegate) -> Self {
+        Self {
+            base: value.base.into(),
+            on_key_event: value.on_key_event,
+            on_after_user_action: value.on_after_user_action,
+        }
+    }
+}
+impl Default for TextfieldDelegate {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [`_cef_textfield_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct Textfield {
+    pub base: View,
+    pub set_password_input: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_textfield_t,
+            password_input: ::std::os::raw::c_int,
+        ),
+    >,
+    pub is_password_input: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
+    >,
+    pub set_read_only: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, read_only: ::std::os::raw::c_int),
+    >,
+    pub is_read_only: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_text: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
+    >,
+    pub set_text: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    pub append_text: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    pub insert_or_replace_text: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    pub has_selection: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_selected_text: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
+    >,
+    pub select_all: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, reversed: ::std::os::raw::c_int),
+    >,
+    pub clear_selection:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t)>,
+    pub get_selected_range: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_range_t,
+    >,
+    pub select_range: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, range: *const cef_range_t),
+    >,
+    pub get_cursor_position:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> usize>,
+    pub set_text_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    pub get_text_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_color_t,
+    >,
+    pub set_selection_text_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    pub get_selection_text_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_color_t,
+    >,
+    pub set_selection_background_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    pub get_selection_background_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_color_t,
+    >,
+    pub set_font_list: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, font_list: *const cef_string_t),
+    >,
+    pub apply_text_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_textfield_t,
+            color: cef_color_t,
+            range: *const cef_range_t,
+        ),
+    >,
+    pub apply_text_style: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_textfield_t,
+            style: cef_text_style_t,
+            add: ::std::os::raw::c_int,
+            range: *const cef_range_t,
+        ),
+    >,
+    pub is_command_enabled: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_textfield_t,
+            command_id: cef_text_field_commands_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub execute_command: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_textfield_t,
+            command_id: cef_text_field_commands_t,
+        ),
+    >,
+    pub clear_edit_history:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t)>,
+    pub set_placeholder_text: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    pub get_placeholder_text: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
+    >,
+    pub set_placeholder_text_color: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    pub set_accessible_name: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_textfield_t, name: *const cef_string_t),
+    >,
+}
+impl Textfield {
+    fn get_raw(&self) -> _cef_textfield_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_textfield_t> for Textfield {
+    fn from(value: _cef_textfield_t) -> Self {
+        Self {
+            base: value.base.into(),
+            set_password_input: value.set_password_input,
+            is_password_input: value.is_password_input,
+            set_read_only: value.set_read_only,
+            is_read_only: value.is_read_only,
+            get_text: value.get_text,
+            set_text: value.set_text,
+            append_text: value.append_text,
+            insert_or_replace_text: value.insert_or_replace_text,
+            has_selection: value.has_selection,
+            get_selected_text: value.get_selected_text,
+            select_all: value.select_all,
+            clear_selection: value.clear_selection,
+            get_selected_range: value.get_selected_range,
+            select_range: value.select_range,
+            get_cursor_position: value.get_cursor_position,
+            set_text_color: value.set_text_color,
+            get_text_color: value.get_text_color,
+            set_selection_text_color: value.set_selection_text_color,
+            get_selection_text_color: value.get_selection_text_color,
+            set_selection_background_color: value.set_selection_background_color,
+            get_selection_background_color: value.get_selection_background_color,
+            set_font_list: value.set_font_list,
+            apply_text_color: value.apply_text_color,
+            apply_text_style: value.apply_text_style,
+            is_command_enabled: value.is_command_enabled,
+            execute_command: value.execute_command,
+            clear_edit_history: value.clear_edit_history,
+            set_placeholder_text: value.set_placeholder_text,
+            get_placeholder_text: value.get_placeholder_text,
+            set_placeholder_text_color: value.set_placeholder_text_color,
+            set_accessible_name: value.set_accessible_name,
+        }
+    }
+}
+impl From<Textfield> for _cef_textfield_t {
+    fn from(value: Textfield) -> Self {
+        Self {
+            base: value.base.into(),
+            set_password_input: value.set_password_input,
+            is_password_input: value.is_password_input,
+            set_read_only: value.set_read_only,
+            is_read_only: value.is_read_only,
+            get_text: value.get_text,
+            set_text: value.set_text,
+            append_text: value.append_text,
+            insert_or_replace_text: value.insert_or_replace_text,
+            has_selection: value.has_selection,
+            get_selected_text: value.get_selected_text,
+            select_all: value.select_all,
+            clear_selection: value.clear_selection,
+            get_selected_range: value.get_selected_range,
+            select_range: value.select_range,
+            get_cursor_position: value.get_cursor_position,
+            set_text_color: value.set_text_color,
+            get_text_color: value.get_text_color,
+            set_selection_text_color: value.set_selection_text_color,
+            get_selection_text_color: value.get_selection_text_color,
+            set_selection_background_color: value.set_selection_background_color,
+            get_selection_background_color: value.get_selection_background_color,
+            set_font_list: value.set_font_list,
+            apply_text_color: value.apply_text_color,
+            apply_text_style: value.apply_text_style,
+            is_command_enabled: value.is_command_enabled,
+            execute_command: value.execute_command,
+            clear_edit_history: value.clear_edit_history,
+            set_placeholder_text: value.set_placeholder_text,
+            get_placeholder_text: value.get_placeholder_text,
+            set_placeholder_text_color: value.set_placeholder_text_color,
+            set_accessible_name: value.set_accessible_name,
+        }
+    }
+}
+impl Default for Textfield {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -21767,6 +22540,673 @@ pub fn set_nestable_tasks_allowed(allowed: ::std::os::raw::c_int) {
     }
 }
 
+/// See [`cef_crash_reporting_enabled`] for more documentation.
+pub fn crash_reporting_enabled() -> ::std::os::raw::c_int {
+    unsafe {
+        let result = cef_crash_reporting_enabled();
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_set_crash_key_value`] for more documentation.
+pub fn set_crash_key_value(key: Option<&CefString>, value: Option<&CefString>) {
+    unsafe {
+        let (arg_key, arg_value) = (key, value);
+        let arg_key = arg_key
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_value = arg_value
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        cef_set_crash_key_value(arg_key, arg_value);
+    }
+}
+
+/// See [`cef_create_directory`] for more documentation.
+pub fn create_directory(full_path: Option<&CefString>) -> ::std::os::raw::c_int {
+    unsafe {
+        let arg_full_path = full_path;
+        let arg_full_path = arg_full_path
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_create_directory(arg_full_path);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_get_temp_directory`] for more documentation.
+pub fn get_temp_directory(temp_dir: Option<&mut CefString>) -> ::std::os::raw::c_int {
+    unsafe {
+        let arg_temp_dir = temp_dir;
+        let arg_temp_dir = arg_temp_dir
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_get_temp_directory(arg_temp_dir);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_create_new_temp_directory`] for more documentation.
+pub fn create_new_temp_directory(
+    prefix: Option<&CefString>,
+    new_temp_path: Option<&mut CefString>,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_prefix, arg_new_temp_path) = (prefix, new_temp_path);
+        let arg_prefix = arg_prefix
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_new_temp_path = arg_new_temp_path
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_create_new_temp_directory(arg_prefix, arg_new_temp_path);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_create_temp_directory_in_directory`] for more documentation.
+pub fn create_temp_directory_in_directory(
+    base_dir: Option<&CefString>,
+    prefix: Option<&CefString>,
+    new_dir: Option<&mut CefString>,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_base_dir, arg_prefix, arg_new_dir) = (base_dir, prefix, new_dir);
+        let arg_base_dir = arg_base_dir
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_prefix = arg_prefix
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_new_dir = arg_new_dir
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_create_temp_directory_in_directory(arg_base_dir, arg_prefix, arg_new_dir);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_directory_exists`] for more documentation.
+pub fn directory_exists(path: Option<&CefString>) -> ::std::os::raw::c_int {
+    unsafe {
+        let arg_path = path;
+        let arg_path = arg_path
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_directory_exists(arg_path);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_delete_file`] for more documentation.
+pub fn delete_file(
+    path: Option<&CefString>,
+    recursive: ::std::os::raw::c_int,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_path, arg_recursive) = (path, recursive);
+        let arg_path = arg_path
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_delete_file(arg_path, arg_recursive);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_zip_directory`] for more documentation.
+pub fn zip_directory(
+    src_dir: Option<&CefString>,
+    dest_file: Option<&CefString>,
+    include_hidden_files: ::std::os::raw::c_int,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_src_dir, arg_dest_file, arg_include_hidden_files) =
+            (src_dir, dest_file, include_hidden_files);
+        let arg_src_dir = arg_src_dir
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_dest_file = arg_dest_file
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_zip_directory(arg_src_dir, arg_dest_file, arg_include_hidden_files);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_load_crlsets_file`] for more documentation.
+pub fn load_crlsets_file(path: Option<&CefString>) {
+    unsafe {
+        let arg_path = path;
+        let arg_path = arg_path
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        cef_load_crlsets_file(arg_path);
+    }
+}
+
+/// See [`cef_is_rtl`] for more documentation.
+pub fn is_rtl() -> ::std::os::raw::c_int {
+    unsafe {
+        let result = cef_is_rtl();
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_add_cross_origin_whitelist_entry`] for more documentation.
+pub fn add_cross_origin_whitelist_entry(
+    source_origin: Option<&CefString>,
+    target_protocol: Option<&CefString>,
+    target_domain: Option<&CefString>,
+    allow_target_subdomains: ::std::os::raw::c_int,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (
+            arg_source_origin,
+            arg_target_protocol,
+            arg_target_domain,
+            arg_allow_target_subdomains,
+        ) = (
+            source_origin,
+            target_protocol,
+            target_domain,
+            allow_target_subdomains,
+        );
+        let arg_source_origin = arg_source_origin
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_target_protocol = arg_target_protocol
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_target_domain = arg_target_domain
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_add_cross_origin_whitelist_entry(
+            arg_source_origin,
+            arg_target_protocol,
+            arg_target_domain,
+            arg_allow_target_subdomains,
+        );
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_remove_cross_origin_whitelist_entry`] for more documentation.
+pub fn remove_cross_origin_whitelist_entry(
+    source_origin: Option<&CefString>,
+    target_protocol: Option<&CefString>,
+    target_domain: Option<&CefString>,
+    allow_target_subdomains: ::std::os::raw::c_int,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (
+            arg_source_origin,
+            arg_target_protocol,
+            arg_target_domain,
+            arg_allow_target_subdomains,
+        ) = (
+            source_origin,
+            target_protocol,
+            target_domain,
+            allow_target_subdomains,
+        );
+        let arg_source_origin = arg_source_origin
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_target_protocol = arg_target_protocol
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_target_domain = arg_target_domain
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_remove_cross_origin_whitelist_entry(
+            arg_source_origin,
+            arg_target_protocol,
+            arg_target_domain,
+            arg_allow_target_subdomains,
+        );
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_clear_cross_origin_whitelist`] for more documentation.
+pub fn clear_cross_origin_whitelist() -> ::std::os::raw::c_int {
+    unsafe {
+        let result = cef_clear_cross_origin_whitelist();
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_resolve_url`] for more documentation.
+pub fn resolve_url(
+    base_url: Option<&CefString>,
+    relative_url: Option<&CefString>,
+    resolved_url: Option<&mut CefString>,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_base_url, arg_relative_url, arg_resolved_url) =
+            (base_url, relative_url, resolved_url);
+        let arg_base_url = arg_base_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_relative_url = arg_relative_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_resolved_url = arg_resolved_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_resolve_url(arg_base_url, arg_relative_url, arg_resolved_url);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_parse_url`] for more documentation.
+pub fn parse_url(url: Option<&CefString>, parts: Option<&mut Urlparts>) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_url, arg_parts) = (url, parts);
+        let arg_url = arg_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let mut arg_parts = arg_parts.cloned().map(|arg| arg.into());
+        let arg_parts = arg_parts
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_parse_url(arg_url, arg_parts);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_create_url`] for more documentation.
+pub fn create_url(parts: Option<&Urlparts>, url: Option<&mut CefString>) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_parts, arg_url) = (parts, url);
+        let arg_parts = arg_parts.cloned().map(|arg| arg.into());
+        let arg_parts = arg_parts
+            .as_ref()
+            .map(std::ptr::from_ref)
+            .unwrap_or(std::ptr::null());
+        let arg_url = arg_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_create_url(arg_parts, arg_url);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_format_url_for_security_display`] for more documentation.
+pub fn format_url_for_security_display(origin_url: Option<&CefString>) -> CefStringUserfree {
+    unsafe {
+        let arg_origin_url = origin_url;
+        let arg_origin_url = arg_origin_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_format_url_for_security_display(arg_origin_url);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_get_mime_type`] for more documentation.
+pub fn get_mime_type(extension: Option<&CefString>) -> CefStringUserfree {
+    unsafe {
+        let arg_extension = extension;
+        let arg_extension = arg_extension
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_get_mime_type(arg_extension);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_get_extensions_for_mime_type`] for more documentation.
+pub fn get_extensions_for_mime_type(
+    mime_type: Option<&CefString>,
+    extensions: Option<&mut CefStringList>,
+) {
+    unsafe {
+        let (arg_mime_type, arg_extensions) = (mime_type, extensions);
+        let arg_mime_type = arg_mime_type
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_extensions = arg_extensions
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        cef_get_extensions_for_mime_type(arg_mime_type, arg_extensions);
+    }
+}
+
+/// See [`cef_base64_encode`] for more documentation.
+pub fn base64_encode(data: Option<&[u8]>) -> CefStringUserfree {
+    unsafe {
+        let arg_data = data;
+        let arg_data_size = arg_data.as_ref().map(|arg| arg.len()).unwrap_or_default();
+        let arg_data = arg_data
+            .and_then(|arg| {
+                if arg.is_empty() {
+                    None
+                } else {
+                    Some(arg.as_ptr().cast())
+                }
+            })
+            .unwrap_or(std::ptr::null());
+        let result = cef_base64_encode(arg_data, arg_data_size);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_base64_decode`] for more documentation.
+pub fn base64_decode(data: Option<&CefString>) -> Option<BinaryValue> {
+    unsafe {
+        let arg_data = data;
+        let arg_data = arg_data
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_base64_decode(arg_data);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_uriencode`] for more documentation.
+pub fn uriencode(text: Option<&CefString>, use_plus: ::std::os::raw::c_int) -> CefStringUserfree {
+    unsafe {
+        let (arg_text, arg_use_plus) = (text, use_plus);
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_uriencode(arg_text, arg_use_plus);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_uridecode`] for more documentation.
+pub fn uridecode(
+    text: Option<&CefString>,
+    convert_to_utf_8: ::std::os::raw::c_int,
+    unescape_rule: UriUnescapeRule,
+) -> CefStringUserfree {
+    unsafe {
+        let (arg_text, arg_convert_to_utf_8, arg_unescape_rule) =
+            (text, convert_to_utf_8, unescape_rule);
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_unescape_rule = arg_unescape_rule.into_raw();
+        let result = cef_uridecode(arg_text, arg_convert_to_utf_8, arg_unescape_rule);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_parse_json`] for more documentation.
+pub fn parse_json(json_string: Option<&CefString>, options: JsonParserOptions) -> Option<Value> {
+    unsafe {
+        let (arg_json_string, arg_options) = (json_string, options);
+        let arg_json_string = arg_json_string
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_options = arg_options.into_raw();
+        let result = cef_parse_json(arg_json_string, arg_options);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_parse_json_buffer`] for more documentation.
+pub fn parse_json_buffer(json: Option<&[u8]>, options: JsonParserOptions) -> Option<Value> {
+    unsafe {
+        let (arg_json, arg_options) = (json, options);
+        let arg_json_size = arg_json.as_ref().map(|arg| arg.len()).unwrap_or_default();
+        let arg_json = arg_json
+            .and_then(|arg| {
+                if arg.is_empty() {
+                    None
+                } else {
+                    Some(arg.as_ptr().cast())
+                }
+            })
+            .unwrap_or(std::ptr::null());
+        let arg_options = arg_options.into_raw();
+        let result = cef_parse_json_buffer(arg_json, arg_json_size, arg_options);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_parse_jsonand_return_error`] for more documentation.
+pub fn parse_jsonand_return_error(
+    json_string: Option<&CefString>,
+    options: JsonParserOptions,
+    error_msg_out: Option<&mut CefString>,
+) -> Option<Value> {
+    unsafe {
+        let (arg_json_string, arg_options, arg_error_msg_out) =
+            (json_string, options, error_msg_out);
+        let arg_json_string = arg_json_string
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_options = arg_options.into_raw();
+        let arg_error_msg_out = arg_error_msg_out
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result =
+            cef_parse_jsonand_return_error(arg_json_string, arg_options, arg_error_msg_out);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_write_json`] for more documentation.
+pub fn write_json(node: Option<&mut Value>, options: JsonWriterOptions) -> CefStringUserfree {
+    unsafe {
+        let (arg_node, arg_options) = (node, options);
+        let mut arg_node = arg_node.cloned().map(|arg| arg.into());
+        let arg_node = arg_node
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let arg_options = arg_options.into_raw();
+        let result = cef_write_json(arg_node, arg_options);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_get_path`] for more documentation.
+pub fn get_path(key: PathKey, path: Option<&mut CefString>) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_key, arg_path) = (key, path);
+        let arg_key = arg_key.into_raw();
+        let arg_path = arg_path
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_get_path(arg_key, arg_path);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_launch_process`] for more documentation.
+pub fn launch_process(command_line: Option<&mut CommandLine>) -> ::std::os::raw::c_int {
+    unsafe {
+        let arg_command_line = command_line;
+        let mut arg_command_line = arg_command_line.cloned().map(|arg| arg.into());
+        let arg_command_line = arg_command_line
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_launch_process(arg_command_line);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_resource_bundle_get_global`] for more documentation.
+pub fn resource_bundle_get_global() -> Option<ResourceBundle> {
+    unsafe {
+        let result = cef_resource_bundle_get_global();
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_server_create`] for more documentation.
+pub fn server_create(
+    address: Option<&CefString>,
+    port: u16,
+    backlog: ::std::os::raw::c_int,
+    handler: Option<&mut ServerHandler>,
+) {
+    unsafe {
+        let (arg_address, arg_port, arg_backlog, arg_handler) = (address, port, backlog, handler);
+        let arg_address = arg_address
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let mut arg_handler = arg_handler.cloned().map(|arg| arg.into());
+        let arg_handler = arg_handler
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        cef_server_create(arg_address, arg_port, arg_backlog, arg_handler);
+    }
+}
+
+/// See [`cef_shared_process_message_builder_create`] for more documentation.
+pub fn shared_process_message_builder_create(
+    name: Option<&CefString>,
+    byte_size: usize,
+) -> Option<SharedProcessMessageBuilder> {
+    unsafe {
+        let (arg_name, arg_byte_size) = (name, byte_size);
+        let arg_name = arg_name
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_shared_process_message_builder_create(arg_name, arg_byte_size);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_get_current_platform_thread_id`] for more documentation.
+pub fn get_current_platform_thread_id() -> cef_platform_thread_id_t {
+    unsafe {
+        let result = cef_get_current_platform_thread_id();
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_get_current_platform_thread_handle`] for more documentation.
+pub fn get_current_platform_thread_handle() -> cef_platform_thread_handle_t {
+    unsafe {
+        let result = cef_get_current_platform_thread_handle();
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_thread_create`] for more documentation.
+pub fn thread_create(
+    display_name: Option<&CefString>,
+    priority: ThreadPriority,
+    message_loop_type: MessageLoopType,
+    stoppable: ::std::os::raw::c_int,
+    com_init_mode: ComInitMode,
+) -> Option<Thread> {
+    unsafe {
+        let (
+            arg_display_name,
+            arg_priority,
+            arg_message_loop_type,
+            arg_stoppable,
+            arg_com_init_mode,
+        ) = (
+            display_name,
+            priority,
+            message_loop_type,
+            stoppable,
+            com_init_mode,
+        );
+        let arg_display_name = arg_display_name
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_priority = arg_priority.into_raw();
+        let arg_message_loop_type = arg_message_loop_type.into_raw();
+        let arg_com_init_mode = arg_com_init_mode.into_raw();
+        let result = cef_thread_create(
+            arg_display_name,
+            arg_priority,
+            arg_message_loop_type,
+            arg_stoppable,
+            arg_com_init_mode,
+        );
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_begin_tracing`] for more documentation.
+pub fn begin_tracing(
+    categories: Option<&CefString>,
+    callback: Option<&mut CompletionCallback>,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_categories, arg_callback) = (categories, callback);
+        let arg_categories = arg_categories
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let mut arg_callback = arg_callback.cloned().map(|arg| arg.into());
+        let arg_callback = arg_callback
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_begin_tracing(arg_categories, arg_callback);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_end_tracing`] for more documentation.
+pub fn end_tracing(
+    tracing_file: Option<&CefString>,
+    callback: Option<&mut EndTracingCallback>,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_tracing_file, arg_callback) = (tracing_file, callback);
+        let arg_tracing_file = arg_tracing_file
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let mut arg_callback = arg_callback.cloned().map(|arg| arg.into());
+        let arg_callback = arg_callback
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_end_tracing(arg_tracing_file, arg_callback);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_now_from_system_trace_time`] for more documentation.
+pub fn now_from_system_trace_time() -> i64 {
+    unsafe {
+        let result = cef_now_from_system_trace_time();
+        result.wrap_result()
+    }
+}
+
 /// See [`cef_urlrequest_create`] for more documentation.
 pub fn urlrequest_create(
     request: Option<&mut Request>,
@@ -21799,22 +23239,14 @@ pub fn urlrequest_create(
     }
 }
 
-/// See [`cef_label_button_create`] for more documentation.
-pub fn label_button_create(
-    delegate: Option<&mut ButtonDelegate>,
-    text: Option<&CefString>,
-) -> Option<LabelButton> {
+/// See [`cef_waitable_event_create`] for more documentation.
+pub fn waitable_event_create(
+    automatic_reset: ::std::os::raw::c_int,
+    initially_signaled: ::std::os::raw::c_int,
+) -> Option<WaitableEvent> {
     unsafe {
-        let (arg_delegate, arg_text) = (delegate, text);
-        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
-        let arg_delegate = arg_delegate
-            .as_mut()
-            .map(std::ptr::from_mut)
-            .unwrap_or(std::ptr::null_mut());
-        let arg_text = arg_text
-            .map(|arg| arg.into_raw())
-            .unwrap_or(std::ptr::null());
-        let result = cef_label_button_create(arg_delegate, arg_text);
+        let (arg_automatic_reset, arg_initially_signaled) = (automatic_reset, initially_signaled);
+        let result = cef_waitable_event_create(arg_automatic_reset, arg_initially_signaled);
         if result.is_null() {
             None
         } else {
@@ -21823,22 +23255,24 @@ pub fn label_button_create(
     }
 }
 
-/// See [`cef_menu_button_create`] for more documentation.
-pub fn menu_button_create(
-    delegate: Option<&mut MenuButtonDelegate>,
-    text: Option<&CefString>,
-) -> Option<MenuButton> {
+/// See [`cef_xml_reader_create`] for more documentation.
+pub fn xml_reader_create(
+    stream: Option<&mut StreamReader>,
+    encoding_type: XmlEncodingType,
+    uri: Option<&CefString>,
+) -> Option<XmlReader> {
     unsafe {
-        let (arg_delegate, arg_text) = (delegate, text);
-        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
-        let arg_delegate = arg_delegate
+        let (arg_stream, arg_encoding_type, arg_uri) = (stream, encoding_type, uri);
+        let mut arg_stream = arg_stream.cloned().map(|arg| arg.into());
+        let arg_stream = arg_stream
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let arg_text = arg_text
+        let arg_encoding_type = arg_encoding_type.into_raw();
+        let arg_uri = arg_uri
             .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
-        let result = cef_menu_button_create(arg_delegate, arg_text);
+        let result = cef_xml_reader_create(arg_stream, arg_encoding_type, arg_uri);
         if result.is_null() {
             None
         } else {
@@ -21847,16 +23281,16 @@ pub fn menu_button_create(
     }
 }
 
-/// See [`cef_textfield_create`] for more documentation.
-pub fn textfield_create(delegate: Option<&mut TextfieldDelegate>) -> Option<Textfield> {
+/// See [`cef_zip_reader_create`] for more documentation.
+pub fn zip_reader_create(stream: Option<&mut StreamReader>) -> Option<ZipReader> {
     unsafe {
-        let arg_delegate = delegate;
-        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
-        let arg_delegate = arg_delegate
+        let arg_stream = stream;
+        let mut arg_stream = arg_stream.cloned().map(|arg| arg.into());
+        let arg_stream = arg_stream
             .as_mut()
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
-        let result = cef_textfield_create(arg_delegate);
+        let result = cef_zip_reader_create(arg_stream);
         if result.is_null() {
             None
         } else {
@@ -21931,24 +23365,6 @@ pub fn browser_view_get_for_browser(browser: Option<&mut Browser>) -> Option<Bro
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_browser_view_get_for_browser(arg_browser);
-        if result.is_null() {
-            None
-        } else {
-            Some(result.wrap_result())
-        }
-    }
-}
-
-/// See [`cef_scroll_view_create`] for more documentation.
-pub fn scroll_view_create(delegate: Option<&mut ViewDelegate>) -> Option<ScrollView> {
-    unsafe {
-        let arg_delegate = delegate;
-        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
-        let arg_delegate = arg_delegate
-            .as_mut()
-            .map(std::ptr::from_mut)
-            .unwrap_or(std::ptr::null_mut());
-        let result = cef_scroll_view_create(arg_delegate);
         if result.is_null() {
             None
         } else {
@@ -22119,6 +23535,54 @@ pub fn display_convert_screen_rect_from_pixels(rect: Option<&Rect>) -> Rect {
     }
 }
 
+/// See [`cef_label_button_create`] for more documentation.
+pub fn label_button_create(
+    delegate: Option<&mut ButtonDelegate>,
+    text: Option<&CefString>,
+) -> Option<LabelButton> {
+    unsafe {
+        let (arg_delegate, arg_text) = (delegate, text);
+        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
+        let arg_delegate = arg_delegate
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_label_button_create(arg_delegate, arg_text);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_menu_button_create`] for more documentation.
+pub fn menu_button_create(
+    delegate: Option<&mut MenuButtonDelegate>,
+    text: Option<&CefString>,
+) -> Option<MenuButton> {
+    unsafe {
+        let (arg_delegate, arg_text) = (delegate, text);
+        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
+        let arg_delegate = arg_delegate
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_menu_button_create(arg_delegate, arg_text);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
 /// See [`cef_panel_create`] for more documentation.
 pub fn panel_create(delegate: Option<&mut PanelDelegate>) -> Option<Panel> {
     unsafe {
@@ -22129,6 +23593,42 @@ pub fn panel_create(delegate: Option<&mut PanelDelegate>) -> Option<Panel> {
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_panel_create(arg_delegate);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_scroll_view_create`] for more documentation.
+pub fn scroll_view_create(delegate: Option<&mut ViewDelegate>) -> Option<ScrollView> {
+    unsafe {
+        let arg_delegate = delegate;
+        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
+        let arg_delegate = arg_delegate
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_scroll_view_create(arg_delegate);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_textfield_create`] for more documentation.
+pub fn textfield_create(delegate: Option<&mut TextfieldDelegate>) -> Option<Textfield> {
+    unsafe {
+        let arg_delegate = delegate;
+        let mut arg_delegate = arg_delegate.cloned().map(|arg| arg.into());
+        let arg_delegate = arg_delegate
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_textfield_create(arg_delegate);
         if result.is_null() {
             None
         } else {
