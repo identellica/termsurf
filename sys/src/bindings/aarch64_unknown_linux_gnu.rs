@@ -34,7 +34,9 @@ pub const CHROME_VERSION_BUILD: i32 = 7499;
 pub const CHROME_VERSION_PATCH: i32 = 110;
 pub type __uint16_t = ::std::os::raw::c_ushort;
 pub type __uint_least16_t = __uint16_t;
+pub type __pid_t = ::std::os::raw::c_int;
 pub type __time_t = ::std::os::raw::c_long;
+pub type pid_t = __pid_t;
 unsafe extern "C" {
     #[doc = "\n Configures the CEF API version and returns API hashes for the libcef\n library. The returned string is owned by the library and should not be\n freed. The |version| parameter should be CEF_API_VERSION and any changes to\n this value will be ignored after the first call to this method. The |entry|\n parameter describes which hash value will be returned:\n\n 0 - CEF_API_HASH_PLATFORM\n 1 - CEF_API_HASH_UNIVERSAL (deprecated, same as CEF_API_HASH_PLATFORM)\n 2 - CEF_COMMIT_HASH (from cef_version.h)\n"]
     pub fn cef_api_hash(
@@ -4540,86 +4542,6 @@ const _: () = {
 };
 #[doc = "\n All scoped framework structures must include this structure first.\n"]
 pub type cef_base_scoped_t = _cef_base_scoped_t;
-#[doc = "\n Callback structure for cef_browser_host_t::AddDevToolsMessageObserver. The\n functions of this structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_dev_tools_message_observer_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_base_ref_counted_t,
-    #[doc = "\n Method that will be called on receipt of a DevTools protocol message.\n |browser| is the originating browser instance. |message| is a UTF8-encoded\n JSON dictionary representing either a function result or an event.\n |message| is only valid for the scope of this callback and should be\n copied if necessary. Return true (1) if the message was handled or false\n (0) if the message should be further processed and passed to the\n OnDevToolsMethodResult or OnDevToolsEvent functions as appropriate.\n\n Method result dictionaries include an \"id\" (int) value that identifies the\n orginating function call sent from\n cef_browser_host_t::SendDevToolsMessage, and optionally either a \"result\"\n (dictionary) or \"error\" (dictionary) value. The \"error\" dictionary will\n contain \"code\" (int) and \"message\" (string) values. Event dictionaries\n include a \"function\" (string) value and optionally a \"params\" (dictionary)\n value. See the DevTools protocol documentation at\n https://chromedevtools.github.io/devtools-protocol/ for details of\n supported function calls and the expected \"result\" or \"params\" dictionary\n contents. JSON dictionaries can be parsed using the CefParseJSON function\n if desired, however be aware of performance considerations when parsing\n large messages (some of which may exceed 1MB in size).\n"]
-    pub on_dev_tools_message: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-            message: *const ::std::os::raw::c_void,
-            message_size: usize,
-        ) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Method that will be called after attempted execution of a DevTools\n protocol function. |browser| is the originating browser instance.\n |message_id| is the \"id\" value that identifies the originating function\n call message. If the function succeeded |success| will be true (1) and\n |result| will be the UTF8-encoded JSON \"result\" dictionary value (which\n may be NULL). If the function failed |success| will be false (0) and\n |result| will be the UTF8-encoded JSON \"error\" dictionary value. |result|\n is only valid for the scope of this callback and should be copied if\n necessary. See the OnDevToolsMessage documentation for additional details\n on |result| contents.\n"]
-    pub on_dev_tools_method_result: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-            message_id: ::std::os::raw::c_int,
-            success: ::std::os::raw::c_int,
-            result: *const ::std::os::raw::c_void,
-            result_size: usize,
-        ),
-    >,
-    #[doc = "\n Method that will be called on receipt of a DevTools protocol event.\n |browser| is the originating browser instance. |function| is the\n \"function\" value. |params| is the UTF8-encoded JSON \"params\" dictionary\n value (which may be NULL). |params| is only valid for the scope of this\n callback and should be copied if necessary. See the OnDevToolsMessage\n documentation for additional details on |params| contents.\n"]
-    pub on_dev_tools_event: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-            method: *const cef_string_t,
-            params: *const ::std::os::raw::c_void,
-            params_size: usize,
-        ),
-    >,
-    #[doc = "\n Method that will be called when the DevTools agent has attached. |browser|\n is the originating browser instance. This will generally occur in response\n to the first message sent while the agent is detached.\n"]
-    pub on_dev_tools_agent_attached: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-    #[doc = "\n Method that will be called when the DevTools agent has detached. |browser|\n is the originating browser instance. Any function results that were\n pending before the agent became detached will not be delivered, and any\n active event subscriptions will be canceled.\n"]
-    pub on_dev_tools_agent_detached: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_dev_tools_message_observer_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_dev_tools_message_observer_t"]
-        [::std::mem::size_of::<_cef_dev_tools_message_observer_t>() - 80usize];
-    ["Alignment of _cef_dev_tools_message_observer_t"]
-        [::std::mem::align_of::<_cef_dev_tools_message_observer_t>() - 8usize];
-    ["Offset of field: _cef_dev_tools_message_observer_t::base"]
-        [::std::mem::offset_of!(_cef_dev_tools_message_observer_t, base) - 0usize];
-    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_message"]
-        [::std::mem::offset_of!(_cef_dev_tools_message_observer_t, on_dev_tools_message) - 40usize];
-    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_method_result"][::std::mem::offset_of!(
-        _cef_dev_tools_message_observer_t,
-        on_dev_tools_method_result
-    ) - 48usize];
-    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_event"]
-        [::std::mem::offset_of!(_cef_dev_tools_message_observer_t, on_dev_tools_event) - 56usize];
-    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_agent_attached"][::std::mem::offset_of!(
-        _cef_dev_tools_message_observer_t,
-        on_dev_tools_agent_attached
-    )
-        - 64usize];
-    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_agent_detached"][::std::mem::offset_of!(
-        _cef_dev_tools_message_observer_t,
-        on_dev_tools_agent_detached
-    )
-        - 72usize];
-};
-#[doc = "\n Callback structure for cef_browser_host_t::AddDevToolsMessageObserver. The\n functions of this structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
-pub type cef_dev_tools_message_observer_t = _cef_dev_tools_message_observer_t;
 #[doc = "\n Structure that wraps other data value types. Complex types (binary,\n dictionary and list) will be referenced but not owned by this object. Can be\n used on any process and thread.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -5374,6 +5296,121 @@ unsafe extern "C" {
     #[doc = "\n Creates a new object that is not owned by any other object.\n"]
     pub fn cef_list_value_create() -> *mut cef_list_value_t;
 }
+#[doc = "\n Implement this structure to receive accessibility notification when\n accessibility events have been registered. The functions of this structure\n will be called on the UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_accessibility_handler_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Called after renderer process sends accessibility tree changes to the\n browser process.\n"]
+    pub on_accessibility_tree_change: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_accessibility_handler_t, value: *mut _cef_value_t),
+    >,
+    #[doc = "\n Called after renderer process sends accessibility location changes to the\n browser process.\n"]
+    pub on_accessibility_location_change: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_accessibility_handler_t, value: *mut _cef_value_t),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_accessibility_handler_t"]
+        [::std::mem::size_of::<_cef_accessibility_handler_t>() - 56usize];
+    ["Alignment of _cef_accessibility_handler_t"]
+        [::std::mem::align_of::<_cef_accessibility_handler_t>() - 8usize];
+    ["Offset of field: _cef_accessibility_handler_t::base"]
+        [::std::mem::offset_of!(_cef_accessibility_handler_t, base) - 0usize];
+    ["Offset of field: _cef_accessibility_handler_t::on_accessibility_tree_change"][::std::mem::offset_of!(
+        _cef_accessibility_handler_t,
+        on_accessibility_tree_change
+    ) - 40usize];
+    ["Offset of field: _cef_accessibility_handler_t::on_accessibility_location_change"][::std::mem::offset_of!(
+        _cef_accessibility_handler_t,
+        on_accessibility_location_change
+    )
+        - 48usize];
+};
+#[doc = "\n Implement this structure to receive accessibility notification when\n accessibility events have been registered. The functions of this structure\n will be called on the UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_accessibility_handler_t = _cef_accessibility_handler_t;
+#[doc = "\n Callback structure for cef_browser_host_t::AddDevToolsMessageObserver. The\n functions of this structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_dev_tools_message_observer_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Method that will be called on receipt of a DevTools protocol message.\n |browser| is the originating browser instance. |message| is a UTF8-encoded\n JSON dictionary representing either a function result or an event.\n |message| is only valid for the scope of this callback and should be\n copied if necessary. Return true (1) if the message was handled or false\n (0) if the message should be further processed and passed to the\n OnDevToolsMethodResult or OnDevToolsEvent functions as appropriate.\n\n Method result dictionaries include an \"id\" (int) value that identifies the\n orginating function call sent from\n cef_browser_host_t::SendDevToolsMessage, and optionally either a \"result\"\n (dictionary) or \"error\" (dictionary) value. The \"error\" dictionary will\n contain \"code\" (int) and \"message\" (string) values. Event dictionaries\n include a \"function\" (string) value and optionally a \"params\" (dictionary)\n value. See the DevTools protocol documentation at\n https://chromedevtools.github.io/devtools-protocol/ for details of\n supported function calls and the expected \"result\" or \"params\" dictionary\n contents. JSON dictionaries can be parsed using the CefParseJSON function\n if desired, however be aware of performance considerations when parsing\n large messages (some of which may exceed 1MB in size).\n"]
+    pub on_dev_tools_message: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+            message: *const ::std::os::raw::c_void,
+            message_size: usize,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Method that will be called after attempted execution of a DevTools\n protocol function. |browser| is the originating browser instance.\n |message_id| is the \"id\" value that identifies the originating function\n call message. If the function succeeded |success| will be true (1) and\n |result| will be the UTF8-encoded JSON \"result\" dictionary value (which\n may be NULL). If the function failed |success| will be false (0) and\n |result| will be the UTF8-encoded JSON \"error\" dictionary value. |result|\n is only valid for the scope of this callback and should be copied if\n necessary. See the OnDevToolsMessage documentation for additional details\n on |result| contents.\n"]
+    pub on_dev_tools_method_result: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+            message_id: ::std::os::raw::c_int,
+            success: ::std::os::raw::c_int,
+            result: *const ::std::os::raw::c_void,
+            result_size: usize,
+        ),
+    >,
+    #[doc = "\n Method that will be called on receipt of a DevTools protocol event.\n |browser| is the originating browser instance. |function| is the\n \"function\" value. |params| is the UTF8-encoded JSON \"params\" dictionary\n value (which may be NULL). |params| is only valid for the scope of this\n callback and should be copied if necessary. See the OnDevToolsMessage\n documentation for additional details on |params| contents.\n"]
+    pub on_dev_tools_event: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+            method: *const cef_string_t,
+            params: *const ::std::os::raw::c_void,
+            params_size: usize,
+        ),
+    >,
+    #[doc = "\n Method that will be called when the DevTools agent has attached. |browser|\n is the originating browser instance. This will generally occur in response\n to the first message sent while the agent is detached.\n"]
+    pub on_dev_tools_agent_attached: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+    #[doc = "\n Method that will be called when the DevTools agent has detached. |browser|\n is the originating browser instance. Any function results that were\n pending before the agent became detached will not be delivered, and any\n active event subscriptions will be canceled.\n"]
+    pub on_dev_tools_agent_detached: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_dev_tools_message_observer_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_dev_tools_message_observer_t"]
+        [::std::mem::size_of::<_cef_dev_tools_message_observer_t>() - 80usize];
+    ["Alignment of _cef_dev_tools_message_observer_t"]
+        [::std::mem::align_of::<_cef_dev_tools_message_observer_t>() - 8usize];
+    ["Offset of field: _cef_dev_tools_message_observer_t::base"]
+        [::std::mem::offset_of!(_cef_dev_tools_message_observer_t, base) - 0usize];
+    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_message"]
+        [::std::mem::offset_of!(_cef_dev_tools_message_observer_t, on_dev_tools_message) - 40usize];
+    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_method_result"][::std::mem::offset_of!(
+        _cef_dev_tools_message_observer_t,
+        on_dev_tools_method_result
+    ) - 48usize];
+    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_event"]
+        [::std::mem::offset_of!(_cef_dev_tools_message_observer_t, on_dev_tools_event) - 56usize];
+    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_agent_attached"][::std::mem::offset_of!(
+        _cef_dev_tools_message_observer_t,
+        on_dev_tools_agent_attached
+    )
+        - 64usize];
+    ["Offset of field: _cef_dev_tools_message_observer_t::on_dev_tools_agent_detached"][::std::mem::offset_of!(
+        _cef_dev_tools_message_observer_t,
+        on_dev_tools_agent_detached
+    )
+        - 72usize];
+};
+#[doc = "\n Callback structure for cef_browser_host_t::AddDevToolsMessageObserver. The\n functions of this structure will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_dev_tools_message_observer_t = _cef_dev_tools_message_observer_t;
 #[doc = "\n Container for a single image represented at different scale factors. All\n image representations should be the same size in density independent pixel\n (DIP) units. For example, if the image at scale factor 1.0 is 100x100 pixels\n then the image at scale factor 2.0 should be 200x200 pixels -- both images\n will display with a DIP size of 100x100 units. The functions of this\n structure can be called on any browser process thread.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -11293,41 +11330,6 @@ const _: () = {
 };
 #[doc = "\n Implement this structure to handle printing on Linux. Each browser will have\n only one print job in progress at a time. The functions of this structure\n will be called on the browser process UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_print_handler_t = _cef_print_handler_t;
-#[doc = "\n Implement this structure to receive accessibility notification when\n accessibility events have been registered. The functions of this structure\n will be called on the UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_accessibility_handler_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_base_ref_counted_t,
-    #[doc = "\n Called after renderer process sends accessibility tree changes to the\n browser process.\n"]
-    pub on_accessibility_tree_change: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_accessibility_handler_t, value: *mut _cef_value_t),
-    >,
-    #[doc = "\n Called after renderer process sends accessibility location changes to the\n browser process.\n"]
-    pub on_accessibility_location_change: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_accessibility_handler_t, value: *mut _cef_value_t),
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_accessibility_handler_t"]
-        [::std::mem::size_of::<_cef_accessibility_handler_t>() - 56usize];
-    ["Alignment of _cef_accessibility_handler_t"]
-        [::std::mem::align_of::<_cef_accessibility_handler_t>() - 8usize];
-    ["Offset of field: _cef_accessibility_handler_t::base"]
-        [::std::mem::offset_of!(_cef_accessibility_handler_t, base) - 0usize];
-    ["Offset of field: _cef_accessibility_handler_t::on_accessibility_tree_change"][::std::mem::offset_of!(
-        _cef_accessibility_handler_t,
-        on_accessibility_tree_change
-    ) - 40usize];
-    ["Offset of field: _cef_accessibility_handler_t::on_accessibility_location_change"][::std::mem::offset_of!(
-        _cef_accessibility_handler_t,
-        on_accessibility_location_change
-    )
-        - 48usize];
-};
-#[doc = "\n Implement this structure to receive accessibility notification when\n accessibility events have been registered. The functions of this structure\n will be called on the UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
-pub type cef_accessibility_handler_t = _cef_accessibility_handler_t;
 #[doc = "\n Implement this structure to handle events when window rendering is disabled.\n The functions of this structure will be called on the UI thread.\n\n NOTE: This struct is allocated client-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -14013,6 +14015,621 @@ unsafe extern "C" {
     #[doc = "\n Set to true (1) before calling OS APIs on the CEF UI thread that will enter\n a native message loop (see usage restrictions below). Set to false (0) after\n exiting the native message loop. On Windows, use the CefSetOSModalLoop\n function instead in cases like native top menus where resize of the browser\n content is not required, or in cases like printer APIs where reentrancy\n safety cannot be guaranteed.\n\n Nested processing of Chromium tasks is disabled by default because common\n controls and/or printer functions may use nested native message loops that\n lead to unplanned reentrancy. This function re-enables nested processing in\n the scope of an upcoming native message loop. It must only be used in cases\n where the stack is reentrancy safe and processing nestable tasks is\n explicitly safe. Do not use in cases (like the printer example) where an OS\n API may experience unplanned reentrancy as a result of a new task executing\n immediately.\n\n For instance,\n - The UI thread is running a message loop.\n - It receives a task #1 and executes it.\n - The task #1 implicitly starts a nested message loop. For example, via\n   Windows APIs such as MessageBox or GetSaveFileName, or default handling of\n   a user-initiated drag/resize operation (e.g. DefWindowProc handling of\n   WM_SYSCOMMAND for SC_MOVE/SC_SIZE).\n - The UI thread receives a task #2 before or while in this second message\n   loop.\n - With NestableTasksAllowed set to true (1), the task #2 will run right\n   away. Otherwise, it will be executed right after task #1 completes at\n   \"thread message loop level\".\n"]
     pub fn cef_set_nestable_tasks_allowed(allowed: ::std::os::raw::c_int);
 }
+unsafe extern "C" {
+    #[doc = "\n Crash reporting is configured using an INI-style config file named\n \"crash_reporter.cfg\". On Windows and Linux this file must be placed next to\n the main application executable. On macOS this file must be placed in the\n top-level app bundle Resources directory (e.g.\n \"<appname>.app/Contents/Resources\"). File contents are as follows:\n\n <pre>\n  # Comments start with a hash character and must be on their own line.\n\n  [Config]\n  ProductName=<Value of the \"prod\" crash key; defaults to \"cef\">\n  ProductVersion=<Value of the \"ver\" crash key; defaults to the CEF version>\n  AppName=<Windows only; App-specific folder name component for storing crash\n           information; default to \"CEF\">\n  ExternalHandler=<Windows only; Name of the external handler exe to use\n                   instead of re-launching the main exe; default to empty>\n  BrowserCrashForwardingEnabled=<macOS only; True if browser process crashes\n                                 should be forwarded to the system crash\n                                 reporter; default to false>\n  ServerURL=<crash server URL; default to empty>\n  RateLimitEnabled=<True if uploads should be rate limited; default to true>\n  MaxUploadsPerDay=<Max uploads per 24 hours, used if rate limit is enabled;\n                    default to 5>\n  MaxDatabaseSizeInMb=<Total crash report disk usage greater than this value\n                       will cause older reports to be deleted; default to 20>\n  MaxDatabaseAgeInDays=<Crash reports older than this value will be deleted;\n                        default to 5>\n\n  [CrashKeys]\n  my_key1=<small|medium|large>\n  my_key2=<small|medium|large>\n </pre>\n\n <b>Config section:</b>\n\n If \"ProductName\" and/or \"ProductVersion\" are set then the specified values\n will be included in the crash dump metadata. On macOS if these values are\n set to NULL then they will be retrieved from the Info.plist file using the\n \"CFBundleName\" and \"CFBundleShortVersionString\" keys respectively.\n\n If \"AppName\" is set on Windows then crash report information (metrics,\n database and dumps) will be stored locally on disk under the\n \"C:\\Users\\[CurrentUser]\\AppData\\Local\\[AppName]\\User Data\" folder. On other\n platforms the cef_settings_t.root_cache_path value will be used.\n\n If \"ExternalHandler\" is set on Windows then the specified exe will be\n launched as the crashpad-handler instead of re-launching the main process\n exe. The value can be an absolute path or a path relative to the main exe\n directory. On Linux the cef_settings_t.browser_subprocess_path value will be\n used. On macOS the existing subprocess app bundle will be used.\n\n If \"BrowserCrashForwardingEnabled\" is set to true (1) on macOS then browser\n process crashes will be forwarded to the system crash reporter. This results\n in the crash UI dialog being displayed to the user and crash reports being\n logged under \"~/Library/Logs/DiagnosticReports\". Forwarding of crash reports\n from non-browser processes and Debug builds is always disabled.\n\n If \"ServerURL\" is set then crashes will be uploaded as a multi-part POST\n request to the specified URL. Otherwise, reports will only be stored locally\n on disk.\n\n If \"RateLimitEnabled\" is set to true (1) then crash report uploads will be\n rate limited as follows:\n  1. If \"MaxUploadsPerDay\" is set to a positive value then at most the\n     specified number of crashes will be uploaded in each 24 hour period.\n  2. If crash upload fails due to a network or server error then an\n     incremental backoff delay up to a maximum of 24 hours will be applied\n     for retries.\n  3. If a backoff delay is applied and \"MaxUploadsPerDay\" is > 1 then the\n     \"MaxUploadsPerDay\" value will be reduced to 1 until the client is\n     restarted. This helps to avoid an upload flood when the network or\n     server error is resolved.\n Rate limiting is not supported on Linux.\n\n If \"MaxDatabaseSizeInMb\" is set to a positive value then crash report\n storage on disk will be limited to that size in megabytes. For example, on\n Windows each dump is about 600KB so a \"MaxDatabaseSizeInMb\" value of 20\n equates to about 34 crash reports stored on disk. Not supported on Linux.\n\n If \"MaxDatabaseAgeInDays\" is set to a positive value then crash reports\n older than the specified age in days will be deleted. Not supported on\n Linux.\n\n <b>CrashKeys section:</b>\n\n A maximum of 26 crash keys of each size can be specified for use by the\n application. Crash key values will be truncated based on the specified size\n (small = 64 bytes, medium = 256 bytes, large = 1024 bytes). The value of\n crash keys can be set from any thread or process using the\n CefSetCrashKeyValue function. These key/value pairs will be sent to the\n crash server along with the crash dump file.\n"]
+    pub fn cef_crash_reporting_enabled() -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Sets or clears a specific key-value pair from the crash metadata.\n"]
+    pub fn cef_set_crash_key_value(key: *const cef_string_t, value: *const cef_string_t);
+}
+unsafe extern "C" {
+    #[doc = "\n Creates a directory and all parent directories if they don't already exist.\n Returns true (1) on successful creation or if the directory already exists.\n The directory is only readable by the current user. Calling this function on\n the browser process UI or IO threads is not allowed.\n"]
+    pub fn cef_create_directory(full_path: *const cef_string_t) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Get the temporary directory provided by the system.\n\n WARNING: In general, you should use the temp directory variants below\n instead of this function. Those variants will ensure that the proper\n permissions are set so that other users on the system can't edit them while\n they're open (which could lead to security issues).\n"]
+    pub fn cef_get_temp_directory(temp_dir: *mut cef_string_t) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Creates a new directory. On Windows if |prefix| is provided the new\n directory name is in the format of \"prefixyyyy\". Returns true (1) on success\n and sets |new_temp_path| to the full path of the directory that was created.\n The directory is only readable by the current user. Calling this function on\n the browser process UI or IO threads is not allowed.\n"]
+    pub fn cef_create_new_temp_directory(
+        prefix: *const cef_string_t,
+        new_temp_path: *mut cef_string_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Creates a directory within another directory. Extra characters will be\n appended to |prefix| to ensure that the new directory does not have the same\n name as an existing directory. Returns true (1) on success and sets\n |new_dir| to the full path of the directory that was created. The directory\n is only readable by the current user. Calling this function on the browser\n process UI or IO threads is not allowed.\n"]
+    pub fn cef_create_temp_directory_in_directory(
+        base_dir: *const cef_string_t,
+        prefix: *const cef_string_t,
+        new_dir: *mut cef_string_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns true (1) if the given path exists and is a directory. Calling this\n function on the browser process UI or IO threads is not allowed.\n"]
+    pub fn cef_directory_exists(path: *const cef_string_t) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Deletes the given path whether it's a file or a directory. If |path| is a\n directory all contents will be deleted.  If |recursive| is true (1) any sub-\n directories and their contents will also be deleted (equivalent to executing\n \"rm -rf\", so use with caution). On POSIX environments if |path| is a\n symbolic link then only the symlink will be deleted. Returns true (1) on\n successful deletion or if |path| does not exist. Calling this function on\n the browser process UI or IO threads is not allowed.\n"]
+    pub fn cef_delete_file(
+        path: *const cef_string_t,
+        recursive: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Writes the contents of |src_dir| into a zip archive at |dest_file|. If\n |include_hidden_files| is true (1) files starting with \".\" will be included.\n Returns true (1) on success.  Calling this function on the browser process\n UI or IO threads is not allowed.\n"]
+    pub fn cef_zip_directory(
+        src_dir: *const cef_string_t,
+        dest_file: *const cef_string_t,
+        include_hidden_files: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Loads the existing \"Certificate Revocation Lists\" file that is managed by\n Google Chrome. This file can generally be found in Chrome's User Data\n directory (e.g. \"C:\\Users\\[User]\\AppData\\Local\\Google\\Chrome\\User Data\\\" on\n Windows) and is updated periodically by Chrome's component updater service.\n Must be called in the browser process after the context has been\n initialized. See https://dev.chromium.org/Home/chromium-security/crlsets for\n background.\n"]
+    pub fn cef_load_crlsets_file(path: *const cef_string_t);
+}
+unsafe extern "C" {
+    #[doc = "\n Returns true (1) if the application text direction is right-to-left.\n"]
+    pub fn cef_is_rtl() -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Add an entry to the cross-origin access whitelist.\n\n The same-origin policy restricts how scripts hosted from different origins\n (scheme + domain + port) can communicate. By default, scripts can only\n access resources with the same origin. Scripts hosted on the HTTP and HTTPS\n schemes (but no other schemes) can use the \"Access-Control-Allow-Origin\"\n header to allow cross-origin requests. For example,\n https://source.example.com can make XMLHttpRequest requests on\n http://target.example.com if the http://target.example.com request returns\n an \"Access-Control-Allow-Origin: https://source.example.com\" response\n header.\n\n Scripts in separate frames or iframes and hosted from the same protocol and\n domain suffix can execute cross-origin JavaScript if both pages set the\n document.domain value to the same domain suffix. For example,\n scheme://foo.example.com and scheme://bar.example.com can communicate using\n JavaScript if both domains set document.domain=\"example.com\".\n\n This function is used to allow access to origins that would otherwise\n violate the same-origin policy. Scripts hosted underneath the fully\n qualified |source_origin| URL (like http://www.example.com) will be allowed\n access to all resources hosted on the specified |target_protocol| and\n |target_domain|. If |target_domain| is non-NULL and\n |allow_target_subdomains| is false (0) only exact domain matches will be\n allowed. If |target_domain| contains a top- level domain component (like\n \"example.com\") and |allow_target_subdomains| is true (1) sub-domain matches\n will be allowed. If |target_domain| is NULL and |allow_target_subdomains| if\n true (1) all domains and IP addresses will be allowed.\n\n This function cannot be used to bypass the restrictions on local or display\n isolated schemes. See the comments on CefRegisterCustomScheme for more\n information.\n\n This function may be called on any thread. Returns false (0) if\n |source_origin| is invalid or the whitelist cannot be accessed.\n"]
+    pub fn cef_add_cross_origin_whitelist_entry(
+        source_origin: *const cef_string_t,
+        target_protocol: *const cef_string_t,
+        target_domain: *const cef_string_t,
+        allow_target_subdomains: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Remove an entry from the cross-origin access whitelist. Returns false (0) if\n |source_origin| is invalid or the whitelist cannot be accessed.\n"]
+    pub fn cef_remove_cross_origin_whitelist_entry(
+        source_origin: *const cef_string_t,
+        target_protocol: *const cef_string_t,
+        target_domain: *const cef_string_t,
+        allow_target_subdomains: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Remove all entries from the cross-origin access whitelist. Returns false (0)\n if the whitelist cannot be accessed.\n"]
+    pub fn cef_clear_cross_origin_whitelist() -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Combines specified |base_url| and |relative_url| into |resolved_url|.\n Returns false (0) if one of the URLs is NULL or invalid.\n"]
+    pub fn cef_resolve_url(
+        base_url: *const cef_string_t,
+        relative_url: *const cef_string_t,
+        resolved_url: *mut cef_string_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Parse the specified |url| into its component parts. Returns false (0) if the\n URL is NULL or invalid.\n"]
+    pub fn cef_parse_url(
+        url: *const cef_string_t,
+        parts: *mut _cef_urlparts_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Creates a URL from the specified |parts|, which must contain a non-NULL spec\n or a non-NULL host and path (at a minimum), but not both. Returns false (0)\n if |parts| isn't initialized as described.\n"]
+    pub fn cef_create_url(
+        parts: *const _cef_urlparts_t,
+        url: *mut cef_string_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n This is a convenience function for formatting a URL in a concise and human-\n friendly way to help users make security-related decisions (or in other\n circumstances when people need to distinguish sites, origins, or otherwise-\n simplified URLs from each other). Internationalized domain names (IDN) may\n be presented in Unicode if the conversion is considered safe. The returned\n value will (a) omit the path for standard schemes, excepting file and\n filesystem, and (b) omit the port if it is the default for the scheme. Do\n not use this for URLs which will be parsed or sent to other applications.\n"]
+    pub fn cef_format_url_for_security_display(
+        origin_url: *const cef_string_t,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the mime type for the specified file extension or an NULL string if\n unknown.\n"]
+    pub fn cef_get_mime_type(extension: *const cef_string_t) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Get the extensions associated with the given mime type. This should be\n passed in lower case. There could be multiple extensions for a given mime\n type, like \"html,htm\" for \"text/html\", or \"txt,text,html,...\" for \"text/*\".\n Any existing elements in the provided vector will not be erased.\n"]
+    pub fn cef_get_extensions_for_mime_type(
+        mime_type: *const cef_string_t,
+        extensions: cef_string_list_t,
+    );
+}
+unsafe extern "C" {
+    #[doc = "\n Encodes |data| as a base64 string.\n"]
+    pub fn cef_base64_encode(
+        data: *const ::std::os::raw::c_void,
+        data_size: usize,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Decodes the base64 encoded string |data|. The returned value will be NULL if\n the decoding fails.\n"]
+    pub fn cef_base64_decode(data: *const cef_string_t) -> *mut _cef_binary_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Escapes characters in |text| which are unsuitable for use as a query\n parameter value. Everything except alphanumerics and -_.!~*'() will be\n converted to \"%XX\". If |use_plus| is true (1) spaces will change to \"+\". The\n result is basically the same as encodeURIComponent in Javacript.\n"]
+    pub fn cef_uriencode(
+        text: *const cef_string_t,
+        use_plus: ::std::os::raw::c_int,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Unescapes |text| and returns the result. Unescaping consists of looking for\n the exact pattern \"%XX\" where each X is a hex digit and converting to the\n character with the numerical value of those digits (e.g. \"i%20=%203%3b\"\n unescapes to \"i = 3;\"). If |convert_to_utf8| is true (1) this function will\n attempt to interpret the initial decoded result as UTF-8. If the result is\n convertable into UTF-8 it will be returned as converted. Otherwise the\n initial decoded result will be returned.  The |unescape_rule| parameter\n supports further customization the decoding process.\n"]
+    pub fn cef_uridecode(
+        text: *const cef_string_t,
+        convert_to_utf8: ::std::os::raw::c_int,
+        unescape_rule: cef_uri_unescape_rule_t,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Parses the specified |json_string| and returns a dictionary or list\n representation. If JSON parsing fails this function returns NULL.\n"]
+    pub fn cef_parse_json(
+        json_string: *const cef_string_t,
+        options: cef_json_parser_options_t,
+    ) -> *mut _cef_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Parses the specified UTF8-encoded |json| buffer of size |json_size| and\n returns a dictionary or list representation. If JSON parsing fails this\n function returns NULL.\n"]
+    pub fn cef_parse_json_buffer(
+        json: *const ::std::os::raw::c_void,
+        json_size: usize,
+        options: cef_json_parser_options_t,
+    ) -> *mut _cef_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Parses the specified |json_string| and returns a dictionary or list\n representation. If JSON parsing fails this function returns NULL and\n populates |error_msg_out| with a formatted error message.\n"]
+    pub fn cef_parse_jsonand_return_error(
+        json_string: *const cef_string_t,
+        options: cef_json_parser_options_t,
+        error_msg_out: *mut cef_string_t,
+    ) -> *mut _cef_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Generates a JSON string from the specified root |node| which should be a\n dictionary or list value. Returns an NULL string on failure. This function\n requires exclusive access to |node| including any underlying data.\n"]
+    pub fn cef_write_json(
+        node: *mut _cef_value_t,
+        options: cef_json_writer_options_t,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Retrieve the path associated with the specified |key|. Returns true (1) on\n success. Can be called on any thread in the browser process.\n"]
+    pub fn cef_get_path(key: cef_path_key_t, path: *mut cef_string_t) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Launches the process specified via |command_line|. Returns true (1) upon\n success. Must be called on the browser process TID_PROCESS_LAUNCHER thread.\n\n Unix-specific notes:\n - All file descriptors open in the parent process will be closed in the\n   child process except for stdin, stdout, and stderr.\n - If the first argument on the command line does not contain a slash, PATH\n   will be searched. (See man execvp.)\n"]
+    pub fn cef_launch_process(command_line: *mut _cef_command_line_t) -> ::std::os::raw::c_int;
+}
+#[doc = "\n Structure used for retrieving resources from the resource bundle (*.pak)\n files loaded by CEF during startup or via the cef_resource_bundle_handler_t\n returned from cef_app_t::GetResourceBundleHandler. See CefSettings for\n additional options related to resource bundle loading. The functions of this\n structure may be called on any thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_resource_bundle_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns the localized string for the specified |string_id| or an NULL\n string if the value is not found. Use the cef_id_for_pack_string_name()\n function for version-safe mapping of string IDS names from\n cef_pack_strings.h to version-specific numerical |string_id| values.\n"]
+    pub get_localized_string: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_resource_bundle_t,
+            string_id: ::std::os::raw::c_int,
+        ) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns a cef_binary_value_t containing the decompressed contents of the\n specified scale independent |resource_id| or NULL if not found. Use the\n cef_id_for_pack_resource_name() function for version-safe mapping of\n resource IDR names from cef_pack_resources.h to version-specific numerical\n |resource_id| values.\n"]
+    pub get_data_resource: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_resource_bundle_t,
+            resource_id: ::std::os::raw::c_int,
+        ) -> *mut _cef_binary_value_t,
+    >,
+    #[doc = "\n Returns a cef_binary_value_t containing the decompressed contents of the\n specified |resource_id| nearest the scale factor |scale_factor| or NULL if\n not found. Use a |scale_factor| value of SCALE_FACTOR_NONE for scale\n independent resources or call GetDataResource instead. Use the\n cef_id_for_pack_resource_name() function for version-safe mapping of\n resource IDR names from cef_pack_resources.h to version-specific numerical\n |resource_id| values.\n"]
+    pub get_data_resource_for_scale: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_resource_bundle_t,
+            resource_id: ::std::os::raw::c_int,
+            scale_factor: cef_scale_factor_t,
+        ) -> *mut _cef_binary_value_t,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_resource_bundle_t"][::std::mem::size_of::<_cef_resource_bundle_t>() - 64usize];
+    ["Alignment of _cef_resource_bundle_t"]
+        [::std::mem::align_of::<_cef_resource_bundle_t>() - 8usize];
+    ["Offset of field: _cef_resource_bundle_t::base"]
+        [::std::mem::offset_of!(_cef_resource_bundle_t, base) - 0usize];
+    ["Offset of field: _cef_resource_bundle_t::get_localized_string"]
+        [::std::mem::offset_of!(_cef_resource_bundle_t, get_localized_string) - 40usize];
+    ["Offset of field: _cef_resource_bundle_t::get_data_resource"]
+        [::std::mem::offset_of!(_cef_resource_bundle_t, get_data_resource) - 48usize];
+    ["Offset of field: _cef_resource_bundle_t::get_data_resource_for_scale"]
+        [::std::mem::offset_of!(_cef_resource_bundle_t, get_data_resource_for_scale) - 56usize];
+};
+#[doc = "\n Structure used for retrieving resources from the resource bundle (*.pak)\n files loaded by CEF during startup or via the cef_resource_bundle_handler_t\n returned from cef_app_t::GetResourceBundleHandler. See CefSettings for\n additional options related to resource bundle loading. The functions of this\n structure may be called on any thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_resource_bundle_t = _cef_resource_bundle_t;
+unsafe extern "C" {
+    #[doc = "\n Returns the global resource bundle instance.\n"]
+    pub fn cef_resource_bundle_get_global() -> *mut cef_resource_bundle_t;
+}
+#[doc = "\n Structure representing a server that supports HTTP and WebSocket requests.\n Server capacity is limited and is intended to handle only a small number of\n simultaneous connections (e.g. for communicating between applications on\n localhost). The functions of this structure are safe to call from any thread\n in the brower process unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_server_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns the task runner for the dedicated server thread.\n"]
+    pub get_task_runner: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_t) -> *mut _cef_task_runner_t,
+    >,
+    #[doc = "\n Stop the server and shut down the dedicated server thread. See\n cef_server_handler_t::OnServerCreated documentation for a description of\n server lifespan.\n"]
+    pub shutdown: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_server_t)>,
+    #[doc = "\n Returns true (1) if the server is currently running and accepting incoming\n connections. See cef_server_handler_t::OnServerCreated documentation for a\n description of server lifespan. This function must be called on the\n dedicated server thread.\n"]
+    pub is_running: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the server address including the port number.\n"]
+    pub get_address: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns true (1) if the server currently has a connection. This function\n must be called on the dedicated server thread.\n"]
+    pub has_connection: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns true (1) if |connection_id| represents a valid connection. This\n function must be called on the dedicated server thread.\n"]
+    pub is_valid_connection: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Send an HTTP 200 \"OK\" response to the connection identified by\n |connection_id|. |content_type| is the response content type (e.g.\n \"text/html\"), |data| is the response content, and |data_size| is the size\n of |data| in bytes. The contents of |data| will be copied. The connection\n will be closed automatically after the response is sent.\n"]
+    pub send_http200_response: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            content_type: *const cef_string_t,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+    #[doc = "\n Send an HTTP 404 \"Not Found\" response to the connection identified by\n |connection_id|. The connection will be closed automatically after the\n response is sent.\n"]
+    pub send_http404_response: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_t, connection_id: ::std::os::raw::c_int),
+    >,
+    #[doc = "\n Send an HTTP 500 \"Internal Server Error\" response to the connection\n identified by |connection_id|. |error_message| is the associated error\n message. The connection will be closed automatically after the response is\n sent.\n"]
+    pub send_http500_response: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            error_message: *const cef_string_t,
+        ),
+    >,
+    #[doc = "\n Send a custom HTTP response to the connection identified by\n |connection_id|. |response_code| is the HTTP response code sent in the\n status line (e.g. 200), |content_type| is the response content type sent\n as the \"Content-Type\" header (e.g. \"text/html\"), |content_length| is the\n expected content length, and |extra_headers| is the map of extra response\n headers. If |content_length| is >= 0 then the \"Content-Length\" header will\n be sent. If |content_length| is 0 then no content is expected and the\n connection will be closed automatically after the response is sent. If\n |content_length| is < 0 then no \"Content-Length\" header will be sent and\n the client will continue reading until the connection is closed. Use the\n SendRawData function to send the content, if applicable, and call\n CloseConnection after all content has been sent.\n"]
+    pub send_http_response: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            response_code: ::std::os::raw::c_int,
+            content_type: *const cef_string_t,
+            content_length: i64,
+            extra_headers: cef_string_multimap_t,
+        ),
+    >,
+    #[doc = "\n Send raw data directly to the connection identified by |connection_id|.\n |data| is the raw data and |data_size| is the size of |data| in bytes. The\n contents of |data| will be copied. No validation of |data| is performed\n internally so the client should be careful to send the amount indicated by\n the \"Content-Length\" header, if specified. See SendHttpResponse\n documentation for intended usage.\n"]
+    pub send_raw_data: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+    #[doc = "\n Close the connection identified by |connection_id|. See SendHttpResponse\n documentation for intended usage.\n"]
+    pub close_connection: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_t, connection_id: ::std::os::raw::c_int),
+    >,
+    #[doc = "\n Send a WebSocket message to the connection identified by |connection_id|.\n |data| is the response content and |data_size| is the size of |data| in\n bytes. The contents of |data| will be copied. See\n cef_server_handler_t::OnWebSocketRequest documentation for intended usage.\n"]
+    pub send_web_socket_message: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_server_t"][::std::mem::size_of::<_cef_server_t>() - 144usize];
+    ["Alignment of _cef_server_t"][::std::mem::align_of::<_cef_server_t>() - 8usize];
+    ["Offset of field: _cef_server_t::base"][::std::mem::offset_of!(_cef_server_t, base) - 0usize];
+    ["Offset of field: _cef_server_t::get_task_runner"]
+        [::std::mem::offset_of!(_cef_server_t, get_task_runner) - 40usize];
+    ["Offset of field: _cef_server_t::shutdown"]
+        [::std::mem::offset_of!(_cef_server_t, shutdown) - 48usize];
+    ["Offset of field: _cef_server_t::is_running"]
+        [::std::mem::offset_of!(_cef_server_t, is_running) - 56usize];
+    ["Offset of field: _cef_server_t::get_address"]
+        [::std::mem::offset_of!(_cef_server_t, get_address) - 64usize];
+    ["Offset of field: _cef_server_t::has_connection"]
+        [::std::mem::offset_of!(_cef_server_t, has_connection) - 72usize];
+    ["Offset of field: _cef_server_t::is_valid_connection"]
+        [::std::mem::offset_of!(_cef_server_t, is_valid_connection) - 80usize];
+    ["Offset of field: _cef_server_t::send_http200_response"]
+        [::std::mem::offset_of!(_cef_server_t, send_http200_response) - 88usize];
+    ["Offset of field: _cef_server_t::send_http404_response"]
+        [::std::mem::offset_of!(_cef_server_t, send_http404_response) - 96usize];
+    ["Offset of field: _cef_server_t::send_http500_response"]
+        [::std::mem::offset_of!(_cef_server_t, send_http500_response) - 104usize];
+    ["Offset of field: _cef_server_t::send_http_response"]
+        [::std::mem::offset_of!(_cef_server_t, send_http_response) - 112usize];
+    ["Offset of field: _cef_server_t::send_raw_data"]
+        [::std::mem::offset_of!(_cef_server_t, send_raw_data) - 120usize];
+    ["Offset of field: _cef_server_t::close_connection"]
+        [::std::mem::offset_of!(_cef_server_t, close_connection) - 128usize];
+    ["Offset of field: _cef_server_t::send_web_socket_message"]
+        [::std::mem::offset_of!(_cef_server_t, send_web_socket_message) - 136usize];
+};
+#[doc = "\n Structure representing a server that supports HTTP and WebSocket requests.\n Server capacity is limited and is intended to handle only a small number of\n simultaneous connections (e.g. for communicating between applications on\n localhost). The functions of this structure are safe to call from any thread\n in the brower process unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_server_t = _cef_server_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new server that binds to |address| and |port|. |address| must be a\n valid IPv4 or IPv6 address (e.g. 127.0.0.1 or ::1) and |port| must be a port\n number outside of the reserved range (e.g. between 1025 and 65535 on most\n platforms). |backlog| is the maximum number of pending connections. A new\n thread will be created for each CreateServer call (the \"dedicated server\n thread\"). It is therefore recommended to use a different\n cef_server_handler_t instance for each CreateServer call to avoid thread\n safety issues in the cef_server_handler_t implementation. The\n cef_server_handler_t::OnServerCreated function will be called on the\n dedicated server thread to report success or failure. See\n cef_server_handler_t::OnServerCreated documentation for a description of\n server lifespan.\n"]
+    pub fn cef_server_create(
+        address: *const cef_string_t,
+        port: u16,
+        backlog: ::std::os::raw::c_int,
+        handler: *mut _cef_server_handler_t,
+    );
+}
+#[doc = "\n Implement this structure to handle HTTP server requests. A new thread will\n be created for each cef_server_t::CreateServer call (the \"dedicated server\n thread\"), and the functions of this structure will be called on that thread.\n It is therefore recommended to use a different cef_server_handler_t instance\n for each cef_server_t::CreateServer call to avoid thread safety issues in\n the cef_server_handler_t implementation.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_server_handler_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Called when |server| is created. If the server was started successfully\n then cef_server_t::IsRunning will return true (1). The server will\n continue running until cef_server_t::Shutdown is called, after which time\n OnServerDestroyed will be called. If the server failed to start then\n OnServerDestroyed will be called immediately after this function returns.\n"]
+    pub on_server_created: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_handler_t, server: *mut _cef_server_t),
+    >,
+    #[doc = "\n Called when |server| is destroyed. The server thread will be stopped after\n this function returns. The client should release any references to\n |server| when this function is called. See OnServerCreated documentation\n for a description of server lifespan.\n"]
+    pub on_server_destroyed: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_server_handler_t, server: *mut _cef_server_t),
+    >,
+    #[doc = "\n Called when a client connects to |server|. |connection_id| uniquely\n identifies the connection. Each call to this function will have a matching\n call to OnClientDisconnected.\n"]
+    pub on_client_connected: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ),
+    >,
+    #[doc = "\n Called when a client disconnects from |server|. |connection_id| uniquely\n identifies the connection. The client should release any data associated\n with |connection_id| when this function is called and |connection_id|\n should no longer be passed to cef_server_t functions. Disconnects can\n originate from either the client or the server. For example, the server\n will disconnect automatically after a cef_server_t::SendHttpXXXResponse\n function is called.\n"]
+    pub on_client_disconnected: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ),
+    >,
+    #[doc = "\n Called when |server| receives an HTTP request. |connection_id| uniquely\n identifies the connection, |client_address| is the requesting IPv4 or IPv6\n client address including port number, and |request| contains the request\n contents (URL, function, headers and optional POST data). Call\n cef_server_t functions either synchronously or asynchronusly to send a\n response.\n"]
+    pub on_http_request: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            client_address: *const cef_string_t,
+            request: *mut _cef_request_t,
+        ),
+    >,
+    #[doc = "\n Called when |server| receives a WebSocket request. |connection_id|\n uniquely identifies the connection, |client_address| is the requesting\n IPv4 or IPv6 client address including port number, and |request| contains\n the request contents (URL, function, headers and optional POST data).\n Execute |callback| either synchronously or asynchronously to accept or\n decline the WebSocket connection. If the request is accepted then\n OnWebSocketConnected will be called after the WebSocket has connected and\n incoming messages will be delivered to the OnWebSocketMessage callback. If\n the request is declined then the client will be disconnected and\n OnClientDisconnected will be called. Call the\n cef_server_t::SendWebSocketMessage function after receiving the\n OnWebSocketConnected callback to respond with WebSocket messages.\n"]
+    pub on_web_socket_request: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            client_address: *const cef_string_t,
+            request: *mut _cef_request_t,
+            callback: *mut _cef_callback_t,
+        ),
+    >,
+    #[doc = "\n Called after the client has accepted the WebSocket connection for |server|\n and |connection_id| via the OnWebSocketRequest callback. See\n OnWebSocketRequest documentation for intended usage.\n"]
+    pub on_web_socket_connected: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+        ),
+    >,
+    #[doc = "\n Called when |server| receives an WebSocket message. |connection_id|\n uniquely identifies the connection, |data| is the message content and\n |data_size| is the size of |data| in bytes. Do not keep a reference to\n |data| outside of this function. See OnWebSocketRequest documentation for\n intended usage.\n"]
+    pub on_web_socket_message: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_server_handler_t,
+            server: *mut _cef_server_t,
+            connection_id: ::std::os::raw::c_int,
+            data: *const ::std::os::raw::c_void,
+            data_size: usize,
+        ),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_server_handler_t"][::std::mem::size_of::<_cef_server_handler_t>() - 104usize];
+    ["Alignment of _cef_server_handler_t"]
+        [::std::mem::align_of::<_cef_server_handler_t>() - 8usize];
+    ["Offset of field: _cef_server_handler_t::base"]
+        [::std::mem::offset_of!(_cef_server_handler_t, base) - 0usize];
+    ["Offset of field: _cef_server_handler_t::on_server_created"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_server_created) - 40usize];
+    ["Offset of field: _cef_server_handler_t::on_server_destroyed"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_server_destroyed) - 48usize];
+    ["Offset of field: _cef_server_handler_t::on_client_connected"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_client_connected) - 56usize];
+    ["Offset of field: _cef_server_handler_t::on_client_disconnected"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_client_disconnected) - 64usize];
+    ["Offset of field: _cef_server_handler_t::on_http_request"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_http_request) - 72usize];
+    ["Offset of field: _cef_server_handler_t::on_web_socket_request"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_web_socket_request) - 80usize];
+    ["Offset of field: _cef_server_handler_t::on_web_socket_connected"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_web_socket_connected) - 88usize];
+    ["Offset of field: _cef_server_handler_t::on_web_socket_message"]
+        [::std::mem::offset_of!(_cef_server_handler_t, on_web_socket_message) - 96usize];
+};
+#[doc = "\n Implement this structure to handle HTTP server requests. A new thread will\n be created for each cef_server_t::CreateServer call (the \"dedicated server\n thread\"), and the functions of this structure will be called on that thread.\n It is therefore recommended to use a different cef_server_handler_t instance\n for each cef_server_t::CreateServer call to avoid thread safety issues in\n the cef_server_handler_t implementation.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_server_handler_t = _cef_server_handler_t;
+#[doc = "\n Structure that builds a cef_process_message_t containing a shared memory\n region. This structure is not thread-safe but may be used exclusively on a\n different thread from the one which constructed it.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_shared_process_message_builder_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns true (1) if the builder is valid.\n"]
+    pub is_valid: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_shared_process_message_builder_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the size of the shared memory region in bytes. Returns 0 for\n invalid instances.\n"]
+    pub size: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_shared_process_message_builder_t) -> usize,
+    >,
+    #[doc = "\n Returns the pointer to the writable memory. Returns nullptr for invalid\n instances. The returned pointer is only valid for the life span of this\n object.\n"]
+    pub memory: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_shared_process_message_builder_t,
+        ) -> *mut ::std::os::raw::c_void,
+    >,
+    #[doc = "\n Creates a new cef_process_message_t from the data provided to the builder.\n Returns nullptr for invalid instances. Invalidates the builder instance.\n"]
+    pub build: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_shared_process_message_builder_t,
+        ) -> *mut _cef_process_message_t,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_shared_process_message_builder_t"]
+        [::std::mem::size_of::<_cef_shared_process_message_builder_t>() - 72usize];
+    ["Alignment of _cef_shared_process_message_builder_t"]
+        [::std::mem::align_of::<_cef_shared_process_message_builder_t>() - 8usize];
+    ["Offset of field: _cef_shared_process_message_builder_t::base"]
+        [::std::mem::offset_of!(_cef_shared_process_message_builder_t, base) - 0usize];
+    ["Offset of field: _cef_shared_process_message_builder_t::is_valid"]
+        [::std::mem::offset_of!(_cef_shared_process_message_builder_t, is_valid) - 40usize];
+    ["Offset of field: _cef_shared_process_message_builder_t::size"]
+        [::std::mem::offset_of!(_cef_shared_process_message_builder_t, size) - 48usize];
+    ["Offset of field: _cef_shared_process_message_builder_t::memory"]
+        [::std::mem::offset_of!(_cef_shared_process_message_builder_t, memory) - 56usize];
+    ["Offset of field: _cef_shared_process_message_builder_t::build"]
+        [::std::mem::offset_of!(_cef_shared_process_message_builder_t, build) - 64usize];
+};
+#[doc = "\n Structure that builds a cef_process_message_t containing a shared memory\n region. This structure is not thread-safe but may be used exclusively on a\n different thread from the one which constructed it.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_shared_process_message_builder_t = _cef_shared_process_message_builder_t;
+unsafe extern "C" {
+    #[doc = "\n Creates a new cef_shared_process_message_builder_t with the specified |name|\n and shared memory region of specified |byte_size|.\n"]
+    pub fn cef_shared_process_message_builder_create(
+        name: *const cef_string_t,
+        byte_size: usize,
+    ) -> *mut cef_shared_process_message_builder_t;
+}
+pub type pthread_t = ::std::os::raw::c_ulong;
+pub type cef_platform_thread_id_t = pid_t;
+unsafe extern "C" {
+    #[doc = "\n Returns the current platform thread ID.\n"]
+    pub fn cef_get_current_platform_thread_id() -> cef_platform_thread_id_t;
+}
+pub type cef_platform_thread_handle_t = pthread_t;
+unsafe extern "C" {
+    #[doc = "\n Returns the current platform thread handle.\n"]
+    pub fn cef_get_current_platform_thread_handle() -> cef_platform_thread_handle_t;
+}
+#[doc = "\n A simple thread abstraction that establishes a message loop on a new thread.\n The consumer uses cef_task_runner_t to execute code on the thread's message\n loop. The thread is terminated when the cef_thread_t object is destroyed or\n stop() is called. All pending tasks queued on the thread's message loop will\n run to completion before the thread is terminated. cef_thread_create() can\n be called on any valid CEF thread in either the browser or render process.\n This structure should only be used for tasks that require a dedicated\n thread. In most cases you can post tasks to an existing CEF thread instead\n of creating a new one; see cef_task.h for details.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_thread_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns the cef_task_runner_t that will execute code on this thread's\n message loop. This function is safe to call from any thread.\n"]
+    pub get_task_runner: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_thread_t) -> *mut _cef_task_runner_t,
+    >,
+    #[doc = "\n Returns the platform thread ID. It will return the same value after stop()\n is called. This function is safe to call from any thread.\n"]
+    pub get_platform_thread_id: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_thread_t) -> cef_platform_thread_id_t,
+    >,
+    #[doc = "\n Stop and join the thread. This function must be called from the same\n thread that called cef_thread_create(). Do not call this function if\n cef_thread_create() was called with a |stoppable| value of false (0).\n"]
+    pub stop: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_thread_t)>,
+    #[doc = "\n Returns true (1) if the thread is currently running. This function must be\n called from the same thread that called cef_thread_create().\n"]
+    pub is_running: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_thread_t) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_thread_t"][::std::mem::size_of::<_cef_thread_t>() - 72usize];
+    ["Alignment of _cef_thread_t"][::std::mem::align_of::<_cef_thread_t>() - 8usize];
+    ["Offset of field: _cef_thread_t::base"][::std::mem::offset_of!(_cef_thread_t, base) - 0usize];
+    ["Offset of field: _cef_thread_t::get_task_runner"]
+        [::std::mem::offset_of!(_cef_thread_t, get_task_runner) - 40usize];
+    ["Offset of field: _cef_thread_t::get_platform_thread_id"]
+        [::std::mem::offset_of!(_cef_thread_t, get_platform_thread_id) - 48usize];
+    ["Offset of field: _cef_thread_t::stop"][::std::mem::offset_of!(_cef_thread_t, stop) - 56usize];
+    ["Offset of field: _cef_thread_t::is_running"]
+        [::std::mem::offset_of!(_cef_thread_t, is_running) - 64usize];
+};
+#[doc = "\n A simple thread abstraction that establishes a message loop on a new thread.\n The consumer uses cef_task_runner_t to execute code on the thread's message\n loop. The thread is terminated when the cef_thread_t object is destroyed or\n stop() is called. All pending tasks queued on the thread's message loop will\n run to completion before the thread is terminated. cef_thread_create() can\n be called on any valid CEF thread in either the browser or render process.\n This structure should only be used for tasks that require a dedicated\n thread. In most cases you can post tasks to an existing CEF thread instead\n of creating a new one; see cef_task.h for details.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_thread_t = _cef_thread_t;
+unsafe extern "C" {
+    #[doc = "\n Create and start a new thread. This function does not block waiting for the\n thread to run initialization. |display_name| is the name that will be used\n to identify the thread. |priority| is the thread execution priority.\n |message_loop_type| indicates the set of asynchronous events that the thread\n can process. If |stoppable| is true (1) the thread will stopped and joined\n on destruction or when stop() is called; otherwise, the thread cannot be\n stopped and will be leaked on shutdown. On Windows the |com_init_mode| value\n specifies how COM will be initialized for the thread. If |com_init_mode| is\n set to COM_INIT_MODE_STA then |message_loop_type| must be set to ML_TYPE_UI.\n"]
+    pub fn cef_thread_create(
+        display_name: *const cef_string_t,
+        priority: cef_thread_priority_t,
+        message_loop_type: cef_message_loop_type_t,
+        stoppable: ::std::os::raw::c_int,
+        com_init_mode: cef_com_init_mode_t,
+    ) -> *mut cef_thread_t;
+}
+#[doc = "\n Implement this structure to receive notification when tracing has completed.\n The functions of this structure will be called on the browser process UI\n thread.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_end_tracing_callback_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Called after all processes have sent their trace data. |tracing_file| is\n the path at which tracing data was written. The client is responsible for\n deleting |tracing_file|.\n"]
+    pub on_end_tracing_complete: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_end_tracing_callback_t,
+            tracing_file: *const cef_string_t,
+        ),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_end_tracing_callback_t"]
+        [::std::mem::size_of::<_cef_end_tracing_callback_t>() - 48usize];
+    ["Alignment of _cef_end_tracing_callback_t"]
+        [::std::mem::align_of::<_cef_end_tracing_callback_t>() - 8usize];
+    ["Offset of field: _cef_end_tracing_callback_t::base"]
+        [::std::mem::offset_of!(_cef_end_tracing_callback_t, base) - 0usize];
+    ["Offset of field: _cef_end_tracing_callback_t::on_end_tracing_complete"]
+        [::std::mem::offset_of!(_cef_end_tracing_callback_t, on_end_tracing_complete) - 40usize];
+};
+#[doc = "\n Implement this structure to receive notification when tracing has completed.\n The functions of this structure will be called on the browser process UI\n thread.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_end_tracing_callback_t = _cef_end_tracing_callback_t;
+unsafe extern "C" {
+    #[doc = "\n Start tracing events on all processes. Tracing is initialized asynchronously\n and |callback| will be executed on the UI thread after initialization is\n complete.\n\n If CefBeginTracing was called previously, or if a CefEndTracingAsync call is\n pending, CefBeginTracing will fail and return false (0).\n\n |categories| is a comma-delimited list of category wildcards. A category can\n have an optional '-' prefix to make it an excluded category. Having both\n included and excluded categories in the same list is not supported.\n\n Examples:\n - \"test_MyTest*\"\n - \"test_MyTest*,test_OtherStuff\"\n - \"-excluded_category1,-excluded_category2\"\n\n This function must be called on the browser process UI thread.\n"]
+    pub fn cef_begin_tracing(
+        categories: *const cef_string_t,
+        callback: *mut _cef_completion_callback_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Stop tracing events on all processes.\n\n This function will fail and return false (0) if a previous call to\n CefEndTracingAsync is already pending or if CefBeginTracing was not called.\n\n |tracing_file| is the path at which tracing data will be written and\n |callback| is the callback that will be executed once all processes have\n sent their trace data. If |tracing_file| is NULL a new temporary file path\n will be used. If |callback| is NULL no trace data will be written.\n\n This function must be called on the browser process UI thread.\n"]
+    pub fn cef_end_tracing(
+        tracing_file: *const cef_string_t,
+        callback: *mut cef_end_tracing_callback_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the current system trace time or, if none is defined, the current\n high-res time. Can be used by clients to synchronize with the time\n information in trace events.\n"]
+    pub fn cef_now_from_system_trace_time() -> i64;
+}
 #[doc = "\n Structure used to make a URL request. URL requests are not associated with a\n browser instance so no cef_client_t callbacks will be executed. URL requests\n can be created on any valid CEF thread in either the browser or render\n process. Once created the functions of the URL request object must be\n accessed on the same thread that created it.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -14148,6 +14765,374 @@ const _: () = {
 };
 #[doc = "\n Structure that should be implemented by the cef_urlrequest_t client. The\n functions of this structure will be called on the same thread that created\n the request unless otherwise documented.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_urlrequest_client_t = _cef_urlrequest_client_t;
+#[doc = "\n WaitableEvent is a thread synchronization tool that allows one thread to\n wait for another thread to finish some work. This is equivalent to using a\n Lock+ConditionVariable to protect a simple boolean value. However, using\n WaitableEvent in conjunction with a Lock to wait for a more complex state\n change (e.g., for an item to be added to a queue) is not recommended. In\n that case consider using a ConditionVariable instead of a WaitableEvent. It\n is safe to create and/or signal a WaitableEvent from any thread. Blocking on\n a WaitableEvent by calling the *wait() functions is not allowed on the\n browser process UI or IO threads.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_waitable_event_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Put the event in the un-signaled state.\n"]
+    pub reset: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_waitable_event_t)>,
+    #[doc = "\n Put the event in the signaled state. This causes any thread blocked on\n Wait to be woken up.\n"]
+    pub signal: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_waitable_event_t)>,
+    #[doc = "\n Returns true (1) if the event is in the signaled state, else false (0). If\n the event was created with |automatic_reset| set to true (1) then calling\n this function will also cause a reset.\n"]
+    pub is_signaled: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_waitable_event_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Wait indefinitely for the event to be signaled. This function will not\n return until after the call to signal() has completed. This function\n cannot be called on the browser process UI or IO threads.\n"]
+    pub wait: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_waitable_event_t)>,
+    #[doc = "\n Wait up to |max_ms| milliseconds for the event to be signaled. Returns\n true (1) if the event was signaled. A return value of false (0) does not\n necessarily mean that |max_ms| was exceeded. This function will not return\n until after the call to signal() has completed. This function cannot be\n called on the browser process UI or IO threads.\n"]
+    pub timed_wait: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_waitable_event_t,
+            max_ms: i64,
+        ) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_waitable_event_t"][::std::mem::size_of::<_cef_waitable_event_t>() - 80usize];
+    ["Alignment of _cef_waitable_event_t"]
+        [::std::mem::align_of::<_cef_waitable_event_t>() - 8usize];
+    ["Offset of field: _cef_waitable_event_t::base"]
+        [::std::mem::offset_of!(_cef_waitable_event_t, base) - 0usize];
+    ["Offset of field: _cef_waitable_event_t::reset"]
+        [::std::mem::offset_of!(_cef_waitable_event_t, reset) - 40usize];
+    ["Offset of field: _cef_waitable_event_t::signal"]
+        [::std::mem::offset_of!(_cef_waitable_event_t, signal) - 48usize];
+    ["Offset of field: _cef_waitable_event_t::is_signaled"]
+        [::std::mem::offset_of!(_cef_waitable_event_t, is_signaled) - 56usize];
+    ["Offset of field: _cef_waitable_event_t::wait"]
+        [::std::mem::offset_of!(_cef_waitable_event_t, wait) - 64usize];
+    ["Offset of field: _cef_waitable_event_t::timed_wait"]
+        [::std::mem::offset_of!(_cef_waitable_event_t, timed_wait) - 72usize];
+};
+#[doc = "\n WaitableEvent is a thread synchronization tool that allows one thread to\n wait for another thread to finish some work. This is equivalent to using a\n Lock+ConditionVariable to protect a simple boolean value. However, using\n WaitableEvent in conjunction with a Lock to wait for a more complex state\n change (e.g., for an item to be added to a queue) is not recommended. In\n that case consider using a ConditionVariable instead of a WaitableEvent. It\n is safe to create and/or signal a WaitableEvent from any thread. Blocking on\n a WaitableEvent by calling the *wait() functions is not allowed on the\n browser process UI or IO threads.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_waitable_event_t = _cef_waitable_event_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new waitable event. If |automatic_reset| is true (1) then the event\n state is automatically reset to un-signaled after a single waiting thread\n has been released; otherwise, the state remains signaled until reset() is\n called manually. If |initially_signaled| is true (1) then the event will\n start in the signaled state.\n"]
+    pub fn cef_waitable_event_create(
+        automatic_reset: ::std::os::raw::c_int,
+        initially_signaled: ::std::os::raw::c_int,
+    ) -> *mut cef_waitable_event_t;
+}
+#[doc = "\n Structure that supports the reading of XML data via the libxml streaming\n API. The functions of this structure should only be called on the thread\n that creates the object.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_xml_reader_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Moves the cursor to the next node in the document. This function must be\n called at least once to set the current cursor position. Returns true (1)\n if the cursor position was set successfully.\n"]
+    pub move_to_next_node: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Close the document. This should be called directly to ensure that cleanup\n occurs on the correct thread.\n"]
+    pub close: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns true (1) if an error has been reported by the XML parser.\n"]
+    pub has_error: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the error string.\n"]
+    pub get_error: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the node type.\n"]
+    pub get_type: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_xml_node_type_t,
+    >,
+    #[doc = "\n Returns the node depth. Depth starts at 0 for the root node.\n"]
+    pub get_depth: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the local name. See http://www.w3.org/TR/REC-xml-names/#NT-\n LocalPart for additional details.\n"]
+    pub get_local_name: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the namespace prefix. See http://www.w3.org/TR/REC-xml-names/ for\n additional details.\n"]
+    pub get_prefix: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the qualified name, equal to (Prefix:)LocalName. See\n http://www.w3.org/TR/REC-xml-names/#ns-qualnames for additional details.\n"]
+    pub get_qualified_name: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the URI defining the namespace associated with the node. See\n http://www.w3.org/TR/REC-xml-names/ for additional details.\n"]
+    pub get_namespace_uri: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the base URI of the node. See http://www.w3.org/TR/xmlbase/ for\n additional details.\n"]
+    pub get_base_uri: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the xml:lang scope within which the node resides. See\n http://www.w3.org/TR/REC-xml/#sec-lang-tag for additional details.\n"]
+    pub get_xml_lang: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns true (1) if the node represents an NULL element. \"<a/>\" is\n considered NULL but \"<a></a>\" is not.\n"]
+    pub is_empty_element: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns true (1) if the node has a text value.\n"]
+    pub has_value: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the text value.\n"]
+    pub get_value: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns true (1) if the node has attributes.\n"]
+    pub has_attributes: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the number of attributes.\n"]
+    pub get_attribute_count:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> usize>,
+    #[doc = "\n Returns the value of the attribute at the specified 0-based index.\n"]
+    pub get_attribute_byindex: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_xml_reader_t,
+            index: ::std::os::raw::c_int,
+        ) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the value of the attribute with the specified qualified name.\n"]
+    pub get_attribute_byqname: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_xml_reader_t,
+            qualifiedName: *const cef_string_t,
+        ) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the value of the attribute with the specified local name and\n namespace URI.\n"]
+    pub get_attribute_bylname: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_xml_reader_t,
+            localName: *const cef_string_t,
+            namespaceURI: *const cef_string_t,
+        ) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns an XML representation of the current node's children.\n"]
+    pub get_inner_xml: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns an XML representation of the current node including its children.\n"]
+    pub get_outer_xml: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the line number for the current node.\n"]
+    pub get_line_number: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the attribute at the specified 0-based index. Returns\n true (1) if the cursor position was set successfully.\n"]
+    pub move_to_attribute_byindex: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_xml_reader_t,
+            index: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the attribute with the specified qualified name.\n Returns true (1) if the cursor position was set successfully.\n"]
+    pub move_to_attribute_byqname: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_xml_reader_t,
+            qualifiedName: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the attribute with the specified local name and\n namespace URI. Returns true (1) if the cursor position was set\n successfully.\n"]
+    pub move_to_attribute_bylname: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_xml_reader_t,
+            localName: *const cef_string_t,
+            namespaceURI: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the first attribute in the current element. Returns\n true (1) if the cursor position was set successfully.\n"]
+    pub move_to_first_attribute: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the next attribute in the current element. Returns\n true (1) if the cursor position was set successfully.\n"]
+    pub move_to_next_attribute: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor back to the carrying element. Returns true (1) if the\n cursor position was set successfully.\n"]
+    pub move_to_carrying_element: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_xml_reader_t) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_xml_reader_t"][::std::mem::size_of::<_cef_xml_reader_t>() - 272usize];
+    ["Alignment of _cef_xml_reader_t"][::std::mem::align_of::<_cef_xml_reader_t>() - 8usize];
+    ["Offset of field: _cef_xml_reader_t::base"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, base) - 0usize];
+    ["Offset of field: _cef_xml_reader_t::move_to_next_node"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, move_to_next_node) - 40usize];
+    ["Offset of field: _cef_xml_reader_t::close"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, close) - 48usize];
+    ["Offset of field: _cef_xml_reader_t::has_error"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, has_error) - 56usize];
+    ["Offset of field: _cef_xml_reader_t::get_error"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_error) - 64usize];
+    ["Offset of field: _cef_xml_reader_t::get_type"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_type) - 72usize];
+    ["Offset of field: _cef_xml_reader_t::get_depth"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_depth) - 80usize];
+    ["Offset of field: _cef_xml_reader_t::get_local_name"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_local_name) - 88usize];
+    ["Offset of field: _cef_xml_reader_t::get_prefix"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_prefix) - 96usize];
+    ["Offset of field: _cef_xml_reader_t::get_qualified_name"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_qualified_name) - 104usize];
+    ["Offset of field: _cef_xml_reader_t::get_namespace_uri"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_namespace_uri) - 112usize];
+    ["Offset of field: _cef_xml_reader_t::get_base_uri"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_base_uri) - 120usize];
+    ["Offset of field: _cef_xml_reader_t::get_xml_lang"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_xml_lang) - 128usize];
+    ["Offset of field: _cef_xml_reader_t::is_empty_element"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, is_empty_element) - 136usize];
+    ["Offset of field: _cef_xml_reader_t::has_value"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, has_value) - 144usize];
+    ["Offset of field: _cef_xml_reader_t::get_value"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_value) - 152usize];
+    ["Offset of field: _cef_xml_reader_t::has_attributes"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, has_attributes) - 160usize];
+    ["Offset of field: _cef_xml_reader_t::get_attribute_count"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_attribute_count) - 168usize];
+    ["Offset of field: _cef_xml_reader_t::get_attribute_byindex"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_attribute_byindex) - 176usize];
+    ["Offset of field: _cef_xml_reader_t::get_attribute_byqname"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_attribute_byqname) - 184usize];
+    ["Offset of field: _cef_xml_reader_t::get_attribute_bylname"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_attribute_bylname) - 192usize];
+    ["Offset of field: _cef_xml_reader_t::get_inner_xml"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_inner_xml) - 200usize];
+    ["Offset of field: _cef_xml_reader_t::get_outer_xml"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_outer_xml) - 208usize];
+    ["Offset of field: _cef_xml_reader_t::get_line_number"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, get_line_number) - 216usize];
+    ["Offset of field: _cef_xml_reader_t::move_to_attribute_byindex"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, move_to_attribute_byindex) - 224usize];
+    ["Offset of field: _cef_xml_reader_t::move_to_attribute_byqname"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, move_to_attribute_byqname) - 232usize];
+    ["Offset of field: _cef_xml_reader_t::move_to_attribute_bylname"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, move_to_attribute_bylname) - 240usize];
+    ["Offset of field: _cef_xml_reader_t::move_to_first_attribute"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, move_to_first_attribute) - 248usize];
+    ["Offset of field: _cef_xml_reader_t::move_to_next_attribute"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, move_to_next_attribute) - 256usize];
+    ["Offset of field: _cef_xml_reader_t::move_to_carrying_element"]
+        [::std::mem::offset_of!(_cef_xml_reader_t, move_to_carrying_element) - 264usize];
+};
+#[doc = "\n Structure that supports the reading of XML data via the libxml streaming\n API. The functions of this structure should only be called on the thread\n that creates the object.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_xml_reader_t = _cef_xml_reader_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new cef_xml_reader_t object. The returned object's functions can\n only be called from the thread that created the object.\n"]
+    pub fn cef_xml_reader_create(
+        stream: *mut _cef_stream_reader_t,
+        encodingType: cef_xml_encoding_type_t,
+        URI: *const cef_string_t,
+    ) -> *mut cef_xml_reader_t;
+}
+#[doc = "\n Structure that supports the reading of zip archives via the zlib unzip API.\n The functions of this structure should only be called on the thread that\n creates the object.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_zip_reader_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Moves the cursor to the first file in the archive. Returns true (1) if the\n cursor position was set successfully.\n"]
+    pub move_to_first_file: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the next file in the archive. Returns true (1) if the\n cursor position was set successfully.\n"]
+    pub move_to_next_file: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the specified file in the archive. If |caseSensitive|\n is true (1) then the search will be case sensitive. Returns true (1) if\n the cursor position was set successfully.\n"]
+    pub move_to_file: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_zip_reader_t,
+            fileName: *const cef_string_t,
+            caseSensitive: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Closes the archive. This should be called directly to ensure that cleanup\n occurs on the correct thread.\n"]
+    pub close: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the name of the file.\n"]
+    pub get_file_name: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the uncompressed size of the file.\n"]
+    pub get_file_size:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    #[doc = "\n Returns the last modified timestamp for the file.\n"]
+    pub get_file_last_modified: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> cef_basetime_t,
+    >,
+    #[doc = "\n Opens the file for reading of uncompressed data. A read password may\n optionally be specified.\n"]
+    pub open_file: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_zip_reader_t,
+            password: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Closes the file.\n"]
+    pub close_file: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Read uncompressed file contents into the specified buffer. Returns < 0 if\n an error occurred, 0 if at the end of file, or the number of bytes read.\n"]
+    pub read_file: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_zip_reader_t,
+            buffer: *mut ::std::os::raw::c_void,
+            bufferSize: usize,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the current offset in the uncompressed file contents.\n"]
+    pub tell: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    #[doc = "\n Returns true (1) if at end of the file contents.\n"]
+    pub eof: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_zip_reader_t"][::std::mem::size_of::<_cef_zip_reader_t>() - 136usize];
+    ["Alignment of _cef_zip_reader_t"][::std::mem::align_of::<_cef_zip_reader_t>() - 8usize];
+    ["Offset of field: _cef_zip_reader_t::base"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, base) - 0usize];
+    ["Offset of field: _cef_zip_reader_t::move_to_first_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, move_to_first_file) - 40usize];
+    ["Offset of field: _cef_zip_reader_t::move_to_next_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, move_to_next_file) - 48usize];
+    ["Offset of field: _cef_zip_reader_t::move_to_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, move_to_file) - 56usize];
+    ["Offset of field: _cef_zip_reader_t::close"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, close) - 64usize];
+    ["Offset of field: _cef_zip_reader_t::get_file_name"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, get_file_name) - 72usize];
+    ["Offset of field: _cef_zip_reader_t::get_file_size"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, get_file_size) - 80usize];
+    ["Offset of field: _cef_zip_reader_t::get_file_last_modified"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, get_file_last_modified) - 88usize];
+    ["Offset of field: _cef_zip_reader_t::open_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, open_file) - 96usize];
+    ["Offset of field: _cef_zip_reader_t::close_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, close_file) - 104usize];
+    ["Offset of field: _cef_zip_reader_t::read_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, read_file) - 112usize];
+    ["Offset of field: _cef_zip_reader_t::tell"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, tell) - 120usize];
+    ["Offset of field: _cef_zip_reader_t::eof"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, eof) - 128usize];
+};
+#[doc = "\n Structure that supports the reading of zip archives via the zlib unzip API.\n The functions of this structure should only be called on the thread that\n creates the object.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_zip_reader_t = _cef_zip_reader_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new cef_zip_reader_t object. The returned object's functions can\n only be called from the thread that created the object.\n"]
+    pub fn cef_zip_reader_create(stream: *mut _cef_stream_reader_t) -> *mut cef_zip_reader_t;
+}
 #[doc = "\n A Layout handles the sizing of the children of a Panel according to\n implementation-specific heuristics. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -14213,22 +15198,6 @@ const _: () = {
 };
 #[doc = "\n A Layout manager that arranges child views vertically or horizontally in a\n side-by-side fashion with spacing around and between the child views. The\n child views are always sized according to their preferred size. If the\n host's bounds provide insufficient space, child views will be clamped.\n Excess space will not be distributed. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_box_layout_t = _cef_box_layout_t;
-#[doc = "\n A simple Layout that causes the associated Panel's one child to be sized to\n match the bounds of its parent. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_fill_layout_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_layout_t,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_fill_layout_t"][::std::mem::size_of::<_cef_fill_layout_t>() - 64usize];
-    ["Alignment of _cef_fill_layout_t"][::std::mem::align_of::<_cef_fill_layout_t>() - 8usize];
-    ["Offset of field: _cef_fill_layout_t::base"]
-        [::std::mem::offset_of!(_cef_fill_layout_t, base) - 0usize];
-};
-#[doc = "\n A simple Layout that causes the associated Panel's one child to be sized to\n match the bounds of its parent. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-pub type cef_fill_layout_t = _cef_fill_layout_t;
 #[doc = "\n Implement this structure to handle view events. All size and position values\n are in density independent pixels (DIP) unless otherwise indicated. The\n functions of this structure will be called on the browser process UI thread\n unless otherwise indicated.\n\n NOTE: This struct is allocated client-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -14342,6 +15311,119 @@ const _: () = {
 };
 #[doc = "\n Implement this structure to handle view events. All size and position values\n are in density independent pixels (DIP) unless otherwise indicated. The\n functions of this structure will be called on the browser process UI thread\n unless otherwise indicated.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_view_delegate_t = _cef_view_delegate_t;
+#[doc = "\n Implement this structure to handle BrowserView events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_browser_view_delegate_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_view_delegate_t,
+    #[doc = "\n Called when |browser| associated with |browser_view| is created. This\n function will be called after cef_life_span_handler_t::on_after_created()\n is called for |browser| and before on_popup_browser_view_created() is\n called for |browser|'s parent delegate if |browser| is a popup.\n"]
+    pub on_browser_created: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+    #[doc = "\n Called when |browser| associated with |browser_view| is destroyed. Release\n all references to |browser| and do not attempt to execute any functions on\n |browser| after this callback returns. This function will be called before\n cef_life_span_handler_t::on_before_close() is called for |browser|.\n"]
+    pub on_browser_destroyed: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            browser: *mut _cef_browser_t,
+        ),
+    >,
+    #[doc = "\n Called before a new popup BrowserView is created. The popup originated\n from |browser_view|. |settings| and |client| are the values returned from\n cef_life_span_handler_t::on_before_popup(). |is_devtools| will be true (1)\n if the popup will be a DevTools browser. Return the delegate that will be\n used for the new popup BrowserView.\n"]
+    pub get_delegate_for_popup_browser_view: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            settings: *const _cef_browser_settings_t,
+            client: *mut _cef_client_t,
+            is_devtools: ::std::os::raw::c_int,
+        ) -> *mut _cef_browser_view_delegate_t,
+    >,
+    #[doc = "\n Called after |popup_browser_view| is created. This function will be called\n after cef_life_span_handler_t::on_after_created() and on_browser_created()\n are called for the new popup browser. The popup originated from\n |browser_view|. |is_devtools| will be true (1) if the popup is a DevTools\n browser. Optionally add |popup_browser_view| to the views hierarchy\n yourself and return true (1). Otherwise return false (0) and a default\n cef_window_t will be created for the popup.\n"]
+    pub on_popup_browser_view_created: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            popup_browser_view: *mut _cef_browser_view_t,
+            is_devtools: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the Chrome toolbar type that will be available via\n cef_browser_view_t::get_chrome_toolbar(). See that function for related\n documentation.\n"]
+    pub get_chrome_toolbar_type: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> cef_chrome_toolbar_type_t,
+    >,
+    #[doc = "\n Return true (1) to create frameless windows for Document picture-in-\n picture popups. Content in frameless windows should specify draggable\n regions using \"-webkit-app-region: drag\" CSS.\n"]
+    pub use_frameless_window_for_picture_in_picture: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Called when |browser_view| receives a gesture command. Return true (1) to\n handle (or disable) a |gesture_command| or false (0) to propagate the\n gesture to the browser for default handling. With Chrome style these\n commands can also be handled via cef_command_handler_t::OnChromeCommand.\n"]
+    pub on_gesture_command: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+            gesture_command: cef_gesture_command_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Optionally change the runtime style for this BrowserView. See\n cef_runtime_style_t documentation for details.\n"]
+    pub get_browser_runtime_style: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_browser_view_delegate_t) -> cef_runtime_style_t,
+    >,
+    #[doc = "\n Return true (1) to allow the use of JavaScript moveTo/By() and\n resizeTo/By() (without user activation) with Document picture-in-picture\n popups.\n"]
+    pub allow_move_for_picture_in_picture: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_delegate_t,
+            browser_view: *mut _cef_browser_view_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_browser_view_delegate_t"]
+        [::std::mem::size_of::<_cef_browser_view_delegate_t>() - 200usize];
+    ["Alignment of _cef_browser_view_delegate_t"]
+        [::std::mem::align_of::<_cef_browser_view_delegate_t>() - 8usize];
+    ["Offset of field: _cef_browser_view_delegate_t::base"]
+        [::std::mem::offset_of!(_cef_browser_view_delegate_t, base) - 0usize];
+    ["Offset of field: _cef_browser_view_delegate_t::on_browser_created"]
+        [::std::mem::offset_of!(_cef_browser_view_delegate_t, on_browser_created) - 128usize];
+    ["Offset of field: _cef_browser_view_delegate_t::on_browser_destroyed"]
+        [::std::mem::offset_of!(_cef_browser_view_delegate_t, on_browser_destroyed) - 136usize];
+    ["Offset of field: _cef_browser_view_delegate_t::get_delegate_for_popup_browser_view"][::std::mem::offset_of!(
+        _cef_browser_view_delegate_t,
+        get_delegate_for_popup_browser_view
+    )
+        - 144usize];
+    ["Offset of field: _cef_browser_view_delegate_t::on_popup_browser_view_created"][::std::mem::offset_of!(
+        _cef_browser_view_delegate_t,
+        on_popup_browser_view_created
+    ) - 152usize];
+    ["Offset of field: _cef_browser_view_delegate_t::get_chrome_toolbar_type"]
+        [::std::mem::offset_of!(_cef_browser_view_delegate_t, get_chrome_toolbar_type) - 160usize];
+    ["Offset of field: _cef_browser_view_delegate_t::use_frameless_window_for_picture_in_picture"] [:: std :: mem :: offset_of ! (_cef_browser_view_delegate_t , use_frameless_window_for_picture_in_picture) - 168usize] ;
+    ["Offset of field: _cef_browser_view_delegate_t::on_gesture_command"]
+        [::std::mem::offset_of!(_cef_browser_view_delegate_t, on_gesture_command) - 176usize];
+    ["Offset of field: _cef_browser_view_delegate_t::get_browser_runtime_style"][::std::mem::offset_of!(
+        _cef_browser_view_delegate_t,
+        get_browser_runtime_style
+    ) - 184usize];
+    ["Offset of field: _cef_browser_view_delegate_t::allow_move_for_picture_in_picture"][::std::mem::offset_of!(
+        _cef_browser_view_delegate_t,
+        allow_move_for_picture_in_picture
+    )
+        - 192usize];
+};
+#[doc = "\n Implement this structure to handle BrowserView events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_browser_view_delegate_t = _cef_browser_view_delegate_t;
 #[doc = "\n A View is a rectangle within the views View hierarchy. It is the base\n structure for all Views. All size and position values are in density\n independent pixels (DIP) unless otherwise indicated. Methods must be called\n on the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -14685,6 +15767,66 @@ const _: () = {
 };
 #[doc = "\n A View is a rectangle within the views View hierarchy. It is the base\n structure for all Views. All size and position values are in density\n independent pixels (DIP) unless otherwise indicated. Methods must be called\n on the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 pub type cef_view_t = _cef_view_t;
+#[doc = "\n A View hosting a cef_browser_t instance. Methods must be called on the\n browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_browser_view_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_view_t,
+    #[doc = "\n Returns the cef_browser_t hosted by this BrowserView. Will return NULL if\n the browser has not yet been created or has already been destroyed.\n"]
+    pub get_browser: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_browser_t,
+    >,
+    #[doc = "\n Returns the Chrome toolbar associated with this BrowserView. Only\n supported when using Chrome style. The cef_browser_view_delegate_t::\n get_chrome_toolbar_type() function must return a value other than\n CEF_CTT_NONE and the toolbar will not be available until after this\n BrowserView is added to a cef_window_t and\n cef_view_delegate_t::on_window_changed() has been called.\n"]
+    pub get_chrome_toolbar: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_view_t,
+    >,
+    #[doc = "\n Sets whether normal priority accelerators are first forwarded to the web\n content (`keydown` event handler) or cef_keyboard_handler_t. Normal\n priority accelerators can be registered via cef_window_t::SetAccelerator\n (with |high_priority|=false (0)) or internally for standard accelerators\n supported by Chrome style. If |prefer_accelerators| is true (1) then the\n matching accelerator will be triggered immediately (calling\n cef_window_delegate_t::OnAccelerator or\n cef_command_handler_t::OnChromeCommand respectively) and the event will\n not be forwarded to the web content or cef_keyboard_handler_t first. If\n |prefer_accelerators| is false (0) then the matching accelerator will only\n be triggered if the event is not handled by web content (`keydown` event\n handler that calls `event.preventDefault()`) or by cef_keyboard_handler_t.\n The default value is false (0).\n"]
+    pub set_prefer_accelerators: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_browser_view_t,
+            prefer_accelerators: ::std::os::raw::c_int,
+        ),
+    >,
+    #[doc = "\n Returns the runtime style for this BrowserView (ALLOY or CHROME). See\n cef_runtime_style_t documentation for details.\n"]
+    pub get_runtime_style: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_browser_view_t) -> cef_runtime_style_t,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_browser_view_t"][::std::mem::size_of::<_cef_browser_view_t>() - 488usize];
+    ["Alignment of _cef_browser_view_t"][::std::mem::align_of::<_cef_browser_view_t>() - 8usize];
+    ["Offset of field: _cef_browser_view_t::base"]
+        [::std::mem::offset_of!(_cef_browser_view_t, base) - 0usize];
+    ["Offset of field: _cef_browser_view_t::get_browser"]
+        [::std::mem::offset_of!(_cef_browser_view_t, get_browser) - 456usize];
+    ["Offset of field: _cef_browser_view_t::get_chrome_toolbar"]
+        [::std::mem::offset_of!(_cef_browser_view_t, get_chrome_toolbar) - 464usize];
+    ["Offset of field: _cef_browser_view_t::set_prefer_accelerators"]
+        [::std::mem::offset_of!(_cef_browser_view_t, set_prefer_accelerators) - 472usize];
+    ["Offset of field: _cef_browser_view_t::get_runtime_style"]
+        [::std::mem::offset_of!(_cef_browser_view_t, get_runtime_style) - 480usize];
+};
+#[doc = "\n A View hosting a cef_browser_t instance. Methods must be called on the\n browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_browser_view_t = _cef_browser_view_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new BrowserView. The underlying cef_browser_t will not be created\n until this view is added to the views hierarchy. The optional |extra_info|\n parameter provides an opportunity to specify extra information specific to\n the created browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n"]
+    pub fn cef_browser_view_create(
+        client: *mut _cef_client_t,
+        url: *const cef_string_t,
+        settings: *const _cef_browser_settings_t,
+        extra_info: *mut _cef_dictionary_value_t,
+        request_context: *mut _cef_request_context_t,
+        delegate: *mut _cef_browser_view_delegate_t,
+    ) -> *mut cef_browser_view_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the BrowserView associated with |browser|.\n"]
+    pub fn cef_browser_view_get_for_browser(
+        browser: *mut _cef_browser_t,
+    ) -> *mut cef_browser_view_t;
+}
 #[doc = "\n A View representing a button. Depending on the specific type, the button\n could be implemented by a native control or custom rendered. Methods must be\n called on the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -14765,6 +15907,117 @@ const _: () = {
 };
 #[doc = "\n Implement this structure to handle Button events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_button_delegate_t = _cef_button_delegate_t;
+#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_display_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns the unique identifier for this Display.\n"]
+    pub get_id: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> i64>,
+    #[doc = "\n Returns this Display's device pixel scale factor. This specifies how much\n the UI should be scaled when the actual output has more pixels than\n standard displays (which is around 100~120dpi). The potential return\n values differ by platform. Windowed browsers with 1.0 zoom will have a\n JavaScript `window.devicePixelRatio` value matching the associated\n Display's get_device_scale_factor() value.\n"]
+    pub get_device_scale_factor:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> f32>,
+    #[doc = "\n Convert |point| from DIP coordinates to pixel coordinates using this\n Display's device scale factor.\n"]
+    pub convert_point_to_pixels: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
+    >,
+    #[doc = "\n Convert |point| from pixel coordinates to DIP coordinates using this\n Display's device scale factor.\n"]
+    pub convert_point_from_pixels: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
+    >,
+    #[doc = "\n Returns this Display's bounds in DIP screen coordinates. This is the full\n size of the display.\n"]
+    pub get_bounds:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
+    #[doc = "\n Returns this Display's work area in DIP screen coordinates. This excludes\n areas of the display that are occupied with window manager toolbars, etc.\n"]
+    pub get_work_area:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
+    #[doc = "\n Returns this Display's rotation in degrees.\n"]
+    pub get_rotation: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_display_t) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_display_t"][::std::mem::size_of::<_cef_display_t>() - 96usize];
+    ["Alignment of _cef_display_t"][::std::mem::align_of::<_cef_display_t>() - 8usize];
+    ["Offset of field: _cef_display_t::base"]
+        [::std::mem::offset_of!(_cef_display_t, base) - 0usize];
+    ["Offset of field: _cef_display_t::get_id"]
+        [::std::mem::offset_of!(_cef_display_t, get_id) - 40usize];
+    ["Offset of field: _cef_display_t::get_device_scale_factor"]
+        [::std::mem::offset_of!(_cef_display_t, get_device_scale_factor) - 48usize];
+    ["Offset of field: _cef_display_t::convert_point_to_pixels"]
+        [::std::mem::offset_of!(_cef_display_t, convert_point_to_pixels) - 56usize];
+    ["Offset of field: _cef_display_t::convert_point_from_pixels"]
+        [::std::mem::offset_of!(_cef_display_t, convert_point_from_pixels) - 64usize];
+    ["Offset of field: _cef_display_t::get_bounds"]
+        [::std::mem::offset_of!(_cef_display_t, get_bounds) - 72usize];
+    ["Offset of field: _cef_display_t::get_work_area"]
+        [::std::mem::offset_of!(_cef_display_t, get_work_area) - 80usize];
+    ["Offset of field: _cef_display_t::get_rotation"]
+        [::std::mem::offset_of!(_cef_display_t, get_rotation) - 88usize];
+};
+#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_display_t = _cef_display_t;
+unsafe extern "C" {
+    #[doc = "\n Returns the primary Display.\n"]
+    pub fn cef_display_get_primary() -> *mut cef_display_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the Display nearest |point|. Set |input_pixel_coords| to true (1) if\n |point| is in pixel screen coordinates instead of DIP screen coordinates.\n"]
+    pub fn cef_display_get_nearest_point(
+        point: *const cef_point_t,
+        input_pixel_coords: ::std::os::raw::c_int,
+    ) -> *mut cef_display_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the Display that most closely intersects |bounds|.  Set\n |input_pixel_coords| to true (1) if |bounds| is in pixel screen coordinates\n instead of DIP screen coordinates.\n"]
+    pub fn cef_display_get_matching_bounds(
+        bounds: *const cef_rect_t,
+        input_pixel_coords: ::std::os::raw::c_int,
+    ) -> *mut cef_display_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the total number of Displays. Mirrored displays are excluded; this\n function is intended to return the number of distinct, usable displays.\n"]
+    pub fn cef_display_get_count() -> usize;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns all Displays. Mirrored displays are excluded; this function is\n intended to return distinct, usable displays.\n"]
+    pub fn cef_display_get_alls(displaysCount: *mut usize, displays: *mut *mut cef_display_t);
+}
+unsafe extern "C" {
+    #[doc = "\n Convert |point| from DIP screen coordinates to pixel screen coordinates.\n This function is only used on Windows.\n"]
+    pub fn cef_display_convert_screen_point_to_pixels(point: *const cef_point_t) -> cef_point_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Convert |point| from pixel screen coordinates to DIP screen coordinates.\n This function is only used on Windows.\n"]
+    pub fn cef_display_convert_screen_point_from_pixels(point: *const cef_point_t) -> cef_point_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Convert |rect| from DIP screen coordinates to pixel screen coordinates. This\n function is only used on Windows.\n"]
+    pub fn cef_display_convert_screen_rect_to_pixels(rect: *const cef_rect_t) -> cef_rect_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Convert |rect| from pixel screen coordinates to DIP screen coordinates. This\n function is only used on Windows.\n"]
+    pub fn cef_display_convert_screen_rect_from_pixels(rect: *const cef_rect_t) -> cef_rect_t;
+}
+#[doc = "\n A simple Layout that causes the associated Panel's one child to be sized to\n match the bounds of its parent. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_fill_layout_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_layout_t,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_fill_layout_t"][::std::mem::size_of::<_cef_fill_layout_t>() - 64usize];
+    ["Alignment of _cef_fill_layout_t"][::std::mem::align_of::<_cef_fill_layout_t>() - 8usize];
+    ["Offset of field: _cef_fill_layout_t::base"]
+        [::std::mem::offset_of!(_cef_fill_layout_t, base) - 0usize];
+};
+#[doc = "\n A simple Layout that causes the associated Panel's one child to be sized to\n match the bounds of its parent. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_fill_layout_t = _cef_fill_layout_t;
 #[doc = "\n LabelButton is a button with optional text and/or icon. Methods must be\n called on the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -14952,582 +16205,6 @@ unsafe extern "C" {
         delegate: *mut _cef_menu_button_delegate_t,
         text: *const cef_string_t,
     ) -> *mut cef_menu_button_t;
-}
-#[doc = "\n Implement this structure to handle Textfield events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_textfield_delegate_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_view_delegate_t,
-    #[doc = "\n Called when |textfield| receives a keyboard event. |event| contains\n information about the keyboard event. Return true (1) if the keyboard\n event was handled or false (0) otherwise for default handling.\n"]
-    pub on_key_event: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_textfield_delegate_t,
-            textfield: *mut _cef_textfield_t,
-            event: *const cef_key_event_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Called after performing a user action that may change |textfield|.\n"]
-    pub on_after_user_action: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_textfield_delegate_t,
-            textfield: *mut _cef_textfield_t,
-        ),
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_textfield_delegate_t"]
-        [::std::mem::size_of::<_cef_textfield_delegate_t>() - 144usize];
-    ["Alignment of _cef_textfield_delegate_t"]
-        [::std::mem::align_of::<_cef_textfield_delegate_t>() - 8usize];
-    ["Offset of field: _cef_textfield_delegate_t::base"]
-        [::std::mem::offset_of!(_cef_textfield_delegate_t, base) - 0usize];
-    ["Offset of field: _cef_textfield_delegate_t::on_key_event"]
-        [::std::mem::offset_of!(_cef_textfield_delegate_t, on_key_event) - 128usize];
-    ["Offset of field: _cef_textfield_delegate_t::on_after_user_action"]
-        [::std::mem::offset_of!(_cef_textfield_delegate_t, on_after_user_action) - 136usize];
-};
-#[doc = "\n Implement this structure to handle Textfield events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
-pub type cef_textfield_delegate_t = _cef_textfield_delegate_t;
-#[doc = "\n A Textfield supports editing of text. This control is custom rendered with\n no platform-specific code. Methods must be called on the browser process UI\n thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_textfield_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_view_t,
-    #[doc = "\n Sets whether the text will be displayed as asterisks.\n"]
-    pub set_password_input: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, password_input: ::std::os::raw::c_int),
-    >,
-    #[doc = "\n Returns true (1) if the text will be displayed as asterisks.\n"]
-    pub is_password_input: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Sets whether the text will read-only.\n"]
-    pub set_read_only: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, read_only: ::std::os::raw::c_int),
-    >,
-    #[doc = "\n Returns true (1) if the text is read-only.\n"]
-    pub is_read_only: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns the currently displayed text.\n"]
-    pub get_text: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
-    >,
-    #[doc = "\n Sets the contents to |text|. The cursor will be moved to end of the text\n if the current position is outside of the text range.\n"]
-    pub set_text: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    #[doc = "\n Appends |text| to the previously-existing text.\n"]
-    pub append_text: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    #[doc = "\n Inserts |text| at the current cursor position replacing any selected text.\n"]
-    pub insert_or_replace_text: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    #[doc = "\n Returns true (1) if there is any selected text.\n"]
-    pub has_selection: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns the currently selected text.\n"]
-    pub get_selected_text: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
-    >,
-    #[doc = "\n Selects all text. If |reversed| is true (1) the range will end at the\n logical beginning of the text; this generally shows the leading portion of\n text that overflows its display area.\n"]
-    pub select_all: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, reversed: ::std::os::raw::c_int),
-    >,
-    #[doc = "\n Clears the text selection and sets the caret to the end.\n"]
-    pub clear_selection: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t)>,
-    #[doc = "\n Returns the selected logical text range.\n"]
-    pub get_selected_range:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_range_t>,
-    #[doc = "\n Selects the specified logical text range.\n"]
-    pub select_range: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, range: *const cef_range_t),
-    >,
-    #[doc = "\n Returns the current cursor position.\n"]
-    pub get_cursor_position:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> usize>,
-    #[doc = "\n Sets the text color.\n"]
-    pub set_text_color: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    #[doc = "\n Returns the text color.\n"]
-    pub get_text_color:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_color_t>,
-    #[doc = "\n Sets the selection text color.\n"]
-    pub set_selection_text_color: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    #[doc = "\n Returns the selection text color.\n"]
-    pub get_selection_text_color:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_color_t>,
-    #[doc = "\n Sets the selection background color.\n"]
-    pub set_selection_background_color: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    #[doc = "\n Returns the selection background color.\n"]
-    pub get_selection_background_color:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_color_t>,
-    #[doc = "\n Sets the font list. The format is \"<FONT_FAMILY_LIST>,[STYLES] <SIZE>\",\n where:\n - FONT_FAMILY_LIST is a comma-separated list of font family names,\n - STYLES is an optional space-separated list of style names (case-\n   sensitive \"Bold\" and \"Italic\" are supported), and\n - SIZE is an integer font size in pixels with the suffix \"px\".\n\n Here are examples of valid font description strings:\n - \"Arial, Helvetica, Bold Italic 14px\"\n - \"Arial, 14px\"\n"]
-    pub set_font_list: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, font_list: *const cef_string_t),
-    >,
-    #[doc = "\n Applies |color| to the specified |range| without changing the default\n color. If |range| is NULL the color will be set on the complete text\n contents.\n"]
-    pub apply_text_color: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_textfield_t,
-            color: cef_color_t,
-            range: *const cef_range_t,
-        ),
-    >,
-    #[doc = "\n Applies |style| to the specified |range| without changing the default\n style. If |add| is true (1) the style will be added, otherwise the style\n will be removed. If |range| is NULL the style will be set on the complete\n text contents.\n"]
-    pub apply_text_style: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_textfield_t,
-            style: cef_text_style_t,
-            add: ::std::os::raw::c_int,
-            range: *const cef_range_t,
-        ),
-    >,
-    #[doc = "\n Returns true (1) if the action associated with the specified command id is\n enabled. See additional comments on execute_command().\n"]
-    pub is_command_enabled: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_textfield_t,
-            command_id: cef_text_field_commands_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Performs the action associated with the specified command id.\n"]
-    pub execute_command: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, command_id: cef_text_field_commands_t),
-    >,
-    #[doc = "\n Clears Edit history.\n"]
-    pub clear_edit_history:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t)>,
-    #[doc = "\n Sets the placeholder text that will be displayed when the Textfield is\n NULL.\n"]
-    pub set_placeholder_text: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
-    >,
-    #[doc = "\n Returns the placeholder text that will be displayed when the Textfield is\n NULL.\n"]
-    pub get_placeholder_text: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
-    >,
-    #[doc = "\n Sets the placeholder text color.\n"]
-    pub set_placeholder_text_color: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
-    >,
-    #[doc = "\n Set the accessible name that will be exposed to assistive technology (AT).\n"]
-    pub set_accessible_name: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_textfield_t, name: *const cef_string_t),
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_textfield_t"][::std::mem::size_of::<_cef_textfield_t>() - 704usize];
-    ["Alignment of _cef_textfield_t"][::std::mem::align_of::<_cef_textfield_t>() - 8usize];
-    ["Offset of field: _cef_textfield_t::base"]
-        [::std::mem::offset_of!(_cef_textfield_t, base) - 0usize];
-    ["Offset of field: _cef_textfield_t::set_password_input"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_password_input) - 456usize];
-    ["Offset of field: _cef_textfield_t::is_password_input"]
-        [::std::mem::offset_of!(_cef_textfield_t, is_password_input) - 464usize];
-    ["Offset of field: _cef_textfield_t::set_read_only"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_read_only) - 472usize];
-    ["Offset of field: _cef_textfield_t::is_read_only"]
-        [::std::mem::offset_of!(_cef_textfield_t, is_read_only) - 480usize];
-    ["Offset of field: _cef_textfield_t::get_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_text) - 488usize];
-    ["Offset of field: _cef_textfield_t::set_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_text) - 496usize];
-    ["Offset of field: _cef_textfield_t::append_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, append_text) - 504usize];
-    ["Offset of field: _cef_textfield_t::insert_or_replace_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, insert_or_replace_text) - 512usize];
-    ["Offset of field: _cef_textfield_t::has_selection"]
-        [::std::mem::offset_of!(_cef_textfield_t, has_selection) - 520usize];
-    ["Offset of field: _cef_textfield_t::get_selected_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selected_text) - 528usize];
-    ["Offset of field: _cef_textfield_t::select_all"]
-        [::std::mem::offset_of!(_cef_textfield_t, select_all) - 536usize];
-    ["Offset of field: _cef_textfield_t::clear_selection"]
-        [::std::mem::offset_of!(_cef_textfield_t, clear_selection) - 544usize];
-    ["Offset of field: _cef_textfield_t::get_selected_range"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selected_range) - 552usize];
-    ["Offset of field: _cef_textfield_t::select_range"]
-        [::std::mem::offset_of!(_cef_textfield_t, select_range) - 560usize];
-    ["Offset of field: _cef_textfield_t::get_cursor_position"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_cursor_position) - 568usize];
-    ["Offset of field: _cef_textfield_t::set_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_text_color) - 576usize];
-    ["Offset of field: _cef_textfield_t::get_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_text_color) - 584usize];
-    ["Offset of field: _cef_textfield_t::set_selection_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_selection_text_color) - 592usize];
-    ["Offset of field: _cef_textfield_t::get_selection_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selection_text_color) - 600usize];
-    ["Offset of field: _cef_textfield_t::set_selection_background_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_selection_background_color) - 608usize];
-    ["Offset of field: _cef_textfield_t::get_selection_background_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selection_background_color) - 616usize];
-    ["Offset of field: _cef_textfield_t::set_font_list"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_font_list) - 624usize];
-    ["Offset of field: _cef_textfield_t::apply_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, apply_text_color) - 632usize];
-    ["Offset of field: _cef_textfield_t::apply_text_style"]
-        [::std::mem::offset_of!(_cef_textfield_t, apply_text_style) - 640usize];
-    ["Offset of field: _cef_textfield_t::is_command_enabled"]
-        [::std::mem::offset_of!(_cef_textfield_t, is_command_enabled) - 648usize];
-    ["Offset of field: _cef_textfield_t::execute_command"]
-        [::std::mem::offset_of!(_cef_textfield_t, execute_command) - 656usize];
-    ["Offset of field: _cef_textfield_t::clear_edit_history"]
-        [::std::mem::offset_of!(_cef_textfield_t, clear_edit_history) - 664usize];
-    ["Offset of field: _cef_textfield_t::set_placeholder_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text) - 672usize];
-    ["Offset of field: _cef_textfield_t::get_placeholder_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_placeholder_text) - 680usize];
-    ["Offset of field: _cef_textfield_t::set_placeholder_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text_color) - 688usize];
-    ["Offset of field: _cef_textfield_t::set_accessible_name"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_accessible_name) - 696usize];
-};
-#[doc = "\n A Textfield supports editing of text. This control is custom rendered with\n no platform-specific code. Methods must be called on the browser process UI\n thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-pub type cef_textfield_t = _cef_textfield_t;
-unsafe extern "C" {
-    #[doc = "\n Create a new Textfield.\n"]
-    pub fn cef_textfield_create(delegate: *mut _cef_textfield_delegate_t) -> *mut cef_textfield_t;
-}
-#[doc = "\n Implement this structure to handle BrowserView events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_browser_view_delegate_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_view_delegate_t,
-    #[doc = "\n Called when |browser| associated with |browser_view| is created. This\n function will be called after cef_life_span_handler_t::on_after_created()\n is called for |browser| and before on_popup_browser_view_created() is\n called for |browser|'s parent delegate if |browser| is a popup.\n"]
-    pub on_browser_created: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-    #[doc = "\n Called when |browser| associated with |browser_view| is destroyed. Release\n all references to |browser| and do not attempt to execute any functions on\n |browser| after this callback returns. This function will be called before\n cef_life_span_handler_t::on_before_close() is called for |browser|.\n"]
-    pub on_browser_destroyed: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            browser: *mut _cef_browser_t,
-        ),
-    >,
-    #[doc = "\n Called before a new popup BrowserView is created. The popup originated\n from |browser_view|. |settings| and |client| are the values returned from\n cef_life_span_handler_t::on_before_popup(). |is_devtools| will be true (1)\n if the popup will be a DevTools browser. Return the delegate that will be\n used for the new popup BrowserView.\n"]
-    pub get_delegate_for_popup_browser_view: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            settings: *const _cef_browser_settings_t,
-            client: *mut _cef_client_t,
-            is_devtools: ::std::os::raw::c_int,
-        ) -> *mut _cef_browser_view_delegate_t,
-    >,
-    #[doc = "\n Called after |popup_browser_view| is created. This function will be called\n after cef_life_span_handler_t::on_after_created() and on_browser_created()\n are called for the new popup browser. The popup originated from\n |browser_view|. |is_devtools| will be true (1) if the popup is a DevTools\n browser. Optionally add |popup_browser_view| to the views hierarchy\n yourself and return true (1). Otherwise return false (0) and a default\n cef_window_t will be created for the popup.\n"]
-    pub on_popup_browser_view_created: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            popup_browser_view: *mut _cef_browser_view_t,
-            is_devtools: ::std::os::raw::c_int,
-        ) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns the Chrome toolbar type that will be available via\n cef_browser_view_t::get_chrome_toolbar(). See that function for related\n documentation.\n"]
-    pub get_chrome_toolbar_type: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-        ) -> cef_chrome_toolbar_type_t,
-    >,
-    #[doc = "\n Return true (1) to create frameless windows for Document picture-in-\n picture popups. Content in frameless windows should specify draggable\n regions using \"-webkit-app-region: drag\" CSS.\n"]
-    pub use_frameless_window_for_picture_in_picture: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Called when |browser_view| receives a gesture command. Return true (1) to\n handle (or disable) a |gesture_command| or false (0) to propagate the\n gesture to the browser for default handling. With Chrome style these\n commands can also be handled via cef_command_handler_t::OnChromeCommand.\n"]
-    pub on_gesture_command: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-            gesture_command: cef_gesture_command_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Optionally change the runtime style for this BrowserView. See\n cef_runtime_style_t documentation for details.\n"]
-    pub get_browser_runtime_style: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_browser_view_delegate_t) -> cef_runtime_style_t,
-    >,
-    #[doc = "\n Return true (1) to allow the use of JavaScript moveTo/By() and\n resizeTo/By() (without user activation) with Document picture-in-picture\n popups.\n"]
-    pub allow_move_for_picture_in_picture: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_delegate_t,
-            browser_view: *mut _cef_browser_view_t,
-        ) -> ::std::os::raw::c_int,
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_browser_view_delegate_t"]
-        [::std::mem::size_of::<_cef_browser_view_delegate_t>() - 200usize];
-    ["Alignment of _cef_browser_view_delegate_t"]
-        [::std::mem::align_of::<_cef_browser_view_delegate_t>() - 8usize];
-    ["Offset of field: _cef_browser_view_delegate_t::base"]
-        [::std::mem::offset_of!(_cef_browser_view_delegate_t, base) - 0usize];
-    ["Offset of field: _cef_browser_view_delegate_t::on_browser_created"]
-        [::std::mem::offset_of!(_cef_browser_view_delegate_t, on_browser_created) - 128usize];
-    ["Offset of field: _cef_browser_view_delegate_t::on_browser_destroyed"]
-        [::std::mem::offset_of!(_cef_browser_view_delegate_t, on_browser_destroyed) - 136usize];
-    ["Offset of field: _cef_browser_view_delegate_t::get_delegate_for_popup_browser_view"][::std::mem::offset_of!(
-        _cef_browser_view_delegate_t,
-        get_delegate_for_popup_browser_view
-    )
-        - 144usize];
-    ["Offset of field: _cef_browser_view_delegate_t::on_popup_browser_view_created"][::std::mem::offset_of!(
-        _cef_browser_view_delegate_t,
-        on_popup_browser_view_created
-    ) - 152usize];
-    ["Offset of field: _cef_browser_view_delegate_t::get_chrome_toolbar_type"]
-        [::std::mem::offset_of!(_cef_browser_view_delegate_t, get_chrome_toolbar_type) - 160usize];
-    ["Offset of field: _cef_browser_view_delegate_t::use_frameless_window_for_picture_in_picture"] [:: std :: mem :: offset_of ! (_cef_browser_view_delegate_t , use_frameless_window_for_picture_in_picture) - 168usize] ;
-    ["Offset of field: _cef_browser_view_delegate_t::on_gesture_command"]
-        [::std::mem::offset_of!(_cef_browser_view_delegate_t, on_gesture_command) - 176usize];
-    ["Offset of field: _cef_browser_view_delegate_t::get_browser_runtime_style"][::std::mem::offset_of!(
-        _cef_browser_view_delegate_t,
-        get_browser_runtime_style
-    ) - 184usize];
-    ["Offset of field: _cef_browser_view_delegate_t::allow_move_for_picture_in_picture"][::std::mem::offset_of!(
-        _cef_browser_view_delegate_t,
-        allow_move_for_picture_in_picture
-    )
-        - 192usize];
-};
-#[doc = "\n Implement this structure to handle BrowserView events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
-pub type cef_browser_view_delegate_t = _cef_browser_view_delegate_t;
-#[doc = "\n A View hosting a cef_browser_t instance. Methods must be called on the\n browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_browser_view_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_view_t,
-    #[doc = "\n Returns the cef_browser_t hosted by this BrowserView. Will return NULL if\n the browser has not yet been created or has already been destroyed.\n"]
-    pub get_browser: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_browser_t,
-    >,
-    #[doc = "\n Returns the Chrome toolbar associated with this BrowserView. Only\n supported when using Chrome style. The cef_browser_view_delegate_t::\n get_chrome_toolbar_type() function must return a value other than\n CEF_CTT_NONE and the toolbar will not be available until after this\n BrowserView is added to a cef_window_t and\n cef_view_delegate_t::on_window_changed() has been called.\n"]
-    pub get_chrome_toolbar: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_view_t,
-    >,
-    #[doc = "\n Sets whether normal priority accelerators are first forwarded to the web\n content (`keydown` event handler) or cef_keyboard_handler_t. Normal\n priority accelerators can be registered via cef_window_t::SetAccelerator\n (with |high_priority|=false (0)) or internally for standard accelerators\n supported by Chrome style. If |prefer_accelerators| is true (1) then the\n matching accelerator will be triggered immediately (calling\n cef_window_delegate_t::OnAccelerator or\n cef_command_handler_t::OnChromeCommand respectively) and the event will\n not be forwarded to the web content or cef_keyboard_handler_t first. If\n |prefer_accelerators| is false (0) then the matching accelerator will only\n be triggered if the event is not handled by web content (`keydown` event\n handler that calls `event.preventDefault()`) or by cef_keyboard_handler_t.\n The default value is false (0).\n"]
-    pub set_prefer_accelerators: ::std::option::Option<
-        unsafe extern "C" fn(
-            self_: *mut _cef_browser_view_t,
-            prefer_accelerators: ::std::os::raw::c_int,
-        ),
-    >,
-    #[doc = "\n Returns the runtime style for this BrowserView (ALLOY or CHROME). See\n cef_runtime_style_t documentation for details.\n"]
-    pub get_runtime_style: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_browser_view_t) -> cef_runtime_style_t,
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_browser_view_t"][::std::mem::size_of::<_cef_browser_view_t>() - 488usize];
-    ["Alignment of _cef_browser_view_t"][::std::mem::align_of::<_cef_browser_view_t>() - 8usize];
-    ["Offset of field: _cef_browser_view_t::base"]
-        [::std::mem::offset_of!(_cef_browser_view_t, base) - 0usize];
-    ["Offset of field: _cef_browser_view_t::get_browser"]
-        [::std::mem::offset_of!(_cef_browser_view_t, get_browser) - 456usize];
-    ["Offset of field: _cef_browser_view_t::get_chrome_toolbar"]
-        [::std::mem::offset_of!(_cef_browser_view_t, get_chrome_toolbar) - 464usize];
-    ["Offset of field: _cef_browser_view_t::set_prefer_accelerators"]
-        [::std::mem::offset_of!(_cef_browser_view_t, set_prefer_accelerators) - 472usize];
-    ["Offset of field: _cef_browser_view_t::get_runtime_style"]
-        [::std::mem::offset_of!(_cef_browser_view_t, get_runtime_style) - 480usize];
-};
-#[doc = "\n A View hosting a cef_browser_t instance. Methods must be called on the\n browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-pub type cef_browser_view_t = _cef_browser_view_t;
-unsafe extern "C" {
-    #[doc = "\n Create a new BrowserView. The underlying cef_browser_t will not be created\n until this view is added to the views hierarchy. The optional |extra_info|\n parameter provides an opportunity to specify extra information specific to\n the created browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n"]
-    pub fn cef_browser_view_create(
-        client: *mut _cef_client_t,
-        url: *const cef_string_t,
-        settings: *const _cef_browser_settings_t,
-        extra_info: *mut _cef_dictionary_value_t,
-        request_context: *mut _cef_request_context_t,
-        delegate: *mut _cef_browser_view_delegate_t,
-    ) -> *mut cef_browser_view_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Returns the BrowserView associated with |browser|.\n"]
-    pub fn cef_browser_view_get_for_browser(
-        browser: *mut _cef_browser_t,
-    ) -> *mut cef_browser_view_t;
-}
-#[doc = "\n A ScrollView will show horizontal and/or vertical scrollbars when necessary\n based on the size of the attached content view. Methods must be called on\n the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_scroll_view_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_view_t,
-    #[doc = "\n Set the content View. The content View must have a specified size (e.g.\n via cef_view_t::SetBounds or cef_view_delegate_t::GetPreferredSize).\n"]
-    pub set_content_view: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t, view: *mut _cef_view_t),
-    >,
-    #[doc = "\n Returns the content View.\n"]
-    pub get_content_view: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> *mut _cef_view_t,
-    >,
-    #[doc = "\n Returns the visible region of the content View.\n"]
-    pub get_visible_content_rect:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> cef_rect_t>,
-    #[doc = "\n Returns true (1) if the horizontal scrollbar is currently showing.\n"]
-    pub has_horizontal_scrollbar: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns the height of the horizontal scrollbar.\n"]
-    pub get_horizontal_scrollbar_height: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns true (1) if the vertical scrollbar is currently showing.\n"]
-    pub has_vertical_scrollbar: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns the width of the vertical scrollbar.\n"]
-    pub get_vertical_scrollbar_width: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_scroll_view_t"][::std::mem::size_of::<_cef_scroll_view_t>() - 512usize];
-    ["Alignment of _cef_scroll_view_t"][::std::mem::align_of::<_cef_scroll_view_t>() - 8usize];
-    ["Offset of field: _cef_scroll_view_t::base"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, base) - 0usize];
-    ["Offset of field: _cef_scroll_view_t::set_content_view"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, set_content_view) - 456usize];
-    ["Offset of field: _cef_scroll_view_t::get_content_view"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_content_view) - 464usize];
-    ["Offset of field: _cef_scroll_view_t::get_visible_content_rect"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_visible_content_rect) - 472usize];
-    ["Offset of field: _cef_scroll_view_t::has_horizontal_scrollbar"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, has_horizontal_scrollbar) - 480usize];
-    ["Offset of field: _cef_scroll_view_t::get_horizontal_scrollbar_height"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_horizontal_scrollbar_height) - 488usize];
-    ["Offset of field: _cef_scroll_view_t::has_vertical_scrollbar"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, has_vertical_scrollbar) - 496usize];
-    ["Offset of field: _cef_scroll_view_t::get_vertical_scrollbar_width"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_vertical_scrollbar_width) - 504usize];
-};
-#[doc = "\n A ScrollView will show horizontal and/or vertical scrollbars when necessary\n based on the size of the attached content view. Methods must be called on\n the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
-pub type cef_scroll_view_t = _cef_scroll_view_t;
-unsafe extern "C" {
-    #[doc = "\n Create a new ScrollView.\n"]
-    pub fn cef_scroll_view_create(delegate: *mut _cef_view_delegate_t) -> *mut cef_scroll_view_t;
-}
-#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_display_t {
-    #[doc = "\n Base structure.\n"]
-    pub base: cef_base_ref_counted_t,
-    #[doc = "\n Returns the unique identifier for this Display.\n"]
-    pub get_id: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> i64>,
-    #[doc = "\n Returns this Display's device pixel scale factor. This specifies how much\n the UI should be scaled when the actual output has more pixels than\n standard displays (which is around 100~120dpi). The potential return\n values differ by platform. Windowed browsers with 1.0 zoom will have a\n JavaScript `window.devicePixelRatio` value matching the associated\n Display's get_device_scale_factor() value.\n"]
-    pub get_device_scale_factor:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> f32>,
-    #[doc = "\n Convert |point| from DIP coordinates to pixel coordinates using this\n Display's device scale factor.\n"]
-    pub convert_point_to_pixels: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
-    >,
-    #[doc = "\n Convert |point| from pixel coordinates to DIP coordinates using this\n Display's device scale factor.\n"]
-    pub convert_point_from_pixels: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_display_t, point: *mut cef_point_t),
-    >,
-    #[doc = "\n Returns this Display's bounds in DIP screen coordinates. This is the full\n size of the display.\n"]
-    pub get_bounds:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
-    #[doc = "\n Returns this Display's work area in DIP screen coordinates. This excludes\n areas of the display that are occupied with window manager toolbars, etc.\n"]
-    pub get_work_area:
-        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_display_t) -> cef_rect_t>,
-    #[doc = "\n Returns this Display's rotation in degrees.\n"]
-    pub get_rotation: ::std::option::Option<
-        unsafe extern "C" fn(self_: *mut _cef_display_t) -> ::std::os::raw::c_int,
-    >,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_display_t"][::std::mem::size_of::<_cef_display_t>() - 96usize];
-    ["Alignment of _cef_display_t"][::std::mem::align_of::<_cef_display_t>() - 8usize];
-    ["Offset of field: _cef_display_t::base"]
-        [::std::mem::offset_of!(_cef_display_t, base) - 0usize];
-    ["Offset of field: _cef_display_t::get_id"]
-        [::std::mem::offset_of!(_cef_display_t, get_id) - 40usize];
-    ["Offset of field: _cef_display_t::get_device_scale_factor"]
-        [::std::mem::offset_of!(_cef_display_t, get_device_scale_factor) - 48usize];
-    ["Offset of field: _cef_display_t::convert_point_to_pixels"]
-        [::std::mem::offset_of!(_cef_display_t, convert_point_to_pixels) - 56usize];
-    ["Offset of field: _cef_display_t::convert_point_from_pixels"]
-        [::std::mem::offset_of!(_cef_display_t, convert_point_from_pixels) - 64usize];
-    ["Offset of field: _cef_display_t::get_bounds"]
-        [::std::mem::offset_of!(_cef_display_t, get_bounds) - 72usize];
-    ["Offset of field: _cef_display_t::get_work_area"]
-        [::std::mem::offset_of!(_cef_display_t, get_work_area) - 80usize];
-    ["Offset of field: _cef_display_t::get_rotation"]
-        [::std::mem::offset_of!(_cef_display_t, get_rotation) - 88usize];
-};
-#[doc = "\n This structure typically, but not always, corresponds to a physical display\n connected to the system. A fake Display may exist on a headless system, or a\n Display may correspond to a remote, virtual display. All size and position\n values are in density independent pixel (DIP) coordinates unless otherwise\n indicated. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n\n For details on coordinate systems and usage see\n https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage#markdown-\n header-coordinate-systems\n\n NOTE: This struct is allocated DLL-side.\n"]
-pub type cef_display_t = _cef_display_t;
-unsafe extern "C" {
-    #[doc = "\n Returns the primary Display.\n"]
-    pub fn cef_display_get_primary() -> *mut cef_display_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Returns the Display nearest |point|. Set |input_pixel_coords| to true (1) if\n |point| is in pixel screen coordinates instead of DIP screen coordinates.\n"]
-    pub fn cef_display_get_nearest_point(
-        point: *const cef_point_t,
-        input_pixel_coords: ::std::os::raw::c_int,
-    ) -> *mut cef_display_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Returns the Display that most closely intersects |bounds|.  Set\n |input_pixel_coords| to true (1) if |bounds| is in pixel screen coordinates\n instead of DIP screen coordinates.\n"]
-    pub fn cef_display_get_matching_bounds(
-        bounds: *const cef_rect_t,
-        input_pixel_coords: ::std::os::raw::c_int,
-    ) -> *mut cef_display_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Returns the total number of Displays. Mirrored displays are excluded; this\n function is intended to return the number of distinct, usable displays.\n"]
-    pub fn cef_display_get_count() -> usize;
-}
-unsafe extern "C" {
-    #[doc = "\n Returns all Displays. Mirrored displays are excluded; this function is\n intended to return distinct, usable displays.\n"]
-    pub fn cef_display_get_alls(displaysCount: *mut usize, displays: *mut *mut cef_display_t);
-}
-unsafe extern "C" {
-    #[doc = "\n Convert |point| from DIP screen coordinates to pixel screen coordinates.\n This function is only used on Windows.\n"]
-    pub fn cef_display_convert_screen_point_to_pixels(point: *const cef_point_t) -> cef_point_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Convert |point| from pixel screen coordinates to DIP screen coordinates.\n This function is only used on Windows.\n"]
-    pub fn cef_display_convert_screen_point_from_pixels(point: *const cef_point_t) -> cef_point_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Convert |rect| from DIP screen coordinates to pixel screen coordinates. This\n function is only used on Windows.\n"]
-    pub fn cef_display_convert_screen_rect_to_pixels(rect: *const cef_rect_t) -> cef_rect_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Convert |rect| from pixel screen coordinates to DIP screen coordinates. This\n function is only used on Windows.\n"]
-    pub fn cef_display_convert_screen_rect_from_pixels(rect: *const cef_rect_t) -> cef_rect_t;
 }
 #[doc = "\n Controller for an overlay that contains a contents View added via\n cef_window_t::AddOverlayView. Methods exposed by this controller should be\n called in preference to functions of the same name exposed by the contents\n View unless otherwise indicated. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
@@ -15776,6 +16453,314 @@ pub type cef_panel_t = _cef_panel_t;
 unsafe extern "C" {
     #[doc = "\n Create a new Panel.\n"]
     pub fn cef_panel_create(delegate: *mut _cef_panel_delegate_t) -> *mut cef_panel_t;
+}
+#[doc = "\n A ScrollView will show horizontal and/or vertical scrollbars when necessary\n based on the size of the attached content view. Methods must be called on\n the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_scroll_view_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_view_t,
+    #[doc = "\n Set the content View. The content View must have a specified size (e.g.\n via cef_view_t::SetBounds or cef_view_delegate_t::GetPreferredSize).\n"]
+    pub set_content_view: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t, view: *mut _cef_view_t),
+    >,
+    #[doc = "\n Returns the content View.\n"]
+    pub get_content_view: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> *mut _cef_view_t,
+    >,
+    #[doc = "\n Returns the visible region of the content View.\n"]
+    pub get_visible_content_rect:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> cef_rect_t>,
+    #[doc = "\n Returns true (1) if the horizontal scrollbar is currently showing.\n"]
+    pub has_horizontal_scrollbar: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the height of the horizontal scrollbar.\n"]
+    pub get_horizontal_scrollbar_height: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns true (1) if the vertical scrollbar is currently showing.\n"]
+    pub has_vertical_scrollbar: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the width of the vertical scrollbar.\n"]
+    pub get_vertical_scrollbar_width: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_scroll_view_t) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_scroll_view_t"][::std::mem::size_of::<_cef_scroll_view_t>() - 512usize];
+    ["Alignment of _cef_scroll_view_t"][::std::mem::align_of::<_cef_scroll_view_t>() - 8usize];
+    ["Offset of field: _cef_scroll_view_t::base"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, base) - 0usize];
+    ["Offset of field: _cef_scroll_view_t::set_content_view"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, set_content_view) - 456usize];
+    ["Offset of field: _cef_scroll_view_t::get_content_view"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_content_view) - 464usize];
+    ["Offset of field: _cef_scroll_view_t::get_visible_content_rect"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_visible_content_rect) - 472usize];
+    ["Offset of field: _cef_scroll_view_t::has_horizontal_scrollbar"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, has_horizontal_scrollbar) - 480usize];
+    ["Offset of field: _cef_scroll_view_t::get_horizontal_scrollbar_height"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_horizontal_scrollbar_height) - 488usize];
+    ["Offset of field: _cef_scroll_view_t::has_vertical_scrollbar"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, has_vertical_scrollbar) - 496usize];
+    ["Offset of field: _cef_scroll_view_t::get_vertical_scrollbar_width"]
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_vertical_scrollbar_width) - 504usize];
+};
+#[doc = "\n A ScrollView will show horizontal and/or vertical scrollbars when necessary\n based on the size of the attached content view. Methods must be called on\n the browser process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_scroll_view_t = _cef_scroll_view_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new ScrollView.\n"]
+    pub fn cef_scroll_view_create(delegate: *mut _cef_view_delegate_t) -> *mut cef_scroll_view_t;
+}
+#[doc = "\n Implement this structure to handle Textfield events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_textfield_delegate_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_view_delegate_t,
+    #[doc = "\n Called when |textfield| receives a keyboard event. |event| contains\n information about the keyboard event. Return true (1) if the keyboard\n event was handled or false (0) otherwise for default handling.\n"]
+    pub on_key_event: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_textfield_delegate_t,
+            textfield: *mut _cef_textfield_t,
+            event: *const cef_key_event_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Called after performing a user action that may change |textfield|.\n"]
+    pub on_after_user_action: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_textfield_delegate_t,
+            textfield: *mut _cef_textfield_t,
+        ),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_textfield_delegate_t"]
+        [::std::mem::size_of::<_cef_textfield_delegate_t>() - 144usize];
+    ["Alignment of _cef_textfield_delegate_t"]
+        [::std::mem::align_of::<_cef_textfield_delegate_t>() - 8usize];
+    ["Offset of field: _cef_textfield_delegate_t::base"]
+        [::std::mem::offset_of!(_cef_textfield_delegate_t, base) - 0usize];
+    ["Offset of field: _cef_textfield_delegate_t::on_key_event"]
+        [::std::mem::offset_of!(_cef_textfield_delegate_t, on_key_event) - 128usize];
+    ["Offset of field: _cef_textfield_delegate_t::on_after_user_action"]
+        [::std::mem::offset_of!(_cef_textfield_delegate_t, on_after_user_action) - 136usize];
+};
+#[doc = "\n Implement this structure to handle Textfield events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
+pub type cef_textfield_delegate_t = _cef_textfield_delegate_t;
+#[doc = "\n A Textfield supports editing of text. This control is custom rendered with\n no platform-specific code. Methods must be called on the browser process UI\n thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_textfield_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_view_t,
+    #[doc = "\n Sets whether the text will be displayed as asterisks.\n"]
+    pub set_password_input: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, password_input: ::std::os::raw::c_int),
+    >,
+    #[doc = "\n Returns true (1) if the text will be displayed as asterisks.\n"]
+    pub is_password_input: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Sets whether the text will read-only.\n"]
+    pub set_read_only: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, read_only: ::std::os::raw::c_int),
+    >,
+    #[doc = "\n Returns true (1) if the text is read-only.\n"]
+    pub is_read_only: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the currently displayed text.\n"]
+    pub get_text: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Sets the contents to |text|. The cursor will be moved to end of the text\n if the current position is outside of the text range.\n"]
+    pub set_text: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    #[doc = "\n Appends |text| to the previously-existing text.\n"]
+    pub append_text: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    #[doc = "\n Inserts |text| at the current cursor position replacing any selected text.\n"]
+    pub insert_or_replace_text: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    #[doc = "\n Returns true (1) if there is any selected text.\n"]
+    pub has_selection: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the currently selected text.\n"]
+    pub get_selected_text: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Selects all text. If |reversed| is true (1) the range will end at the\n logical beginning of the text; this generally shows the leading portion of\n text that overflows its display area.\n"]
+    pub select_all: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, reversed: ::std::os::raw::c_int),
+    >,
+    #[doc = "\n Clears the text selection and sets the caret to the end.\n"]
+    pub clear_selection: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t)>,
+    #[doc = "\n Returns the selected logical text range.\n"]
+    pub get_selected_range:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_range_t>,
+    #[doc = "\n Selects the specified logical text range.\n"]
+    pub select_range: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, range: *const cef_range_t),
+    >,
+    #[doc = "\n Returns the current cursor position.\n"]
+    pub get_cursor_position:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> usize>,
+    #[doc = "\n Sets the text color.\n"]
+    pub set_text_color: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    #[doc = "\n Returns the text color.\n"]
+    pub get_text_color:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_color_t>,
+    #[doc = "\n Sets the selection text color.\n"]
+    pub set_selection_text_color: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    #[doc = "\n Returns the selection text color.\n"]
+    pub get_selection_text_color:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_color_t>,
+    #[doc = "\n Sets the selection background color.\n"]
+    pub set_selection_background_color: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    #[doc = "\n Returns the selection background color.\n"]
+    pub get_selection_background_color:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_color_t>,
+    #[doc = "\n Sets the font list. The format is \"<FONT_FAMILY_LIST>,[STYLES] <SIZE>\",\n where:\n - FONT_FAMILY_LIST is a comma-separated list of font family names,\n - STYLES is an optional space-separated list of style names (case-\n   sensitive \"Bold\" and \"Italic\" are supported), and\n - SIZE is an integer font size in pixels with the suffix \"px\".\n\n Here are examples of valid font description strings:\n - \"Arial, Helvetica, Bold Italic 14px\"\n - \"Arial, 14px\"\n"]
+    pub set_font_list: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, font_list: *const cef_string_t),
+    >,
+    #[doc = "\n Applies |color| to the specified |range| without changing the default\n color. If |range| is NULL the color will be set on the complete text\n contents.\n"]
+    pub apply_text_color: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_textfield_t,
+            color: cef_color_t,
+            range: *const cef_range_t,
+        ),
+    >,
+    #[doc = "\n Applies |style| to the specified |range| without changing the default\n style. If |add| is true (1) the style will be added, otherwise the style\n will be removed. If |range| is NULL the style will be set on the complete\n text contents.\n"]
+    pub apply_text_style: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_textfield_t,
+            style: cef_text_style_t,
+            add: ::std::os::raw::c_int,
+            range: *const cef_range_t,
+        ),
+    >,
+    #[doc = "\n Returns true (1) if the action associated with the specified command id is\n enabled. See additional comments on execute_command().\n"]
+    pub is_command_enabled: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_textfield_t,
+            command_id: cef_text_field_commands_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Performs the action associated with the specified command id.\n"]
+    pub execute_command: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, command_id: cef_text_field_commands_t),
+    >,
+    #[doc = "\n Clears Edit history.\n"]
+    pub clear_edit_history:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_textfield_t)>,
+    #[doc = "\n Sets the placeholder text that will be displayed when the Textfield is\n NULL.\n"]
+    pub set_placeholder_text: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, text: *const cef_string_t),
+    >,
+    #[doc = "\n Returns the placeholder text that will be displayed when the Textfield is\n NULL.\n"]
+    pub get_placeholder_text: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Sets the placeholder text color.\n"]
+    pub set_placeholder_text_color: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, color: cef_color_t),
+    >,
+    #[doc = "\n Set the accessible name that will be exposed to assistive technology (AT).\n"]
+    pub set_accessible_name: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_textfield_t, name: *const cef_string_t),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_textfield_t"][::std::mem::size_of::<_cef_textfield_t>() - 704usize];
+    ["Alignment of _cef_textfield_t"][::std::mem::align_of::<_cef_textfield_t>() - 8usize];
+    ["Offset of field: _cef_textfield_t::base"]
+        [::std::mem::offset_of!(_cef_textfield_t, base) - 0usize];
+    ["Offset of field: _cef_textfield_t::set_password_input"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_password_input) - 456usize];
+    ["Offset of field: _cef_textfield_t::is_password_input"]
+        [::std::mem::offset_of!(_cef_textfield_t, is_password_input) - 464usize];
+    ["Offset of field: _cef_textfield_t::set_read_only"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_read_only) - 472usize];
+    ["Offset of field: _cef_textfield_t::is_read_only"]
+        [::std::mem::offset_of!(_cef_textfield_t, is_read_only) - 480usize];
+    ["Offset of field: _cef_textfield_t::get_text"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_text) - 488usize];
+    ["Offset of field: _cef_textfield_t::set_text"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_text) - 496usize];
+    ["Offset of field: _cef_textfield_t::append_text"]
+        [::std::mem::offset_of!(_cef_textfield_t, append_text) - 504usize];
+    ["Offset of field: _cef_textfield_t::insert_or_replace_text"]
+        [::std::mem::offset_of!(_cef_textfield_t, insert_or_replace_text) - 512usize];
+    ["Offset of field: _cef_textfield_t::has_selection"]
+        [::std::mem::offset_of!(_cef_textfield_t, has_selection) - 520usize];
+    ["Offset of field: _cef_textfield_t::get_selected_text"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_selected_text) - 528usize];
+    ["Offset of field: _cef_textfield_t::select_all"]
+        [::std::mem::offset_of!(_cef_textfield_t, select_all) - 536usize];
+    ["Offset of field: _cef_textfield_t::clear_selection"]
+        [::std::mem::offset_of!(_cef_textfield_t, clear_selection) - 544usize];
+    ["Offset of field: _cef_textfield_t::get_selected_range"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_selected_range) - 552usize];
+    ["Offset of field: _cef_textfield_t::select_range"]
+        [::std::mem::offset_of!(_cef_textfield_t, select_range) - 560usize];
+    ["Offset of field: _cef_textfield_t::get_cursor_position"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_cursor_position) - 568usize];
+    ["Offset of field: _cef_textfield_t::set_text_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_text_color) - 576usize];
+    ["Offset of field: _cef_textfield_t::get_text_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_text_color) - 584usize];
+    ["Offset of field: _cef_textfield_t::set_selection_text_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_selection_text_color) - 592usize];
+    ["Offset of field: _cef_textfield_t::get_selection_text_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_selection_text_color) - 600usize];
+    ["Offset of field: _cef_textfield_t::set_selection_background_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_selection_background_color) - 608usize];
+    ["Offset of field: _cef_textfield_t::get_selection_background_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_selection_background_color) - 616usize];
+    ["Offset of field: _cef_textfield_t::set_font_list"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_font_list) - 624usize];
+    ["Offset of field: _cef_textfield_t::apply_text_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, apply_text_color) - 632usize];
+    ["Offset of field: _cef_textfield_t::apply_text_style"]
+        [::std::mem::offset_of!(_cef_textfield_t, apply_text_style) - 640usize];
+    ["Offset of field: _cef_textfield_t::is_command_enabled"]
+        [::std::mem::offset_of!(_cef_textfield_t, is_command_enabled) - 648usize];
+    ["Offset of field: _cef_textfield_t::execute_command"]
+        [::std::mem::offset_of!(_cef_textfield_t, execute_command) - 656usize];
+    ["Offset of field: _cef_textfield_t::clear_edit_history"]
+        [::std::mem::offset_of!(_cef_textfield_t, clear_edit_history) - 664usize];
+    ["Offset of field: _cef_textfield_t::set_placeholder_text"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text) - 672usize];
+    ["Offset of field: _cef_textfield_t::get_placeholder_text"]
+        [::std::mem::offset_of!(_cef_textfield_t, get_placeholder_text) - 680usize];
+    ["Offset of field: _cef_textfield_t::set_placeholder_text_color"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text_color) - 688usize];
+    ["Offset of field: _cef_textfield_t::set_accessible_name"]
+        [::std::mem::offset_of!(_cef_textfield_t, set_accessible_name) - 696usize];
+};
+#[doc = "\n A Textfield supports editing of text. This control is custom rendered with\n no platform-specific code. Methods must be called on the browser process UI\n thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_textfield_t = _cef_textfield_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new Textfield.\n"]
+    pub fn cef_textfield_create(delegate: *mut _cef_textfield_delegate_t) -> *mut cef_textfield_t;
 }
 #[doc = "\n Implement this structure to handle window events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n\n NOTE: This struct is allocated client-side.\n"]
 #[repr(C)]
