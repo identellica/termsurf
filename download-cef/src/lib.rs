@@ -488,11 +488,17 @@ where
     let decoder = BzDecoder::new(BufReader::new(File::open(&archive)?));
     tar::Archive::new(decoder).unpack(&location)?;
 
-    let extracted_dir = archive.as_ref().display().to_string();
+    let extracted_dir = archive
+        .as_ref()
+        .file_name()
+        .unwrap() // Safe here due to File::open check above
+        .display()
+        .to_string();
     let extracted_dir = extracted_dir
         .strip_suffix(".tar.bz2")
         .map(PathBuf::from)
         .ok_or(Error::InvalidArchiveFile(extracted_dir))?;
+    let extracted_dir = location.as_ref().join(extracted_dir);
 
     let os_and_arch = OsAndArch::try_from(target)?;
     let OsAndArch { os, arch } = os_and_arch;
