@@ -77,7 +77,7 @@
 #include "include/capi/cef_stream_capi.h"
 #include "include/capi/cef_string_visitor_capi.h"
 #include "include/capi/cef_task_capi.h"
-// #include "include/capi/cef_task_manager_capi.h" NOTE: Not yet included because bindings generate incorrect out-parameter
+#include "include/capi/cef_task_manager_capi.h"
 #include "include/capi/cef_thread_capi.h"
 #include "include/capi/cef_trace_capi.h"
 #include "include/capi/cef_unresponsive_process_callback_capi.h"
