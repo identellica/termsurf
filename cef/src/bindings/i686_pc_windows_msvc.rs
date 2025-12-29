@@ -12001,6 +12001,74 @@ impl Default for SharedProcessMessageBuilder {
     }
 }
 
+/// See [`_cef_task_manager_t`] for more documentation.
+#[derive(Clone, Debug)]
+pub struct TaskManager {
+    pub base: BaseRefCounted,
+    pub get_tasks_count:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_task_manager_t) -> usize>,
+    pub get_task_ids_list: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_task_manager_t,
+            task_idsCount: *mut usize,
+            task_ids: *mut i64,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_task_info: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_task_manager_t,
+            task_id: i64,
+            info: *mut _cef_task_info_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub kill_task: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_task_manager_t,
+            task_id: i64,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_task_id_for_browser_id: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_task_manager_t,
+            browser_id: ::std::os::raw::c_int,
+        ) -> i64,
+    >,
+}
+impl TaskManager {
+    fn get_raw(&self) -> _cef_task_manager_t {
+        self.clone().into()
+    }
+}
+impl From<_cef_task_manager_t> for TaskManager {
+    fn from(value: _cef_task_manager_t) -> Self {
+        Self {
+            base: value.base.into(),
+            get_tasks_count: value.get_tasks_count,
+            get_task_ids_list: value.get_task_ids_list,
+            get_task_info: value.get_task_info,
+            kill_task: value.kill_task,
+            get_task_id_for_browser_id: value.get_task_id_for_browser_id,
+        }
+    }
+}
+impl From<TaskManager> for _cef_task_manager_t {
+    fn from(value: TaskManager) -> Self {
+        Self {
+            base: value.base.into(),
+            get_tasks_count: value.get_tasks_count,
+            get_task_ids_list: value.get_task_ids_list,
+            get_task_info: value.get_task_info,
+            kill_task: value.kill_task,
+            get_task_id_for_browser_id: value.get_task_id_for_browser_id,
+        }
+    }
+}
+impl Default for TaskManager {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [`_cef_thread_t`] for more documentation.
 #[derive(Clone, Debug)]
 pub struct Thread {
@@ -23092,6 +23160,18 @@ pub fn shared_process_message_builder_create(
             .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_shared_process_message_builder_create(arg_name, arg_byte_size);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_task_manager_get`] for more documentation.
+pub fn task_manager_get() -> Option<TaskManager> {
+    unsafe {
+        let result = cef_task_manager_get();
         if result.is_null() {
             None
         } else {
