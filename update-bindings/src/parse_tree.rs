@@ -599,11 +599,18 @@ impl SignatureRef<'_> {
                 let arg_name = format_ident!("arg_{slice_name}");
                 let out_name = format_ident!("out_{slice_name}");
                 let vec_name = format_ident!("vec_{slice_name}");
-                let add_refs = if tree.root(&slice_ty.to_token_stream().to_string()) == BASE_REF_COUNTED {
-                    Some(quote! { elem.add_ref(); })
+                let slice_ty = slice_ty.to_token_stream().to_string();
+                let get_elem = if tree.root(&slice_ty) == BASE_REF_COUNTED {
+                    quote! {
+                        elem.add_ref();
+                        elem.get_raw()
+                    }
+                } else if tree.cef_name_map.contains_key(&slice_ty) {
+                    quote! { elem.get_raw() }
                 } else {
-                    None
+                    quote! { *elem }
                 };
+
                 match (count_modifiers.as_slice(), slice_modifiers.as_slice()) {
                     ([], [TypeModifier::Slice]) => Some(quote! {
                         let #arg_count = #arg_name
@@ -615,8 +622,7 @@ impl SignatureRef<'_> {
                             .map(|arg| arg
                                 .iter()
                                 .map(|elem| {
-                                    #add_refs
-                                    elem.get_raw()
+                                    #get_elem
                                 })
                                 .collect::<Vec<_>>())
                             .unwrap_or_default();
@@ -638,8 +644,7 @@ impl SignatureRef<'_> {
                                 .map(|elem| elem
                                     .as_ref()
                                     .map(|elem| {
-                                        #add_refs
-                                        elem.get_raw()
+                                        #get_elem
                                     })
                                     .unwrap_or(std::ptr::null_mut()))
                                 .collect::<Vec<_>>())
@@ -662,8 +667,7 @@ impl SignatureRef<'_> {
                             .map(|arg| arg
                                 .iter()
                                 .map(|elem| {
-                                    #add_refs
-                                    elem.get_raw()
+                                    #get_elem
                                 })
                                 .collect::<Vec<_>>())
                             .unwrap_or_default();
@@ -687,8 +691,7 @@ impl SignatureRef<'_> {
                                 .map(|elem| elem
                                     .as_ref()
                                     .map(|elem| {
-                                        #add_refs
-                                        elem.get_raw()
+                                        #get_elem
                                     })
                                     .unwrap_or(std::ptr::null_mut()))
                                 .collect::<Vec<_>>())
