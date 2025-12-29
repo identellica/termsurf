@@ -14528,6 +14528,69 @@ unsafe extern "C" {
         byte_size: usize,
     ) -> *mut cef_shared_process_message_builder_t;
 }
+#[doc = "\n Structure that facilitates managing the browser-related tasks. The functions\n of this structure may only be called on the UI thread.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_task_manager_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns the number of tasks currently tracked by the task manager. Returns\n 0 if the function was called from the incorrect thread.\n"]
+    pub get_tasks_count:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_task_manager_t) -> usize>,
+    #[doc = "\n Gets the list of task IDs currently tracked by the task manager. Tasks\n that share the same process id will always be consecutive. The list will\n be sorted in a way that reflects the process tree: the browser process\n will be first, followed by the gpu process if it exists. Related processes\n (e.g., a subframe process and its parent) will be kept together if\n possible. Callers can expect this ordering to be stable when a process is\n added or removed. The task IDs are unique within the application lifespan.\n Returns false (0) if the function was called from the incorrect thread.\n"]
+    pub get_task_ids_list: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_task_manager_t,
+            task_idsCount: *mut usize,
+            task_ids: *mut i64,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Gets information about the task with |task_id|. Returns true (1) if the\n information about the task was successfully retrieved and false (0) if the\n |task_id| is invalid or the function was called from the incorrect thread.\n"]
+    pub get_task_info: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_task_manager_t,
+            task_id: i64,
+            info: *mut _cef_task_info_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Attempts to terminate a task with |task_id|. Returns false (0) if the\n |task_id| is invalid, the call is made from an incorrect thread, or if the\n task cannot be terminated.\n"]
+    pub kill_task: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_task_manager_t,
+            task_id: i64,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the task ID associated with the main task for |browser_id| (value\n from cef_browser_t::GetIdentifier). Returns -1 if |browser_id| is invalid,\n does not currently have an associated task, or the function was called\n from the incorrect thread.\n"]
+    pub get_task_id_for_browser_id: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_task_manager_t,
+            browser_id: ::std::os::raw::c_int,
+        ) -> i64,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_task_manager_t"][::std::mem::size_of::<_cef_task_manager_t>() - 80usize];
+    ["Alignment of _cef_task_manager_t"][::std::mem::align_of::<_cef_task_manager_t>() - 8usize];
+    ["Offset of field: _cef_task_manager_t::base"]
+        [::std::mem::offset_of!(_cef_task_manager_t, base) - 0usize];
+    ["Offset of field: _cef_task_manager_t::get_tasks_count"]
+        [::std::mem::offset_of!(_cef_task_manager_t, get_tasks_count) - 40usize];
+    ["Offset of field: _cef_task_manager_t::get_task_ids_list"]
+        [::std::mem::offset_of!(_cef_task_manager_t, get_task_ids_list) - 48usize];
+    ["Offset of field: _cef_task_manager_t::get_task_info"]
+        [::std::mem::offset_of!(_cef_task_manager_t, get_task_info) - 56usize];
+    ["Offset of field: _cef_task_manager_t::kill_task"]
+        [::std::mem::offset_of!(_cef_task_manager_t, kill_task) - 64usize];
+    ["Offset of field: _cef_task_manager_t::get_task_id_for_browser_id"]
+        [::std::mem::offset_of!(_cef_task_manager_t, get_task_id_for_browser_id) - 72usize];
+};
+#[doc = "\n Structure that facilitates managing the browser-related tasks. The functions\n of this structure may only be called on the UI thread.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_task_manager_t = _cef_task_manager_t;
+unsafe extern "C" {
+    #[doc = "\n Returns the global task manager object. Returns nullptr if the function was\n called from the incorrect thread.\n"]
+    pub fn cef_task_manager_get() -> *mut cef_task_manager_t;
+}
 pub type pthread_t = ::std::os::raw::c_ulong;
 pub type cef_platform_thread_id_t = pid_t;
 unsafe extern "C" {

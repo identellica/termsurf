@@ -34764,6 +34764,151 @@ impl From<SharedProcessMessageBuilder> for *mut _cef_shared_process_message_buil
     }
 }
 
+/// See [`_cef_task_manager_t`] for more documentation.
+#[derive(Clone)]
+pub struct TaskManager(RefGuard<_cef_task_manager_t>);
+pub trait ImplTaskManager: Clone + Sized + Rc {
+    #[doc = "See [`_cef_task_manager_t::get_tasks_count`] for more documentation."]
+    fn tasks_count(&self) -> usize;
+    #[doc = "See [`_cef_task_manager_t::get_task_ids_list`] for more documentation."]
+    fn task_ids_list(&self, task_ids: Option<&mut Vec<i64>>) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_task_manager_t::get_task_info`] for more documentation."]
+    fn task_info(&self, task_id: i64, info: Option<&mut TaskInfo>) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_task_manager_t::kill_task`] for more documentation."]
+    fn kill_task(&self, task_id: i64) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_task_manager_t::get_task_id_for_browser_id`] for more documentation."]
+    fn task_id_for_browser_id(&self, browser_id: ::std::os::raw::c_int) -> i64;
+    fn get_raw(&self) -> *mut _cef_task_manager_t;
+}
+impl ImplTaskManager for TaskManager {
+    fn tasks_count(&self) -> usize {
+        unsafe {
+            self.0
+                .get_tasks_count
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn task_ids_list(&self, task_ids: Option<&mut Vec<i64>>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .get_task_ids_list
+                .map(|f| {
+                    let arg_task_ids = task_ids;
+                    let arg_self_ = self.into_raw();
+                    let mut out_task_ids_count = arg_task_ids
+                        .as_ref()
+                        .map(|arg| arg.len())
+                        .unwrap_or_default();
+                    let arg_task_ids_count = &mut out_task_ids_count;
+                    let out_task_ids = arg_task_ids;
+                    let mut vec_task_ids = out_task_ids
+                        .as_ref()
+                        .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                        .unwrap_or_default();
+                    let arg_task_ids = if vec_task_ids.is_empty() {
+                        std::ptr::null_mut()
+                    } else {
+                        vec_task_ids.as_mut_ptr()
+                    };
+                    let result = f(arg_self_, arg_task_ids_count, arg_task_ids);
+                    if let Some(out_task_ids) = out_task_ids {
+                        *out_task_ids = vec_task_ids
+                            .into_iter()
+                            .take(out_task_ids_count)
+                            .map(|elem| elem.wrap_result())
+                            .collect();
+                    }
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn task_info(&self, task_id: i64, info: Option<&mut TaskInfo>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .get_task_info
+                .map(|f| {
+                    let (arg_task_id, arg_info) = (task_id, info);
+                    let arg_self_ = self.into_raw();
+                    let mut arg_info = arg_info.cloned().map(|arg| arg.into());
+                    let arg_info = arg_info
+                        .as_mut()
+                        .map(std::ptr::from_mut)
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_task_id, arg_info);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn kill_task(&self, task_id: i64) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .kill_task
+                .map(|f| {
+                    let arg_task_id = task_id;
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_, arg_task_id);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn task_id_for_browser_id(&self, browser_id: ::std::os::raw::c_int) -> i64 {
+        unsafe {
+            self.0
+                .get_task_id_for_browser_id
+                .map(|f| {
+                    let arg_browser_id = browser_id;
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_, arg_browser_id);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_task_manager_t {
+        unsafe { RefGuard::into_raw(&self.0) }
+    }
+}
+impl Rc for _cef_task_manager_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for TaskManager {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_task_manager_t> for &TaskManager {
+    fn into_raw(self) -> *mut _cef_task_manager_t {
+        ImplTaskManager::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_task_manager_t> for &mut TaskManager {
+    fn into_raw(self) -> *mut _cef_task_manager_t {
+        ImplTaskManager::get_raw(self)
+    }
+}
+impl ConvertReturnValue<TaskManager> for *mut _cef_task_manager_t {
+    fn wrap_result(self) -> TaskManager {
+        TaskManager(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl From<TaskManager> for *mut _cef_task_manager_t {
+    fn from(value: TaskManager) -> Self {
+        let object = ImplTaskManager::get_raw(&value);
+        std::mem::forget(value);
+        object
+    }
+}
+
 /// See [`_cef_thread_t`] for more documentation.
 #[derive(Clone)]
 pub struct Thread(RefGuard<_cef_thread_t>);
@@ -52938,6 +53083,18 @@ pub fn shared_process_message_builder_create(
             .map(|arg| arg.into_raw())
             .unwrap_or(std::ptr::null());
         let result = cef_shared_process_message_builder_create(arg_name, arg_byte_size);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_task_manager_get`] for more documentation.
+pub fn task_manager_get() -> Option<TaskManager> {
+    unsafe {
+        let result = cef_task_manager_get();
         if result.is_null() {
             None
         } else {
