@@ -34780,7 +34780,7 @@ impl ImplTaskManager for TaskManager {
                     let out_task_ids = arg_task_ids;
                     let mut vec_task_ids = out_task_ids
                         .as_ref()
-                        .map(|arg| arg.iter().map(|elem| elem.get_raw()).collect::<Vec<_>>())
+                        .map(|arg| arg.iter().map(|elem| *elem).collect::<Vec<_>>())
                         .unwrap_or_default();
                     let arg_task_ids = if vec_task_ids.is_empty() {
                         std::ptr::null_mut()
