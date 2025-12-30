@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [143.4.0+143.0.13](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v143.3.0+143.0.13...cef-dll-sys-v143.4.0+143.0.13) - 2025-12-30
+
+### Added
+
+- add cef_task_manager_capi.h
+
+### Other
+
+- update bindings
+
 ## [143.2.0+143.0.10](https://github.com/tauri-apps/cef-rs/compare/cef-dll-sys-v143.1.0+143.0.10...cef-dll-sys-v143.2.0+143.0.10) - 2025-12-23
 
 ### Added
