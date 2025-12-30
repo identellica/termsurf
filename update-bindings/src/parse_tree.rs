@@ -602,13 +602,20 @@ impl SignatureRef<'_> {
                 let slice_ty = slice_ty.to_token_stream().to_string();
                 let get_elem = if tree.root(&slice_ty) == BASE_REF_COUNTED {
                     quote! {
-                        elem.add_ref();
-                        elem.get_raw()
+                        map(|elem| {
+                            elem.add_ref();
+                            elem.get_raw()
+                        })
                     }
                 } else if tree.cef_name_map.contains_key(&slice_ty) {
-                    quote! { elem.get_raw() }
+                    quote! { map(|elem| elem.get_raw()) }
                 } else {
-                    quote! { *elem }
+                    quote! { copied() }
+                };
+                let collect_vec = if tree.cef_name_map.contains_key(&slice_ty) {
+                    quote! { iter().#get_elem.collect::<Vec<_>>() }
+                } else {
+                    quote! { to_vec() }
                 };
 
                 match (count_modifiers.as_slice(), slice_modifiers.as_slice()) {
@@ -619,12 +626,7 @@ impl SignatureRef<'_> {
                             .unwrap_or_default();
                         let #vec_name = #arg_name
                             .as_ref()
-                            .map(|arg| arg
-                                .iter()
-                                .map(|elem| {
-                                    #get_elem
-                                })
-                                .collect::<Vec<_>>())
+                            .map(|arg| arg.#collect_vec)
                             .unwrap_or_default();
                         let #arg_name = if #vec_name.is_empty() {
                             std::ptr::null()
@@ -643,9 +645,7 @@ impl SignatureRef<'_> {
                                 .iter()
                                 .map(|elem| elem
                                     .as_ref()
-                                    .map(|elem| {
-                                        #get_elem
-                                    })
+                                    .#get_elem
                                     .unwrap_or(std::ptr::null_mut()))
                                 .collect::<Vec<_>>())
                             .unwrap_or_default();
@@ -664,12 +664,7 @@ impl SignatureRef<'_> {
                         let #out_name = #arg_name;
                         let mut #vec_name = #out_name
                             .as_ref()
-                            .map(|arg| arg
-                                .iter()
-                                .map(|elem| {
-                                    #get_elem
-                                })
-                                .collect::<Vec<_>>())
+                            .map(|arg| arg.#collect_vec)
                             .unwrap_or_default();
                         let #arg_name = if #vec_name.is_empty() {
                             std::ptr::null_mut()
@@ -690,9 +685,7 @@ impl SignatureRef<'_> {
                                 .iter()
                                 .map(|elem| elem
                                     .as_ref()
-                                    .map(|elem| {
-                                        #get_elem
-                                    })
+                                    .#get_elem
                                     .unwrap_or(std::ptr::null_mut()))
                                 .collect::<Vec<_>>())
                             .unwrap_or_default();
@@ -1113,7 +1106,7 @@ impl SignatureRef<'_> {
                                     None
                                 } else {
                                     let #arg_name = unsafe { std::slice::from_raw_parts(#arg_name, #arg_count) };
-                                    let #arg_name: Vec<_> = #arg_name.iter().map(|elem| elem.clone().into()).collect();
+                                    let #arg_name: Vec<_> = #arg_name.iter().map(|elem| (*elem).into()).collect();
                                     Some(#arg_name)
                                 };
                                 let #arg_name = #arg_name.as_deref();
@@ -1751,7 +1744,8 @@ impl ParseTree<'_> {
                 non_camel_case_types,
                 unused_variables,
                 clippy::not_unsafe_ptr_arg_deref,
-                clippy::too_many_arguments
+                clippy::too_many_arguments,
+                clippy::let_unit_value
             )]
             use crate::rc::{
                 ConvertParam, ConvertReturnValue, Rc, RcImpl, RefGuard, WrapParamRef,
