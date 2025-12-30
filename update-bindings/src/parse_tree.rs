@@ -3517,6 +3517,31 @@ fn make_my_struct() -> {rust_name} {{
                     })
                 }
             });
+            let impl_raw_repr = e.ty.and_then(|ty| {
+                ty.attrs
+                    .iter()
+                    .find_map(|attr| match (attr.style, &attr.meta) {
+                        (
+                            syn::AttrStyle::Outer,
+                            syn::Meta::List(syn::MetaList {
+                                path,
+                                delimiter: syn::MacroDelimiter::Paren(_),
+                                tokens,
+                            }),
+                        ) if path.to_token_stream().to_string() == quote! { repr }.to_string() => {
+                            let repr = syn::parse2::<syn::Type>(tokens.clone()).ok()?;
+                            Some(quote! {
+                                impl #rust_name {
+                                    #[doc = "Get the raw integer representation."]
+                                    pub fn get_raw(&self) -> #repr {
+                                        self.0 as #repr
+                                    }
+                                }
+                            })
+                        }
+                        _ => None,
+                    })
+            });
             let impl_default =
                 e.ty.and_then(|ty| ty.variants.first())
                     .map(|v| {
@@ -3553,6 +3578,8 @@ fn make_my_struct() -> {rust_name} {{
                 }
 
                 #declare_values
+
+                #impl_raw_repr
 
                 impl Default for #rust_name {
                     fn default() -> Self {
