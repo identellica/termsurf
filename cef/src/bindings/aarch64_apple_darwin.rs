@@ -45054,6 +45054,12 @@ impl ContentSettingTypes {
     pub const NUM_VALUES: Self =
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_NUM_VALUES);
 }
+impl ContentSettingTypes {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ContentSettingTypes {
     fn default() -> Self {
         Self(cef_content_setting_types_t::CEF_CONTENT_SETTING_TYPE_COOKIES)
@@ -45103,6 +45109,12 @@ impl ContentSettingValues {
     pub const NUM_VALUES: Self =
         Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_NUM_VALUES);
 }
+impl ContentSettingValues {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ContentSettingValues {
     fn default() -> Self {
         Self(cef_content_setting_values_t::CEF_CONTENT_SETTING_VALUE_DEFAULT)
@@ -45140,6 +45152,12 @@ impl ColorType {
     #[doc = "See [`cef_color_type_t::CEF_COLOR_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_color_type_t::CEF_COLOR_TYPE_NUM_VALUES);
 }
+impl ColorType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ColorType {
     fn default() -> Self {
         Self(cef_color_type_t::CEF_COLOR_TYPE_RGBA_8888)
@@ -45176,6 +45194,12 @@ impl RuntimeStyle {
     pub const CHROME: Self = Self(cef_runtime_style_t::CEF_RUNTIME_STYLE_CHROME);
     #[doc = "See [`cef_runtime_style_t::CEF_RUNTIME_STYLE_ALLOY`] for more documentation."]
     pub const ALLOY: Self = Self(cef_runtime_style_t::CEF_RUNTIME_STYLE_ALLOY);
+}
+impl RuntimeStyle {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for RuntimeStyle {
     fn default() -> Self {
@@ -45222,6 +45246,12 @@ impl LogSeverity {
     #[doc = "See [`cef_log_severity_t::LOGSEVERITY_DISABLE`] for more documentation."]
     pub const DISABLE: Self = Self(cef_log_severity_t::LOGSEVERITY_DISABLE);
 }
+impl LogSeverity {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for LogSeverity {
     fn default() -> Self {
         Self(cef_log_severity_t::LOGSEVERITY_DEFAULT)
@@ -45265,6 +45295,12 @@ impl LogItems {
     #[doc = "See [`cef_log_items_t::LOG_ITEMS_FLAG_TICK_COUNT`] for more documentation."]
     pub const FLAG_TICK_COUNT: Self = Self(cef_log_items_t::LOG_ITEMS_FLAG_TICK_COUNT);
 }
+impl LogItems {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for LogItems {
     fn default() -> Self {
         Self(cef_log_items_t::LOG_ITEMS_DEFAULT)
@@ -45301,6 +45337,12 @@ impl State {
     pub const ENABLED: Self = Self(cef_state_t::STATE_ENABLED);
     #[doc = "See [`cef_state_t::STATE_DISABLED`] for more documentation."]
     pub const DISABLED: Self = Self(cef_state_t::STATE_DISABLED);
+}
+impl State {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for State {
     fn default() -> Self {
@@ -45339,6 +45381,12 @@ impl ReturnValue {
     #[doc = "See [`cef_return_value_t::RV_CONTINUE_ASYNC`] for more documentation."]
     pub const CONTINUE_ASYNC: Self = Self(cef_return_value_t::RV_CONTINUE_ASYNC);
 }
+impl ReturnValue {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ReturnValue {
     fn default() -> Self {
         Self(cef_return_value_t::RV_CANCEL)
@@ -45375,6 +45423,12 @@ impl CookiePriority {
     pub const MEDIUM: Self = Self(cef_cookie_priority_t::CEF_COOKIE_PRIORITY_MEDIUM);
     #[doc = "See [`cef_cookie_priority_t::CEF_COOKIE_PRIORITY_HIGH`] for more documentation."]
     pub const HIGH: Self = Self(cef_cookie_priority_t::CEF_COOKIE_PRIORITY_HIGH);
+}
+impl CookiePriority {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
 }
 impl Default for CookiePriority {
     fn default() -> Self {
@@ -45417,6 +45471,12 @@ impl CookieSameSite {
     pub const STRICT_MODE: Self = Self(cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_STRICT_MODE);
     #[doc = "See [`cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_cookie_same_site_t::CEF_COOKIE_SAME_SITE_NUM_VALUES);
+}
+impl CookieSameSite {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for CookieSameSite {
     fn default() -> Self {
@@ -45462,6 +45522,12 @@ impl TerminationStatus {
     pub const INTEGRITY_FAILURE: Self = Self(cef_termination_status_t::TS_INTEGRITY_FAILURE);
     #[doc = "See [`cef_termination_status_t::TS_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_termination_status_t::TS_NUM_VALUES);
+}
+impl TerminationStatus {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for TerminationStatus {
     fn default() -> Self {
@@ -45514,6 +45580,12 @@ impl PathKey {
     #[doc = "See [`cef_path_key_t::PK_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_path_key_t::PK_NUM_VALUES);
 }
+impl PathKey {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for PathKey {
     fn default() -> Self {
         Self(cef_path_key_t::PK_DIR_CURRENT)
@@ -45548,6 +45620,12 @@ impl StorageType {
     pub const LOCALSTORAGE: Self = Self(cef_storage_type_t::ST_LOCALSTORAGE);
     #[doc = "See [`cef_storage_type_t::ST_SESSIONSTORAGE`] for more documentation."]
     pub const SESSIONSTORAGE: Self = Self(cef_storage_type_t::ST_SESSIONSTORAGE);
+}
+impl StorageType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for StorageType {
     fn default() -> Self {
@@ -46164,6 +46242,12 @@ impl Errorcode {
     pub const BLOB_REFERENCED_FILE_UNAVAILABLE: Self =
         Self(cef_errorcode_t::ERR_BLOB_REFERENCED_FILE_UNAVAILABLE);
 }
+impl Errorcode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
+}
 impl Default for Errorcode {
     fn default() -> Self {
         Self(cef_errorcode_t::ERR_NONE)
@@ -46237,6 +46321,12 @@ impl CertStatus {
     #[doc = "See [`cef_cert_status_t::CERT_STATUS_CT_COMPLIANCE_FAILED`] for more documentation."]
     pub const CT_COMPLIANCE_FAILED: Self =
         Self(cef_cert_status_t::CERT_STATUS_CT_COMPLIANCE_FAILED);
+}
+impl CertStatus {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for CertStatus {
     fn default() -> Self {
@@ -46350,6 +46440,12 @@ impl Resultcode {
     #[doc = "See [`cef_resultcode_t::CEF_RESULT_CODE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_resultcode_t::CEF_RESULT_CODE_NUM_VALUES);
 }
+impl Resultcode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for Resultcode {
     fn default() -> Self {
         Self(cef_resultcode_t::CEF_RESULT_CODE_NORMAL_EXIT)
@@ -46409,6 +46505,12 @@ impl WindowOpenDisposition {
         Self(cef_window_open_disposition_t::CEF_WOD_NEW_PICTURE_IN_PICTURE);
     #[doc = "See [`cef_window_open_disposition_t::CEF_WOD_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_window_open_disposition_t::CEF_WOD_NUM_VALUES);
+}
+impl WindowOpenDisposition {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for WindowOpenDisposition {
     fn default() -> Self {
@@ -46490,6 +46592,12 @@ impl TextInputMode {
     #[doc = "See [`cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_NUM_VALUES);
 }
+impl TextInputMode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for TextInputMode {
     fn default() -> Self {
         Self(cef_text_input_mode_t::CEF_TEXT_INPUT_MODE_DEFAULT)
@@ -46557,6 +46665,12 @@ impl PostdataelementType {
     pub const FILE: Self = Self(cef_postdataelement_type_t::PDE_TYPE_FILE);
     #[doc = "See [`cef_postdataelement_type_t::PDE_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_postdataelement_type_t::PDE_TYPE_NUM_VALUES);
+}
+impl PostdataelementType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for PostdataelementType {
     fn default() -> Self {
@@ -46632,6 +46746,12 @@ impl ResourceType {
         Self(cef_resource_type_t::RT_NAVIGATION_PRELOAD_SUB_FRAME);
     #[doc = "See [`cef_resource_type_t::RT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_resource_type_t::RT_NUM_VALUES);
+}
+impl ResourceType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ResourceType {
     fn default() -> Self {
@@ -46712,6 +46832,12 @@ impl TransitionType {
     #[doc = "See [`cef_transition_type_t::TT_QUALIFIER_MASK`] for more documentation."]
     pub const QUALIFIER_MASK: Self = Self(cef_transition_type_t::TT_QUALIFIER_MASK);
 }
+impl TransitionType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for TransitionType {
     fn default() -> Self {
         Self(cef_transition_type_t::TT_LINK)
@@ -46784,6 +46910,12 @@ impl UrlrequestStatus {
     #[doc = "See [`cef_urlrequest_status_t::UR_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_urlrequest_status_t::UR_NUM_VALUES);
 }
+impl UrlrequestStatus {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for UrlrequestStatus {
     fn default() -> Self {
         Self(cef_urlrequest_status_t::UR_UNKNOWN)
@@ -46818,6 +46950,12 @@ impl ProcessId {
     pub const BROWSER: Self = Self(cef_process_id_t::PID_BROWSER);
     #[doc = "See [`cef_process_id_t::PID_RENDERER`] for more documentation."]
     pub const RENDERER: Self = Self(cef_process_id_t::PID_RENDERER);
+}
+impl ProcessId {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ProcessId {
     fn default() -> Self {
@@ -46866,6 +47004,12 @@ impl ThreadId {
     #[doc = "See [`cef_thread_id_t::TID_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_thread_id_t::TID_NUM_VALUES);
 }
+impl ThreadId {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ThreadId {
     fn default() -> Self {
         Self(cef_thread_id_t::TID_UI)
@@ -46907,6 +47051,12 @@ impl ThreadPriority {
     #[doc = "See [`cef_thread_priority_t::TP_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_thread_priority_t::TP_NUM_VALUES);
 }
+impl ThreadPriority {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ThreadPriority {
     fn default() -> Self {
         Self(cef_thread_priority_t::TP_BACKGROUND)
@@ -46946,6 +47096,12 @@ impl MessageLoopType {
     #[doc = "See [`cef_message_loop_type_t::ML_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_message_loop_type_t::ML_NUM_VALUES);
 }
+impl MessageLoopType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for MessageLoopType {
     fn default() -> Self {
         Self(cef_message_loop_type_t::ML_TYPE_DEFAULT)
@@ -46982,6 +47138,12 @@ impl ComInitMode {
     pub const STA: Self = Self(cef_com_init_mode_t::COM_INIT_MODE_STA);
     #[doc = "See [`cef_com_init_mode_t::COM_INIT_MODE_MTA`] for more documentation."]
     pub const MTA: Self = Self(cef_com_init_mode_t::COM_INIT_MODE_MTA);
+}
+impl ComInitMode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ComInitMode {
     fn default() -> Self {
@@ -47034,6 +47196,12 @@ impl ValueType {
     #[doc = "See [`cef_value_type_t::VTYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_value_type_t::VTYPE_NUM_VALUES);
 }
+impl ValueType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ValueType {
     fn default() -> Self {
         Self(cef_value_type_t::VTYPE_INVALID)
@@ -47072,6 +47240,12 @@ impl JsdialogType {
     pub const PROMPT: Self = Self(cef_jsdialog_type_t::JSDIALOGTYPE_PROMPT);
     #[doc = "See [`cef_jsdialog_type_t::JSDIALOGTYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_jsdialog_type_t::JSDIALOGTYPE_NUM_VALUES);
+}
+impl JsdialogType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for JsdialogType {
     fn default() -> Self {
@@ -47158,6 +47332,12 @@ impl MenuId {
     #[doc = "See [`cef_menu_id_t::MENU_ID_USER_LAST`] for more documentation."]
     pub const USER_LAST: Self = Self(cef_menu_id_t::MENU_ID_USER_LAST);
 }
+impl MenuId {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for MenuId {
     fn default() -> Self {
         Self(cef_menu_id_t::MENU_ID_BACK)
@@ -47194,6 +47374,12 @@ impl MouseButtonType {
     pub const MIDDLE: Self = Self(cef_mouse_button_type_t::MBT_MIDDLE);
     #[doc = "See [`cef_mouse_button_type_t::MBT_RIGHT`] for more documentation."]
     pub const RIGHT: Self = Self(cef_mouse_button_type_t::MBT_RIGHT);
+}
+impl MouseButtonType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for MouseButtonType {
     fn default() -> Self {
@@ -47233,6 +47419,12 @@ impl TouchEventType {
     pub const MOVED: Self = Self(cef_touch_event_type_t::CEF_TET_MOVED);
     #[doc = "See [`cef_touch_event_type_t::CEF_TET_CANCELLED`] for more documentation."]
     pub const CANCELLED: Self = Self(cef_touch_event_type_t::CEF_TET_CANCELLED);
+}
+impl TouchEventType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for TouchEventType {
     fn default() -> Self {
@@ -47275,6 +47467,12 @@ impl PointerType {
     #[doc = "See [`cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN`] for more documentation."]
     pub const UNKNOWN: Self = Self(cef_pointer_type_t::CEF_POINTER_TYPE_UNKNOWN);
 }
+impl PointerType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for PointerType {
     fn default() -> Self {
         Self(cef_pointer_type_t::CEF_POINTER_TYPE_TOUCH)
@@ -47309,6 +47507,12 @@ impl PaintElementType {
     pub const VIEW: Self = Self(cef_paint_element_type_t::PET_VIEW);
     #[doc = "See [`cef_paint_element_type_t::PET_POPUP`] for more documentation."]
     pub const POPUP: Self = Self(cef_paint_element_type_t::PET_POPUP);
+}
+impl PaintElementType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for PaintElementType {
     fn default() -> Self {
@@ -47381,6 +47585,12 @@ impl MenuItemType {
     pub const SEPARATOR: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_SEPARATOR);
     #[doc = "See [`cef_menu_item_type_t::MENUITEMTYPE_SUBMENU`] for more documentation."]
     pub const SUBMENU: Self = Self(cef_menu_item_type_t::MENUITEMTYPE_SUBMENU);
+}
+impl MenuItemType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for MenuItemType {
     fn default() -> Self {
@@ -47457,6 +47667,12 @@ impl ContextMenuMediaType {
     pub const PLUGIN: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_PLUGIN);
     #[doc = "See [`cef_context_menu_media_type_t::CM_MEDIATYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_context_menu_media_type_t::CM_MEDIATYPE_NUM_VALUES);
+}
+impl ContextMenuMediaType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ContextMenuMediaType {
     fn default() -> Self {
@@ -47584,6 +47800,12 @@ impl KeyEventType {
     #[doc = "See [`cef_key_event_type_t::KEYEVENT_CHAR`] for more documentation."]
     pub const CHAR: Self = Self(cef_key_event_type_t::KEYEVENT_CHAR);
 }
+impl KeyEventType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for KeyEventType {
     fn default() -> Self {
         Self(cef_key_event_type_t::KEYEVENT_RAWKEYDOWN)
@@ -47620,6 +47842,12 @@ impl FocusSource {
     pub const SYSTEM: Self = Self(cef_focus_source_t::FOCUS_SOURCE_SYSTEM);
     #[doc = "See [`cef_focus_source_t::FOCUS_SOURCE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_focus_source_t::FOCUS_SOURCE_NUM_VALUES);
+}
+impl FocusSource {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for FocusSource {
     fn default() -> Self {
@@ -47666,6 +47894,12 @@ impl NavigationType {
     #[doc = "See [`cef_navigation_type_t::NAVIGATION_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_navigation_type_t::NAVIGATION_NUM_VALUES);
 }
+impl NavigationType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for NavigationType {
     fn default() -> Self {
         Self(cef_navigation_type_t::NAVIGATION_LINK_CLICKED)
@@ -47708,6 +47942,12 @@ impl XmlEncodingType {
     pub const ASCII: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_ASCII);
     #[doc = "See [`cef_xml_encoding_type_t::XML_ENCODING_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_xml_encoding_type_t::XML_ENCODING_NUM_VALUES);
+}
+impl XmlEncodingType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for XmlEncodingType {
     fn default() -> Self {
@@ -47765,6 +48005,12 @@ impl XmlNodeType {
     #[doc = "See [`cef_xml_node_type_t::XML_NODE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_xml_node_type_t::XML_NODE_NUM_VALUES);
 }
+impl XmlNodeType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for XmlNodeType {
     fn default() -> Self {
         Self(cef_xml_node_type_t::XML_NODE_UNSUPPORTED)
@@ -47805,6 +48051,12 @@ impl DomDocumentType {
     pub const PLUGIN: Self = Self(cef_dom_document_type_t::DOM_DOCUMENT_TYPE_PLUGIN);
     #[doc = "See [`cef_dom_document_type_t::DOM_DOCUMENT_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_dom_document_type_t::DOM_DOCUMENT_TYPE_NUM_VALUES);
+}
+impl DomDocumentType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for DomDocumentType {
     fn default() -> Self {
@@ -47874,6 +48126,12 @@ impl DomEventCategory {
     pub const XMLHTTPREQUEST_PROGRESS: Self =
         Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_XMLHTTPREQUEST_PROGRESS);
 }
+impl DomEventCategory {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for DomEventCategory {
     fn default() -> Self {
         Self(cef_dom_event_category_t::DOM_EVENT_CATEGORY_UNKNOWN)
@@ -47914,6 +48172,12 @@ impl DomEventPhase {
     pub const BUBBLING: Self = Self(cef_dom_event_phase_t::DOM_EVENT_PHASE_BUBBLING);
     #[doc = "See [`cef_dom_event_phase_t::DOM_EVENT_PHASE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_dom_event_phase_t::DOM_EVENT_PHASE_NUM_VALUES);
+}
+impl DomEventPhase {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for DomEventPhase {
     fn default() -> Self {
@@ -47968,6 +48232,12 @@ impl DomNodeType {
     pub const DOCUMENT_FRAGMENT: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_DOCUMENT_FRAGMENT);
     #[doc = "See [`cef_dom_node_type_t::DOM_NODE_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_dom_node_type_t::DOM_NODE_TYPE_NUM_VALUES);
+}
+impl DomNodeType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for DomNodeType {
     fn default() -> Self {
@@ -48095,6 +48365,12 @@ impl DomFormControlType {
     pub const NUM_VALUES: Self =
         Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_NUM_VALUES);
 }
+impl DomFormControlType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for DomFormControlType {
     fn default() -> Self {
         Self(cef_dom_form_control_type_t::DOM_FORM_CONTROL_TYPE_UNSUPPORTED)
@@ -48135,6 +48411,12 @@ impl FileDialogMode {
     pub const SAVE: Self = Self(cef_file_dialog_mode_t::FILE_DIALOG_SAVE);
     #[doc = "See [`cef_file_dialog_mode_t::FILE_DIALOG_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_file_dialog_mode_t::FILE_DIALOG_NUM_VALUES);
+}
+impl FileDialogMode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for FileDialogMode {
     fn default() -> Self {
@@ -48216,6 +48498,12 @@ impl ColorModel {
     #[doc = "See [`cef_color_model_t::COLOR_MODEL_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_color_model_t::COLOR_MODEL_NUM_VALUES);
 }
+impl ColorModel {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ColorModel {
     fn default() -> Self {
         Self(cef_color_model_t::COLOR_MODEL_UNKNOWN)
@@ -48256,6 +48544,12 @@ impl DuplexMode {
     pub const SHORT_EDGE: Self = Self(cef_duplex_mode_t::DUPLEX_MODE_SHORT_EDGE);
     #[doc = "See [`cef_duplex_mode_t::DUPLEX_MODE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_duplex_mode_t::DUPLEX_MODE_NUM_VALUES);
+}
+impl DuplexMode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
 }
 impl Default for DuplexMode {
     fn default() -> Self {
@@ -48391,6 +48685,12 @@ impl CursorType {
     #[doc = "See [`cef_cursor_type_t::CT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_cursor_type_t::CT_NUM_VALUES);
 }
+impl CursorType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for CursorType {
     fn default() -> Self {
         Self(cef_cursor_type_t::CT_POINTER)
@@ -48436,6 +48736,12 @@ impl UriUnescapeRule {
     pub const REPLACE_PLUS_WITH_SPACE: Self =
         Self(cef_uri_unescape_rule_t::UU_REPLACE_PLUS_WITH_SPACE);
 }
+impl UriUnescapeRule {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for UriUnescapeRule {
     fn default() -> Self {
         Self(cef_uri_unescape_rule_t::UU_NONE)
@@ -48471,6 +48777,12 @@ impl JsonParserOptions {
     #[doc = "See [`cef_json_parser_options_t::JSON_PARSER_ALLOW_TRAILING_COMMAS`] for more documentation."]
     pub const ALLOW_TRAILING_COMMAS: Self =
         Self(cef_json_parser_options_t::JSON_PARSER_ALLOW_TRAILING_COMMAS);
+}
+impl JsonParserOptions {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for JsonParserOptions {
     fn default() -> Self {
@@ -48513,6 +48825,12 @@ impl JsonWriterOptions {
     #[doc = "See [`cef_json_writer_options_t::JSON_WRITER_PRETTY_PRINT`] for more documentation."]
     pub const PRETTY_PRINT: Self = Self(cef_json_writer_options_t::JSON_WRITER_PRETTY_PRINT);
 }
+impl JsonWriterOptions {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for JsonWriterOptions {
     fn default() -> Self {
         Self(cef_json_writer_options_t::JSON_WRITER_DEFAULT)
@@ -48549,6 +48867,12 @@ impl PdfPrintMarginType {
     pub const NONE: Self = Self(cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_NONE);
     #[doc = "See [`cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_CUSTOM`] for more documentation."]
     pub const CUSTOM: Self = Self(cef_pdf_print_margin_type_t::PDF_PRINT_MARGIN_CUSTOM);
+}
+impl PdfPrintMarginType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for PdfPrintMarginType {
     fn default() -> Self {
@@ -48602,6 +48926,12 @@ impl ScaleFactor {
     pub const FACTOR_300P: Self = Self(cef_scale_factor_t::SCALE_FACTOR_300P);
     #[doc = "See [`cef_scale_factor_t::SCALE_FACTOR_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_scale_factor_t::SCALE_FACTOR_NUM_VALUES);
+}
+impl ScaleFactor {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ScaleFactor {
     fn default() -> Self {
@@ -48659,6 +48989,12 @@ impl ReferrerPolicy {
     #[doc = "See [`cef_referrer_policy_t::REFERRER_POLICY_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_referrer_policy_t::REFERRER_POLICY_NUM_VALUES);
 }
+impl ReferrerPolicy {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ReferrerPolicy {
     fn default() -> Self {
         Self (cef_referrer_policy_t :: REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE)
@@ -48697,6 +49033,12 @@ impl ResponseFilterStatus {
     #[doc = "See [`cef_response_filter_status_t::RESPONSE_FILTER_ERROR`] for more documentation."]
     pub const ERROR: Self = Self(cef_response_filter_status_t::RESPONSE_FILTER_ERROR);
 }
+impl ResponseFilterStatus {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ResponseFilterStatus {
     fn default() -> Self {
         Self(cef_response_filter_status_t::RESPONSE_FILTER_NEED_MORE_DATA)
@@ -48733,6 +49075,12 @@ impl AlphaType {
     pub const PREMULTIPLIED: Self = Self(cef_alpha_type_t::CEF_ALPHA_TYPE_PREMULTIPLIED);
     #[doc = "See [`cef_alpha_type_t::CEF_ALPHA_TYPE_POSTMULTIPLIED`] for more documentation."]
     pub const POSTMULTIPLIED: Self = Self(cef_alpha_type_t::CEF_ALPHA_TYPE_POSTMULTIPLIED);
+}
+impl AlphaType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for AlphaType {
     fn default() -> Self {
@@ -48777,6 +49125,12 @@ impl TextStyle {
     #[doc = "See [`cef_text_style_t::CEF_TEXT_STYLE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_text_style_t::CEF_TEXT_STYLE_NUM_VALUES);
 }
+impl TextStyle {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for TextStyle {
     fn default() -> Self {
         Self(cef_text_style_t::CEF_TEXT_STYLE_BOLD)
@@ -48817,6 +49171,12 @@ impl AxisAlignment {
     pub const STRETCH: Self = Self(cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_STRETCH);
     #[doc = "See [`cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_axis_alignment_t::CEF_AXIS_ALIGNMENT_NUM_VALUES);
+}
+impl AxisAlignment {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for AxisAlignment {
     fn default() -> Self {
@@ -48859,6 +49219,12 @@ impl ButtonState {
     #[doc = "See [`cef_button_state_t::CEF_BUTTON_STATE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_button_state_t::CEF_BUTTON_STATE_NUM_VALUES);
 }
+impl ButtonState {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ButtonState {
     fn default() -> Self {
         Self(cef_button_state_t::CEF_BUTTON_STATE_NORMAL)
@@ -48895,6 +49261,12 @@ impl HorizontalAlignment {
     pub const CENTER: Self = Self(cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_CENTER);
     #[doc = "See [`cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_RIGHT`] for more documentation."]
     pub const RIGHT: Self = Self(cef_horizontal_alignment_t::CEF_HORIZONTAL_ALIGNMENT_RIGHT);
+}
+impl HorizontalAlignment {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for HorizontalAlignment {
     fn default() -> Self {
@@ -48934,6 +49306,12 @@ impl MenuAnchorPosition {
     pub const BOTTOMCENTER: Self = Self(cef_menu_anchor_position_t::CEF_MENU_ANCHOR_BOTTOMCENTER);
     #[doc = "See [`cef_menu_anchor_position_t::CEF_MENU_ANCHOR_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_menu_anchor_position_t::CEF_MENU_ANCHOR_NUM_VALUES);
+}
+impl MenuAnchorPosition {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for MenuAnchorPosition {
     fn default() -> Self {
@@ -48981,6 +49359,12 @@ impl MenuColorType {
         Self(cef_menu_color_type_t::CEF_MENU_COLOR_BACKGROUND_HOVERED);
     #[doc = "See [`cef_menu_color_type_t::CEF_MENU_COLOR_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_menu_color_type_t::CEF_MENU_COLOR_NUM_VALUES);
+}
+impl MenuColorType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for MenuColorType {
     fn default() -> Self {
@@ -49031,6 +49415,12 @@ impl SslVersion {
     #[doc = "See [`cef_ssl_version_t::SSL_CONNECTION_VERSION_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_NUM_VALUES);
 }
+impl SslVersion {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for SslVersion {
     fn default() -> Self {
         Self(cef_ssl_version_t::SSL_CONNECTION_VERSION_UNKNOWN)
@@ -49069,6 +49459,12 @@ impl SslContentStatus {
     #[doc = "See [`cef_ssl_content_status_t::SSL_CONTENT_RAN_INSECURE_CONTENT`] for more documentation."]
     pub const RAN_INSECURE_CONTENT: Self =
         Self(cef_ssl_content_status_t::SSL_CONTENT_RAN_INSECURE_CONTENT);
+}
+impl SslContentStatus {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for SslContentStatus {
     fn default() -> Self {
@@ -49118,6 +49514,12 @@ impl SchemeOptions {
     #[doc = "See [`cef_scheme_options_t::CEF_SCHEME_OPTION_FETCH_ENABLED`] for more documentation."]
     pub const FETCH_ENABLED: Self = Self(cef_scheme_options_t::CEF_SCHEME_OPTION_FETCH_ENABLED);
 }
+impl SchemeOptions {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for SchemeOptions {
     fn default() -> Self {
         Self(cef_scheme_options_t::CEF_SCHEME_OPTION_NONE)
@@ -49158,6 +49560,12 @@ impl CompositionUnderlineStyle {
     pub const NONE: Self = Self(cef_composition_underline_style_t::CEF_CUS_NONE);
     #[doc = "See [`cef_composition_underline_style_t::CEF_CUS_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_composition_underline_style_t::CEF_CUS_NUM_VALUES);
+}
+impl CompositionUnderlineStyle {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for CompositionUnderlineStyle {
     fn default() -> Self {
@@ -49269,6 +49677,12 @@ impl ChannelLayout {
     #[doc = "See [`cef_channel_layout_t::CEF_CHANNEL_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_channel_layout_t::CEF_CHANNEL_NUM_VALUES);
 }
+impl ChannelLayout {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ChannelLayout {
     fn default() -> Self {
         Self(cef_channel_layout_t::CEF_CHANNEL_LAYOUT_NONE)
@@ -49341,6 +49755,12 @@ impl MediaRouteCreateResult {
     #[doc = "See [`cef_media_route_create_result_t::CEF_MRCR_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_media_route_create_result_t::CEF_MRCR_NUM_VALUES);
 }
+impl MediaRouteCreateResult {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for MediaRouteCreateResult {
     fn default() -> Self {
         Self(cef_media_route_create_result_t::CEF_MRCR_UNKNOWN_ERROR)
@@ -49383,6 +49803,12 @@ impl MediaRouteConnectionState {
     pub const TERMINATED: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_TERMINATED);
     #[doc = "See [`cef_media_route_connection_state_t::CEF_MRCS_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_media_route_connection_state_t::CEF_MRCS_NUM_VALUES);
+}
+impl MediaRouteConnectionState {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> i32 {
+        self.0 as i32
+    }
 }
 impl Default for MediaRouteConnectionState {
     fn default() -> Self {
@@ -49433,6 +49859,12 @@ impl MediaSinkIconType {
     #[doc = "See [`cef_media_sink_icon_type_t::CEF_MSIT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_media_sink_icon_type_t::CEF_MSIT_NUM_VALUES);
 }
+impl MediaSinkIconType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for MediaSinkIconType {
     fn default() -> Self {
         Self(cef_media_sink_icon_type_t::CEF_MSIT_CAST)
@@ -49482,6 +49914,12 @@ impl TextFieldCommands {
     #[doc = "See [`cef_text_field_commands_t::CEF_TFC_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_text_field_commands_t::CEF_TFC_NUM_VALUES);
 }
+impl TextFieldCommands {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for TextFieldCommands {
     fn default() -> Self {
         Self(cef_text_field_commands_t::CEF_TFC_UNKNOWN)
@@ -49522,6 +49960,12 @@ impl ChromeToolbarType {
     pub const LOCATION: Self = Self(cef_chrome_toolbar_type_t::CEF_CTT_LOCATION);
     #[doc = "See [`cef_chrome_toolbar_type_t::CEF_CTT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_chrome_toolbar_type_t::CEF_CTT_NUM_VALUES);
+}
+impl ChromeToolbarType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ChromeToolbarType {
     fn default() -> Self {
@@ -49653,6 +50097,12 @@ impl ChromePageActionIconType {
     #[doc = "See [`cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_NUM_VALUES);
 }
+impl ChromePageActionIconType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ChromePageActionIconType {
     fn default() -> Self {
         Self(cef_chrome_page_action_icon_type_t::CEF_CPAIT_BOOKMARK_STAR)
@@ -49706,6 +50156,12 @@ impl ChromeToolbarButtonType {
     #[doc = "See [`cef_chrome_toolbar_button_type_t::CEF_CTBT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_NUM_VALUES);
 }
+impl ChromeToolbarButtonType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for ChromeToolbarButtonType {
     fn default() -> Self {
         Self(cef_chrome_toolbar_button_type_t::CEF_CTBT_CAST_DEPRECATED)
@@ -49749,6 +50205,12 @@ impl DockingMode {
     #[doc = "See [`cef_docking_mode_t::CEF_DOCKING_MODE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_docking_mode_t::CEF_DOCKING_MODE_NUM_VALUES);
 }
+impl DockingMode {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for DockingMode {
     fn default() -> Self {
         Self(cef_docking_mode_t::CEF_DOCKING_MODE_TOP_LEFT)
@@ -49791,6 +50253,12 @@ impl ShowState {
     pub const HIDDEN: Self = Self(cef_show_state_t::CEF_SHOW_STATE_HIDDEN);
     #[doc = "See [`cef_show_state_t::CEF_SHOW_STATE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_show_state_t::CEF_SHOW_STATE_NUM_VALUES);
+}
+impl ShowState {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ShowState {
     fn default() -> Self {
@@ -49865,6 +50333,12 @@ impl MediaAccessPermissionTypes {
     #[doc = "See [`cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DESKTOP_VIDEO_CAPTURE`] for more documentation."]
     pub const DESKTOP_VIDEO_CAPTURE: Self =
         Self(cef_media_access_permission_types_t::CEF_MEDIA_PERMISSION_DESKTOP_VIDEO_CAPTURE);
+}
+impl MediaAccessPermissionTypes {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for MediaAccessPermissionTypes {
     fn default() -> Self {
@@ -49976,6 +50450,12 @@ impl PermissionRequestTypes {
     pub const LOCAL_NETWORK_ACCESS: Self =
         Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_LOCAL_NETWORK_ACCESS);
 }
+impl PermissionRequestTypes {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for PermissionRequestTypes {
     fn default() -> Self {
         Self(cef_permission_request_types_t::CEF_PERMISSION_TYPE_NONE)
@@ -50018,6 +50498,12 @@ impl PermissionRequestResult {
     pub const NUM_VALUES: Self =
         Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_NUM_VALUES);
 }
+impl PermissionRequestResult {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for PermissionRequestResult {
     fn default() -> Self {
         Self(cef_permission_request_result_t::CEF_PERMISSION_RESULT_ACCEPT)
@@ -50057,6 +50543,12 @@ impl TestCertType {
     #[doc = "See [`cef_test_cert_type_t::CEF_TEST_CERT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_test_cert_type_t::CEF_TEST_CERT_NUM_VALUES);
 }
+impl TestCertType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for TestCertType {
     fn default() -> Self {
         Self(cef_test_cert_type_t::CEF_TEST_CERT_OK_IP)
@@ -50094,6 +50586,12 @@ impl PreferencesType {
         Self(cef_preferences_type_t::CEF_PREFERENCES_TYPE_REQUEST_CONTEXT);
     #[doc = "See [`cef_preferences_type_t::CEF_PREFERENCES_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_preferences_type_t::CEF_PREFERENCES_TYPE_NUM_VALUES);
+}
+impl PreferencesType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for PreferencesType {
     fn default() -> Self {
@@ -50218,6 +50716,12 @@ impl DownloadInterruptReason {
     pub const CRASH: Self =
         Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_CRASH);
 }
+impl DownloadInterruptReason {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
+}
 impl Default for DownloadInterruptReason {
     fn default() -> Self {
         Self(cef_download_interrupt_reason_t::CEF_DOWNLOAD_INTERRUPT_REASON_NONE)
@@ -50252,6 +50756,12 @@ impl GestureCommand {
     pub const BACK: Self = Self(cef_gesture_command_t::CEF_GESTURE_COMMAND_BACK);
     #[doc = "See [`cef_gesture_command_t::CEF_GESTURE_COMMAND_FORWARD`] for more documentation."]
     pub const FORWARD: Self = Self(cef_gesture_command_t::CEF_GESTURE_COMMAND_FORWARD);
+}
+impl GestureCommand {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for GestureCommand {
     fn default() -> Self {
@@ -50289,6 +50799,12 @@ impl ZoomCommand {
     pub const RESET: Self = Self(cef_zoom_command_t::CEF_ZOOM_COMMAND_RESET);
     #[doc = "See [`cef_zoom_command_t::CEF_ZOOM_COMMAND_IN`] for more documentation."]
     pub const IN: Self = Self(cef_zoom_command_t::CEF_ZOOM_COMMAND_IN);
+}
+impl ZoomCommand {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ZoomCommand {
     fn default() -> Self {
@@ -50336,6 +50852,12 @@ impl ColorVariant {
     pub const EXPRESSIVE: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_EXPRESSIVE);
     #[doc = "See [`cef_color_variant_t::CEF_COLOR_VARIANT_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_color_variant_t::CEF_COLOR_VARIANT_NUM_VALUES);
+}
+impl ColorVariant {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for ColorVariant {
     fn default() -> Self {
@@ -50395,6 +50917,12 @@ impl TaskType {
     pub const SERVICE_WORKER: Self = Self(cef_task_type_t::CEF_TASK_TYPE_SERVICE_WORKER);
     #[doc = "See [`cef_task_type_t::CEF_TASK_TYPE_NUM_VALUES`] for more documentation."]
     pub const NUM_VALUES: Self = Self(cef_task_type_t::CEF_TASK_TYPE_NUM_VALUES);
+}
+impl TaskType {
+    #[doc = "Get the raw integer representation."]
+    pub fn get_raw(&self) -> u32 {
+        self.0 as u32
+    }
 }
 impl Default for TaskType {
     fn default() -> Self {
