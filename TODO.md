@@ -1,21 +1,27 @@
 # TermSurf CEF Integration Plan
 
-This document tracks the integration of Chromium Embedded Framework (CEF) into TermSurf, enabling browser panes within the terminal.
+This document tracks the integration of Chromium Embedded Framework (CEF) into
+TermSurf, enabling browser panes within the terminal.
 
 ## Why CEF?
 
 - **Consistent cross-platform API** - Same C API on macOS, Linux, Windows
 - **Full Chrome DevTools** - Essential for web developers
-- **Profile support** - Different cache paths = isolated sessions (cookies, localStorage)
-- **Console message capture** - Native `OnConsoleMessage` callback for stdout/stderr bridging
-- **Binary size is acceptable** - ~150-200MB, but provides full browser capabilities
+- **Profile support** - Different cache paths = isolated sessions (cookies,
+  localStorage)
+- **Console message capture** - Native `OnConsoleMessage` callback for
+  stdout/stderr bridging
+- **Binary size is acceptable** - ~150-200MB, but provides full browser
+  capabilities
 
 ## Phase 1: Setup & Foundation ✓
 
 Download CEF and understand its structure before writing any code.
 
-- [x] Download latest stable CEF macOS arm64 build from cef-builds.spotifycdn.com
-- [x] Extract to `termsurf-macos/Frameworks/cef/` (v143.0.13, Chromium 143.0.7499.170)
+- [x] Download latest stable CEF macOS arm64 build from
+      cef-builds.spotifycdn.com
+- [x] Extract to `termsurf-macos/Frameworks/cef/` (v143.0.13, Chromium
+      143.0.7499.170)
 - [x] Document the directory structure (headers, framework, resources)
 - [x] Read key C API headers we need:
   - [x] `include/capi/cef_app_capi.h` - initialization
@@ -24,13 +30,15 @@ Download CEF and understand its structure before writing any code.
   - [x] `include/capi/cef_display_handler_capi.h` - console messages
   - [x] `include/capi/cef_life_span_handler_capi.h` - browser lifecycle
   - [x] `include/capi/cef_request_context_capi.h` - profiles
-- [x] Document the exact C function signatures we need to wrap (see [docs/cef.md](docs/cef.md))
+- [x] Document the exact C function signatures we need to wrap (see
+      [docs/cef.md](docs/cef.md))
 
 ## Phase 2: Minimal Swift Bindings
 
 Create a lean Swift wrapper (CEFKit) that exposes only what TermSurf needs.
 
 ### Structure
+
 ```
 termsurf-macos/CEFKit/
 ├── Modules/CEF/
@@ -49,6 +57,7 @@ termsurf-macos/CEFKit/
 ```
 
 ### Tasks
+
 - [ ] Create module.modulemap to import CEF C headers
 - [ ] Create umbrella header with only needed headers
 - [ ] Verify Swift can see CEF types
@@ -140,13 +149,19 @@ Final polish and documentation updates.
 ## Resources
 
 - [CEF Integration Guide](docs/cef.md) - C API reference and directory structure
-- [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Official binary distributions
-- [CEF C API Docs](https://cef-builds.spotifycdn.com/docs/stable.html) - API documentation
-- [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - General usage guide
+- [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Official binary
+  distributions
+- [CEF C API Docs](https://cef-builds.spotifycdn.com/docs/stable.html) - API
+  documentation
+- [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - General
+  usage guide
 - [CEF.swift](CEF.swift/) - Reference implementation (outdated but informative)
 
 ## Notes
 
-- CEF.swift (cloned to repo root) is for reference only - we're building our own minimal wrapper
-- Console message callback only receives first argument; use JS injection to JSON.stringify all args
-- CEF takes over message loop by default; use `cef_do_message_loop_work()` to integrate with existing loop
+- CEF.swift (cloned to repo root) is for reference only - we're building our own
+  minimal wrapper
+- Console message callback only receives first argument; use JS injection to
+  JSON.stringify all args
+- CEF takes over message loop by default; use `cef_do_message_loop_work()` to
+  integrate with existing loop
