@@ -18,6 +18,7 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 
 ### TermSurf macOS App
 
+- **Setup CEF:** `./scripts/setup-cef.sh` (downloads ~250MB CEF binary, required for browser panes)
 - **Build:** `cd termsurf-macos && xcodebuild -project Ghostty.xcodeproj -scheme Ghostty -configuration Debug build`
 - **Run:** Build in Xcode and run, or use `zig build run` for the original Ghostty app
 - **Clean:** `cd termsurf-macos && xcodebuild clean`
@@ -56,11 +57,12 @@ TermSurf uses the Chromium Embedded Framework (CEF) for browser panes, providing
 - Console message capture (stdout/stderr bridging)
 - Consistent cross-platform API
 
+**Setup:** Run `./scripts/setup-cef.sh` to download CEF (~250MB). This is required before building TermSurf with browser support.
+
 **Key locations:**
-- `termsurf-macos/Frameworks/cef/` - CEF binary distribution (v143.0.13)
+- `termsurf-macos/Frameworks/cef/` - CEF binary distribution (not committed, download via setup script)
 - `termsurf-macos/CEFKit/` - Minimal Swift bindings for CEF (to be created)
 - `docs/cef.md` - C API reference and integration guide
-- `CEF.swift/` - Reference implementation at repo root (not committed, for research only)
 
 ## Key Files for TermSurf Development
 

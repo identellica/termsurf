@@ -100,9 +100,22 @@ Binary size increases ~150-200MB per engine, which is acceptable for web develop
 - Xcode 15+
 - Zig (see [Ghostty's build instructions](https://ghostty.org/docs/install/build))
 
+### Download CEF
+
+TermSurf requires the Chromium Embedded Framework (CEF) for browser panes. Run the setup script to download it (~250MB):
+
+```bash
+./scripts/setup-cef.sh
+```
+
+Or download manually from [cef-builds.spotifycdn.com](https://cef-builds.spotifycdn.com/index.html):
+- Select **macOS ARM64** (or x64 for Intel)
+- Download the **Standard Distribution** for the latest stable version
+- Extract to `termsurf-macos/Frameworks/cef/`
+
 ### Build libghostty
 
-First, build the shared library from the repo root:
+Build the shared library from the repo root:
 
 ```bash
 zig build
