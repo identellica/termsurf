@@ -80,7 +80,7 @@ TermSurf uses two icons: a production icon and a debug icon (shown in DEBUG buil
 - **Source icons:**
   - Production: `termsurf-macos/icon-source/termsurf-icon.png`
   - Debug: `termsurf-macos/icon-source/termsurf-debug-icon.png`
-- **Update icons:** `cd termsurf-macos && ./scripts/generate-icons.sh`
+- **Update icons:** `./scripts/generate-icons.sh`
 - **Generated assets:**
   - `termsurf-macos/Assets.xcassets/AppIcon.appiconset/` (production, multiple sizes)
   - `termsurf-macos/Assets.xcassets/TermSurfDebugIcon.imageset/` (debug)

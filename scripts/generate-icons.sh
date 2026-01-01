@@ -3,13 +3,14 @@
 # Usage: ./scripts/generate-icons.sh
 #
 # This script generates all icon sizes for the macOS app from source images:
-# - Production icon: icon-source/termsurf-icon.png -> Assets.xcassets/AppIcon.appiconset/
-# - Debug icon: icon-source/termsurf-debug-icon.png -> Assets.xcassets/TermSurfDebugIcon.imageset/
+# - Production icon: termsurf-macos/icon-source/termsurf-icon.png
+# - Debug icon: termsurf-macos/icon-source/termsurf-debug-icon.png
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_DIR="$REPO_ROOT/termsurf-macos"
 
 PROD_SOURCE="$PROJECT_DIR/icon-source/termsurf-icon.png"
 DEBUG_SOURCE="$PROJECT_DIR/icon-source/termsurf-debug-icon.png"
