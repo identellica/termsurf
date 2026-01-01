@@ -4,7 +4,8 @@
     non_camel_case_types,
     unused_variables,
     clippy::not_unsafe_ptr_arg_deref,
-    clippy::too_many_arguments
+    clippy::too_many_arguments,
+    clippy::let_unit_value
 )]
 use crate::rc::{ConvertParam, ConvertReturnValue, Rc, RcImpl, RefGuard, WrapParamRef};
 use cef_dll_sys::*;
@@ -19161,7 +19162,7 @@ mod impl_cef_drag_handler_t {
             None
         } else {
             let arg_regions = unsafe { std::slice::from_raw_parts(arg_regions, arg_regions_count) };
-            let arg_regions: Vec<_> = arg_regions.iter().map(|elem| elem.clone().into()).collect();
+            let arg_regions: Vec<_> = arg_regions.iter().map(|elem| (*elem).into()).collect();
             Some(arg_regions)
         };
         let arg_regions = arg_regions.as_deref();
@@ -23412,10 +23413,8 @@ mod impl_cef_render_handler_t {
         } else {
             let arg_dirty_rects =
                 unsafe { std::slice::from_raw_parts(arg_dirty_rects, arg_dirty_rects_count) };
-            let arg_dirty_rects: Vec<_> = arg_dirty_rects
-                .iter()
-                .map(|elem| elem.clone().into())
-                .collect();
+            let arg_dirty_rects: Vec<_> =
+                arg_dirty_rects.iter().map(|elem| (*elem).into()).collect();
             Some(arg_dirty_rects)
         };
         let arg_dirty_rects = arg_dirty_rects.as_deref();
@@ -23452,10 +23451,8 @@ mod impl_cef_render_handler_t {
         } else {
             let arg_dirty_rects =
                 unsafe { std::slice::from_raw_parts(arg_dirty_rects, arg_dirty_rects_count) };
-            let arg_dirty_rects: Vec<_> = arg_dirty_rects
-                .iter()
-                .map(|elem| elem.clone().into())
-                .collect();
+            let arg_dirty_rects: Vec<_> =
+                arg_dirty_rects.iter().map(|elem| (*elem).into()).collect();
             Some(arg_dirty_rects)
         };
         let arg_dirty_rects = arg_dirty_rects.as_deref();
@@ -23616,7 +23613,7 @@ mod impl_cef_render_handler_t {
             };
             let arg_character_bounds: Vec<_> = arg_character_bounds
                 .iter()
-                .map(|elem| elem.clone().into())
+                .map(|elem| (*elem).into())
                 .collect();
             Some(arg_character_bounds)
         };
@@ -34808,7 +34805,7 @@ impl ImplTaskManager for TaskManager {
                     let out_task_ids = arg_task_ids;
                     let mut vec_task_ids = out_task_ids
                         .as_ref()
-                        .map(|arg| arg.iter().map(|elem| *elem).collect::<Vec<_>>())
+                        .map(|arg| arg.to_vec())
                         .unwrap_or_default();
                     let arg_task_ids = if vec_task_ids.is_empty() {
                         std::ptr::null_mut()

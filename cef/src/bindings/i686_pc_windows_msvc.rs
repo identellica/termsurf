@@ -4,7 +4,8 @@
     non_camel_case_types,
     unused_variables,
     clippy::not_unsafe_ptr_arg_deref,
-    clippy::too_many_arguments
+    clippy::too_many_arguments,
+    clippy::let_unit_value
 )]
 use crate::rc::{ConvertParam, ConvertReturnValue, Rc, RcImpl, RefGuard, WrapParamRef};
 use cef_dll_sys::*;
