@@ -1007,9 +1007,9 @@ class AppDelegate: NSObject,
             if appIcon == nil {
                 await MainActor.run {
                     // Changing the app bundle's icon will corrupt code signing.
-                    // We only use the default blueprint icon for the dock,
+                    // We only use a debug icon for the dock,
                     // so developers don't need to clean and re-build every time.
-                    NSApplication.shared.applicationIconImage = NSImage(named: "BlueprintImage")
+                    NSApplication.shared.applicationIconImage = NSImage(named: "TermSurfDebugIcon")
                 }
             }
 #endif

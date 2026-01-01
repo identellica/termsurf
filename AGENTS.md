@@ -56,6 +56,20 @@ When implementing webview pane support, focus on these files in `termsurf-macos/
 3. **BaseTerminalController.swift** - Handle `termsurf open` command
 4. **New: WebviewPane.swift** - WKWebView wrapper (to be created)
 
+## Icon Generation
+
+TermSurf uses two icons: a production icon and a debug icon (shown in DEBUG builds to distinguish dev from release).
+
+- **Source icons:**
+  - Production: `termsurf-macos/icon-source/termsurf-icon.png`
+  - Debug: `termsurf-macos/icon-source/termsurf-debug-icon.png`
+- **Update icons:** `cd termsurf-macos && ./scripts/generate-icons.sh`
+- **Generated assets:**
+  - `termsurf-macos/Assets.xcassets/AppIcon.appiconset/` (production, multiple sizes)
+  - `termsurf-macos/Assets.xcassets/TermSurfDebugIcon.imageset/` (debug)
+
+Note: Source icons should be at least 1024x1024 pixels for best quality.
+
 ## Build System Notes
 
 - `zig build` creates `GhosttyKit.xcframework` in both `macos/` and `termsurf-macos/`

@@ -70,6 +70,17 @@ xcodebuild -project Ghostty.xcodeproj -scheme Ghostty -configuration Debug build
 
 Or open `termsurf-macos/Ghostty.xcodeproj` in Xcode and build from there.
 
+### Updating the App Icon
+
+To update the app icon, place your source image in `termsurf-macos/icon-source/termsurf-icon.png`, then run:
+
+```bash
+cd termsurf-macos
+./scripts/generate-icons.sh
+```
+
+Then rebuild the app.
+
 ## Development Status
 
 **Current Phase**: Foundation
