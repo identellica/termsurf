@@ -4,20 +4,34 @@ A terminal emulator with integrated webview support, built as a fork of [Ghostty
 
 ## Vision
 
-TermSurf is a terminal designed for web developers. It combines a high-quality native terminal (via libghostty) with the ability to open webviews directly inside terminal panes. This enables workflows like:
+TermSurf is a terminal designed for web developers. It combines a high-quality native terminal (via libghostty) with the ability to open browsers directly inside terminal panes. This enables workflows like:
 
 - Run `termsurf open https://localhost:3000` to preview your dev server in a pane
 - View documentation alongside your terminal
 - Debug web applications with terminal and browser side-by-side
 - Script the terminal using TypeScript instead of Lua
 
+**The ultimate goal:** Test your web app in *any* browser engine, right from your terminal. Starting with Chromium, we plan to add Safari/WebKit and Firefox/Gecko support, making TermSurf the ultimate browser for web developers.
+
 ## Key Features (Planned)
 
-- **Browser Panes**: Embed Chromium (via CEF) as first-class panes alongside terminals
+- **Multi-Engine Browser Panes**: Open browsers as first-class panes with `--browser` flag
+  - Chromium (via CEF) - available now
+  - Safari/WebKit - planned
+  - Firefox/Gecko - planned
 - **Browser Profiles**: Isolated sessions with `--profile` flag (separate cookies, localStorage)
 - **Unified Focus Management**: Navigate between terminal and browser panes with vim-style keybindings (ctrl+h/j/k/l)
 - **Console Bridging**: `console.log` → stdout, `console.error` → stderr
 - **TypeScript Configuration**: Configure the terminal using TypeScript instead of config files
+
+```bash
+# Example usage
+termsurf open google.com                        # Chromium (default)
+termsurf open --browser chromium google.com     # Chromium (explicit)
+termsurf open --browser webkit google.com       # Safari/WebKit (planned)
+termsurf open --browser gecko google.com        # Firefox/Gecko (planned)
+termsurf open --profile work --browser chromium google.com  # With profile
+```
 
 ## Architecture
 
@@ -45,16 +59,37 @@ By forking Ghostty and placing our modifications in a separate folder:
 2. **Side-by-side comparison**: Can always compare against working Ghostty
 3. **Clear separation**: TermSurf-specific code is isolated in `termsurf-macos/`
 
-### Why CEF?
+### Browser Engine Strategy
 
-We chose the Chromium Embedded Framework over system webviews (WKWebView) because:
+TermSurf is designed to support multiple browser engines. Our API abstracts over engine-specific details so you can test your app in any browser.
 
-1. **Consistent cross-platform API**: Same C API on macOS, Linux, Windows
-2. **Full DevTools**: Essential for web developers
-3. **Profile support**: Different cache paths = isolated browser sessions
-4. **Console capture**: Native callback for stdout/stderr bridging
+**Current: Chromium (via CEF)**
 
-Binary size increases by ~150-200MB, which is acceptable for the target audience (web developers).
+We start with the Chromium Embedded Framework because:
+- Consistent cross-platform API (macOS, Linux, Windows)
+- Full Chrome DevTools
+- Native profile and console capture support
+- Well-established, used by Electron, Spotify, Steam, etc.
+
+**Planned: Safari/WebKit**
+
+WebKit is already designed for embedding (WKWebView, WebKitGTK). We'll create a unified wrapper providing the same API as our CEF integration. This is our next priority after Chromium.
+
+**Planned: Firefox/Gecko**
+
+Gecko is harder to embed (no official desktop embedding API), but we plan to fork and create one. GeckoView exists for Android, proving it's possible. This is a longer-term goal.
+
+**The Architecture**
+
+Each engine will implement a common `BrowserEngine` protocol:
+- Create browser with profile/cache path
+- Navigate, reload, go back/forward
+- Capture console messages
+- Return embeddable native view
+
+This allows future engines to be added without changing the rest of TermSurf.
+
+Binary size increases ~150-200MB per engine, which is acceptable for web developers who need accurate cross-browser testing.
 
 ## Building
 
