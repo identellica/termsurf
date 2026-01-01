@@ -856,6 +856,7 @@ impl<'a, T> From<&'a mut CefStringCollection<T>> for Option<&'a mut T> {
 }
 
 /// See [_cef_string_list_t] for more documentation.
+#[derive(Clone)]
 pub struct CefStringList(CefStringCollection<_cef_string_list_t>);
 
 impl CefStringList {
@@ -988,6 +989,7 @@ impl Debug for CefStringList {
 }
 
 /// See [_cef_string_map_t] for more documentation.
+#[derive(Clone)]
 pub struct CefStringMap(CefStringCollection<_cef_string_map_t>);
 
 impl CefStringMap {
@@ -1134,6 +1136,7 @@ impl Debug for CefStringMap {
 }
 
 /// See [_cef_string_multimap_t] for more documentation.
+#[derive(Clone)]
 pub struct CefStringMultimap(CefStringCollection<_cef_string_multimap_t>);
 
 impl CefStringMultimap {

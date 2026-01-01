@@ -357,7 +357,7 @@ impl CefVersion {
     where
         P: AsRef<Path>,
     {
-        let mut result = self.download_archive_from(&url, &location, show_progress);
+        let mut result = self.download_archive_from(url, &location, show_progress);
 
         let mut retry = 0;
         while let Err(Error::Io(_)) = &result {
@@ -368,7 +368,7 @@ impl CefVersion {
             retry += 1;
             thread::sleep(retry_delay * retry);
 
-            result = self.download_archive_from(&url, &location, show_progress);
+            result = self.download_archive_from(url, &location, show_progress);
         }
 
         result
@@ -459,7 +459,7 @@ where
         println!("Downloading CEF archive for {target}...");
     }
 
-    let index = CefIndex::download_from(&url)?;
+    let index = CefIndex::download_from(url)?;
     let platform = index.platform(target)?;
     let version = platform.version(cef_version)?;
 

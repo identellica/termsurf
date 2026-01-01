@@ -33,8 +33,10 @@ wrap_app! {
             command_line.append_switch(Some(&"hide-crash-restore-bubble".into()));
             command_line.append_switch(Some(&"use-mock-keychain".into()));
             command_line.append_switch(Some(&"enable-logging=stderr".into()));
-            command_line
-                .append_switch_with_value(Some(&"remote-debugging-port".into()), Some(&"9229".into()));
+            command_line.append_switch_with_value(
+                Some(&"remote-debugging-port".into()),
+                Some(&"9229".into()),
+            );
         }
 
         fn browser_process_handler(&self) -> Option<cef::BrowserProcessHandler> {
@@ -223,7 +225,9 @@ wrap_render_handler! {
                                 ty: wgpu::BindingType::Texture {
                                     multisampled: false,
                                     view_dimension: wgpu::TextureViewDimension::D2,
-                                    sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                                    sample_type: wgpu::TextureSampleType::Float {
+                                        filterable: true,
+                                    },
                                 },
                                 count: None,
                             },
@@ -348,7 +352,9 @@ wrap_render_handler! {
                                 ty: wgpu::BindingType::Texture {
                                     multisampled: false,
                                     view_dimension: wgpu::TextureViewDimension::D2,
-                                    sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                                    sample_type: wgpu::TextureSampleType::Float {
+                                        filterable: true,
+                                    },
                                 },
                                 count: None,
                             },

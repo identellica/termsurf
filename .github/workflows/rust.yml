@@ -23,6 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install dependencies
+        run: |
+          ${{ matrix.os == 'ubuntu-latest'
+            && 'sudo apt-get update -q; sudo apt-get install -yq libglib2.0-dev'
+            || 'echo "No additional dependencies."'
+          }}
+
       - name: Check fmt
         run: cargo fmt --check
 
