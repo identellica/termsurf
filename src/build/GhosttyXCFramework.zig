@@ -15,6 +15,15 @@ pub fn init(
     deps: *const SharedDeps,
     target: Target,
 ) !GhosttyXCFramework {
+    return initWithPath(b, deps, target, "macos/GhosttyKit.xcframework");
+}
+
+pub fn initWithPath(
+    b: *std.Build,
+    deps: *const SharedDeps,
+    target: Target,
+    out_path: []const u8,
+) !GhosttyXCFramework {
     // Universal macOS build
     const macos_universal = try GhosttyLib.initMacOSUniversal(b, deps);
 
@@ -57,7 +66,7 @@ pub fn init(
     // it to the final app built with Swift.
     const xcframework = XCFrameworkStep.create(b, .{
         .name = "GhosttyKit",
-        .out_path = "macos/GhosttyKit.xcframework",
+        .out_path = out_path,
         .libraries = switch (target) {
             .universal => &.{
                 .{

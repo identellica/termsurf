@@ -148,14 +148,24 @@ pub fn build(b: *std.Build) !void {
     // macOS only artifacts. These will error if they're initialized for
     // other targets.
     if (config.target.result.os.tag.isDarwin()) {
-        // Ghostty xcframework
+        // Ghostty xcframework (for macos/)
         const xcframework = try buildpkg.GhosttyXCFramework.init(
             b,
             &deps,
             config.xcframework_target,
         );
+
+        // TermSurf xcframework (for termsurf-macos/)
+        const xcframework_termsurf = try buildpkg.GhosttyXCFramework.initWithPath(
+            b,
+            &deps,
+            config.xcframework_target,
+            "termsurf-macos/GhosttyKit.xcframework",
+        );
+
         if (config.emit_xcframework) {
             xcframework.install();
+            xcframework_termsurf.install();
 
             // The xcframework build always installs resources because our
             // macOS xcode project contains references to them.
