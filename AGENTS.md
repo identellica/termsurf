@@ -34,7 +34,7 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 
 - Swift sources: `termsurf-macos/Sources/`
 - Xcode project: `termsurf-macos/Ghostty.xcodeproj`
-- **TODO.md: `termsurf-macos/TODO.md`** - Active checklist of tasks to launch (keep up to date!)
+- **TODO.md: `TODO.md`** - Active checklist of tasks to launch (keep up to date!)
 - Documentation: `termsurf-macos/docs/`
   - `ARCHITECTURE.md` - Technical decisions and design
   - `ROADMAP.md` - Development phases and milestones
