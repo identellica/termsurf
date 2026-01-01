@@ -41,12 +41,13 @@ This project is structured as a fork of Ghostty with TermSurf code in the `terms
 termsurf/                    # Root (Ghostty fork)
 ├── src/                     # libghostty (Zig) - shared core
 ├── macos/                   # Original Ghostty macOS app
+├── docs/                    # Documentation
+│   ├── architecture.md      # Technical decisions
+│   └── cef.md               # CEF C API reference
 ├── TODO.md                  # Active task checklist
 ├── termsurf-macos/          # TermSurf macOS app (our code)
 │   ├── Sources/             # Swift source
-│   ├── docs/                # TermSurf documentation
-│   │   ├── ARCHITECTURE.md  # Technical decisions
-│   │   └── ROADMAP.md       # Development phases
+│   ├── Frameworks/cef/      # CEF binary distribution
 │   └── Ghostty.xcodeproj    # Xcode project
 └── ...                      # Other Ghostty/libghostty files
 ```
@@ -135,8 +136,8 @@ Then rebuild the app.
 
 See:
 - [TODO.md](TODO.md) - Active checklist of tasks to launch
-- [Roadmap](termsurf-macos/docs/ROADMAP.md) - Development phases
-- [Architecture](termsurf-macos/docs/ARCHITECTURE.md) - Technical decisions
+- [Architecture](docs/architecture.md) - Technical decisions and design rationale
+- [CEF Integration](docs/cef.md) - Browser engine C API reference
 
 ## Acknowledgments
 
