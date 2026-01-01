@@ -28,6 +28,7 @@ termsurf/                    # Root (Ghostty fork)
 ├── macos/                   # Original Ghostty macOS app
 ├── termsurf-macos/          # TermSurf macOS app (our code)
 │   ├── Sources/             # Swift source
+│   ├── TODO.md              # Active task checklist
 │   ├── docs/                # TermSurf documentation
 │   │   ├── ARCHITECTURE.md  # Technical decisions
 │   │   └── ROADMAP.md       # Development phases
@@ -83,9 +84,12 @@ Then rebuild the app.
 
 ## Development Status
 
-**Current Phase**: Foundation
+**Current Phase**: Foundation (CEF Integration)
 
-See the [Roadmap](termsurf-macos/docs/ROADMAP.md) for development phases and the [Architecture](termsurf-macos/docs/ARCHITECTURE.md) document for technical decisions.
+See:
+- [TODO.md](termsurf-macos/TODO.md) - Active checklist of tasks to launch
+- [Roadmap](termsurf-macos/docs/ROADMAP.md) - Development phases
+- [Architecture](termsurf-macos/docs/ARCHITECTURE.md) - Technical decisions
 
 ## Acknowledgments
 
