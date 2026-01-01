@@ -13,9 +13,10 @@ TermSurf is a terminal designed for web developers. It combines a high-quality n
 
 ## Key Features (Planned)
 
-- **Webview Panes**: Open web content as first-class panes alongside terminals
-- **Unified Focus Management**: Navigate between terminal and webview panes with vim-style keybindings (ctrl+h/j/k/l)
-- **Console Bridging**: `console.log` output from webviews appears in stdout
+- **Browser Panes**: Embed Chromium (via CEF) as first-class panes alongside terminals
+- **Browser Profiles**: Isolated sessions with `--profile` flag (separate cookies, localStorage)
+- **Unified Focus Management**: Navigate between terminal and browser panes with vim-style keybindings (ctrl+h/j/k/l)
+- **Console Bridging**: `console.log` → stdout, `console.error` → stderr
 - **TypeScript Configuration**: Configure the terminal using TypeScript instead of config files
 
 ## Architecture
@@ -43,6 +44,17 @@ By forking Ghostty and placing our modifications in a separate folder:
 1. **Upstream compatibility**: Can merge upstream Ghostty changes
 2. **Side-by-side comparison**: Can always compare against working Ghostty
 3. **Clear separation**: TermSurf-specific code is isolated in `termsurf-macos/`
+
+### Why CEF?
+
+We chose the Chromium Embedded Framework over system webviews (WKWebView) because:
+
+1. **Consistent cross-platform API**: Same C API on macOS, Linux, Windows
+2. **Full DevTools**: Essential for web developers
+3. **Profile support**: Different cache paths = isolated browser sessions
+4. **Console capture**: Native callback for stdout/stderr bridging
+
+Binary size increases by ~150-200MB, which is acceptable for the target audience (web developers).
 
 ## Building
 

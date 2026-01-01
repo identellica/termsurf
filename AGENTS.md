@@ -48,14 +48,26 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 - When working on libghostty-vt, do not build the full app.
 - For C only changes, don't run the Zig tests. Build all the examples.
 
+## Browser Integration (CEF)
+
+TermSurf uses the Chromium Embedded Framework (CEF) for browser panes, providing:
+- Full Chrome DevTools
+- Isolated browser profiles via `--profile` flag
+- Console message capture (stdout/stderr bridging)
+- Consistent cross-platform API
+
+**Key locations:**
+- `termsurf-macos/CEFKit/` - Minimal Swift bindings for CEF (to be created)
+- `CEF.swift/` - Reference implementation at repo root (not committed, for research only)
+
 ## Key Files for TermSurf Development
 
-When implementing webview pane support, focus on these files in `termsurf-macos/`:
+When implementing browser pane support, focus on these files in `termsurf-macos/`:
 
-1. **SplitTree.swift** (`Sources/Features/Splits/`) - Pane layout tree, extend for webview nodes
-2. **TerminalSplitTreeView.swift** - Renders panes, add webview rendering
+1. **SplitTree.swift** (`Sources/Features/Splits/`) - Pane layout tree, extend for browser nodes
+2. **TerminalSplitTreeView.swift** - Renders panes, add browser rendering
 3. **BaseTerminalController.swift** - Handle `termsurf open` command
-4. **New: WebviewPane.swift** - WKWebView wrapper (to be created)
+4. **CEFKit/** - CEF Swift bindings (to be created)
 
 ## Icon Generation
 
