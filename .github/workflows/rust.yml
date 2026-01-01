@@ -56,6 +56,12 @@ jobs:
                     || ''
                   }}GITHUB_ENV"
 
+      - name: Install Dependencies
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq libglib2.0-dev
+
       - name: Build
         run: cargo build --verbose
 
