@@ -370,7 +370,8 @@ class QuickTerminalController: BaseTerminalController {
             } else {
                 var config = Ghostty.SurfaceConfiguration()
                 config.environmentVariables["GHOSTTY_QUICK_TERMINAL"] = "1"
-                
+                TermsurfEnvironment.injectEnvVars(into: &config)
+
                 let view = Ghostty.SurfaceView(ghostty_app, baseConfig: config)
                 surfaceTree = SplitTree(view: view)
                 focusedSurface = view

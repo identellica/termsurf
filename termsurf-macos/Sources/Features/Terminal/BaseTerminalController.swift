@@ -134,7 +134,13 @@ class BaseTerminalController: NSWindowController,
 
         // Initialize our initial surface.
         guard let ghostty_app = ghostty.app else { preconditionFailure("app must be loaded") }
-        self.surfaceTree = tree ?? .init(view: Ghostty.SurfaceView(ghostty_app, baseConfig: base))
+        if let tree = tree {
+            self.surfaceTree = tree
+        } else {
+            var config = base ?? Ghostty.SurfaceConfiguration()
+            TermsurfEnvironment.injectEnvVars(into: &config)
+            self.surfaceTree = .init(view: Ghostty.SurfaceView(ghostty_app, baseConfig: config))
+        }
 
         // Setup our notifications for behaviors
         let center = NotificationCenter.default
@@ -235,7 +241,9 @@ class BaseTerminalController: NSWindowController,
 
         // Create a new surface view
         guard let ghostty_app = ghostty.app else { return nil }
-        let newView = Ghostty.SurfaceView(ghostty_app, baseConfig: config)
+        var surfaceConfig = config ?? Ghostty.SurfaceConfiguration()
+        TermsurfEnvironment.injectEnvVars(into: &surfaceConfig)
+        let newView = Ghostty.SurfaceView(ghostty_app, baseConfig: surfaceConfig)
 
         // Do the split
         let newTree: SplitTree<Ghostty.SurfaceView>
