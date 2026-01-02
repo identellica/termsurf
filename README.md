@@ -11,13 +11,13 @@ TermSurf is a terminal designed for web developers. It combines a high-quality n
 - Debug web applications with terminal and browser side-by-side
 - Script the terminal using TypeScript instead of Lua
 
-**The ultimate goal:** Test your web app in *any* browser engine, right from your terminal. Starting with Chromium, we plan to add Safari/WebKit and Firefox/Gecko support, making TermSurf the ultimate browser for web developers.
+**The ultimate goal:** Test your web app in *any* browser engine, right from your terminal. Starting with WebKit (Safari) for the MVP, we plan to add Chromium and Firefox/Gecko support, making TermSurf the ultimate browser for web developers.
 
 ## Key Features (Planned)
 
 - **Multi-Engine Browser Panes**: Open browsers as first-class panes with `--browser` flag
-  - Chromium (via CEF) - available now
-  - Safari/WebKit - planned
+  - Safari/WebKit (via WKWebView) - MVP
+  - Chromium (via CEF) - planned
   - Firefox/Gecko - planned
 - **Browser Profiles**: Isolated sessions with `--profile` flag (separate cookies, localStorage)
 - **Unified Focus Management**: Navigate between terminal and browser panes with vim-style keybindings (ctrl+h/j/k/l)
@@ -26,11 +26,11 @@ TermSurf is a terminal designed for web developers. It combines a high-quality n
 
 ```bash
 # Example usage
-termsurf open google.com                        # Chromium (default)
-termsurf open --browser chromium google.com     # Chromium (explicit)
-termsurf open --browser webkit google.com       # Safari/WebKit (planned)
+termsurf open google.com                        # WebKit (default)
+termsurf open --browser webkit google.com       # Safari/WebKit (explicit)
+termsurf open --browser chromium google.com     # Chromium (planned)
 termsurf open --browser gecko google.com        # Firefox/Gecko (planned)
-termsurf open --profile work --browser chromium google.com  # With profile
+termsurf open --profile work google.com         # With profile
 ```
 
 ## Architecture
@@ -43,11 +43,12 @@ termsurf/                    # Root (Ghostty fork)
 ├── macos/                   # Original Ghostty macOS app
 ├── docs/                    # Documentation
 │   ├── architecture.md      # Technical decisions
-│   └── cef.md               # CEF C API reference
+│   └── cef.md               # CEF integration (deferred)
 ├── TODO.md                  # Active task checklist
 ├── termsurf-macos/          # TermSurf macOS app (our code)
 │   ├── Sources/             # Swift source
-│   ├── Frameworks/cef/      # CEF binary distribution
+│   ├── WebViewKit/          # WKWebView wrapper (MVP)
+│   ├── WebViewTest/         # Browser pane prototype
 │   └── TermSurf.xcodeproj   # Xcode project
 └── ...                      # Other Ghostty/libghostty files
 ```
@@ -64,17 +65,21 @@ By forking Ghostty and placing our modifications in a separate folder:
 
 TermSurf is designed to support multiple browser engines. Our API abstracts over engine-specific details so you can test your app in any browser.
 
-**Current: Chromium (via CEF)**
+**Current: Safari/WebKit (MVP)**
 
-We start with the Chromium Embedded Framework because:
-- Consistent cross-platform API (macOS, Linux, Windows)
+We start with WKWebView (Apple's WebKit) because:
+- Native Swift integration with zero external dependencies
+- Console capture via JavaScript injection (console.log → stdout, console.error → stderr)
+- Safari Web Inspector for debugging
+- Session isolation via WKWebsiteDataStore
+- Fast to implement and reliable
+
+**Planned: Chromium (via CEF)**
+
+CEF integration is deferred due to Swift-to-C struct marshalling challenges. See `docs/cef.md` for documentation. When implemented, CEF will provide:
 - Full Chrome DevTools
+- Cross-platform API (macOS, Linux, Windows)
 - Native profile and console capture support
-- Well-established, used by Electron, Spotify, Steam, etc.
-
-**Planned: Safari/WebKit**
-
-WebKit is already designed for embedding (WKWebView, WebKitGTK). We'll create a unified wrapper providing the same API as our CEF integration. This is our next priority after Chromium.
 
 **Planned: Firefox/Gecko**
 
@@ -90,8 +95,6 @@ Each engine will implement a common `BrowserEngine` protocol:
 
 This allows future engines to be added without changing the rest of TermSurf.
 
-Binary size increases ~150-200MB per engine, which is acceptable for web developers who need accurate cross-browser testing.
-
 ## Building
 
 ### Prerequisites
@@ -99,19 +102,6 @@ Binary size increases ~150-200MB per engine, which is acceptable for web develop
 - macOS 13+
 - Xcode 15+
 - Zig (see [Ghostty's build instructions](https://ghostty.org/docs/install/build))
-
-### Download CEF
-
-TermSurf requires the Chromium Embedded Framework (CEF) for browser panes. Run the setup script to download it (~250MB):
-
-```bash
-./scripts/setup-cef.sh
-```
-
-Or download manually from [cef-builds.spotifycdn.com](https://cef-builds.spotifycdn.com/index.html):
-- Select **macOS ARM64** (or x64 for Intel)
-- Download the **Standard Distribution** for the latest stable version
-- Extract to `termsurf-macos/Frameworks/cef/`
 
 ### Build libghostty
 
@@ -144,12 +134,12 @@ Then rebuild the app.
 
 ## Development Status
 
-**Current Phase**: Foundation (CEF Integration)
+**Current Phase**: Foundation (WebKit Integration)
 
 See:
 - [TODO.md](TODO.md) - Active checklist of tasks to launch
 - [Architecture](docs/architecture.md) - Technical decisions and design rationale
-- [CEF Integration](docs/cef.md) - Browser engine C API reference
+- [CEF Integration](docs/cef.md) - CEF attempt documentation (deferred)
 
 ## Acknowledgments
 

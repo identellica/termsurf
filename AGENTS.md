@@ -18,7 +18,6 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 
 ### TermSurf macOS App
 
-- **Setup CEF:** `./scripts/setup-cef.sh` (downloads ~250MB CEF binary, required for browser panes)
 - **Build:** `cd termsurf-macos && xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Debug build`
 - **Run:** Build in Xcode and run, or use `zig build run` for the original Ghostty app
 - **Clean:** `cd termsurf-macos && xcodebuild clean`
@@ -38,7 +37,7 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 - **TODO.md: `TODO.md`** - Active checklist of tasks to launch (keep up to date!)
 - Documentation: `docs/`
   - `docs/architecture.md` - Technical decisions and design rationale
-  - `docs/cef.md` - CEF C API reference and integration guide
+  - `docs/cef.md` - CEF integration attempt (deferred, documented for future reference)
 
 ## libghostty-vt
 
@@ -49,20 +48,20 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 - When working on libghostty-vt, do not build the full app.
 - For C only changes, don't run the Zig tests. Build all the examples.
 
-## Browser Integration (CEF)
+## Browser Integration
 
-TermSurf uses the Chromium Embedded Framework (CEF) for browser panes, providing:
-- Full Chrome DevTools
-- Isolated browser profiles via `--profile` flag
-- Console message capture (stdout/stderr bridging)
-- Consistent cross-platform API
+TermSurf uses WKWebView (Apple's WebKit) for browser panes in the MVP, providing:
+- Native Swift integration (no external dependencies)
+- Console message capture (stdout/stderr bridging via JS injection)
+- Safari Web Inspector for debugging
+- Session isolation via WKWebsiteDataStore
 
-**Setup:** Run `./scripts/setup-cef.sh` to download CEF (~250MB). This is required before building TermSurf with browser support.
+CEF (Chromium) integration is deferred due to Swift-to-C marshalling challenges. See `docs/cef.md` for details.
 
 **Key locations:**
-- `termsurf-macos/Frameworks/cef/` - CEF binary distribution (not committed, download via setup script)
-- `termsurf-macos/CEFKit/` - Minimal Swift bindings for CEF (to be created)
-- `docs/cef.md` - C API reference and integration guide
+- `termsurf-macos/WebViewKit/` - WKWebView wrapper with console capture (to be extracted from WebViewTest)
+- `termsurf-macos/WebViewTest/` - Working prototype demonstrating WKWebView integration
+- `docs/cef.md` - CEF integration attempt documentation (for future reference)
 
 ## Key Files for TermSurf Development
 
@@ -71,7 +70,7 @@ When implementing browser pane support, focus on these files in `termsurf-macos/
 1. **SplitTree.swift** (`Sources/Features/Splits/`) - Pane layout tree, extend for browser nodes
 2. **TerminalSplitTreeView.swift** - Renders panes, add browser rendering
 3. **BaseTerminalController.swift** - Handle `termsurf open` command
-4. **CEFKit/** - CEF Swift bindings (to be created)
+4. **WebViewKit/** - WKWebView wrapper (to be extracted from WebViewTest)
 
 ## Icon Generation
 
