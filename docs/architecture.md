@@ -1,6 +1,7 @@
 # TermSurf Architecture
 
-This document explains the architectural decisions behind TermSurf, including why we chose to fork Ghostty and use CEF for browser integration.
+This document explains the architectural decisions behind TermSurf, including
+why we chose Ghostty as our foundation and how we integrate browser panes.
 
 ## Requirements
 
@@ -81,47 +82,79 @@ TermSurf is designed to support multiple browser engines via a common protocol:
 This will allow `termsurf open --browser chromium` or `--browser gecko` for
 cross-browser testing.
 
-## libghostty Extension Strategy
+## CLI-App Communication
 
 ### The Problem
 
-TermSurf needs to receive custom OSC escape sequences (`\x1b]termsurf;...\x07`)
-from CLI tools. However, libghostty (the Zig terminal core) parses all escape
-sequences internally and discards ones it doesn't recognize.
+TermSurf needs a way for CLI tools (`termsurf open`, etc.) to communicate with
+the running TermSurf app to control browser panes.
 
-### Solution: Generic Custom OSC Passthrough
+### Solution: Unix Domain Sockets
 
-Rather than forking libghostty with TermSurf-specific code, we add a **minimal
-generic extension** that passes unrecognized OSC sequences to the embedder:
+We use Unix domain sockets for CLI-to-app communication:
 
 ```
-Shell output: \x1b]termsurf;open;https://...\x07
-                    ↓
-libghostty: "I don't recognize 'termsurf;...'"
-                    ↓
-libghostty: Calls action_cb with GHOSTTY_ACTION_CUSTOM_OSC
-                    ↓
-Swift: Receives "termsurf;open;https://..."
-                    ↓
-Swift: Parses and handles TermSurf command
+┌─────────────────────────────────────────────────────────────┐
+│ TermSurf App                                                │
+│                                                             │
+│  ┌──────────────┐         ┌─────────────────┐              │
+│  │ SocketServer │◄────────│ CommandHandler  │              │
+│  └──────┬───────┘         └────────┬────────┘              │
+│         │                          │                        │
+│  ┌──────▼───────────────────────────────────────────────┐  │
+│  │ Terminal Pane (shell with env vars)                  │  │
+│  │   TERMSURF_SOCKET=/tmp/termsurf-12345.sock           │  │
+│  │   TERMSURF_PANE_ID=pane-abc-123                      │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                              ▲
+                              │ Unix Socket (JSON)
+                    ┌─────────┴─────────┐
+                    │ termsurf CLI      │
+                    └───────────────────┘
 ```
 
-### Why This Approach?
+### Why Unix Sockets Over OSC Escape Sequences?
 
-| Aspect | TermSurf-specific fork | Generic extension |
-|--------|----------------------|-------------------|
-| libghostty changes | TermSurf parser, structs | One generic action type |
-| Upstream mergeable | No | Yes |
-| Maintenance | Permanent fork | Temporary (until merged) |
-| Code location | Split across Zig/Swift | TermSurf logic in Swift only |
+We considered OSC escape sequences (like iTerm2 and Kitty use) but chose Unix
+domain sockets for these reasons:
 
-The generic approach:
-1. Adds `GHOSTTY_ACTION_CUSTOM_OSC` to the C API
-2. Passes raw OSC string to embedder for any unrecognized sequence
-3. Keeps all TermSurf-specific parsing in Swift
+| Aspect | OSC Escape Sequences | Unix Domain Sockets |
+|--------|---------------------|---------------------|
+| **libghostty changes** | Required (fork) | **None** |
+| **Bidirectional** | No | **Yes** |
+| **Protocol** | String parsing | **Structured JSON** |
+| **Robustness** | Broken by pipes | **Always works** |
+| **`--wait` support** | Not possible | **Supported** |
 
-This is valuable to any Ghostty embedder wanting custom escape sequences, making
-it a strong candidate for upstream merge.
+**Key advantages:**
+
+1. **No libghostty modification** - All code lives in `termsurf-macos/`
+2. **Bidirectional** - CLI can receive responses and events (e.g., `--wait`)
+3. **Robust** - Works regardless of stdout redirection or piping
+4. **Structured** - JSON protocol avoids escaping issues
+
+### Protocol
+
+```json
+// Request (CLI → App)
+{"id": "1", "action": "open", "paneId": "abc-123", "data": {"url": "https://..."}}
+
+// Response (App → CLI)
+{"id": "1", "status": "ok", "data": {"webviewId": "wv-456"}}
+
+// Event (App → CLI, for --wait)
+{"id": "1", "event": "closed", "data": {"exitCode": 0}}
+```
+
+### Environment Variables
+
+When TermSurf spawns a shell, it sets:
+- `TERMSURF_SOCKET` - Path to the Unix domain socket
+- `TERMSURF_PANE_ID` - Unique identifier for this pane
+
+These are inherited by all child processes, allowing the CLI tool to discover
+the socket path and identify which pane it's running in.
 
 ## SplitTree Architecture
 
@@ -224,8 +257,9 @@ Apply same patterns to Ghostty's GTK app:
 
 ```
 termsurf/
-├── src/                          # libghostty (Zig) - shared core
-│   │                             # (minimal generic changes for custom_osc)
+├── src/                          # libghostty (Zig) - shared core (UNMODIFIED)
+├── src/termsurf-cli/             # CLI tool (new)
+│   └── main.zig                  # Socket client, command parsing
 ├── macos/                        # Original Ghostty macOS app
 ├── termsurf-macos/               # TermSurf macOS app
 │   ├── Sources/
@@ -233,12 +267,22 @@ termsurf/
 │   │   ├── Features/
 │   │   │   ├── Splits/           # SplitTree (extend for browser panes)
 │   │   │   ├── Terminal/         # Terminal views
+│   │   │   ├── Socket/           # Unix domain socket server (new)
+│   │   │   │   ├── SocketServer.swift
+│   │   │   │   ├── SocketConnection.swift
+│   │   │   │   ├── TermsurfProtocol.swift
+│   │   │   │   └── CommandHandler.swift
 │   │   │   └── WebView/          # WebView overlay, manager (new)
+│   │   │       ├── WebViewOverlay.swift
+│   │   │       ├── WebViewManager.swift
+│   │   │       └── ConsoleCapture.swift
 │   │   └── Ghostty/              # Ghostty integration
-│   │       └── TermsurfCommand.swift  # Parse termsurf; commands (new)
-│   └── WebViewKit/               # WKWebView wrapper with console capture
+│   └── WebViewKit/               # WKWebView wrapper (prototype)
 ├── docs/                         # Documentation
 │   ├── architecture.md           # This file
 │   └── cef.md                    # CEF reference (deferred approach)
 └── TODO.md                       # Active task checklist
 ```
+
+**Key point:** libghostty (`src/`) remains completely unmodified. All TermSurf
+functionality is implemented in the Swift app and CLI tool.

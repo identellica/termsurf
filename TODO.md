@@ -71,146 +71,164 @@ Test WKWebView integration in isolation before integrating with TermSurf.
 
 **Result:** WebViewTest app working! Located at `termsurf-macos/WebViewTest/`
 
-## Architecture Decision: OSC Escape Sequences
+## Architecture Decision: Unix Domain Sockets
 
-The webview integration uses OSC (Operating System Command) escape sequences for
-communication between the CLI tool and the TermSurf app. This approach:
+The webview integration uses Unix domain sockets for communication between the
+CLI tool and the TermSurf app. This approach was chosen over OSC escape
+sequences after careful analysis.
 
-- Uses the existing PTY connection (no separate IPC mechanism)
-- Follows precedent from iTerm2, Kitty, and other modern terminals
-- Keeps the CLI tool simple (just writes escape sequences)
-- Allows console output to flow naturally to the terminal
+### Why Unix Sockets Over Escape Sequences?
 
-**Protocol:**
+| Aspect | OSC Escape Sequences | Unix Domain Sockets |
+|--------|---------------------|---------------------|
+| **libghostty changes** | Required (fork) | **None** |
+| **Bidirectional** | No | **Yes** |
+| **Protocol** | String parsing | **Structured JSON** |
+| **Robustness** | Broken by pipes | **Always works** |
+| **Error handling** | Silent failures | **Explicit responses** |
+| **`--wait` support** | Not possible | **Supported** |
+
+**Key advantages of sockets:**
+
+1. **No libghostty modification** - All code lives in `termsurf-macos/`
+2. **Bidirectional communication** - CLI can receive responses and events
+3. **Structured protocol** - JSON avoids escaping issues, easy to extend
+4. **Robust** - Works regardless of stdout redirection or piping
+5. **`--wait` flag** - CLI can block until webview closes
+
+### Protocol
 
 ```
-CLI → App:  \x1b]termsurf;open;https://google.com\x07
-CLI → App:  \x1b]termsurf;show;wv-123\x07
-App → PTY:  Console output written directly to PTY master
-App → PTY:  0x03 (ctrl+c) or 0x1a (ctrl+z) relayed to shell
+┌─────────────────────────────────────────────────────────────┐
+│ TermSurf App                                                │
+│                                                             │
+│  ┌──────────────┐         ┌─────────────────┐              │
+│  │ SocketServer │◄────────│ CommandHandler  │              │
+│  │ (listener)   │         └────────┬────────┘              │
+│  └──────┬───────┘                  │                        │
+│         │                   ┌──────▼───────┐               │
+│         │                   │ WebViewMgr   │               │
+│         │                   └──────────────┘               │
+│  ┌──────▼───────────────────────────────────────────────┐  │
+│  │ Terminal Pane (shell with env vars)                  │  │
+│  │   TERMSURF_SOCKET=/tmp/termsurf-12345.sock           │  │
+│  │   TERMSURF_PANE_ID=pane-abc-123                      │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                              ▲
+                              │ Unix Socket (JSON)
+                              │
+                    ┌─────────┴─────────┐
+                    │ termsurf CLI      │
+                    │ (reads env vars,  │
+                    │  sends commands)  │
+                    └───────────────────┘
+```
+
+**Message format:**
+
+```json
+// Request (CLI → App)
+{"id": "1", "action": "open", "paneId": "abc-123", "data": {"url": "https://..."}}
+
+// Response (App → CLI)
+{"id": "1", "status": "ok", "data": {"webviewId": "wv-456"}}
+
+// Event (App → CLI, for --wait)
+{"id": "1", "event": "closed", "data": {"exitCode": 0}}
 ```
 
 **Webview as overlay:** The webview renders on top of the terminal pane (which
 continues to exist underneath). This allows:
 
-- `ctrl+c` to close webview and signal the CLI tool
+- `ctrl+c` to close webview and notify waiting CLI
 - `ctrl+z` to hide webview and background the CLI (shell job control)
 - `fg` to restore the webview (CLI sends show command on SIGCONT)
 - Console output to accumulate in the terminal underneath
 
 ---
 
-## libghostty Extension Strategy
-
-### Problem
-
-libghostty (the Zig terminal core) doesn't expose custom OSC handling. When it
-encounters an OSC sequence it doesn't recognize, it silently discards it. To
-handle `\x1b]termsurf;...\x07`, we need libghostty to pass unrecognized
-sequences to the embedder.
-
-### Approach: Minimal Generic Extension
-
-Rather than forking libghostty with TermSurf-specific code, we add a **generic
-passthrough mechanism** that any embedder could use:
-
-| Approach | libghostty Changes | Upstream Potential | Maintenance |
-|----------|-------------------|-------------------|-------------|
-| TermSurf-specific fork | `TermsurfCommand`, custom parser | None | High (permanent fork) |
-| **Generic extension** | `GHOSTTY_ACTION_CUSTOM_OSC` | High | Low (merge upstream) |
-
-**The generic approach adds:**
-
-1. A new action type `GHOSTTY_ACTION_CUSTOM_OSC` in the C API
-2. When libghostty sees an OSC it doesn't handle, it calls the action callback
-   with the raw OSC string
-3. The embedder (Swift code) parses and handles it however they want
-
-**Benefits:**
-
-- libghostty contains zero TermSurf-specific code
-- Change is useful to any Ghostty embedder wanting custom escape sequences
-- High likelihood of upstream merge → no permanent fork
-- All TermSurf logic stays in `termsurf-macos/` Swift code
-
-### Where Code Lives
-
-| Layer | Contains |
-|-------|----------|
-| **libghostty (fork)** | Generic `custom_osc` passthrough only |
-| **Swift (termsurf-macos)** | Parse `termsurf;action;data`, manage webviews, etc. |
-
-### Upstream Plan
-
-1. Build MVP using forked libghostty with generic extension
-2. Demonstrate value with working TermSurf
-3. Propose upstream PR: "Add custom OSC passthrough for embedders"
-4. Once merged, switch to upstream libghostty
-
----
-
 ## Phase 3: TermSurf Integration
 
-Integrate webview support into TermSurf via OSC escape sequences and a CLI tool.
+Integrate webview support into TermSurf via Unix domain sockets and a CLI tool.
 
-### Phase 3A: Generic OSC Passthrough in libghostty
+**No libghostty changes required!** All code lives in `termsurf-macos/` and the
+CLI tool.
 
-**Goal:** Add generic `custom_osc` action to libghostty so unrecognized OSC
-sequences are passed to the embedder.
+### Phase 3A: Socket Server Foundation
 
-**Files to modify in libghostty (generic changes only):**
+**Goal:** Create Unix socket server, set env vars on shell spawn, verify
+connectivity.
 
-- `src/terminal/osc.zig` - Add `custom` variant to capture unrecognized OSC
-- `src/apprt/surface.zig` - Add `custom_osc` message type
-- `src/apprt/action.zig` - Add `custom_osc` action type
-- `src/termio/stream_handler.zig` - Route custom OSC to surface message
-- `src/Surface.zig` - Forward custom OSC to apprt
-- `include/ghostty.h` - Add C struct for custom OSC
+**New files in `termsurf-macos/Sources/`:**
+
+```
+Features/Socket/
+├── SocketServer.swift       # Unix domain socket listener
+├── SocketConnection.swift   # Handle individual client connections
+├── TermsurfProtocol.swift   # JSON message types (Codable structs)
+└── CommandHandler.swift     # Route commands to handlers
+```
 
 **Tasks:**
 
-- [ ] Add `custom: []const u8` variant to `osc.Command` enum
-- [ ] Modify OSC parser to capture unrecognized sequences as `custom`
-- [ ] Add `custom_osc` to `apprt.surface.Message`
-- [ ] Add `custom_osc: CustomOsc` to `apprt.action.Action`
-- [ ] Add C types to `ghostty.h`:
-  ```c
-  typedef struct {
-      const char* data;
-      size_t len;
-  } ghostty_action_custom_osc_s;
+- [ ] Create `SocketServer` class:
+  - [ ] Create socket at `/tmp/termsurf-{pid}.sock`
+  - [ ] Listen for connections using `Darwin.socket()`, `bind()`, `listen()`
+  - [ ] Accept connections on background queue
+  - [ ] Clean up socket on app termination
 
-  // Add GHOSTTY_ACTION_CUSTOM_OSC to ghostty_action_tag_e
+- [ ] Create `TermsurfProtocol.swift` with Codable message types:
+  ```swift
+  struct Request: Codable {
+      let id: String
+      let action: String    // "ping", "open", "close", "show", "hide"
+      let paneId: String?
+      let data: [String: AnyCodable]?
+  }
+
+  struct Response: Codable {
+      let id: String
+      let status: String    // "ok", "error"
+      let data: [String: AnyCodable]?
+      let error: String?
+  }
+
+  struct Event: Codable {
+      let id: String
+      let event: String     // "closed", "backgrounded"
+      let data: [String: AnyCodable]?
+  }
   ```
-- [ ] Route through stream_handler → Surface → apprt
 
-**Files to modify in Swift (TermSurf-specific):**
+- [ ] Create `CommandHandler` with `ping` handler:
+  ```swift
+  func handle(_ request: Request) -> Response
+  ```
 
-- `termsurf-macos/Sources/Ghostty/Ghostty.App.swift` - Handle custom OSC
-- `termsurf-macos/Sources/Ghostty/TermsurfCommand.swift` (new) - Parse/dispatch
-
-**Tasks:**
-
-- [ ] Handle `GHOSTTY_ACTION_CUSTOM_OSC` in action callback
-- [ ] Create `TermsurfCommand` parser in Swift:
-  - [ ] Parse `termsurf;action;data` format
-  - [ ] Actions: `ping`, `open`, `close`, `show`, `hide`
-- [ ] Dispatch to appropriate handlers
+- [ ] Modify shell spawning to set environment variables:
+  - [ ] Find where shell is spawned (surface configuration)
+  - [ ] Add `TERMSURF_SOCKET` with socket path
+  - [ ] Add `TERMSURF_PANE_ID` with unique pane identifier
 
 **Test:**
 
 ```bash
 # In TermSurf terminal:
-printf '\x1b]termsurf;ping\x07'
-# Expected: "TermSurf: received ping" in Xcode console
+echo $TERMSURF_SOCKET
+# Expected: /tmp/termsurf-12345.sock
 
-printf '\x1b]randomosc;test\x07'
-# Expected: "custom_osc: randomosc;test" logged (generic passthrough works)
+echo $TERMSURF_PANE_ID
+# Expected: pane-abc-123
+
+# Test with netcat:
+echo '{"id":"1","action":"ping"}' | nc -U $TERMSURF_SOCKET
+# Expected: {"id":"1","status":"ok","data":{"pong":true}}
 ```
 
 ### Phase 3B: CLI Tool Foundation
 
-**Goal:** Create `termsurf` CLI tool in Zig that sends OSC commands.
+**Goal:** Create `termsurf` CLI tool that communicates via Unix socket.
 
 **Files to create:**
 
@@ -220,10 +238,18 @@ printf '\x1b]randomosc;test\x07'
 **Tasks:**
 
 - [ ] Create `src/termsurf-cli/` directory
-- [ ] Implement argument parsing:
+- [ ] Implement socket client:
+  - [ ] Read `TERMSURF_SOCKET` and `TERMSURF_PANE_ID` env vars
+  - [ ] Connect to Unix socket
+  - [ ] Send JSON request, receive JSON response
+- [ ] Implement subcommands:
   - [ ] `termsurf ping` - Test connectivity
-  - [ ] `termsurf open [--profile NAME] URL` - Open webview
-- [ ] Write OSC escape sequences to stdout
+  - [ ] `termsurf open [--wait] [--profile NAME] URL` - Open webview
+  - [ ] `termsurf close [WEBVIEW_ID]` - Close webview
+- [ ] Error handling:
+  - [ ] `TERMSURF_SOCKET` not set → "Not running inside TermSurf"
+  - [ ] Socket connection failed → "TermSurf not running"
+  - [ ] Display error messages from response
 - [ ] Add `termsurf-cli` build target to `build.zig`
 - [ ] Prepend `https://` to URLs without scheme
 
@@ -232,42 +258,59 @@ printf '\x1b]randomosc;test\x07'
 ```bash
 zig build termsurf-cli
 ./zig-out/bin/termsurf ping
-# Expected: Same log as Phase 3A
+# Expected: pong
 
 ./zig-out/bin/termsurf open google.com
-# Expected: Log showing "termsurf open: https://google.com"
+# Expected: Opened webview wv-123
+
+# Outside TermSurf:
+./zig-out/bin/termsurf ping
+# Expected: Error: Not running inside TermSurf (TERMSURF_SOCKET not set)
 ```
 
 ### Phase 3C: Webview Overlay
 
-**Goal:** Show WKWebView overlay on terminal pane when receiving `open` command.
+**Goal:** Handle `open` command from socket, display WKWebView overlay.
 
 **Files to create/modify:**
 
-- `termsurf-macos/Sources/Features/WebView/WebViewOverlay.swift` (new)
-- `termsurf-macos/Sources/Features/WebView/WebViewManager.swift` (new)
-- Terminal view files to support overlay
+```
+Features/WebView/
+├── WebViewOverlay.swift     # WKWebView with console capture
+├── WebViewManager.swift     # Track active webviews by ID
+└── ConsoleCapture.swift     # JS injection for console.log/error
+```
 
 **Tasks:**
 
-- [ ] Create `WebViewOverlay` class (extract/adapt from WebViewTest):
-  - [ ] WKWebView with console capture JS injection
+- [ ] Add `open` handler to `CommandHandler`:
+  - [ ] Parse URL and options from request
+  - [ ] Find target pane by `paneId`
+  - [ ] Create `WebViewOverlay` with URL
+  - [ ] Add overlay to pane
+  - [ ] Return `webviewId` in response
+
+- [ ] Create `WebViewManager` singleton:
+  - [ ] Track webviews by ID
+  - [ ] Track webview → pane associations
+  - [ ] Generate unique webview IDs
+
+- [ ] Create `WebViewOverlay` (adapt from WebViewTest):
+  - [ ] WKWebView with configuration
+  - [ ] Console capture JS injection
   - [ ] Navigation delegate for load events
-- [ ] Create `WebViewManager` singleton to track active webviews
-- [ ] Implement overlay display on terminal pane:
-  - [ ] Add webview as subview on top of terminal
-  - [ ] Handle pane resizing
-- [ ] Handle `open` action in Swift callback:
-  - [ ] Create WebViewOverlay with URL
-  - [ ] Add to correct pane
-  - [ ] Give webview focus
+
+- [ ] Handle `close` command:
+  - [ ] Find webview by ID
+  - [ ] Remove from pane
+  - [ ] Notify waiting CLI connections
 
 **Test:**
 
 ```bash
-./zig-out/bin/termsurf open google.com
+termsurf open google.com
 # Expected: Google.com appears overlaid on terminal
-# Can scroll and click in webview
+# Response: {"id":"1","status":"ok","data":{"webviewId":"wv-123"}}
 ```
 
 ### Phase 3D: Console Output Bridging
@@ -292,7 +335,7 @@ zig build termsurf-cli
 
 ### Phase 3E: Close via ctrl+c
 
-**Goal:** Intercept ctrl+c in webview, close webview, relay signal to terminal.
+**Goal:** Intercept ctrl+c in webview, close webview, notify waiting CLI.
 
 **Tasks:**
 
@@ -309,16 +352,17 @@ zig build termsurf-cli
 - [ ] Handle close message in Swift:
   - [ ] Remove webview overlay
   - [ ] Write `0x03` (ctrl+c byte) to PTY master
+  - [ ] Send `{"event":"closed"}` to any CLI connection waiting on this webview
   - [ ] Return focus to terminal
-- [ ] CLI tool exits naturally on SIGINT (default behavior)
+- [ ] CLI with `--wait` receives event and exits cleanly
 
 **Test:**
 
 ```bash
-./zig-out/bin/termsurf open google.com
-# Webview appears
+termsurf open google.com --wait
+# Webview appears, CLI blocks waiting
 # Press ctrl+c
-# Expected: Webview closes, terminal prompt returns
+# Expected: Webview closes, CLI exits with code 0, terminal prompt returns
 ```
 
 ### Phase 3F: Background/Foreground (ctrl+z / fg)
@@ -331,19 +375,21 @@ zig build termsurf-cli
 - [ ] Handle background message in Swift:
   - [ ] Hide webview (set `isHidden = true`, don't destroy)
   - [ ] Write `0x1a` (ctrl+z byte) to PTY master
+  - [ ] Send `{"event":"backgrounded"}` to waiting CLI
   - [ ] Return focus to terminal
 - [ ] CLI tool: Add SIGCONT signal handler:
-  - [ ] On SIGCONT, write `\x1b]termsurf;show;{webview_id}\x07`
-- [ ] Handle `show` action in Swift:
+  - [ ] On SIGCONT, send `{"action":"show","data":{"webviewId":"..."}}` via socket
+- [ ] Handle `show` command in Swift:
   - [ ] Find webview by ID
   - [ ] Set `isHidden = false`
   - [ ] Give webview focus
-- [ ] CLI tool: Track webview ID received from app
+  - [ ] Return success response
+- [ ] CLI tool: Track webview ID from initial `open` response
 
 **Test:**
 
 ```bash
-./zig-out/bin/termsurf open google.com
+termsurf open google.com --wait
 # Press ctrl+z
 # Expected: Webview hides, shell shows "[1]+ Stopped ..."
 
@@ -357,21 +403,21 @@ fg
 
 **Tasks:**
 
-- [ ] CLI generates unique webview ID on open
-- [ ] Include ID in OSC commands: `termsurf;open;{id};{url}`
-- [ ] Determine source pane from PTY (map PTY fd → pane)
-- [ ] WebViewManager tracks:
+- [ ] Each pane gets unique `TERMSURF_PANE_ID` env var
+- [ ] CLI includes `paneId` in all requests (from env var)
+- [ ] `WebViewManager` tracks:
   - [ ] Webview ID → WebViewOverlay instance
   - [ ] Webview ID → Pane association
-- [ ] Ensure ctrl+c/z only affects focused webview
+  - [ ] Pane ID → Active webview (for keyboard routing)
+- [ ] Ensure ctrl+c/z only affects webview in focused pane
 - [ ] Ensure pane switching (cmd+[, cmd+]) works with webviews
 
 **Test:**
 
 ```bash
 # Open two panes side by side
-# Left pane: ./zig-out/bin/termsurf open google.com
-# Right pane: ./zig-out/bin/termsurf open github.com
+# Left pane: termsurf open google.com
+# Right pane: termsurf open github.com
 # Expected: Each pane has its own webview
 # ctrl+c in left only closes left webview
 # cmd+[ and cmd+] switch between them
@@ -381,35 +427,38 @@ fg
 
 | Phase | Goal                    | Test                              | Success Criteria           |
 | ----- | ----------------------- | --------------------------------- | -------------------------- |
-| 3A    | OSC bridge              | `printf '\x1b]termsurf;ping\x07'` | Log in Xcode               |
-| 3B    | CLI tool                | `termsurf ping`                   | Same log via CLI           |
+| 3A    | Socket server           | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response |
+| 3B    | CLI tool                | `termsurf ping`                   | "pong" output              |
 | 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            |
 | 3D    | Console bridging        | console.log in webview            | Output in terminal         |
-| 3E    | ctrl+c close            | Press ctrl+c                      | Webview closes, CLI exits  |
+| 3E    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits |
 | 3F    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         |
 | 3G    | Multi-webview           | Open in two panes                 | Independent operation      |
 
 ### Key Files Reference
 
-**Zig core (libghostty) - Generic changes only:**
-
-- `src/terminal/osc.zig` - Add `custom` variant for unrecognized OSC
-- `src/apprt/surface.zig` - Add `custom_osc` message type
-- `src/apprt/action.zig` - Add `custom_osc` action
-- `src/termio/stream_handler.zig` - Route custom OSC
-- `src/Surface.zig` - Forward to apprt
-- `include/ghostty.h` - C API types for custom OSC
+**No libghostty changes required!**
 
 **Zig CLI:**
 
-- `src/termsurf-cli/main.zig` (new)
+- `src/termsurf-cli/main.zig` (new) - Socket client, command parsing
 
-**Swift app - TermSurf-specific:**
+**Swift app (termsurf-macos):**
 
-- `termsurf-macos/Sources/Ghostty/Ghostty.App.swift` - Action callback
-- `termsurf-macos/Sources/Ghostty/TermsurfCommand.swift` (new) - Parse `termsurf;` commands
-- `termsurf-macos/Sources/Features/WebView/WebViewOverlay.swift` (new)
-- `termsurf-macos/Sources/Features/WebView/WebViewManager.swift` (new)
+```
+Sources/Features/Socket/
+├── SocketServer.swift           # Unix domain socket listener
+├── SocketConnection.swift       # Handle client connections
+├── TermsurfProtocol.swift       # JSON message types
+└── CommandHandler.swift         # Route commands to handlers
+
+Sources/Features/WebView/
+├── WebViewOverlay.swift         # WKWebView with console capture
+├── WebViewManager.swift         # Track webviews by ID
+└── ConsoleCapture.swift         # JS injection
+```
+
+- Shell spawning code - Set `TERMSURF_SOCKET` and `TERMSURF_PANE_ID` env vars
 
 ## Phase 4: Polish & Features
 
