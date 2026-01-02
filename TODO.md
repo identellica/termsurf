@@ -155,7 +155,7 @@ Integrate webview support into TermSurf via Unix domain sockets and a CLI tool.
 **No libghostty changes required!** All code lives in `termsurf-macos/` and the
 CLI tool.
 
-### Phase 3A: Socket Server Foundation
+### Phase 3A: Socket Server Foundation ✓
 
 **Goal:** Create Unix socket server, set env vars on shell spawn, verify
 connectivity.
@@ -167,18 +167,19 @@ Features/Socket/
 ├── SocketServer.swift       # Unix domain socket listener
 ├── SocketConnection.swift   # Handle individual client connections
 ├── TermsurfProtocol.swift   # JSON message types (Codable structs)
+├── TermsurfEnvironment.swift # Inject env vars into surface configs
 └── CommandHandler.swift     # Route commands to handlers
 ```
 
 **Tasks:**
 
-- [ ] Create `SocketServer` class:
-  - [ ] Create socket at `/tmp/termsurf-{pid}.sock`
-  - [ ] Listen for connections using `Darwin.socket()`, `bind()`, `listen()`
-  - [ ] Accept connections on background queue
-  - [ ] Clean up socket on app termination
+- [x] Create `SocketServer` class:
+  - [x] Create socket at `/tmp/termsurf-{pid}.sock`
+  - [x] Listen for connections using `Darwin.socket()`, `bind()`, `listen()`
+  - [x] Accept connections on background queue
+  - [x] Clean up socket on app termination
 
-- [ ] Create `TermsurfProtocol.swift` with Codable message types:
+- [x] Create `TermsurfProtocol.swift` with Codable message types:
   ```swift
   struct Request: Codable {
       let id: String
@@ -201,17 +202,17 @@ Features/Socket/
   }
   ```
 
-- [ ] Create `CommandHandler` with `ping` handler:
+- [x] Create `CommandHandler` with `ping` handler:
   ```swift
   func handle(_ request: Request) -> Response
   ```
 
-- [ ] Modify shell spawning to set environment variables:
-  - [ ] Find where shell is spawned (surface configuration)
-  - [ ] Add `TERMSURF_SOCKET` with socket path
-  - [ ] Add `TERMSURF_PANE_ID` with unique pane identifier
+- [x] Modify shell spawning to set environment variables:
+  - [x] Find where shell is spawned (surface configuration)
+  - [x] Add `TERMSURF_SOCKET` with socket path
+  - [x] Add `TERMSURF_PANE_ID` with unique pane identifier
 
-**Test:**
+**Test:** ✓
 
 ```bash
 # In TermSurf terminal:
@@ -425,15 +426,15 @@ fg
 
 ### Phase 3 Summary
 
-| Phase | Goal                    | Test                              | Success Criteria           |
-| ----- | ----------------------- | --------------------------------- | -------------------------- |
-| 3A    | Socket server           | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response |
-| 3B    | CLI tool                | `termsurf ping`                   | "pong" output              |
-| 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            |
-| 3D    | Console bridging        | console.log in webview            | Output in terminal         |
-| 3E    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits |
-| 3F    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         |
-| 3G    | Multi-webview           | Open in two panes                 | Independent operation      |
+| Phase | Goal                    | Test                              | Success Criteria           | Status |
+| ----- | ----------------------- | --------------------------------- | -------------------------- | ------ |
+| 3A    | Socket server           | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response | ✓ |
+| 3B    | CLI tool                | `termsurf ping`                   | "pong" output              | |
+| 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            | |
+| 3D    | Console bridging        | console.log in webview            | Output in terminal         | |
+| 3E    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits | |
+| 3F    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         | |
+| 3G    | Multi-webview           | Open in two panes                 | Independent operation      | |
 
 ### Key Files Reference
 
