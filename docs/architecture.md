@@ -54,32 +54,74 @@ Not suitable - would require building pane management from scratch.
 
 ## Browser Integration Approach
 
-### CEF (Chosen)
+### WKWebView (MVP)
 
-We use the Chromium Embedded Framework (CEF) for browser panes:
+For the MVP, we use Apple's native WKWebView:
 
-**Why CEF over system webviews (WKWebView)?**
-- **Profile isolation**: Different cache paths = separate cookies/localStorage per profile
-- **Console capture**: Native `on_console_message` callback with log level for stdout/stderr routing
-- **DevTools**: Full Chrome DevTools built-in
-- **Cross-platform consistency**: Same C API on macOS, Linux, Windows
-- **Multi-engine future**: CEF provides the architecture pattern for adding WebKit/Gecko later
+**Why WKWebView for MVP?**
+- **Zero dependencies**: Built into macOS, no additional frameworks
+- **Native Swift integration**: Seamless API, no C marshalling
+- **Profile isolation**: `WKWebsiteDataStore(forIdentifier:)` on macOS 14+
+- **Console capture**: JS injection for console.log/error interception
+- **DevTools**: Safari Web Inspector available
 
-**Trade-offs**:
-- Binary size: ~150-200MB (acceptable for web developer tooling)
-- Complexity: C API requires Swift wrapper (CEFKit)
-
-See [docs/cef.md](cef.md) for C API reference and integration details.
+**Trade-offs accepted**:
+- WebKit only (not Chromium)
+- No Chrome DevTools (Safari Web Inspector instead)
+- Console capture requires JS injection (not native callback)
 
 ### Future: Multi-Engine Support
 
-TermSurf is designed to support multiple browser engines via a common `BrowserEngine` protocol:
+TermSurf is designed to support multiple browser engines via a common protocol:
 
-- **Chromium (CEF)** - Current implementation
-- **Safari/WebKit** - Planned (WKWebView wrapper with same interface)
-- **Firefox/Gecko** - Planned (longer-term, requires custom embedding work)
+- **Safari/WebKit (WKWebView)** - Current MVP implementation
+- **Chromium (CEF)** - Deferred (see [docs/cef.md](cef.md) for prior work)
+- **Firefox/Gecko** - Longer-term goal
 
-This allows `termsurf open --browser webkit` or `--browser gecko` for cross-browser testing.
+This will allow `termsurf open --browser chromium` or `--browser gecko` for
+cross-browser testing.
+
+## libghostty Extension Strategy
+
+### The Problem
+
+TermSurf needs to receive custom OSC escape sequences (`\x1b]termsurf;...\x07`)
+from CLI tools. However, libghostty (the Zig terminal core) parses all escape
+sequences internally and discards ones it doesn't recognize.
+
+### Solution: Generic Custom OSC Passthrough
+
+Rather than forking libghostty with TermSurf-specific code, we add a **minimal
+generic extension** that passes unrecognized OSC sequences to the embedder:
+
+```
+Shell output: \x1b]termsurf;open;https://...\x07
+                    ↓
+libghostty: "I don't recognize 'termsurf;...'"
+                    ↓
+libghostty: Calls action_cb with GHOSTTY_ACTION_CUSTOM_OSC
+                    ↓
+Swift: Receives "termsurf;open;https://..."
+                    ↓
+Swift: Parses and handles TermSurf command
+```
+
+### Why This Approach?
+
+| Aspect | TermSurf-specific fork | Generic extension |
+|--------|----------------------|-------------------|
+| libghostty changes | TermSurf parser, structs | One generic action type |
+| Upstream mergeable | No | Yes |
+| Maintenance | Permanent fork | Temporary (until merged) |
+| Code location | Split across Zig/Swift | TermSurf logic in Swift only |
+
+The generic approach:
+1. Adds `GHOSTTY_ACTION_CUSTOM_OSC` to the C API
+2. Passes raw OSC string to embedder for any unrecognized sequence
+3. Keeps all TermSurf-specific parsing in Swift
+
+This is valuable to any Ghostty embedder wanting custom escape sequences, making
+it a strong candidate for upstream merge.
 
 ## SplitTree Architecture
 
@@ -108,7 +150,7 @@ We extend this to support multiple pane types:
 // TermSurf modification
 enum PaneContent {
     case terminal(TerminalSurfaceView)
-    case browser(CEFBrowserView)
+    case browser(WebViewOverlay)  // WKWebView-based
 }
 
 indirect enum Node: Codable {
@@ -126,26 +168,41 @@ This allows:
 
 When a browser pane is active, JavaScript console output should appear in the terminal's stdout/stderr.
 
-### CEF Implementation
+### WKWebView Implementation
 
-CEF provides native console capture via `on_console_message` callback:
+WKWebView doesn't expose native console access, so we use JavaScript injection:
 
-```c
-int (*on_console_message)(
-    cef_display_handler_t* self,
-    cef_browser_t* browser,
-    cef_log_severity_t level,   // Route based on this
-    const cef_string_t* message,
-    const cef_string_t* source,
-    int line
-);
+```javascript
+// Injected at document start
+['log', 'warn', 'error', 'info', 'debug'].forEach(level => {
+    const original = console[level];
+    console[level] = function(...args) {
+        const message = args.map(a =>
+            typeof a === 'object' ? JSON.stringify(a) : String(a)
+        ).join(' ');
+        window.webkit.messageHandlers.console.postMessage({level, message});
+        original.apply(console, args);
+    };
+});
 ```
 
-Routing:
-- `LOGSEVERITY_DEBUG`, `LOGSEVERITY_INFO` → stdout
-- `LOGSEVERITY_WARNING`, `LOGSEVERITY_ERROR` → stderr
+Swift receives messages via `WKScriptMessageHandler`:
 
-**Note**: The callback only receives the first argument. For multiple arguments, inject JavaScript to wrap console methods and JSON.stringify all args before logging.
+```swift
+func userContentController(_ controller: WKUserContentController,
+                          didReceive message: WKScriptMessage) {
+    guard let dict = message.body as? [String: Any],
+          let level = dict["level"] as? String,
+          let msg = dict["message"] as? String else { return }
+
+    // Route to PTY based on level
+    if ["error", "warn"].contains(level) {
+        writeToPTY(stderr: "[\\(level)] \\(msg)\\n")
+    } else {
+        writeToPTY(stdout: "[\\(level)] \\(msg)\\n")
+    }
+}
+```
 
 ## Cross-Platform Strategy
 
@@ -153,34 +210,35 @@ Routing:
 
 Focus on macOS first:
 - Fork the Swift app (`termsurf-macos/`)
-- Add CEF browser pane support
-- Implement profile isolation
+- Add WKWebView browser pane support
+- Implement profile isolation via `WKWebsiteDataStore`
 
 ### Phase 2: Linux
 
 Apply same patterns to Ghostty's GTK app:
 - Create `termsurf-linux/` as fork of GTK app
-- Use same CEF integration (CEF supports Linux)
-- Share CEFKit concepts, adapt for GTK
+- Use WebKitGTK for browser panes (similar API to WKWebView)
+- Share architectural patterns, adapt for GTK
 
 ## File Structure
 
 ```
 termsurf/
 ├── src/                          # libghostty (Zig) - shared core
+│   │                             # (minimal generic changes for custom_osc)
 ├── macos/                        # Original Ghostty macOS app
 ├── termsurf-macos/               # TermSurf macOS app
 │   ├── Sources/
 │   │   ├── App/                  # App delegate, main entry
 │   │   ├── Features/
 │   │   │   ├── Splits/           # SplitTree (extend for browser panes)
-│   │   │   └── Terminal/         # Terminal views
+│   │   │   ├── Terminal/         # Terminal views
+│   │   │   └── WebView/          # WebView overlay, manager (new)
 │   │   └── Ghostty/              # Ghostty integration
-│   ├── Frameworks/
-│   │   └── cef/                  # CEF binary distribution
-│   └── CEFKit/                   # Swift bindings for CEF (to be created)
+│   │       └── TermsurfCommand.swift  # Parse termsurf; commands (new)
+│   └── WebViewKit/               # WKWebView wrapper with console capture
 ├── docs/                         # Documentation
 │   ├── architecture.md           # This file
-│   └── cef.md                    # CEF C API reference
+│   └── cef.md                    # CEF reference (deferred approach)
 └── TODO.md                       # Active task checklist
 ```

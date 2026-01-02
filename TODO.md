@@ -100,32 +100,102 @@ continues to exist underneath). This allows:
 
 ---
 
+## libghostty Extension Strategy
+
+### Problem
+
+libghostty (the Zig terminal core) doesn't expose custom OSC handling. When it
+encounters an OSC sequence it doesn't recognize, it silently discards it. To
+handle `\x1b]termsurf;...\x07`, we need libghostty to pass unrecognized
+sequences to the embedder.
+
+### Approach: Minimal Generic Extension
+
+Rather than forking libghostty with TermSurf-specific code, we add a **generic
+passthrough mechanism** that any embedder could use:
+
+| Approach | libghostty Changes | Upstream Potential | Maintenance |
+|----------|-------------------|-------------------|-------------|
+| TermSurf-specific fork | `TermsurfCommand`, custom parser | None | High (permanent fork) |
+| **Generic extension** | `GHOSTTY_ACTION_CUSTOM_OSC` | High | Low (merge upstream) |
+
+**The generic approach adds:**
+
+1. A new action type `GHOSTTY_ACTION_CUSTOM_OSC` in the C API
+2. When libghostty sees an OSC it doesn't handle, it calls the action callback
+   with the raw OSC string
+3. The embedder (Swift code) parses and handles it however they want
+
+**Benefits:**
+
+- libghostty contains zero TermSurf-specific code
+- Change is useful to any Ghostty embedder wanting custom escape sequences
+- High likelihood of upstream merge → no permanent fork
+- All TermSurf logic stays in `termsurf-macos/` Swift code
+
+### Where Code Lives
+
+| Layer | Contains |
+|-------|----------|
+| **libghostty (fork)** | Generic `custom_osc` passthrough only |
+| **Swift (termsurf-macos)** | Parse `termsurf;action;data`, manage webviews, etc. |
+
+### Upstream Plan
+
+1. Build MVP using forked libghostty with generic extension
+2. Demonstrate value with working TermSurf
+3. Propose upstream PR: "Add custom OSC passthrough for embedders"
+4. Once merged, switch to upstream libghostty
+
+---
+
 ## Phase 3: TermSurf Integration
 
 Integrate webview support into TermSurf via OSC escape sequences and a CLI tool.
 
-### Phase 3A: OSC Handler Foundation
+### Phase 3A: Generic OSC Passthrough in libghostty
 
-**Goal:** Add custom OSC handler `\x1b]termsurf;...\x07` bridging Zig → Swift.
+**Goal:** Add generic `custom_osc` action to libghostty so unrecognized OSC
+sequences are passed to the embedder.
 
-**Files to modify:**
+**Files to modify in libghostty (generic changes only):**
 
-- `src/terminal/osc.zig` - Add `termsurf` command type
-- `src/terminal/stream.zig` - Add dispatch in `oscDispatch()`
-- `src/apprt/action.zig` - Add action type
-- `include/ghostty.h` - Add C API types
-- `termsurf-macos/Sources/Ghostty/Ghostty.App.swift` - Handle callback
+- `src/terminal/osc.zig` - Add `custom` variant to capture unrecognized OSC
+- `src/apprt/surface.zig` - Add `custom_osc` message type
+- `src/apprt/action.zig` - Add `custom_osc` action type
+- `src/termio/stream_handler.zig` - Route custom OSC to surface message
+- `src/Surface.zig` - Forward custom OSC to apprt
+- `include/ghostty.h` - Add C struct for custom OSC
 
 **Tasks:**
 
-- [ ] Define `TermsurfCommand` struct in `osc.zig`:
+- [ ] Add `custom: []const u8` variant to `osc.Command` enum
+- [ ] Modify OSC parser to capture unrecognized sequences as `custom`
+- [ ] Add `custom_osc` to `apprt.surface.Message`
+- [ ] Add `custom_osc: CustomOsc` to `apprt.action.Action`
+- [ ] Add C types to `ghostty.h`:
+  ```c
+  typedef struct {
+      const char* data;
+      size_t len;
+  } ghostty_action_custom_osc_s;
+
+  // Add GHOSTTY_ACTION_CUSTOM_OSC to ghostty_action_tag_e
+  ```
+- [ ] Route through stream_handler → Surface → apprt
+
+**Files to modify in Swift (TermSurf-specific):**
+
+- `termsurf-macos/Sources/Ghostty/Ghostty.App.swift` - Handle custom OSC
+- `termsurf-macos/Sources/Ghostty/TermsurfCommand.swift` (new) - Parse/dispatch
+
+**Tasks:**
+
+- [ ] Handle `GHOSTTY_ACTION_CUSTOM_OSC` in action callback
+- [ ] Create `TermsurfCommand` parser in Swift:
+  - [ ] Parse `termsurf;action;data` format
   - [ ] Actions: `ping`, `open`, `close`, `show`, `hide`
-  - [ ] Data field for URL or webview ID
-- [ ] Add OSC parsing for `termsurf;...` format
-- [ ] Add dispatch in `stream.zig` `oscDispatch()` function
-- [ ] Add `termsurf_command` action type in `action.zig`
-- [ ] Add C struct `ghostty_action_termsurf_s` in `ghostty.h`
-- [ ] Handle `GHOSTTY_ACTION_TERMSURF_COMMAND` in Swift
+- [ ] Dispatch to appropriate handlers
 
 **Test:**
 
@@ -133,6 +203,9 @@ Integrate webview support into TermSurf via OSC escape sequences and a CLI tool.
 # In TermSurf terminal:
 printf '\x1b]termsurf;ping\x07'
 # Expected: "TermSurf: received ping" in Xcode console
+
+printf '\x1b]randomosc;test\x07'
+# Expected: "custom_osc: randomosc;test" logged (generic passthrough works)
 ```
 
 ### Phase 3B: CLI Tool Foundation
@@ -318,20 +391,23 @@ fg
 
 ### Key Files Reference
 
-**Zig core (libghostty):**
+**Zig core (libghostty) - Generic changes only:**
 
-- `src/terminal/osc.zig` - OSC command definitions
-- `src/terminal/stream.zig` - Stream handler dispatch
-- `src/apprt/action.zig` - Action definitions
-- `include/ghostty.h` - C API types
+- `src/terminal/osc.zig` - Add `custom` variant for unrecognized OSC
+- `src/apprt/surface.zig` - Add `custom_osc` message type
+- `src/apprt/action.zig` - Add `custom_osc` action
+- `src/termio/stream_handler.zig` - Route custom OSC
+- `src/Surface.zig` - Forward to apprt
+- `include/ghostty.h` - C API types for custom OSC
 
 **Zig CLI:**
 
 - `src/termsurf-cli/main.zig` (new)
 
-**Swift app:**
+**Swift app - TermSurf-specific:**
 
 - `termsurf-macos/Sources/Ghostty/Ghostty.App.swift` - Action callback
+- `termsurf-macos/Sources/Ghostty/TermsurfCommand.swift` (new) - Parse `termsurf;` commands
 - `termsurf-macos/Sources/Features/WebView/WebViewOverlay.swift` (new)
 - `termsurf-macos/Sources/Features/WebView/WebViewManager.swift` (new)
 
