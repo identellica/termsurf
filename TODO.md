@@ -116,16 +116,38 @@ Integrate WebViewKit into the TermSurf app and connect it to the pane system.
 
 ### Profile/Session Isolation
 
-WKWebView works differently than CEF for profile isolation:
+WKWebView supports named profiles via `WKWebsiteDataStore(forIdentifier:)` (macOS 14+).
+Each profile gets completely isolated: cookies, localStorage, IndexedDB, cache, service workers.
 
-- [ ] Research `WKWebsiteDataStore` for session isolation
-  - [ ] `WKWebsiteDataStore.default()` - shared cookies
-  - [ ] `WKWebsiteDataStore.nonPersistent()` - ephemeral (incognito)
-  - [ ] Custom persistent store with specific directory?
-- [ ] Implement profile support if feasible:
-  - [ ] Default profile
-  - [ ] Named profiles with separate cookies/localStorage
-  - [ ] Ephemeral/incognito mode
+**Requires:** macOS 14+ (Sonoma) - acceptable for target audience (web developers)
+
+```swift
+// Example implementation
+func createWebView(profileName: String?) -> WKWebView {
+    let config = WKWebViewConfiguration()
+
+    if let name = profileName {
+        // Deterministic UUID from profile name
+        let identifier = UUID(name.utf8)  // simplified
+        config.websiteDataStore = WKWebsiteDataStore(forIdentifier: identifier)
+    } else {
+        config.websiteDataStore = .default()
+    }
+
+    return WKWebView(frame: .zero, configuration: config)
+}
+```
+
+- [ ] Implement profile support:
+  - [ ] Map profile names to deterministic UUIDs
+  - [ ] Store profile name → UUID mapping (or use hash-based generation)
+  - [ ] Default profile uses `.default()` data store
+  - [ ] Named profiles use `WKWebsiteDataStore(forIdentifier:)`
+  - [ ] Support `--profile NAME` flag in `termsurf open` command
+  - [ ] Consider `--incognito` flag using `.nonPersistent()` for ephemeral sessions
+- [ ] Profile management:
+  - [ ] List existing profiles
+  - [ ] Delete profile data (`WKWebsiteDataStore.remove(forIdentifier:)`)
 
 ### Developer Tools
 
@@ -176,17 +198,16 @@ CefApp_0_CToCpp called with invalid version -1
 Despite correct struct sizes and callback assignments, CEF's validation fails.
 See [docs/cef.md](docs/cef.md) for detailed analysis.
 
-### Files to Clean Up
+### Cleanup Completed ✓
 
-When ready to remove CEF code:
+All CEF code has been removed:
 
-```
-termsurf-macos/
-├── CEFKit/                    # Delete entire directory
-├── CEFTest/                   # Delete entire directory
-├── Frameworks/cef/            # Delete (250MB framework)
-└── WebViewTest.xcodeproj/     # Can delete after extracting WebViewKit
-```
+- [x] `termsurf-macos/CEFKit/` - Deleted
+- [x] `termsurf-macos/CEFTest/` - Deleted
+- [x] `termsurf-macos/Frameworks/cef/` - Deleted (~1.2GB)
+- [x] `CEF.swift/` - Deleted (reference project)
+- [x] `scripts/setup-cef.sh` - Deleted
+- [x] Xcode project references - Removed
 
 ### Future CEF Options
 
