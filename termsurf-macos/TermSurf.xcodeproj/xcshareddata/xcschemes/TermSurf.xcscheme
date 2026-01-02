@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A5B30530299BEAAA0047F10C"
-               BuildableName = "Ghostty.app"
-               BlueprintName = "Ghostty"
-               ReferencedContainer = "container:Ghostty.xcodeproj">
+               BuildableName = "TermSurf.app"
+               BlueprintName = "TermSurf"
+               ReferencedContainer = "container:TermSurf.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,9 +35,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A54F45F22E1F047A0046BD5C"
-               BuildableName = "GhosttyTests.xctest"
-               BlueprintName = "GhosttyTests"
-               ReferencedContainer = "container:Ghostty.xcodeproj">
+               BuildableName = "TermSurfTests.xctest"
+               BlueprintName = "TermSurfTests"
+               ReferencedContainer = "container:TermSurf.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A5B30530299BEAAA0047F10C"
-            BuildableName = "Ghostty.app"
-            BlueprintName = "Ghostty"
-            ReferencedContainer = "container:Ghostty.xcodeproj">
+            BuildableName = "TermSurf.app"
+            BlueprintName = "TermSurf"
+            ReferencedContainer = "container:TermSurf.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -87,9 +87,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A5B30530299BEAAA0047F10C"
-            BuildableName = "Ghostty.app"
-            BlueprintName = "Ghostty"
-            ReferencedContainer = "container:Ghostty.xcodeproj">
+            BuildableName = "TermSurf.app"
+            BlueprintName = "TermSurf"
+            ReferencedContainer = "container:TermSurf.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

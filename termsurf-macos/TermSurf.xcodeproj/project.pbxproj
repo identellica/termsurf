@@ -31,28 +31,28 @@
 			containerPortal = A5B30529299BEAAA0047F10C /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A5B30530299BEAAA0047F10C;
-			remoteInfo = Ghostty;
+			remoteInfo = TermSurf;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		29C15B1C2CDC3B2000520DD4 /* bat */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bat; path = "../zig-out/share/bat"; sourceTree = "<group>"; };
-		3B39CAA42B33949B00DABEB8 /* GhosttyReleaseLocal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GhosttyReleaseLocal.entitlements; sourceTree = "<group>"; };
+		3B39CAA42B33949B00DABEB8 /* TermSurfReleaseLocal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TermSurfReleaseLocal.entitlements; sourceTree = "<group>"; };
 		55154BDF2B33911F001622DC /* ghostty */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ghostty; path = "../zig-out/share/ghostty"; sourceTree = "<group>"; };
 		552964E52B34A9B400030505 /* vim */ = {isa = PBXFileReference; lastKnownFileType = folder; name = vim; path = "../zig-out/share/vim"; sourceTree = "<group>"; };
 		9351BE8E2D22937F003B3499 /* nvim */ = {isa = PBXFileReference; lastKnownFileType = folder; name = nvim; path = "../zig-out/share/nvim"; sourceTree = "<group>"; };
-		A51BFC282B30F26D00E92F16 /* GhosttyDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GhosttyDebug.entitlements; sourceTree = "<group>"; };
+		A51BFC282B30F26D00E92F16 /* TermSurfDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TermSurfDebug.entitlements; sourceTree = "<group>"; };
 		A546F1132D7B68D7003B11A0 /* locale */ = {isa = PBXFileReference; lastKnownFileType = folder; name = locale; path = "../zig-out/share/locale"; sourceTree = "<group>"; };
-		A54F45F32E1F047A0046BD5C /* GhosttyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GhosttyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A54F45F32E1F047A0046BD5C /* TermSurfTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TermSurfTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A56B880A2A840447007A0E29 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		A571AB1C2A206FC600248498 /* Ghostty-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Ghostty-Info.plist"; sourceTree = "<group>"; };
+		A571AB1C2A206FC600248498 /* TermSurf-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "TermSurf-Info.plist"; sourceTree = "<group>"; };
 		A586167B2B7703CC009BDB1D /* fish */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fish; path = "../zig-out/share/fish"; sourceTree = "<group>"; };
 		A5985CE52C33060F00C57AD3 /* man */ = {isa = PBXFileReference; lastKnownFileType = folder; name = man; path = "../zig-out/share/man"; sourceTree = "<group>"; };
 		A5A1F8842A489D6800D1E8BC /* terminfo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = terminfo; path = "../zig-out/share/terminfo"; sourceTree = "<group>"; };
-		A5B30531299BEAAA0047F10C /* Ghostty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ghostty.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5B30531299BEAAA0047F10C /* TermSurf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TermSurf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5B30538299BEAAB0047F10C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A5B3053D299BEAAB0047F10C /* Ghostty.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Ghostty.entitlements; sourceTree = "<group>"; };
-		A5D4499D2B53AE7B000F5B83 /* Ghostty-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ghostty-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5B3053D299BEAAB0047F10C /* TermSurf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TermSurf.entitlements; sourceTree = "<group>"; };
+		A5D4499D2B53AE7B000F5B83 /* TermSurf-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TermSurf-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5D495A1299BEC7E00DD1313 /* GhosttyKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = GhosttyKit.xcframework; sourceTree = "<group>"; };
 		FC5218F92D10FFC7004C93E0 /* zsh */ = {isa = PBXFileReference; lastKnownFileType = folder; name = zsh; path = "../zig-out/share/zsh"; sourceTree = "<group>"; };
 		FC9ABA9B2D0F538D0020D4C8 /* bash-completion */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "bash-completion"; path = "../zig-out/share/bash-completion"; sourceTree = "<group>"; };
@@ -182,7 +182,7 @@
 				Helpers/VibrantLayer.m,
 				Helpers/Weak.swift,
 			);
-			target = A5D4499C2B53AE7B000F5B83 /* Ghostty-iOS */;
+			target = A5D4499C2B53AE7B000F5B83 /* TermSurf-iOS */;
 		};
 		81F82CB12E8281F9001EDFA7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -190,7 +190,7 @@
 				App/iOS/iOSApp.swift,
 				"Ghostty/Surface View/SurfaceView_UIKit.swift",
 			);
-			target = A5B30530299BEAAA0047F10C /* Ghostty */;
+			target = A5B30530299BEAAA0047F10C /* TermSurf */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -248,11 +248,11 @@
 		A5B30528299BEAAA0047F10C = {
 			isa = PBXGroup;
 			children = (
-				A571AB1C2A206FC600248498 /* Ghostty-Info.plist */,
+				A571AB1C2A206FC600248498 /* TermSurf-Info.plist */,
 				A5B30538299BEAAB0047F10C /* Assets.xcassets */,
-				A5B3053D299BEAAB0047F10C /* Ghostty.entitlements */,
-				A51BFC282B30F26D00E92F16 /* GhosttyDebug.entitlements */,
-				3B39CAA42B33949B00DABEB8 /* GhosttyReleaseLocal.entitlements */,
+				A5B3053D299BEAAB0047F10C /* TermSurf.entitlements */,
+				A51BFC282B30F26D00E92F16 /* TermSurfDebug.entitlements */,
+				3B39CAA42B33949B00DABEB8 /* TermSurfReleaseLocal.entitlements */,
 				81F82BC72E82815D001EDFA7 /* Sources */,
 				A54F45F42E1F047A0046BD5C /* Tests */,
 				A5D495A3299BECBA00DD1313 /* Frameworks */,
@@ -264,9 +264,9 @@
 		A5B30532299BEAAA0047F10C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A5B30531299BEAAA0047F10C /* Ghostty.app */,
-				A5D4499D2B53AE7B000F5B83 /* Ghostty-iOS.app */,
-				A54F45F32E1F047A0046BD5C /* GhosttyTests.xctest */,
+				A5B30531299BEAAA0047F10C /* TermSurf.app */,
+				A5D4499D2B53AE7B000F5B83 /* TermSurf-iOS.app */,
+				A54F45F32E1F047A0046BD5C /* TermSurfTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -283,9 +283,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A54F45F22E1F047A0046BD5C /* GhosttyTests */ = {
+		A54F45F22E1F047A0046BD5C /* TermSurfTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A54F45FC2E1F047A0046BD5C /* Build configuration list for PBXNativeTarget "GhosttyTests" */;
+			buildConfigurationList = A54F45FC2E1F047A0046BD5C /* Build configuration list for PBXNativeTarget "TermSurfTests" */;
 			buildPhases = (
 				A54F45EF2E1F047A0046BD5C /* Sources */,
 				A54F45F02E1F047A0046BD5C /* Frameworks */,
@@ -299,16 +299,16 @@
 			fileSystemSynchronizedGroups = (
 				A54F45F42E1F047A0046BD5C /* Tests */,
 			);
-			name = GhosttyTests;
+			name = TermSurfTests;
 			packageProductDependencies = (
 			);
-			productName = GhosttyTests;
-			productReference = A54F45F32E1F047A0046BD5C /* GhosttyTests.xctest */;
+			productName = TermSurfTests;
+			productReference = A54F45F32E1F047A0046BD5C /* TermSurfTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A5B30530299BEAAA0047F10C /* Ghostty */ = {
+		A5B30530299BEAAA0047F10C /* TermSurf */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A5B30540299BEAAB0047F10C /* Build configuration list for PBXNativeTarget "Ghostty" */;
+			buildConfigurationList = A5B30540299BEAAB0047F10C /* Build configuration list for PBXNativeTarget "TermSurf" */;
 			buildPhases = (
 				A5B3052D299BEAAA0047F10C /* Sources */,
 				A5B3052E299BEAAA0047F10C /* Frameworks */,
@@ -321,17 +321,17 @@
 			fileSystemSynchronizedGroups = (
 				81F82BC72E82815D001EDFA7 /* Sources */,
 			);
-			name = Ghostty;
+			name = TermSurf;
 			packageProductDependencies = (
 				A51BFC262B30F1B800E92F16 /* Sparkle */,
 			);
-			productName = Ghostty;
-			productReference = A5B30531299BEAAA0047F10C /* Ghostty.app */;
+			productName = TermSurf;
+			productReference = A5B30531299BEAAA0047F10C /* TermSurf.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A5D4499C2B53AE7B000F5B83 /* Ghostty-iOS */ = {
+		A5D4499C2B53AE7B000F5B83 /* TermSurf-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A5D449AB2B53AE7B000F5B83 /* Build configuration list for PBXNativeTarget "Ghostty-iOS" */;
+			buildConfigurationList = A5D449AB2B53AE7B000F5B83 /* Build configuration list for PBXNativeTarget "TermSurf-iOS" */;
 			buildPhases = (
 				A5D449992B53AE7B000F5B83 /* Sources */,
 				A5D4499A2B53AE7B000F5B83 /* Frameworks */,
@@ -344,9 +344,9 @@
 			fileSystemSynchronizedGroups = (
 				81F82BC72E82815D001EDFA7 /* Sources */,
 			);
-			name = "Ghostty-iOS";
-			productName = "Ghostty-iOS";
-			productReference = A5D4499D2B53AE7B000F5B83 /* Ghostty-iOS.app */;
+			name = "TermSurf-iOS";
+			productName = "TermSurf-iOS";
+			productReference = A5D4499D2B53AE7B000F5B83 /* TermSurf-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -372,7 +372,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A5B3052C299BEAAA0047F10C /* Build configuration list for PBXProject "Ghostty" */;
+			buildConfigurationList = A5B3052C299BEAAA0047F10C /* Build configuration list for PBXProject "TermSurf" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -388,9 +388,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A5B30530299BEAAA0047F10C /* Ghostty */,
-				A5D4499C2B53AE7B000F5B83 /* Ghostty-iOS */,
-				A54F45F22E1F047A0046BD5C /* GhosttyTests */,
+				A5B30530299BEAAA0047F10C /* TermSurf */,
+				A5D4499C2B53AE7B000F5B83 /* TermSurf-iOS */,
+				A54F45F22E1F047A0046BD5C /* TermSurfTests */,
 			);
 		};
 /* End PBXProject section */
@@ -458,7 +458,7 @@
 /* Begin PBXTargetDependency section */
 		A54F45F82E1F047A0046BD5C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A5B30530299BEAAA0047F10C /* Ghostty */;
+			target = A5B30530299BEAAA0047F10C /* TermSurf */;
 			targetProxy = A54F45F72E1F047A0046BD5C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -526,7 +526,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = GhosttyReleaseLocal.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TermSurfReleaseLocal.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -538,7 +538,7 @@
 				EXECUTABLE_NAME = ghostty;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Ghostty-Info.plist";
+				INFOPLIST_FILE = "TermSurf-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = TermSurf;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "A program running within TermSurf would like to use AppleScript.";
@@ -593,7 +593,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ghostty.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ghostty";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TermSurf.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ghostty";
 			};
 			name = Debug;
 		};
@@ -616,7 +616,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ghostty.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ghostty";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TermSurf.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ghostty";
 			};
 			name = Release;
 		};
@@ -639,7 +639,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ghostty.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ghostty";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TermSurf.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ghostty";
 			};
 			name = ReleaseLocal;
 		};
@@ -767,7 +767,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = GhosttyDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TermSurfDebug.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -779,7 +779,7 @@
 				ENABLE_PREVIEWS = YES;
 				EXECUTABLE_NAME = ghostty;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Ghostty-Info.plist";
+				INFOPLIST_FILE = "TermSurf-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TermSurf[DEBUG]";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "A program running within TermSurf would like to use AppleScript.";
@@ -822,7 +822,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Ghostty.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TermSurf.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -834,7 +834,7 @@
 				EXECUTABLE_NAME = ghostty;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Ghostty-Info.plist";
+				INFOPLIST_FILE = "TermSurf-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = TermSurf;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "A program running within TermSurf would like to use AppleScript.";
@@ -989,7 +989,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A54F45FC2E1F047A0046BD5C /* Build configuration list for PBXNativeTarget "GhosttyTests" */ = {
+		A54F45FC2E1F047A0046BD5C /* Build configuration list for PBXNativeTarget "TermSurfTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A54F45F92E1F047A0046BD5C /* Debug */,
@@ -999,7 +999,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = ReleaseLocal;
 		};
-		A5B3052C299BEAAA0047F10C /* Build configuration list for PBXProject "Ghostty" */ = {
+		A5B3052C299BEAAA0047F10C /* Build configuration list for PBXProject "TermSurf" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A5B3053E299BEAAB0047F10C /* Debug */,
@@ -1009,7 +1009,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = ReleaseLocal;
 		};
-		A5B30540299BEAAB0047F10C /* Build configuration list for PBXNativeTarget "Ghostty" */ = {
+		A5B30540299BEAAB0047F10C /* Build configuration list for PBXNativeTarget "TermSurf" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A5B30541299BEAAB0047F10C /* Debug */,
@@ -1019,7 +1019,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = ReleaseLocal;
 		};
-		A5D449AB2B53AE7B000F5B83 /* Build configuration list for PBXNativeTarget "Ghostty-iOS" */ = {
+		A5D449AB2B53AE7B000F5B83 /* Build configuration list for PBXNativeTarget "TermSurf-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A5D449A82B53AE7B000F5B83 /* Debug */,

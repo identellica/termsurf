@@ -48,7 +48,7 @@ termsurf/                    # Root (Ghostty fork)
 ├── termsurf-macos/          # TermSurf macOS app (our code)
 │   ├── Sources/             # Swift source
 │   ├── Frameworks/cef/      # CEF binary distribution
-│   └── Ghostty.xcodeproj    # Xcode project
+│   └── TermSurf.xcodeproj   # Xcode project
 └── ...                      # Other Ghostty/libghostty files
 ```
 
@@ -127,10 +127,10 @@ This builds `GhosttyKit.xcframework` for both `macos/` and `termsurf-macos/`.
 
 ```bash
 cd termsurf-macos
-xcodebuild -project Ghostty.xcodeproj -scheme Ghostty -configuration Debug build
+xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Debug build
 ```
 
-Or open `termsurf-macos/Ghostty.xcodeproj` in Xcode and build from there.
+Or open `termsurf-macos/TermSurf.xcodeproj` in Xcode and build from there.
 
 ### Updating the App Icon
 

@@ -42,9 +42,9 @@
 			</array>
 		</dict>
 	</array>
-	<key>GhosttyBuild</key>
+	<key>TermSurfBuild</key>
 	<string></string>
-	<key>GhosttyCommit</key>
+	<key>TermSurfCommit</key>
 	<string></string>
 	<key>LSEnvironment</key>
 	<dict>
