@@ -71,46 +71,269 @@ Test WKWebView integration in isolation before integrating with TermSurf.
 
 **Result:** WebViewTest app working! Located at `termsurf-macos/WebViewTest/`
 
+## Architecture Decision: OSC Escape Sequences
+
+The webview integration uses OSC (Operating System Command) escape sequences for
+communication between the CLI tool and the TermSurf app. This approach:
+
+- Uses the existing PTY connection (no separate IPC mechanism)
+- Follows precedent from iTerm2, Kitty, and other modern terminals
+- Keeps the CLI tool simple (just writes escape sequences)
+- Allows console output to flow naturally to the terminal
+
+**Protocol:**
+
+```
+CLI → App:  \x1b]termsurf;open;https://google.com\x07
+CLI → App:  \x1b]termsurf;show;wv-123\x07
+App → PTY:  Console output written directly to PTY master
+App → PTY:  0x03 (ctrl+c) or 0x1a (ctrl+z) relayed to shell
+```
+
+**Webview as overlay:** The webview renders on top of the terminal pane (which
+continues to exist underneath). This allows:
+
+- `ctrl+c` to close webview and signal the CLI tool
+- `ctrl+z` to hide webview and background the CLI (shell job control)
+- `fg` to restore the webview (CLI sends show command on SIGCONT)
+- Console output to accumulate in the terminal underneath
+
+---
+
 ## Phase 3: TermSurf Integration
 
-Integrate WebViewKit into the TermSurf app and connect it to the pane system.
+Integrate webview support into TermSurf via OSC escape sequences and a CLI tool.
 
-### Setup
+### Phase 3A: OSC Handler Foundation
 
-- [ ] Create `termsurf-macos/WebViewKit/` directory (extract from WebViewTest)
-- [ ] Add WebViewKit sources to TermSurf Xcode project
-- [ ] Verify builds with main TermSurf target
+**Goal:** Add custom OSC handler `\x1b]termsurf;...\x07` bridging Zig → Swift.
 
-### Pane System Integration
+**Files to modify:**
 
-- [ ] Extend SplitTree for browser panes:
-  - [ ] Add `PaneContent.browser(WebBrowserView)` case (or similar)
-  - [ ] Create `WebBrowserView` wrapper that hosts WKWebView
-  - [ ] Handle focus routing between terminal and browser panes
+- `src/terminal/osc.zig` - Add `termsurf` command type
+- `src/terminal/stream.zig` - Add dispatch in `oscDispatch()`
+- `src/apprt/action.zig` - Add action type
+- `include/ghostty.h` - Add C API types
+- `termsurf-macos/Sources/Ghostty/Ghostty.App.swift` - Handle callback
+
+**Tasks:**
+
+- [ ] Define `TermsurfCommand` struct in `osc.zig`:
+  - [ ] Actions: `ping`, `open`, `close`, `show`, `hide`
+  - [ ] Data field for URL or webview ID
+- [ ] Add OSC parsing for `termsurf;...` format
+- [ ] Add dispatch in `stream.zig` `oscDispatch()` function
+- [ ] Add `termsurf_command` action type in `action.zig`
+- [ ] Add C struct `ghostty_action_termsurf_s` in `ghostty.h`
+- [ ] Handle `GHOSTTY_ACTION_TERMSURF_COMMAND` in Swift
+
+**Test:**
+
+```bash
+# In TermSurf terminal:
+printf '\x1b]termsurf;ping\x07'
+# Expected: "TermSurf: received ping" in Xcode console
+```
+
+### Phase 3B: CLI Tool Foundation
+
+**Goal:** Create `termsurf` CLI tool in Zig that sends OSC commands.
+
+**Files to create:**
+
+- `src/termsurf-cli/main.zig` - CLI entry point
+- Update `build.zig` - Add build target
+
+**Tasks:**
+
+- [ ] Create `src/termsurf-cli/` directory
+- [ ] Implement argument parsing:
+  - [ ] `termsurf ping` - Test connectivity
+  - [ ] `termsurf open [--profile NAME] URL` - Open webview
+- [ ] Write OSC escape sequences to stdout
+- [ ] Add `termsurf-cli` build target to `build.zig`
+- [ ] Prepend `https://` to URLs without scheme
+
+**Test:**
+
+```bash
+zig build termsurf-cli
+./zig-out/bin/termsurf ping
+# Expected: Same log as Phase 3A
+
+./zig-out/bin/termsurf open google.com
+# Expected: Log showing "termsurf open: https://google.com"
+```
+
+### Phase 3C: Webview Overlay
+
+**Goal:** Show WKWebView overlay on terminal pane when receiving `open` command.
+
+**Files to create/modify:**
+
+- `termsurf-macos/Sources/Features/WebView/WebViewOverlay.swift` (new)
+- `termsurf-macos/Sources/Features/WebView/WebViewManager.swift` (new)
+- Terminal view files to support overlay
+
+**Tasks:**
+
+- [ ] Create `WebViewOverlay` class (extract/adapt from WebViewTest):
+  - [ ] WKWebView with console capture JS injection
+  - [ ] Navigation delegate for load events
+- [ ] Create `WebViewManager` singleton to track active webviews
+- [ ] Implement overlay display on terminal pane:
+  - [ ] Add webview as subview on top of terminal
   - [ ] Handle pane resizing
-- [ ] Implement pane lifecycle:
-  - [ ] Create browser pane
-  - [ ] Close browser pane (return to terminal or close split)
-  - [ ] Switch focus between panes
+- [ ] Handle `open` action in Swift callback:
+  - [ ] Create WebViewOverlay with URL
+  - [ ] Add to correct pane
+  - [ ] Give webview focus
 
-### Command Integration
+**Test:**
 
-- [ ] Implement `termsurf open` command:
-  - [ ] Parse: `termsurf open [--profile NAME] URL`
-  - [ ] Create browser pane with URL
-  - [ ] Handle invalid URLs gracefully
-- [ ] Implement browser controls:
-  - [ ] Keyboard shortcut to close browser (e.g., Ctrl+W or Escape)
-  - [ ] Navigation: back, forward, reload
-  - [ ] URL display in status bar or title
+```bash
+./zig-out/bin/termsurf open google.com
+# Expected: Google.com appears overlaid on terminal
+# Can scroll and click in webview
+```
 
-### Console Output Bridging
+### Phase 3D: Console Output Bridging
 
-- [ ] Connect console capture to terminal output:
-  - [ ] Route captured console.log to associated terminal's stdout
-  - [ ] Route captured console.error to associated terminal's stderr
-  - [ ] Handle case where browser pane has no associated terminal
-- [ ] Consider prefixing output (e.g., `[browser] message`)
+**Goal:** Route webview console.log/error to the terminal's PTY.
+
+**Tasks:**
+
+- [ ] Get PTY file descriptor for the pane hosting the webview
+- [ ] Modify console message handler to write to PTY instead of stdout:
+  - [ ] Format: `[log] message\n`, `[error] message\n`, etc.
+- [ ] Handle high-frequency console output (buffering if needed)
+
+**Test:**
+
+```bash
+./zig-out/bin/termsurf open https://example.com
+# Open Safari Web Inspector, run: console.log("Hello")
+# Close webview manually
+# Expected: Terminal shows "[log] Hello"
+```
+
+### Phase 3E: Close via ctrl+c
+
+**Goal:** Intercept ctrl+c in webview, close webview, relay signal to terminal.
+
+**Tasks:**
+
+- [ ] Add JS key interception for ctrl+c:
+  ```javascript
+  document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'c') {
+          e.preventDefault();
+          window.webkit.messageHandlers.termsurf.postMessage({action: 'close'});
+      }
+  }, true);
+  ```
+- [ ] Register `termsurf` message handler in WKUserContentController
+- [ ] Handle close message in Swift:
+  - [ ] Remove webview overlay
+  - [ ] Write `0x03` (ctrl+c byte) to PTY master
+  - [ ] Return focus to terminal
+- [ ] CLI tool exits naturally on SIGINT (default behavior)
+
+**Test:**
+
+```bash
+./zig-out/bin/termsurf open google.com
+# Webview appears
+# Press ctrl+c
+# Expected: Webview closes, terminal prompt returns
+```
+
+### Phase 3F: Background/Foreground (ctrl+z / fg)
+
+**Goal:** ctrl+z hides webview and backgrounds CLI, fg restores both.
+
+**Tasks:**
+
+- [ ] Add JS key interception for ctrl+z
+- [ ] Handle background message in Swift:
+  - [ ] Hide webview (set `isHidden = true`, don't destroy)
+  - [ ] Write `0x1a` (ctrl+z byte) to PTY master
+  - [ ] Return focus to terminal
+- [ ] CLI tool: Add SIGCONT signal handler:
+  - [ ] On SIGCONT, write `\x1b]termsurf;show;{webview_id}\x07`
+- [ ] Handle `show` action in Swift:
+  - [ ] Find webview by ID
+  - [ ] Set `isHidden = false`
+  - [ ] Give webview focus
+- [ ] CLI tool: Track webview ID received from app
+
+**Test:**
+
+```bash
+./zig-out/bin/termsurf open google.com
+# Press ctrl+z
+# Expected: Webview hides, shell shows "[1]+ Stopped ..."
+
+fg
+# Expected: Webview reappears with same page
+```
+
+### Phase 3G: Multi-webview Tracking
+
+**Goal:** Support multiple webviews across panes, each with correct association.
+
+**Tasks:**
+
+- [ ] CLI generates unique webview ID on open
+- [ ] Include ID in OSC commands: `termsurf;open;{id};{url}`
+- [ ] Determine source pane from PTY (map PTY fd → pane)
+- [ ] WebViewManager tracks:
+  - [ ] Webview ID → WebViewOverlay instance
+  - [ ] Webview ID → Pane association
+- [ ] Ensure ctrl+c/z only affects focused webview
+- [ ] Ensure pane switching (cmd+[, cmd+]) works with webviews
+
+**Test:**
+
+```bash
+# Open two panes side by side
+# Left pane: ./zig-out/bin/termsurf open google.com
+# Right pane: ./zig-out/bin/termsurf open github.com
+# Expected: Each pane has its own webview
+# ctrl+c in left only closes left webview
+# cmd+[ and cmd+] switch between them
+```
+
+### Phase 3 Summary
+
+| Phase | Goal                    | Test                              | Success Criteria           |
+| ----- | ----------------------- | --------------------------------- | -------------------------- |
+| 3A    | OSC bridge              | `printf '\x1b]termsurf;ping\x07'` | Log in Xcode               |
+| 3B    | CLI tool                | `termsurf ping`                   | Same log via CLI           |
+| 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            |
+| 3D    | Console bridging        | console.log in webview            | Output in terminal         |
+| 3E    | ctrl+c close            | Press ctrl+c                      | Webview closes, CLI exits  |
+| 3F    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         |
+| 3G    | Multi-webview           | Open in two panes                 | Independent operation      |
+
+### Key Files Reference
+
+**Zig core (libghostty):**
+
+- `src/terminal/osc.zig` - OSC command definitions
+- `src/terminal/stream.zig` - Stream handler dispatch
+- `src/apprt/action.zig` - Action definitions
+- `include/ghostty.h` - C API types
+
+**Zig CLI:**
+
+- `src/termsurf-cli/main.zig` (new)
+
+**Swift app:**
+
+- `termsurf-macos/Sources/Ghostty/Ghostty.App.swift` - Action callback
+- `termsurf-macos/Sources/Features/WebView/WebViewOverlay.swift` (new)
+- `termsurf-macos/Sources/Features/WebView/WebViewManager.swift` (new)
 
 ## Phase 4: Polish & Features
 
