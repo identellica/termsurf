@@ -33,7 +33,7 @@ Download CEF and understand its structure before writing any code.
 - [x] Document the exact C function signatures we need to wrap (see
       [docs/cef.md](docs/cef.md))
 
-## Phase 2: Minimal Swift Bindings
+## Phase 2: Minimal Swift Bindings ✓
 
 Create a lean Swift wrapper (CEFKit) that exposes only what TermSurf needs.
 
@@ -52,33 +52,34 @@ termsurf-macos/CEFKit/
 ├── CEFBrowser.swift
 ├── CEFClient.swift
 ├── CEFDisplayHandler.swift
+├── CEFLifeSpanHandler.swift
 ├── CEFRequestContext.swift
 └── CEFSettings.swift
 ```
 
 ### Tasks
 
-- [ ] Create module.modulemap to import CEF C headers
-- [ ] Create umbrella header with only needed headers
-- [ ] Verify Swift can see CEF types
-- [ ] Implement `CEFString.swift` - Swift String ↔ cef_string_t conversion
-- [ ] Implement `CEFBase.swift` - Reference counting wrapper
-- [ ] Implement `CEFCallback.swift` - Swift callback marshalling pattern
-- [ ] Implement `CEFApp.swift`:
-  - [ ] `CEFApp.initialize(settings:)`
-  - [ ] `CEFApp.shutdown()`
-  - [ ] `CEFApp.doMessageLoopWork()`
-- [ ] Implement `CEFBrowser.swift`:
-  - [ ] `CEFBrowser.create(url:profile:client:)`
-  - [ ] `browser.loadURL(_:)`
-  - [ ] `browser.goBack()`, `goForward()`, `reload()`
-  - [ ] `browser.close()`
-  - [ ] `browser.view` - returns NSView
-- [ ] Implement `CEFDisplayHandler.swift`:
-  - [ ] Protocol with `onConsoleMessage(level:message:source:line:)`
-  - [ ] C callback that marshals to Swift
-- [ ] Implement `CEFRequestContext.swift`:
-  - [ ] `CEFRequestContext.create(cachePath:)` for profile isolation
+- [x] Create module.modulemap to import CEF C headers
+- [x] Create umbrella header with only needed headers
+- [x] Verify Swift can see CEF types
+- [x] Implement `CEFString.swift` - Swift String ↔ cef_string_t conversion
+- [x] Implement `CEFBase.swift` - Reference counting wrapper
+- [x] Implement `CEFCallback.swift` - Swift callback marshalling pattern
+- [x] Implement `CEFApp.swift`:
+  - [x] `CEFApp.initialize(settings:)`
+  - [x] `CEFApp.shutdown()`
+  - [x] `CEFApp.doMessageLoopWork()`
+- [x] Implement `CEFBrowser.swift`:
+  - [x] `CEFBrowser.create(url:profile:client:)`
+  - [x] `browser.loadURL(_:)`
+  - [x] `browser.goBack()`, `goForward()`, `reload()`
+  - [x] `browser.close()`
+  - [x] `browser.view` - returns NSView
+- [x] Implement `CEFDisplayHandler.swift`:
+  - [x] Protocol with `onConsoleMessage(level:message:source:line:)`
+  - [x] C callback that marshals to Swift
+- [x] Implement `CEFRequestContext.swift`:
+  - [x] `CEFRequestContext.create(cachePath:)` for profile isolation
 
 ## Phase 3: Standalone Prototype
 
