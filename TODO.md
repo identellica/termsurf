@@ -1,168 +1,222 @@
-# TermSurf CEF Integration Plan
+# TermSurf Browser Pane Integration Plan
 
-This document tracks the integration of Chromium Embedded Framework (CEF) into
-TermSurf, enabling browser panes within the terminal.
+This document tracks the integration of browser panes into TermSurf, enabling
+web content alongside terminal sessions.
 
-## Why CEF?
+## Decision: WKWebView for MVP
 
-- **Consistent cross-platform API** - Same C API on macOS, Linux, Windows
-- **Full Chrome DevTools** - Essential for web developers
-- **Profile support** - Different cache paths = isolated sessions (cookies,
-  localStorage)
-- **Console message capture** - Native `OnConsoleMessage` callback for
-  stdout/stderr bridging
-- **Binary size is acceptable** - ~150-200MB, but provides full browser
-  capabilities
+After extensive work on CEF (Chromium Embedded Framework) integration, we
+pivoted to Apple's WKWebView for the MVP due to fundamental Swift-to-C
+marshalling issues with CEF's C API.
 
-## Phase 1: Setup & Foundation ✓
+### Why WKWebView?
 
-Download CEF and understand its structure before writing any code.
+| Factor | WKWebView | CEF |
+|--------|-----------|-----|
+| Setup time | 15 minutes | Hours (still failing) |
+| Dependencies | None (built-in) | 250MB framework |
+| Console capture | Works via JS injection | Native callback (if it worked) |
+| Swift integration | Native, seamless | Complex C struct marshalling |
+| DevTools | Safari Web Inspector | Chrome DevTools |
+| Rendering engine | WebKit | Blink (Chrome) |
 
-- [x] Download latest stable CEF macOS arm64 build from
-      cef-builds.spotifycdn.com
-- [x] Extract to `termsurf-macos/Frameworks/cef/` (v143.0.13, Chromium
-      143.0.7499.170)
-- [x] Document the directory structure (headers, framework, resources)
-- [x] Read key C API headers we need:
-  - [x] `include/capi/cef_app_capi.h` - initialization
-  - [x] `include/capi/cef_browser_capi.h` - browser control
-  - [x] `include/capi/cef_client_capi.h` - client handlers
-  - [x] `include/capi/cef_display_handler_capi.h` - console messages
-  - [x] `include/capi/cef_life_span_handler_capi.h` - browser lifecycle
-  - [x] `include/capi/cef_request_context_capi.h` - profiles
-- [x] Document the exact C function signatures we need to wrap (see
-      [docs/cef.md](docs/cef.md))
+**Bottom line:** WKWebView gives us a working browser pane MVP immediately.
+CEF remains an option for the future if Chrome DevTools become essential.
 
-## Phase 2: Minimal Swift Bindings ✓
+### Trade-offs Accepted
 
-Create a lean Swift wrapper (CEFKit) that exposes only what TermSurf needs.
+- **No Chrome DevTools** - Safari Web Inspector is available instead
+- **WebKit only** - Some sites may render differently than Chrome
+- **Less customization** - WKWebView is more opaque than CEF
+
+See [docs/cef.md](docs/cef.md) for detailed documentation of the CEF attempt.
+
+---
+
+## Phase 1: WebViewKit Foundation ✓
+
+Create a minimal Swift wrapper for WKWebView with console capture.
 
 ### Structure
 
 ```
-termsurf-macos/CEFKit/
-├── Modules/CEF/
-│   ├── module.modulemap
-│   └── CEF.h
-├── Core/
-│   ├── CEFBase.swift
-│   ├── CEFString.swift
-│   └── CEFCallback.swift
-├── CEFApp.swift
-├── CEFBrowser.swift
-├── CEFClient.swift
-├── CEFDisplayHandler.swift
-├── CEFLifeSpanHandler.swift
-├── CEFRequestContext.swift
-└── CEFSettings.swift
+termsurf-macos/WebViewKit/
+├── WebViewManager.swift      # Initialization, configuration
+├── WebViewController.swift   # WKWebView + console capture
+└── ConsoleCapture.swift      # JS injection for console.log/error
 ```
 
 ### Tasks
 
-- [x] Create module.modulemap to import CEF C headers
-- [x] Create umbrella header with only needed headers
-- [x] Verify Swift can see CEF types
-- [x] Implement `CEFString.swift` - Swift String ↔ cef_string_t conversion
-- [x] Implement `CEFBase.swift` - Reference counting wrapper
-- [x] Implement `CEFCallback.swift` - Swift callback marshalling pattern
-- [x] Implement `CEFApp.swift`:
-  - [x] `CEFApp.initialize(settings:)`
-  - [x] `CEFApp.shutdown()`
-  - [x] `CEFApp.doMessageLoopWork()`
-- [x] Implement `CEFBrowser.swift`:
-  - [x] `CEFBrowser.create(url:profile:client:)`
-  - [x] `browser.loadURL(_:)`
-  - [x] `browser.goBack()`, `goForward()`, `reload()`
-  - [x] `browser.close()`
-  - [x] `browser.view` - returns NSView
-- [x] Implement `CEFDisplayHandler.swift`:
-  - [x] Protocol with `onConsoleMessage(level:message:source:line:)`
-  - [x] C callback that marshals to Swift
-- [x] Implement `CEFRequestContext.swift`:
-  - [x] `CEFRequestContext.create(cachePath:)` for profile isolation
+- [x] Create WKWebView with proper configuration
+- [x] Inject JavaScript to intercept console.log, console.warn, console.error
+- [x] Implement `WKScriptMessageHandler` to receive console messages
+- [x] Route console.log → stdout
+- [x] Route console.error → stderr
+- [x] Handle object serialization (JSON.stringify)
+- [x] Capture uncaught errors via window.onerror
 
-## Phase 3: Standalone Prototype
+## Phase 2: Standalone Prototype ✓
 
-Test CEF integration in isolation before integrating with Ghostty.
+Test WKWebView integration in isolation before integrating with TermSurf.
 
-- [ ] Create simple test macOS app (outside Ghostty)
-- [ ] Display CEF browser in a window
-- [ ] Add URL text field for navigation
-- [ ] Test console message capture:
-  - [ ] Load page with `console.log()`, `console.error()`
-  - [ ] Verify messages arrive in Swift callback
-  - [ ] Implement JSON.stringify workaround for multiple arguments
-- [ ] Test profile isolation:
-  - [ ] Create two browsers with different cache paths
-  - [ ] Verify separate cookies/localStorage
-- [ ] Test run loop integration:
-  - [ ] Try `cef_do_message_loop_work()` with timer
-  - [ ] Verify browser + app both responsive
-  - [ ] Test alternative: `multi_threaded_message_loop = true`
+- [x] Create WebViewTest macOS app
+- [x] Display WKWebView in a window
+- [x] Load external URL (google.com)
+- [x] Test console message capture:
+  - [x] Verify console.log appears on stdout
+  - [x] Verify console.error appears on stderr
+  - [x] Verify objects are JSON-serialized
+- [x] Verify navigation callbacks work
 
-## Phase 4: TermSurf Integration
+**Result:** WebViewTest app working! Located at `termsurf-macos/WebViewTest/`
 
-Integrate CEFKit into the TermSurf app and connect it to the pane system.
+## Phase 3: TermSurf Integration
 
-- [ ] Add CEFKit sources to termsurf-macos Xcode project
-- [ ] Link Chromium Embedded Framework
-- [ ] Configure framework search paths
-- [ ] Handle code signing for CEF framework
-- [ ] Integrate with AppKit run loop:
-  - [ ] Add timer/dispatch source for `cef_do_message_loop_work()`
-  - [ ] Ensure terminal rendering unaffected
+Integrate WebViewKit into the TermSurf app and connect it to the pane system.
+
+### Setup
+
+- [ ] Create `termsurf-macos/WebViewKit/` directory (extract from WebViewTest)
+- [ ] Add WebViewKit sources to TermSurf Xcode project
+- [ ] Verify builds with main TermSurf target
+
+### Pane System Integration
+
 - [ ] Extend SplitTree for browser panes:
-  - [ ] Add `PaneContent.browser(CEFBrowserView)` case
-  - [ ] Create `CEFBrowserView` wrapper
-  - [ ] Handle focus routing
+  - [ ] Add `PaneContent.browser(WebBrowserView)` case (or similar)
+  - [ ] Create `WebBrowserView` wrapper that hosts WKWebView
+  - [ ] Handle focus routing between terminal and browser panes
+  - [ ] Handle pane resizing
+- [ ] Implement pane lifecycle:
+  - [ ] Create browser pane
+  - [ ] Close browser pane (return to terminal or close split)
+  - [ ] Switch focus between panes
+
+### Command Integration
+
 - [ ] Implement `termsurf open` command:
   - [ ] Parse: `termsurf open [--profile NAME] URL`
-  - [ ] Create browser with appropriate profile
-  - [ ] Replace/split current pane with browser
-- [ ] Implement console output bridging:
-  - [ ] Route `console.log` → stdout
-  - [ ] Route `console.error` → stderr
-  - [ ] Inject JS for JSON.stringify workaround
+  - [ ] Create browser pane with URL
+  - [ ] Handle invalid URLs gracefully
 - [ ] Implement browser controls:
-  - [ ] Ctrl+C to close browser (return to terminal)
-  - [ ] Navigation shortcuts
-  - [ ] URL display
+  - [ ] Keyboard shortcut to close browser (e.g., Ctrl+W or Escape)
+  - [ ] Navigation: back, forward, reload
+  - [ ] URL display in status bar or title
 
-## Phase 5: Polish & Documentation
+### Console Output Bridging
 
-Final polish and documentation updates.
+- [ ] Connect console capture to terminal output:
+  - [ ] Route captured console.log to associated terminal's stdout
+  - [ ] Route captured console.error to associated terminal's stderr
+  - [ ] Handle case where browser pane has no associated terminal
+- [ ] Consider prefixing output (e.g., `[browser] message`)
 
-- [ ] Profile management:
-  - [ ] Default: `~/.termsurf/profiles/default/`
-  - [ ] Named: `~/.termsurf/profiles/{name}/`
-- [ ] DevTools support:
-  - [ ] Command: `termsurf devtools`
-  - [ ] Keyboard shortcut (Cmd+Option+I)
-- [ ] Update documentation:
-  - [ ] ARCHITECTURE.md - CEF integration details
-  - [ ] ROADMAP.md - mark completed milestones
-  - [ ] Document profile system
-  - [ ] Document console bridging
-- [ ] Binary distribution:
-  - [ ] Bundle CEF framework with app
-  - [ ] Document build process
+## Phase 4: Polish & Features
+
+### Profile/Session Isolation
+
+WKWebView works differently than CEF for profile isolation:
+
+- [ ] Research `WKWebsiteDataStore` for session isolation
+  - [ ] `WKWebsiteDataStore.default()` - shared cookies
+  - [ ] `WKWebsiteDataStore.nonPersistent()` - ephemeral (incognito)
+  - [ ] Custom persistent store with specific directory?
+- [ ] Implement profile support if feasible:
+  - [ ] Default profile
+  - [ ] Named profiles with separate cookies/localStorage
+  - [ ] Ephemeral/incognito mode
+
+### Developer Tools
+
+- [ ] Enable Safari Web Inspector for WKWebView:
+  - [ ] Set `webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")`
+  - [ ] Document how to access (Develop menu in Safari)
+- [ ] Consider command: `termsurf devtools` to open inspector
+
+### Additional Features
+
+- [ ] User agent customization
+- [ ] JavaScript injection API for automation
+- [ ] Download handling
+- [ ] Permission prompts (camera, microphone, location)
+
+### Documentation
+
+- [ ] Update ARCHITECTURE.md with browser pane details
+- [ ] Document console bridging behavior
+- [ ] Document profile system (if implemented)
+- [ ] Document keyboard shortcuts
+- [ ] Add usage examples to README
+
+---
+
+## CEF Integration (Deferred)
+
+CEF integration is deferred due to Swift-to-C marshalling issues. The work is
+preserved for potential future use.
+
+### What Was Completed
+
+- [x] CEF framework downloaded and configured (v143.0.13)
+- [x] Module map created for Swift import
+- [x] Helper apps configured with correct bundle IDs
+- [x] CEFKit wrapper structure created
+- [x] Marshaller pattern implemented (based on CEF.swift)
+
+### What Failed
+
+The `cef_initialize()` function rejects our `cef_app_t` struct with:
+```
+CefApp_0_CToCpp called with invalid version -1
+```
+
+Despite correct struct sizes and callback assignments, CEF's validation fails.
+See [docs/cef.md](docs/cef.md) for detailed analysis.
+
+### Files to Clean Up
+
+When ready to remove CEF code:
+
+```
+termsurf-macos/
+├── CEFKit/                    # Delete entire directory
+├── CEFTest/                   # Delete entire directory
+├── Frameworks/cef/            # Delete (250MB framework)
+└── WebViewTest.xcodeproj/     # Can delete after extracting WebViewKit
+```
+
+### Future CEF Options
+
+If CEF is revisited:
+
+1. Try C++ API with Objective-C++ bridging header
+2. Test older CEF versions
+3. Write integration layer in Objective-C
+4. Check if Swift ABI changes affected the marshaller pattern
+
+---
 
 ## Resources
 
-- [CEF Integration Guide](docs/cef.md) - C API reference and directory structure
-- [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Official binary
-  distributions
-- [CEF C API Docs](https://cef-builds.spotifycdn.com/docs/stable.html) - API
-  documentation
-- [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - General
-  usage guide
-- [CEF.swift](CEF.swift/) - Reference implementation (outdated but informative)
+### WKWebView
+
+- [WKWebView Documentation](https://developer.apple.com/documentation/webkit/wkwebview)
+- [WKScriptMessageHandler](https://developer.apple.com/documentation/webkit/wkscriptmessagehandler)
+- [WKUserContentController](https://developer.apple.com/documentation/webkit/wkusercontentcontroller)
+- [WKWebsiteDataStore](https://developer.apple.com/documentation/webkit/wkwebsitedatastore)
+
+### CEF (Deferred)
+
+- [CEF Integration Guide](docs/cef.md) - Our detailed documentation
+- [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Binary distributions
+- [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - General guide
+
+---
 
 ## Notes
 
-- CEF.swift (cloned to repo root) is for reference only - we're building our own
-  minimal wrapper
-- Console message callback only receives first argument; use JS injection to
-  JSON.stringify all args
-- CEF takes over message loop by default; use `cef_do_message_loop_work()` to
-  integrate with existing loop
+- WebViewTest app is the working prototype - use as reference for integration
+- Console capture uses JS injection; native console isn't accessible
+- WKWebView works best when app is properly signed (some features restricted otherwise)
+- Safari Web Inspector requires "Develop" menu enabled in Safari preferences
