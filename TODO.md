@@ -11,17 +11,17 @@ marshalling issues with CEF's C API.
 
 ### Why WKWebView?
 
-| Factor | WKWebView | CEF |
-|--------|-----------|-----|
-| Setup time | 15 minutes | Hours (still failing) |
-| Dependencies | None (built-in) | 250MB framework |
-| Console capture | Works via JS injection | Native callback (if it worked) |
-| Swift integration | Native, seamless | Complex C struct marshalling |
-| DevTools | Safari Web Inspector | Chrome DevTools |
-| Rendering engine | WebKit | Blink (Chrome) |
+| Factor            | WKWebView              | CEF                            |
+| ----------------- | ---------------------- | ------------------------------ |
+| Setup time        | 15 minutes             | Hours (still failing)          |
+| Dependencies      | None (built-in)        | 250MB framework                |
+| Console capture   | Works via JS injection | Native callback (if it worked) |
+| Swift integration | Native, seamless       | Complex C struct marshalling   |
+| DevTools          | Safari Web Inspector   | Chrome DevTools                |
+| Rendering engine  | WebKit                 | Blink (Chrome)                 |
 
-**Bottom line:** WKWebView gives us a working browser pane MVP immediately.
-CEF remains an option for the future if Chrome DevTools become essential.
+**Bottom line:** WKWebView gives us a working browser pane MVP immediately. CEF
+remains an option for the future if Chrome DevTools become essential.
 
 ### Trade-offs Accepted
 
@@ -130,7 +130,8 @@ WKWebView works differently than CEF for profile isolation:
 ### Developer Tools
 
 - [ ] Enable Safari Web Inspector for WKWebView:
-  - [ ] Set `webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")`
+  - [ ] Set
+        `webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")`
   - [ ] Document how to access (Develop menu in Safari)
 - [ ] Consider command: `termsurf devtools` to open inspector
 
@@ -167,6 +168,7 @@ preserved for potential future use.
 ### What Failed
 
 The `cef_initialize()` function rejects our `cef_app_t` struct with:
+
 ```
 CefApp_0_CToCpp called with invalid version -1
 ```
@@ -209,8 +211,10 @@ If CEF is revisited:
 ### CEF (Deferred)
 
 - [CEF Integration Guide](docs/cef.md) - Our detailed documentation
-- [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Binary distributions
-- [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - General guide
+- [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Binary
+  distributions
+- [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - General
+  guide
 
 ---
 
@@ -218,5 +222,6 @@ If CEF is revisited:
 
 - WebViewTest app is the working prototype - use as reference for integration
 - Console capture uses JS injection; native console isn't accessible
-- WKWebView works best when app is properly signed (some features restricted otherwise)
+- WKWebView works best when app is properly signed (some features restricted
+  otherwise)
 - Safari Web Inspector requires "Develop" menu enabled in Safari preferences
