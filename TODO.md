@@ -320,27 +320,7 @@ termsurf open google.com
 # Response: {"id":"1","status":"ok","data":{"webviewId":"wv-123"}}
 ```
 
-### Phase 3D: Console Output Bridging
-
-**Goal:** Route webview console.log/error to the terminal's PTY.
-
-**Tasks:**
-
-- [ ] Get PTY file descriptor for the pane hosting the webview
-- [ ] Modify console message handler to write to PTY instead of stdout:
-  - [ ] Format: `[log] message\n`, `[error] message\n`, etc.
-- [ ] Handle high-frequency console output (buffering if needed)
-
-**Test:**
-
-```bash
-./zig-out/bin/termsurf open https://example.com
-# Open Safari Web Inspector, run: console.log("Hello")
-# Close webview manually
-# Expected: Terminal shows "[log] Hello"
-```
-
-### Phase 3E: Close via ctrl+c
+### Phase 3D: Close via ctrl+c
 
 **Goal:** Intercept ctrl+c in webview, close webview, notify waiting CLI.
 
@@ -370,6 +350,26 @@ termsurf open google.com --wait
 # Webview appears, CLI blocks waiting
 # Press ctrl+c
 # Expected: Webview closes, CLI exits with code 0, terminal prompt returns
+```
+
+### Phase 3E: Console Output Bridging
+
+**Goal:** Route webview console.log/error to the terminal's PTY.
+
+**Tasks:**
+
+- [ ] Get PTY file descriptor for the pane hosting the webview
+- [ ] Modify console message handler to write to PTY instead of stdout:
+  - [ ] Format: `[log] message\n`, `[error] message\n`, etc.
+- [ ] Handle high-frequency console output (buffering if needed)
+
+**Test:**
+
+```bash
+./zig-out/bin/termsurf open https://example.com
+# Open Safari Web Inspector, run: console.log("Hello")
+# Close webview manually
+# Expected: Terminal shows "[log] Hello"
 ```
 
 ### Phase 3F: Background/Foreground (ctrl+z / fg)
@@ -437,8 +437,8 @@ fg
 | 3A    | Socket server           | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response | ✓ |
 | 3B    | CLI tool                | `termsurf ping`                   | "pong" output              | ✓ |
 | 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            | ✓ |
-| 3D    | Console bridging        | console.log in webview            | Output in terminal         | |
-| 3E    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits | |
+| 3D    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits | |
+| 3E    | Console bridging        | console.log in webview            | Output in terminal         | |
 | 3F    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         | |
 | 3G    | Multi-webview           | Open in two panes                 | Independent operation      | |
 
