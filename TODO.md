@@ -227,34 +227,34 @@ echo '{"id":"1","action":"ping"}' | nc -U $TERMSURF_SOCKET
 # Expected: {"id":"1","status":"ok","data":{"pong":true}}
 ```
 
-### Phase 3B: CLI Tool Foundation
+### Phase 3B: CLI Tool Foundation ✓
 
 **Goal:** Create `termsurf` CLI tool that communicates via Unix socket.
 
-**Files to create:**
+**Files created:**
 
 - `src/termsurf-cli/main.zig` - CLI entry point
-- Update `build.zig` - Add build target
+- `build.zig` - Added `termsurf-cli` build target
 
 **Tasks:**
 
-- [ ] Create `src/termsurf-cli/` directory
-- [ ] Implement socket client:
-  - [ ] Read `TERMSURF_SOCKET` and `TERMSURF_PANE_ID` env vars
-  - [ ] Connect to Unix socket
-  - [ ] Send JSON request, receive JSON response
-- [ ] Implement subcommands:
-  - [ ] `termsurf ping` - Test connectivity
-  - [ ] `termsurf open [--wait] [--profile NAME] URL` - Open webview
-  - [ ] `termsurf close [WEBVIEW_ID]` - Close webview
-- [ ] Error handling:
-  - [ ] `TERMSURF_SOCKET` not set → "Not running inside TermSurf"
-  - [ ] Socket connection failed → "TermSurf not running"
-  - [ ] Display error messages from response
-- [ ] Add `termsurf-cli` build target to `build.zig`
-- [ ] Prepend `https://` to URLs without scheme
+- [x] Create `src/termsurf-cli/` directory
+- [x] Implement socket client:
+  - [x] Read `TERMSURF_SOCKET` and `TERMSURF_PANE_ID` env vars
+  - [x] Connect to Unix socket
+  - [x] Send JSON request, receive JSON response
+- [x] Implement subcommands:
+  - [x] `termsurf ping` - Test connectivity
+  - [x] `termsurf open [--wait] [--profile NAME] URL` - Open webview
+  - [x] `termsurf close [WEBVIEW_ID]` - Close webview
+- [x] Error handling:
+  - [x] `TERMSURF_SOCKET` not set → "Not running inside TermSurf"
+  - [x] Socket connection failed → "TermSurf not running"
+  - [x] Display error messages from response
+- [x] Add `termsurf-cli` build target to `build.zig`
+- [x] Prepend `https://` to URLs without scheme
 
-**Test:**
+**Test:** ✓
 
 ```bash
 zig build termsurf-cli
@@ -429,7 +429,7 @@ fg
 | Phase | Goal                    | Test                              | Success Criteria           | Status |
 | ----- | ----------------------- | --------------------------------- | -------------------------- | ------ |
 | 3A    | Socket server           | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response | ✓ |
-| 3B    | CLI tool                | `termsurf ping`                   | "pong" output              | |
+| 3B    | CLI tool                | `termsurf ping`                   | "pong" output              | ✓ |
 | 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            | |
 | 3D    | Console bridging        | console.log in webview            | Output in terminal         | |
 | 3E    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits | |

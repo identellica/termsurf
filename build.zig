@@ -54,6 +54,10 @@ pub fn build(b: *std.Build) !void {
         "update-translations",
         "Update translation files",
     );
+    const termsurf_cli_step = b.step(
+        "termsurf-cli",
+        "Build the TermSurf CLI tool",
+    );
 
     // Ghostty resources like terminfo, shell integration, themes, etc.
     const resources = try buildpkg.GhosttyResources.init(b, &config, &deps);
@@ -326,5 +330,21 @@ pub fn build(b: *std.Build) !void {
         translations_step.dependOn(v.update_step);
     } else {
         try translations_step.addError("cannot update translations when i18n is disabled", .{});
+    }
+
+    // TermSurf CLI tool - standalone CLI for communicating with TermSurf app
+    {
+        const termsurf_cli_mod = b.createModule(.{
+            .root_source_file = b.path("src/termsurf-cli/main.zig"),
+            .target = config.target,
+            .optimize = config.optimize,
+        });
+        const termsurf_cli = b.addExecutable(.{
+            .name = "termsurf",
+            .root_module = termsurf_cli_mod,
+        });
+        b.installArtifact(termsurf_cli);
+        termsurf_cli_step.dependOn(&termsurf_cli.step);
+        termsurf_cli_step.dependOn(b.getInstallStep());
     }
 }
