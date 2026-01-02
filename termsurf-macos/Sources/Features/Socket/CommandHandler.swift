@@ -60,7 +60,7 @@ class CommandHandler {
         logger.info("Open webview: url=\(urlString) paneId=\(paneId) profile=\(profile ?? "default")")
 
         // Create webview - WebViewManager handles main thread dispatch
-        let webviewId = WebViewManager.shared.createWebViewSync(
+        let webviewId = WebViewManager.shared.createWebView(
             url: url,
             paneId: paneId,
             profile: profile

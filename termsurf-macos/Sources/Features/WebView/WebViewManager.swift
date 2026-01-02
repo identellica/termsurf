@@ -53,7 +53,7 @@ class WebViewManager {
     /// Create a webview overlay on a pane.
     /// Returns the webview ID immediately. The actual webview creation happens asynchronously.
     /// Returns nil if the pane doesn't exist.
-    func createWebViewSync(
+    func createWebView(
         url: URL,
         paneId: String,
         profile: String? = nil
@@ -109,51 +109,6 @@ class WebViewManager {
 
         // Return ID immediately - the webview will be created asynchronously
         logger.info("Queued webview \(webviewId) for creation on pane \(paneId)")
-        return webviewId
-    }
-
-    /// Create a webview overlay on a pane (async version).
-    /// Returns the webview ID on success, or nil on failure.
-    func createWebView(
-        url: URL,
-        paneId: String,
-        profile: String? = nil,
-        onClose: ((String) -> Void)? = nil
-    ) -> String? {
-        lock.lock()
-        let surface = paneRegistry[paneId]?.surface
-        lock.unlock()
-
-        guard let surface = surface else {
-            logger.error("Cannot create webview: pane \(paneId) not found")
-            return nil
-        }
-
-        // Generate unique webview ID
-        let webviewId = "wv-\(UUID().uuidString.prefix(8))"
-
-        // Create the overlay
-        let overlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile)
-        overlay.onClose = { [weak self] id in
-            self?.closeWebView(id: id)
-            onClose?(id)
-        }
-
-        // Add overlay to surface
-        DispatchQueue.main.async {
-            overlay.frame = surface.bounds
-            overlay.autoresizingMask = [.width, .height]
-            surface.addSubview(overlay)
-
-            // Make webview the first responder
-            overlay.window?.makeFirstResponder(overlay.webView)
-        }
-
-        lock.lock()
-        webviews[webviewId] = overlay
-        lock.unlock()
-
-        logger.info("Created webview \(webviewId) on pane \(paneId) with URL: \(url.absoluteString)")
         return webviewId
     }
 
