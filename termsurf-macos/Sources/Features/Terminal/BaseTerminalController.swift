@@ -138,8 +138,14 @@ class BaseTerminalController: NSWindowController,
             self.surfaceTree = tree
         } else {
             var config = base ?? Ghostty.SurfaceConfiguration()
-            TermsurfEnvironment.injectEnvVars(into: &config)
-            self.surfaceTree = .init(view: Ghostty.SurfaceView(ghostty_app, baseConfig: config))
+            let paneId = TermsurfEnvironment.injectEnvVars(into: &config)
+            let surfaceView = Ghostty.SurfaceView(ghostty_app, baseConfig: config)
+            self.surfaceTree = .init(view: surfaceView)
+
+            // Register with WebViewManager for webview overlay support
+            if let paneId = paneId {
+                TermsurfEnvironment.registerSurface(surfaceView, paneId: paneId)
+            }
         }
 
         // Setup our notifications for behaviors
@@ -242,8 +248,13 @@ class BaseTerminalController: NSWindowController,
         // Create a new surface view
         guard let ghostty_app = ghostty.app else { return nil }
         var surfaceConfig = config ?? Ghostty.SurfaceConfiguration()
-        TermsurfEnvironment.injectEnvVars(into: &surfaceConfig)
+        let paneId = TermsurfEnvironment.injectEnvVars(into: &surfaceConfig)
         let newView = Ghostty.SurfaceView(ghostty_app, baseConfig: surfaceConfig)
+
+        // Register with WebViewManager for webview overlay support
+        if let paneId = paneId {
+            TermsurfEnvironment.registerSurface(newView, paneId: paneId)
+        }
 
         // Do the split
         let newTree: SplitTree<Ghostty.SurfaceView>

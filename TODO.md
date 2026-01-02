@@ -269,42 +269,48 @@ zig build termsurf-cli
 # Expected: Error: Not running inside TermSurf (TERMSURF_SOCKET not set)
 ```
 
-### Phase 3C: Webview Overlay
+### Phase 3C: Webview Overlay ✓
 
 **Goal:** Handle `open` command from socket, display WKWebView overlay.
 
-**Files to create/modify:**
+**Files created:**
 
 ```
 Features/WebView/
 ├── WebViewOverlay.swift     # WKWebView with console capture
-├── WebViewManager.swift     # Track active webviews by ID
-└── ConsoleCapture.swift     # JS injection for console.log/error
+└── WebViewManager.swift     # Track active webviews by ID + pane registry
 ```
 
 **Tasks:**
 
-- [ ] Add `open` handler to `CommandHandler`:
-  - [ ] Parse URL and options from request
-  - [ ] Find target pane by `paneId`
-  - [ ] Create `WebViewOverlay` with URL
-  - [ ] Add overlay to pane
-  - [ ] Return `webviewId` in response
+- [x] Add `open` handler to `CommandHandler`:
+  - [x] Parse URL and options from request
+  - [x] Find target pane by `paneId`
+  - [x] Create `WebViewOverlay` with URL
+  - [x] Add overlay to pane
+  - [x] Return `webviewId` in response
 
-- [ ] Create `WebViewManager` singleton:
-  - [ ] Track webviews by ID
-  - [ ] Track webview → pane associations
-  - [ ] Generate unique webview IDs
+- [x] Create `WebViewManager` singleton:
+  - [x] Track webviews by ID
+  - [x] Track pane ID → SurfaceView associations
+  - [x] Generate unique webview IDs
 
-- [ ] Create `WebViewOverlay` (adapt from WebViewTest):
-  - [ ] WKWebView with configuration
-  - [ ] Console capture JS injection
-  - [ ] Navigation delegate for load events
+- [x] Create `WebViewOverlay` (adapted from WebViewTest):
+  - [x] WKWebView with configuration
+  - [x] Console capture JS injection
+  - [x] Navigation delegate for load events
+  - [x] Keyboard interception for ctrl+c/ctrl+z
+  - [x] Profile isolation support (macOS 14+)
+  - [x] Safari Web Inspector enabled
 
-- [ ] Handle `close` command:
-  - [ ] Find webview by ID
-  - [ ] Remove from pane
-  - [ ] Notify waiting CLI connections
+- [x] Handle `close` command:
+  - [x] Find webview by ID
+  - [x] Remove from pane
+
+- [x] Modified pane registration:
+  - [x] `TermsurfEnvironment.injectEnvVars()` now returns pane ID
+  - [x] `TermsurfEnvironment.registerSurface()` registers with WebViewManager
+  - [x] Updated `BaseTerminalController` and `QuickTerminalController`
 
 **Test:**
 
@@ -430,7 +436,7 @@ fg
 | ----- | ----------------------- | --------------------------------- | -------------------------- | ------ |
 | 3A    | Socket server           | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response | ✓ |
 | 3B    | CLI tool                | `termsurf ping`                   | "pong" output              | ✓ |
-| 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            | |
+| 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            | ✓ |
 | 3D    | Console bridging        | console.log in webview            | Output in terminal         | |
 | 3E    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits | |
 | 3F    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         | |

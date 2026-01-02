@@ -43,7 +43,7 @@ class CommandHandler {
     }
 
     private func handleOpen(_ request: TermsurfRequest) -> TermsurfResponse {
-        guard let url = request.getString("url") else {
+        guard let urlString = request.getString("url") else {
             return .error(id: request.id, message: "Missing 'url' in data")
         }
 
@@ -51,16 +51,28 @@ class CommandHandler {
             return .error(id: request.id, message: "Missing paneId")
         }
 
-        logger.info("Open webview: url=\(url) paneId=\(paneId)")
+        guard let url = URL(string: urlString) else {
+            return .error(id: request.id, message: "Invalid URL: \(urlString)")
+        }
 
-        // TODO: Phase 3C - Implement WebViewManager.open()
-        // For now, just acknowledge the request
-        let webviewId = "wv-\(UUID().uuidString.prefix(8))"
+        let profile = request.getString("profile")
 
-        return .ok(id: request.id, data: [
-            "webviewId": .string(webviewId),
-            "message": .string("WebView opening not yet implemented")
-        ])
+        logger.info("Open webview: url=\(urlString) paneId=\(paneId) profile=\(profile ?? "default")")
+
+        // Create webview - WebViewManager handles main thread dispatch
+        let webviewId = WebViewManager.shared.createWebViewSync(
+            url: url,
+            paneId: paneId,
+            profile: profile
+        )
+
+        if let webviewId = webviewId {
+            return .ok(id: request.id, data: [
+                "webviewId": .string(webviewId)
+            ])
+        } else {
+            return .error(id: request.id, message: "Failed to create webview - pane not found: \(paneId)")
+        }
     }
 
     private func handleClose(_ request: TermsurfRequest) -> TermsurfResponse {
@@ -68,10 +80,20 @@ class CommandHandler {
 
         logger.info("Close webview: webviewId=\(webviewId ?? "nil")")
 
-        // TODO: Phase 3C - Implement WebViewManager.close()
-        return .ok(id: request.id, data: [
-            "message": .string("WebView closing not yet implemented")
-        ])
+        if let webviewId = webviewId {
+            // Close specific webview
+            DispatchQueue.main.sync {
+                WebViewManager.shared.closeWebView(id: webviewId)
+            }
+            return .ok(id: request.id, data: [
+                "closed": .string(webviewId)
+            ])
+        } else {
+            // TODO: Close all webviews for this pane
+            return .ok(id: request.id, data: [
+                "message": .string("Closing all webviews for pane not yet implemented")
+            ])
+        }
     }
 
     private func handleShow(_ request: TermsurfRequest) -> TermsurfResponse {
@@ -81,9 +103,12 @@ class CommandHandler {
 
         logger.info("Show webview: webviewId=\(webviewId)")
 
-        // TODO: Phase 3F - Implement WebViewManager.show()
+        DispatchQueue.main.sync {
+            WebViewManager.shared.showWebView(id: webviewId)
+        }
+
         return .ok(id: request.id, data: [
-            "message": .string("WebView show not yet implemented")
+            "shown": .string(webviewId)
         ])
     }
 
@@ -94,9 +119,12 @@ class CommandHandler {
 
         logger.info("Hide webview: webviewId=\(webviewId)")
 
-        // TODO: Phase 3F - Implement WebViewManager.hide()
+        DispatchQueue.main.sync {
+            WebViewManager.shared.hideWebView(id: webviewId)
+        }
+
         return .ok(id: request.id, data: [
-            "message": .string("WebView hide not yet implemented")
+            "hidden": .string(webviewId)
         ])
     }
 }
