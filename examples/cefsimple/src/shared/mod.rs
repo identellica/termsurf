@@ -10,7 +10,7 @@ pub mod simple_handler;
 pub type Library = library_loader::LibraryLoader;
 
 #[cfg(not(target_os = "macos"))]
-pub type Library = ();
+pub struct Library;
 
 #[allow(dead_code)]
 pub fn load_cef() -> Library {
@@ -21,7 +21,7 @@ pub fn load_cef() -> Library {
         loader
     };
     #[cfg(not(target_os = "macos"))]
-    let library = ();
+    let library = Library;
 
     // Initialize the CEF API version.
     let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);

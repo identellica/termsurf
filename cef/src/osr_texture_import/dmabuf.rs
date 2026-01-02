@@ -113,7 +113,8 @@ impl DmaBufImporter {
                     memory_flags: wgpu::hal::MemoryFlags::empty(),
                     view_formats: vec![],
                 },
-                None, // drop_callback
+                None, // drop_callback,
+                wgpu::hal::vulkan::TextureMemory::External,
             );
 
             Ok::<_, TextureImportError>(hal_texture)

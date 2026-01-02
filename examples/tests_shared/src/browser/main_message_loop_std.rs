@@ -8,7 +8,7 @@ use windows_sys::Win32::Foundation::HWND;
 pub struct MainMessageLoopStd;
 
 impl MainMessageLoopStd {
-    pub fn new() -> Arc<Mutex<Option<Box<dyn MainMessageLoop>>>> {
+    pub fn new_message_loop_std() -> Arc<Mutex<Option<Box<dyn MainMessageLoop>>>> {
         set_main_message_loop(Some(Box::new(MainMessageLoopStd)));
         get_main_message_loop()
     }
