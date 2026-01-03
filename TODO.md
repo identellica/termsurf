@@ -320,64 +320,85 @@ termsurf open google.com
 # Response: {"id":"1","status":"ok","data":{"webviewId":"wv-123"}}
 ```
 
-### Phase 3D: Close via ctrl+c
+### Phase 3D: Footer-Based Mode Switching + ctrl+c
 
-**Goal:** Intercept ctrl+c in webview, close webview, notify waiting CLI.
+**Goal:** Add footer-based UI with mode switching. ctrl+c closes webview when
+footer is focused.
+
+**Architecture:**
+
+```
+WebViewContainer (NSView)
+├── WebViewOverlay (fills most of container)
+└── FooterView (bottom strip, ~24px)
+```
+
+- Two modes: footer focused (terminal mode) vs webview focused (browser mode)
+- Footer focused by default when webview opens
+- In footer mode: all terminal keybindings work naturally (ctrl+c, ctrl+h/j/k/l)
+- In webview mode: browser has full control, only Esc escapes
 
 **Tasks:**
 
-- [ ] Add JS key interception for ctrl+c:
-  ```javascript
-  document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'c') {
-          e.preventDefault();
-          window.webkit.messageHandlers.termsurf.postMessage({action: 'close'});
-      }
-  }, true);
-  ```
-- [ ] Register `termsurf` message handler in WKUserContentController
-- [ ] Handle close message in Swift:
-  - [ ] Remove webview overlay
-  - [ ] Write `0x03` (ctrl+c byte) to PTY master
-  - [ ] Send `{"event":"closed"}` to any CLI connection waiting on this webview
-  - [ ] Return focus to terminal
-- [ ] CLI with `--wait` receives event and exits cleanly
+- [ ] Create `WebViewContainer.swift`:
+  - [ ] Contains WebViewOverlay (top) + FooterView (bottom)
+  - [ ] Tracks current focus mode (footer vs webview)
+  - [ ] Manages focus transitions between footer and webview
+
+- [ ] Create `FooterView.swift`:
+  - [ ] Simple NSView with "TermSurf Browser" label (placeholder for future URL bar)
+  - [ ] Accepts first responder
+  - [ ] keyDown handles Enter → focus webview
+  - [ ] keyDown handles ctrl+c → close container (via callback)
+
+- [ ] Update `WebViewOverlay.swift`:
+  - [ ] Remove ctrl+c and ctrl+z JS interception (no longer needed)
+  - [ ] Add Esc JS interception → notify container to focus footer
+  - [ ] Add callback `onEscapePressed` for mode switching
+
+- [ ] Update `WebViewManager.swift`:
+  - [ ] Create WebViewContainer instead of raw WebViewOverlay
+  - [ ] Track webviewId → paneId for focus restoration
+  - [ ] closeWebView() removes container and restores focus to terminal
 
 **Test:**
 
 ```bash
-termsurf open google.com --wait
-# Webview appears, CLI blocks waiting
-# Press ctrl+c
-# Expected: Webview closes, CLI exits with code 0, terminal prompt returns
+termsurf open google.com
+# Footer shows "TermSurf Browser", footer is focused
+# Press Enter → webview is focused, can interact with page
+# Press Esc → footer is focused again
+# Press ctrl+c → webview closes, terminal has focus
+# Can also press ctrl+h/j/k/l to navigate panes (when footer focused)
 ```
 
-### Phase 3E: Support Split Panes
+### Phase 3E: Verify Split Pane Navigation
 
-**Goal:** Allow navigating between terminal and webview panes using keybindings.
+**Goal:** Verify that pane navigation works with the footer-based approach.
 
-**Background:** WKWebView intercepts certain keyboard shortcuts (like cmd+[ for
-browser back). We need to pass through pane navigation keybindings so users can
-move between panes.
+**Background:** With the footer-based approach, when footer is focused, all
+terminal keybindings should flow through the normal responder chain. This phase
+verifies that pane navigation "just works" without additional code.
 
 **Tasks:**
 
-- [ ] Override `performKeyEquivalent()` in WebViewOverlay
-- [ ] Pass through ctrl+h, ctrl+j, ctrl+k, ctrl+l (vim-style navigation)
-- [ ] Test navigation from webview → terminal and terminal → webview
+- [ ] Test ctrl+h/j/k/l navigation between terminal and webview panes
+- [ ] Verify focus moves correctly in both directions
+- [ ] If issues found, debug responder chain
 
 **Test:**
 
 ```bash
 # Open split pane (cmd+d), open webview in left pane
 termsurf open google.com
+# Footer should be focused by default
 # Press ctrl+l to move to right pane (terminal)
-# Press ctrl+h to move back to left pane (webview)
+# Press ctrl+h to move back to left pane (webview footer)
 # Expected: Focus moves correctly between panes
 ```
 
-**Note:** Future work will make this dynamic based on user's configured
-keybindings.
+**Note:** If this works without changes, mark complete. Future work will ensure
+all user-configured keybindings work.
 
 ### Phase 3F: Console Output Bridging
 
@@ -465,7 +486,7 @@ fg
 | 3A    | Socket server         | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response             | ✓      |
 | 3B    | CLI tool              | `termsurf ping`                                               | "pong" output             | ✓      |
 | 3C    | Webview overlay       | `termsurf open google.com`                                    | Webview appears           | ✓      |
-| 3D    | ctrl+c close          | `termsurf open url --wait` + ctrl+c                           | Webview closes, CLI exits |        |
+| 3D    | Footer + ctrl+c       | Enter/Esc mode switch, ctrl+c close                           | Mode switching works      |        |
 | 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly     |        |
 | 3F    | Console bridging      | console.log in webview                                        | Output in terminal        |        |
 | 3G    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works        |        |
@@ -489,6 +510,8 @@ Sources/Features/Socket/
 └── CommandHandler.swift         # Route commands to handlers
 
 Sources/Features/WebView/
+├── WebViewContainer.swift       # Container with footer + webview, mode switching
+├── FooterView.swift             # Footer bar (placeholder for URL bar)
 ├── WebViewOverlay.swift         # WKWebView with console capture
 ├── WebViewManager.swift         # Track webviews by ID
 └── ConsoleCapture.swift         # JS injection
