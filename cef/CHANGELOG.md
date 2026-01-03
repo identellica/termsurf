@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [143.6.0+143.0.13](https://github.com/tauri-apps/cef-rs/compare/cef-v143.5.0+143.0.13...cef-v143.6.0+143.0.13) - 2026-01-03
+
+### Added
+
+- breaking changes and clippy warnings on windows
+
+### Fixed
+
+- breaking changes and clippy warnings on linux
+- breaking changes on macos
+
 ## [143.5.0+143.0.13](https://github.com/tauri-apps/cef-rs/compare/cef-v143.4.0+143.0.13...cef-v143.5.0+143.0.13) - 2026-01-01
 
 ### Added
