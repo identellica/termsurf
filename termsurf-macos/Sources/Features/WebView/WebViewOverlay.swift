@@ -22,6 +22,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     /// Callback for console output (defaults to stdout/stderr)
     var onConsoleOutput: ((ConsoleLevel, String) -> Void)?
 
+    /// Callback when URL changes (navigation started or finished)
+    var onURLChanged: ((URL?) -> Void)?
+
     enum ConsoleLevel: String {
         case log, info, warn, error
     }
@@ -248,7 +251,8 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     // MARK: - WKNavigationDelegate
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        logger.debug("Navigation started for \(self.webviewId)")
+        logger.debug("Navigation started for \(self.webviewId): \(webView.url?.absoluteString ?? "unknown")")
+        onURLChanged?(webView.url)
     }
 
     /// Callback when navigation finishes (for re-establishing focus)
@@ -259,6 +263,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
 
         // Make background opaque once loaded
         webView.setValue(true, forKey: "drawsBackground")
+
+        // Notify URL change (may differ from provisional due to redirects)
+        onURLChanged?(webView.url)
 
         // Notify container that navigation finished (to re-establish focus)
         onNavigationFinished?()

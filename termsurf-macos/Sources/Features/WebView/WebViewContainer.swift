@@ -118,6 +118,11 @@ class WebViewContainer: NSView {
             self?.focusControlBar()
         }
 
+        // WebView: URL changed -> update control bar
+        webViewOverlay.onURLChanged = { [weak self] url in
+            self?.controlBar.updateURL(url)
+        }
+
         // WebView: Navigation finished -> re-establish proper focus state
         webViewOverlay.onNavigationFinished = { [weak self] in
             guard let self = self else { return }
