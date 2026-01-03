@@ -33,9 +33,9 @@ class ControlBar: NSView {
         wantsLayer = true
         layer?.backgroundColor = NSColor(white: 0.15, alpha: 1.0).cgColor
 
-        // URL label styling (left side, truncates)
+        // URL label styling (left side, truncates, monospace font)
         urlLabel.textColor = NSColor(white: 0.7, alpha: 1.0)
-        urlLabel.font = .systemFont(ofSize: 11)
+        urlLabel.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         urlLabel.isBezeled = false
         urlLabel.drawsBackground = false
         urlLabel.isEditable = false

@@ -29,6 +29,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
         case log, info, warn, error
     }
 
+    /// KVO observation for URL changes
+    private var urlObservation: NSKeyValueObservation?
+
     // MARK: - Initialization
 
     init(url: URL, webviewId: String, profile: String? = nil) {
@@ -44,6 +47,7 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     }
 
     deinit {
+        urlObservation?.invalidate()
         logger.info("WebViewOverlay \(self.webviewId) deallocated")
     }
 
@@ -180,6 +184,11 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
 
         // Make background semi-transparent while loading
         webView.setValue(false, forKey: "drawsBackground")
+
+        // Observe URL changes (catches all navigation including SPA pushState)
+        urlObservation = webView.observe(\.url, options: [.new]) { [weak self] webView, _ in
+            self?.onURLChanged?(webView.url)
+        }
 
         addSubview(webView)
         logger.info("WebViewOverlay \(self.webviewId) created")
