@@ -33,10 +33,13 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 ### TermSurf-specific files
 
 - Swift sources: `termsurf-macos/Sources/`
+- CLI tool: `src/termsurf-cli/main.zig`
 - Xcode project: `termsurf-macos/TermSurf.xcodeproj`
 - **TODO.md: `TODO.md`** - Active checklist of tasks to launch (keep up to date!)
 - Documentation: `docs/`
   - `docs/architecture.md` - Technical decisions and design rationale
+  - `docs/console.md` - Console bridging and JavaScript API (`--js-api`)
+  - `docs/keybindings.md` - Webview keyboard shortcuts and modes
   - `docs/cef.md` - CEF integration attempt (deferred, documented for future reference)
 
 ## libghostty-vt
@@ -50,27 +53,38 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 
 ## Browser Integration
 
-TermSurf uses WKWebView (Apple's WebKit) for browser panes in the MVP, providing:
+TermSurf uses WKWebView (Apple's WebKit) for browser panes, providing:
 - Native Swift integration (no external dependencies)
-- Console message capture (stdout/stderr bridging via JS injection)
-- Safari Web Inspector for debugging
+- Console message capture (stdout/stderr bridging via socket to CLI)
+- Safari Web Inspector for debugging (cmd+alt+i in browse mode)
 - Session isolation via WKWebsiteDataStore
+- Optional JavaScript API (`--js-api` flag) for programmatic control
 
 CEF (Chromium) integration is deferred due to Swift-to-C marshalling challenges. See `docs/cef.md` for details.
 
 **Key locations:**
-- `termsurf-macos/WebViewKit/` - WKWebView wrapper with console capture (to be extracted from WebViewTest)
-- `termsurf-macos/WebViewTest/` - Working prototype demonstrating WKWebView integration
-- `docs/cef.md` - CEF integration attempt documentation (for future reference)
+- `termsurf-macos/Sources/Features/WebView/` - WebView implementation
+- `termsurf-macos/Sources/Features/Socket/` - CLI-app socket communication
+- `src/termsurf-cli/main.zig` - CLI tool
+- `docs/console.md` - Console bridging and JS API documentation
 
 ## Key Files for TermSurf Development
 
-When implementing browser pane support, focus on these files in `termsurf-macos/`:
+**WebView implementation** (`termsurf-macos/Sources/Features/WebView/`):
+- `WebViewOverlay.swift` - WKWebView wrapper with console capture and JS injection
+- `WebViewContainer.swift` - Container with control bar, mode management
+- `WebViewManager.swift` - Tracks webviews, routes console events
+- `ControlBar.swift` - URL bar and mode indicator
 
-1. **SplitTree.swift** (`Sources/Features/Splits/`) - Pane layout tree, extend for browser nodes
-2. **TerminalSplitTreeView.swift** - Renders panes, add browser rendering
-3. **BaseTerminalController.swift** - Handle `termsurf open` command
-4. **WebViewKit/** - WKWebView wrapper (to be extracted from WebViewTest)
+**Socket communication** (`termsurf-macos/Sources/Features/Socket/`):
+- `SocketServer.swift` - Unix domain socket server
+- `SocketConnection.swift` - Client connection handling
+- `CommandHandler.swift` - Request routing (open, close, etc.)
+- `TermsurfProtocol.swift` - JSON protocol definitions
+
+**Terminal integration**:
+- `SurfaceView_AppKit.swift` - Keyboard handling for webview modes
+- `TermsurfEnvironment.swift` - Injects TERMSURF_SOCKET and TERMSURF_PANE_ID env vars
 
 ## Icon Generation
 

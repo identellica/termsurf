@@ -20,28 +20,30 @@ your terminal. Starting with WebKit (Safari) for the MVP, we plan to add
 Chromium and Firefox/Gecko support, making TermSurf the ultimate browser for web
 developers.
 
-## Key Features (Planned)
+## Key Features
 
-- **Multi-Engine Browser Panes**: Open browsers as first-class panes with
-  `--browser` flag
-  - Safari/WebKit (via WKWebView) - MVP
-  - Chromium (via CEF) - planned
-  - Firefox/Gecko - planned
+**Implemented:**
+- **Browser Panes**: Open browsers as first-class panes via `termsurf open`
+  - Safari/WebKit (via WKWebView) - current engine
 - **Browser Profiles**: Isolated sessions with `--profile` flag (separate
   cookies, localStorage)
 - **Unified Focus Management**: Navigate between terminal and browser panes with
   vim-style keybindings (ctrl+h/j/k/l)
 - **Console Bridging**: `console.log` → stdout, `console.error` → stderr
+- **JavaScript API**: Optional `--js-api` flag enables `window.termsurf.exit(code)`
+  for programmatic control
+
+**Planned:**
+- **Multi-Engine Support**: Chromium (via CEF) and Firefox/Gecko
 - **TypeScript Configuration**: Configure the terminal using TypeScript instead
   of config files
 
 ```bash
 # Example usage
-termsurf open google.com                        # WebKit (default)
-termsurf open --browser webkit google.com       # Safari/WebKit (explicit)
+termsurf open google.com                        # Open in WebKit
+termsurf open --profile work google.com         # With isolated profile
+termsurf open --js-api localhost:3000           # Enable JS API for automation
 termsurf open --browser chromium google.com     # Chromium (planned)
-termsurf open --browser gecko google.com        # Firefox/Gecko (planned)
-termsurf open --profile work google.com         # With profile
 ```
 
 ## Architecture
@@ -52,15 +54,19 @@ This project is structured as a fork of Ghostty with TermSurf code in the
 ```
 termsurf/                    # Root (Ghostty fork)
 ├── src/                     # libghostty (Zig) - shared core
+│   └── termsurf-cli/        # CLI tool (termsurf open, etc.)
 ├── macos/                   # Original Ghostty macOS app
 ├── docs/                    # Documentation
 │   ├── architecture.md      # Technical decisions
+│   ├── console.md           # Console bridging & JS API
+│   ├── keybindings.md       # Keyboard shortcuts
 │   └── cef.md               # CEF integration (deferred)
 ├── TODO.md                  # Active task checklist
 ├── termsurf-macos/          # TermSurf macOS app (our code)
 │   ├── Sources/             # Swift source
-│   ├── WebViewKit/          # WKWebView wrapper (MVP)
-│   ├── WebViewTest/         # Browser pane prototype
+│   │   └── Features/
+│   │       ├── WebView/     # WebView implementation
+│   │       └── Socket/      # CLI-app communication
 │   └── TermSurf.xcodeproj   # Xcode project
 └── ...                      # Other Ghostty/libghostty files
 ```
@@ -156,13 +162,14 @@ Then rebuild the app.
 
 ## Development Status
 
-**Current Phase**: Foundation (WebKit Integration)
+**Current Phase**: Core features implemented (Phases 3A-3F complete)
 
 See:
 
 - [TODO.md](TODO.md) - Active checklist of tasks to launch
-- [Architecture](docs/architecture.md) - Technical decisions and design
-  rationale
+- [Architecture](docs/architecture.md) - Technical decisions and design rationale
+- [Console Bridging](docs/console.md) - Console output and JavaScript API
+- [Keybindings](docs/keybindings.md) - Keyboard shortcuts for webview modes
 - [CEF Integration](docs/cef.md) - CEF attempt documentation (deferred)
 
 ## Acknowledgments

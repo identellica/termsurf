@@ -199,43 +199,35 @@ This allows:
 
 ## Console Bridging
 
-When a browser pane is active, JavaScript console output should appear in the terminal's stdout/stderr.
+When a browser pane is active, JavaScript console output appears in the terminal
+where `termsurf open` was run. See [docs/console.md](console.md) for full details.
 
-### WKWebView Implementation
+### Implementation
 
-WKWebView doesn't expose native console access, so we use JavaScript injection:
+Console output flows through the socket connection to the blocking CLI:
+
+1. **JavaScript injection** - Console methods are overridden to capture output
+2. **Swift handler** - `WKScriptMessageHandler` receives messages
+3. **Socket event** - Swift sends `{"event":"console","data":{"level":"log","message":"..."}}` to CLI
+4. **CLI output** - CLI writes to stdout (log/info) or stderr (warn/error)
+
+```
+Browser console.log() → Swift → Socket → CLI stdout → Terminal
+```
+
+This approach avoids direct PTY access and leverages the existing socket infrastructure.
+
+### JavaScript API
+
+With the `--js-api` flag, pages can programmatically control the webview:
 
 ```javascript
-// Injected at document start
-['log', 'warn', 'error', 'info', 'debug'].forEach(level => {
-    const original = console[level];
-    console[level] = function(...args) {
-        const message = args.map(a =>
-            typeof a === 'object' ? JSON.stringify(a) : String(a)
-        ).join(' ');
-        window.webkit.messageHandlers.console.postMessage({level, message});
-        original.apply(console, args);
-    };
-});
+window.termsurf.webviewId  // Unique webview ID
+window.termsurf.exit(0)    // Close with exit code 0
+window.termsurf.exit(1)    // Close with exit code 1
 ```
 
-Swift receives messages via `WKScriptMessageHandler`:
-
-```swift
-func userContentController(_ controller: WKUserContentController,
-                          didReceive message: WKScriptMessage) {
-    guard let dict = message.body as? [String: Any],
-          let level = dict["level"] as? String,
-          let msg = dict["message"] as? String else { return }
-
-    // Route to PTY based on level
-    if ["error", "warn"].contains(level) {
-        writeToPTY(stderr: "[\\(level)] \\(msg)\\n")
-    } else {
-        writeToPTY(stdout: "[\\(level)] \\(msg)\\n")
-    }
-}
-```
+The exit code is passed through the socket to the CLI, which exits with that code.
 
 ## Cross-Platform Strategy
 
@@ -258,8 +250,8 @@ Apply same patterns to Ghostty's GTK app:
 ```
 termsurf/
 ├── src/                          # libghostty (Zig) - shared core (UNMODIFIED)
-├── src/termsurf-cli/             # CLI tool (new)
-│   └── main.zig                  # Socket client, command parsing
+├── src/termsurf-cli/             # CLI tool
+│   └── main.zig                  # Socket client, command parsing, event loop
 ├── macos/                        # Original Ghostty macOS app
 ├── termsurf-macos/               # TermSurf macOS app
 │   ├── Sources/
@@ -267,19 +259,21 @@ termsurf/
 │   │   ├── Features/
 │   │   │   ├── Splits/           # SplitTree (extend for browser panes)
 │   │   │   ├── Terminal/         # Terminal views
-│   │   │   ├── Socket/           # Unix domain socket server (new)
+│   │   │   ├── Socket/           # Unix domain socket server
 │   │   │   │   ├── SocketServer.swift
 │   │   │   │   ├── SocketConnection.swift
 │   │   │   │   ├── TermsurfProtocol.swift
 │   │   │   │   └── CommandHandler.swift
-│   │   │   └── WebView/          # WebView overlay, manager (new)
-│   │   │       ├── WebViewOverlay.swift
-│   │   │       ├── WebViewManager.swift
-│   │   │       └── ConsoleCapture.swift
+│   │   │   └── WebView/          # WebView implementation
+│   │   │       ├── WebViewOverlay.swift   # WKWebView + JS injection
+│   │   │       ├── WebViewContainer.swift # Container + mode management
+│   │   │       ├── WebViewManager.swift   # Tracking + console routing
+│   │   │       └── ControlBar.swift       # URL bar + mode indicator
 │   │   └── Ghostty/              # Ghostty integration
-│   └── WebViewKit/               # WKWebView wrapper (prototype)
 ├── docs/                         # Documentation
 │   ├── architecture.md           # This file
+│   ├── console.md                # Console bridging and JS API
+│   ├── keybindings.md            # Keyboard shortcuts
 │   └── cef.md                    # CEF reference (deferred approach)
 └── TODO.md                       # Active task checklist
 ```
