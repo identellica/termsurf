@@ -11,9 +11,10 @@ pub fn main() !void {
     const args = try std.process.argsAlloc(allocator);
     defer std.process.argsFree(allocator, args);
 
+    // No args: open default homepage
     if (args.len < 2) {
-        try printUsage();
-        std.process.exit(1);
+        try cmdOpen(allocator, &.{});
+        return;
     }
 
     const command = args[1];
@@ -29,9 +30,8 @@ pub fn main() !void {
     } else if (std.mem.eql(u8, command, "help") or std.mem.eql(u8, command, "--help") or std.mem.eql(u8, command, "-h")) {
         try printUsage();
     } else {
-        std.debug.print("Unknown command: {s}\n", .{command});
-        try printUsage();
-        std.process.exit(1);
+        // Unknown command: treat as URL (implicit open)
+        try cmdOpen(allocator, args[1..]);
     }
 }
 
@@ -51,23 +51,28 @@ fn printUsage() !void {
         \\termsurf - CLI tool for TermSurf browser pane integration
         \\
         \\USAGE:
+        \\    termsurf [url]              Open URL (or default homepage)
         \\    termsurf <command> [options]
         \\
         \\COMMANDS:
+        \\    open [options] [url]    Open a URL in a browser pane
         \\    ping                    Test connectivity to TermSurf
-        \\    open [--wait] <url>     Open a URL in a browser pane
         \\    close [webview-id]      Close a browser pane
         \\    version                 Show version information
         \\    help                    Show this help message
+        \\
+        \\OPTIONS (for open):
+        \\    --wait, -w              Wait for webview to close
+        \\    --profile, -p NAME      Use isolated browser profile
         \\
         \\ENVIRONMENT:
         \\    TERMSURF_SOCKET         Path to TermSurf Unix socket
         \\    TERMSURF_PANE_ID        Current pane identifier
         \\
         \\EXAMPLES:
-        \\    termsurf ping
-        \\    termsurf open https://google.com
-        \\    termsurf open --wait https://localhost:3000
+        \\    termsurf                        Open default homepage
+        \\    termsurf google.com             Open https://google.com
+        \\    termsurf open --wait localhost:3000
         \\
     );
     try stdout.flush();
@@ -130,20 +135,13 @@ fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
         }
     }
 
-    if (url == null) {
-        std.debug.print("Error: URL is required\n", .{});
-        std.debug.print("Usage: termsurf open [--wait] [--profile NAME] <url>\n", .{});
-        std.process.exit(1);
-    }
-
-    // Prepend https:// if no scheme
-    const finalUrl = try normalizeUrl(allocator, url.?);
-    defer if (finalUrl.ptr != url.?.ptr) allocator.free(finalUrl);
+    // URL can be null - app will use default homepage
+    // URL normalization (https:// prefix) is handled by the app
 
     // Get pane ID from environment
     const paneId = std.posix.getenv("TERMSURF_PANE_ID");
 
-    const response = try sendOpenRequest(allocator, finalUrl, paneId, wait, profile);
+    const response = try sendOpenRequest(allocator, url, paneId, wait, profile);
     defer allocator.free(response);
 
     // Parse response
@@ -226,21 +224,6 @@ fn cmdClose(allocator: std.mem.Allocator, args: []const []const u8) !void {
     }
 }
 
-// MARK: - Helpers
-
-fn normalizeUrl(allocator: std.mem.Allocator, url: []const u8) ![]const u8 {
-    // If URL already has a scheme, return as-is
-    if (std.mem.startsWith(u8, url, "http://") or
-        std.mem.startsWith(u8, url, "https://") or
-        std.mem.startsWith(u8, url, "file://"))
-    {
-        return url;
-    }
-
-    // Prepend https://
-    return try std.fmt.allocPrint(allocator, "https://{s}", .{url});
-}
-
 // MARK: - Socket Communication
 
 const Response = struct {
@@ -254,7 +237,7 @@ fn sendPingRequest(allocator: std.mem.Allocator) ![]u8 {
     return sendJsonRequest(allocator, "{\"id\":\"1\",\"action\":\"ping\"}\n");
 }
 
-fn sendOpenRequest(allocator: std.mem.Allocator, url: []const u8, paneId: ?[]const u8, wait: bool, profile: ?[]const u8) ![]u8 {
+fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]const u8, wait: bool, profile: ?[]const u8) ![]u8 {
     var jsonBuf: std.ArrayListUnmanaged(u8) = .empty;
     defer jsonBuf.deinit(allocator);
 
@@ -267,23 +250,35 @@ fn sendOpenRequest(allocator: std.mem.Allocator, url: []const u8, paneId: ?[]con
         try writer.writeAll("\"");
     }
 
-    try writer.writeAll(",\"data\":{\"url\":\"");
-    // Escape URL for JSON
-    for (url) |c| {
-        switch (c) {
-            '"' => try writer.writeAll("\\\""),
-            '\\' => try writer.writeAll("\\\\"),
-            else => try writer.writeByte(c),
+    try writer.writeAll(",\"data\":{");
+
+    // URL is optional - if not provided, app uses default homepage
+    if (url) |u| {
+        try writer.writeAll("\"url\":\"");
+        // Escape URL for JSON
+        for (u) |c| {
+            switch (c) {
+                '"' => try writer.writeAll("\\\""),
+                '\\' => try writer.writeAll("\\\\"),
+                else => try writer.writeByte(c),
+            }
+        }
+        try writer.writeAll("\"");
+
+        if (wait or profile != null) {
+            try writer.writeAll(",");
         }
     }
-    try writer.writeAll("\"");
 
     if (wait) {
-        try writer.writeAll(",\"wait\":true");
+        try writer.writeAll("\"wait\":true");
+        if (profile != null) {
+            try writer.writeAll(",");
+        }
     }
 
     if (profile) |p| {
-        try writer.writeAll(",\"profile\":\"");
+        try writer.writeAll("\"profile\":\"");
         try writer.writeAll(p);
         try writer.writeAll("\"");
     }

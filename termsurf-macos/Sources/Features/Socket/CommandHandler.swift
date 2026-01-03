@@ -42,22 +42,25 @@ class CommandHandler {
         return .ok(id: request.id, data: ["pong": .bool(true)])
     }
 
-    private func handleOpen(_ request: TermsurfRequest) -> TermsurfResponse {
-        guard let urlString = request.getString("url") else {
-            return .error(id: request.id, message: "Missing 'url' in data")
-        }
+    /// Default homepage when no URL is provided
+    private static let defaultHomepage = "https://hallucipedia.com"
 
+    private func handleOpen(_ request: TermsurfRequest) -> TermsurfResponse {
         guard let paneId = request.paneId else {
             return .error(id: request.id, message: "Missing paneId")
         }
 
-        guard let url = URL(string: urlString) else {
-            return .error(id: request.id, message: "Invalid URL: \(urlString)")
+        // Get URL string, using default homepage if not provided
+        let rawUrlString = request.getString("url")
+        let normalizedUrlString = normalizeUrl(rawUrlString)
+
+        guard let url = URL(string: normalizedUrlString) else {
+            return .error(id: request.id, message: "Invalid URL: \(normalizedUrlString)")
         }
 
         let profile = request.getString("profile")
 
-        logger.info("Open webview: url=\(urlString) paneId=\(paneId) profile=\(profile ?? "default")")
+        logger.info("Open webview: url=\(normalizedUrlString) paneId=\(paneId) profile=\(profile ?? "default")")
 
         // Create webview - WebViewManager handles main thread dispatch
         let webviewId = WebViewManager.shared.createWebView(
@@ -126,5 +129,24 @@ class CommandHandler {
         return .ok(id: request.id, data: [
             "hidden": .string(webviewId)
         ])
+    }
+
+    // MARK: - Helpers
+
+    /// Normalize a URL string: use default if nil, prepend https:// if no scheme
+    private func normalizeUrl(_ urlString: String?) -> String {
+        guard let urlString = urlString, !urlString.isEmpty else {
+            return Self.defaultHomepage
+        }
+
+        // If already has a scheme, return as-is
+        if urlString.hasPrefix("http://") ||
+           urlString.hasPrefix("https://") ||
+           urlString.hasPrefix("file://") {
+            return urlString
+        }
+
+        // Prepend https://
+        return "https://\(urlString)"
     }
 }

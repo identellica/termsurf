@@ -40,6 +40,9 @@ class WebViewContainer: NSView {
         }
     }
 
+    /// Public getter for SurfaceView to check if we're in footer mode
+    var isFooterMode: Bool { focusMode == .footer }
+
     // MARK: - Initialization
 
     init(url: URL, webviewId: String, profile: String? = nil) {
@@ -62,7 +65,6 @@ class WebViewContainer: NSView {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
         logger.info("WebViewContainer \(self.webviewId) deallocated")
     }
 
@@ -70,39 +72,14 @@ class WebViewContainer: NSView {
 
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
+        logger.info("viewDidMoveToWindow called, window: \(String(describing: self.window))")
 
-        if let window = window {
+        if window != nil {
             // When we're added to a window, ensure webview has focus
             DispatchQueue.main.async { [weak self] in
-                self?.focusWebView()
-            }
-
-            // Observe first responder changes to intercept when parent surface gets focus
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(windowDidUpdate),
-                name: NSWindow.didUpdateNotification,
-                object: window
-            )
-        } else {
-            // Remove observer when removed from window
-            NotificationCenter.default.removeObserver(self, name: NSWindow.didUpdateNotification, object: nil)
-        }
-    }
-
-    @objc private func windowDidUpdate(_ notification: Notification) {
-        // Check if the first responder is our parent surface (the terminal behind us)
-        // If so, redirect focus to our footer
-        guard let window = window,
-              let firstResponder = window.firstResponder as? NSView else {
-            return
-        }
-
-        // If the surface (our superview) became first responder, redirect to footer
-        if firstResponder === superview {
-            logger.debug("Parent surface got focus, redirecting to footer")
-            DispatchQueue.main.async { [weak self] in
-                self?.focusFooter()
+                guard let self = self else { return }
+                logger.info("viewDidMoveToWindow async block executing for \(self.webviewId)")
+                self.focusWebView()
             }
         }
     }
@@ -138,19 +115,7 @@ class WebViewContainer: NSView {
     }
 
     private func setupCallbacks() {
-        // Footer: Enter -> focus webview
-        footerView.onEnterPressed = { [weak self] in
-            self?.focusWebView()
-        }
-
-        // Footer: Ctrl+C -> close
-        footerView.onCloseRequested = { [weak self] in
-            guard let self = self else { return }
-            logger.info("Close requested for webview \(self.webviewId)")
-            self.onClose?(self.webviewId)
-        }
-
-        // WebView: Esc -> focus footer
+        // WebView: Esc -> focus footer (switch to terminal mode)
         webViewOverlay.onEscapePressed = { [weak self] in
             self?.focusFooter()
         }
@@ -174,13 +139,14 @@ class WebViewContainer: NSView {
 
     override func becomeFirstResponder() -> Bool {
         // When the container is asked to become first responder (e.g., from pane navigation),
-        // redirect focus to the appropriate subview based on current mode
+        // redirect focus to the appropriate view based on current mode
         logger.debug("WebViewContainer asked to become first responder, redirecting to \(String(describing: self.focusMode))")
 
         if focusMode == .webview {
             return webViewOverlay.webView.becomeFirstResponder()
         } else {
-            return footerView.becomeFirstResponder()
+            // In footer mode, parent SurfaceView should be first responder
+            return superview?.becomeFirstResponder() ?? false
         }
     }
 
@@ -188,29 +154,51 @@ class WebViewContainer: NSView {
 
     /// Focus the webview (browser mode)
     func focusWebView() {
-        logger.info("Focusing webview for \(self.webviewId)")
+        logger.info("focusWebView called for \(self.webviewId)")
+        logger.info("  - window: \(String(describing: self.window))")
+        logger.info("  - webViewOverlay.webView: \(String(describing: self.webViewOverlay.webView))")
+
         focusMode = .webview
-        window?.makeFirstResponder(webViewOverlay.webView)
+        let success = window?.makeFirstResponder(webViewOverlay.webView) ?? false
+        logger.info("  - makeFirstResponder result: \(success)")
+        logger.info("  - actual firstResponder after: \(String(describing: self.window?.firstResponder))")
+
         // Also focus web content so cursor appears in input fields
         webViewOverlay.focusWebContent()
     }
 
     /// Focus the footer (terminal mode)
+    /// Makes parent SurfaceView the first responder so ghostty keybindings work
     func focusFooter() {
-        logger.info("Focusing footer for \(self.webviewId)")
+        logger.info("focusFooter called for \(self.webviewId)")
+        logger.info("  - superview: \(String(describing: self.superview))")
+        logger.info("  - window: \(String(describing: self.window))")
+
         focusMode = .footer
-        window?.makeFirstResponder(footerView)
+        if let surfaceView = superview {
+            let success = window?.makeFirstResponder(surfaceView) ?? false
+            logger.info("  - makeFirstResponder result: \(success)")
+            logger.info("  - actual firstResponder after: \(String(describing: self.window?.firstResponder))")
+        } else {
+            logger.warning("  - superview is nil!")
+        }
         // Blur web content so keystrokes don't go to webview
         webViewOverlay.blurWebContent()
     }
 
-    private func updateFocusVisuals() {
-        // Dim footer when webview is focused, full opacity when footer is focused
-        // Webview always stays at full opacity (user needs to see content)
-        let isWebviewFocused = (focusMode == .webview)
-        footerView.alphaValue = isWebviewFocused ? 0.5 : 1.0
-        footerView.updateText(isWebviewFocused: isWebviewFocused)
+    /// Sync internal state to footer mode without changing first responder.
+    /// Called when SurfaceView detects it's receiving keys but our state is out of sync
+    /// (e.g., after pane switching).
+    func syncToFooterMode() {
+        logger.info("syncToFooterMode called for \(self.webviewId)")
+        focusMode = .footer
+        // Blur web content to ensure keystrokes don't leak to webview
+        webViewOverlay.blurWebContent()
+    }
 
+    private func updateFocusVisuals() {
+        let isWebviewFocused = (focusMode == .webview)
+        footerView.updateText(isWebviewFocused: isWebviewFocused)
         logger.debug("Focus mode: \(String(describing: self.focusMode))")
     }
 }

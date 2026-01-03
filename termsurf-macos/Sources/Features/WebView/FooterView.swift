@@ -3,15 +3,9 @@ import os
 
 private let logger = Logger(subsystem: "com.termsurf", category: "FooterView")
 
-/// A footer bar for the webview container that handles keyboard input when focused.
-/// Displays "TermSurf Browser" text and handles Enter (focus webview) and ctrl+c (close).
+/// A visual footer bar for the webview container.
+/// Displays mode-specific hint text. Keyboard handling is done by SurfaceView.
 class FooterView: NSView {
-    /// Called when Enter is pressed (to focus the webview)
-    var onEnterPressed: (() -> Void)?
-
-    /// Called when ctrl+c is pressed (to close the webview)
-    var onCloseRequested: (() -> Void)?
-
     /// The text label
     private let label: NSTextField
 
@@ -71,55 +65,5 @@ class FooterView: NSView {
             width: bounds.width - (padding * 2),
             height: labelHeight
         )
-    }
-
-    // MARK: - First Responder
-
-    override var acceptsFirstResponder: Bool { true }
-
-    override func becomeFirstResponder() -> Bool {
-        let result = super.becomeFirstResponder()
-        if result {
-            logger.debug("FooterView became first responder")
-        }
-        return result
-    }
-
-    override func resignFirstResponder() -> Bool {
-        let result = super.resignFirstResponder()
-        if result {
-            logger.debug("FooterView resigned first responder")
-        }
-        return result
-    }
-
-    // MARK: - Keyboard Handling
-
-    override func keyDown(with event: NSEvent) {
-        let chars = event.charactersIgnoringModifiers ?? ""
-
-        // Enter key - focus webview
-        if chars == "\r" {
-            logger.info("Enter pressed - focusing webview")
-            onEnterPressed?()
-            return
-        }
-
-        // Ctrl+C - close webview
-        if event.modifierFlags.contains(.control) && chars == "c" {
-            logger.info("Ctrl+C pressed - closing webview")
-            onCloseRequested?()
-            return
-        }
-
-        // Pass unhandled keys up the responder chain
-        // This allows ctrl+h/j/k/l to reach the menu system for pane navigation
-        super.keyDown(with: event)
-    }
-
-    // Suppress the beep for unhandled keys that we pass through
-    override func performKeyEquivalent(with event: NSEvent) -> Bool {
-        // Let the responder chain handle key equivalents
-        return false
     }
 }

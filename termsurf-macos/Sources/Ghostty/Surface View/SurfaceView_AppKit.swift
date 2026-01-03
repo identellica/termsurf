@@ -1026,6 +1026,38 @@ extension Ghostty {
         }
 
         override func keyDown(with event: NSEvent) {
+            // Debug: Log all keyDown events
+            let chars = event.charactersIgnoringModifiers ?? ""
+            let keyCode = event.keyCode
+            Ghostty.logger.info("SurfaceView.keyDown: chars='\(chars)' keyCode=\(keyCode) mods=\(event.modifierFlags.rawValue)")
+
+            // Check for webview overlay - if SurfaceView is receiving keyDown and there's a
+            // WebViewContainer, we are effectively in "footer mode" (terminal has focus).
+            // This handles the case where pane switching causes focus state to get out of sync.
+            if let container = subviews.first(where: { $0 is WebViewContainer }) as? WebViewContainer {
+                Ghostty.logger.info("  - WebViewContainer found, isFooterMode: \(container.isFooterMode)")
+
+                // Sync focus state if it got out of sync (e.g., after pane switching)
+                if !container.isFooterMode {
+                    Ghostty.logger.info("  - Focus state out of sync, syncing to footer mode")
+                    container.syncToFooterMode()
+                }
+
+                // Enter → focus webview
+                if chars == "\r" {
+                    Ghostty.logger.info("  - Enter pressed, calling focusWebView()")
+                    container.focusWebView()
+                    return
+                }
+
+                // Ctrl+C → close webview
+                if event.modifierFlags.contains(.control) && chars == "c" {
+                    Ghostty.logger.info("  - Ctrl+C pressed, calling onClose")
+                    container.onClose?(container.webviewId)
+                    return
+                }
+            }
+
             guard let surface = self.surface else {
                 self.interpretKeyEvents([event])
                 return

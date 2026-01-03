@@ -222,15 +222,23 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     }
 
     private func handleTermsurfMessage(_ message: WKScriptMessage) {
+        logger.info("handleTermsurfMessage called")
+        logger.info("  - message.body: \(String(describing: message.body))")
+
         guard let body = message.body as? [String: Any],
               let action = body["action"] as? String else {
+            logger.warning("  - Failed to parse message body")
             return
         }
+
+        logger.info("  - action: \(action)")
 
         switch action {
         case "escape":
             logger.info("Webview \(self.webviewId) requested escape (switch to footer)")
+            logger.info("  - onEscapePressed callback exists: \(self.onEscapePressed != nil)")
             onEscapePressed?()
+            logger.info("  - onEscapePressed callback invoked")
 
         default:
             logger.warning("Unknown termsurf action: \(action)")
