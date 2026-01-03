@@ -81,6 +81,12 @@ impl Args {
 }
 
 impl From<MainArgs> for Args {
+    #[cfg(target_os = "windows")]
+    fn from(main_args: MainArgs) -> Self {
+        Args { main_args }
+    }
+
+    #[cfg(not(target_os = "windows"))]
     fn from(main_args: MainArgs) -> Self {
         Args {
             main_args,

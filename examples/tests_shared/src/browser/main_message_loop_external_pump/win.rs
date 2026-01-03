@@ -45,11 +45,10 @@ impl MainMessageLoopExternalPumpInner {
                     ptr::null(),
                 );
                 assert!(!main_thread_target.is_null());
+                set_user_data(main_thread_target, Some(pump.clone()));
                 main_thread_target
             }
         };
-
-        set_user_data(main_thread_target, Some(pump.clone()));
 
         Self {
             timer_pending: false,

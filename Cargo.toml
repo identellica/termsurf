@@ -40,7 +40,7 @@ glib = "0.21"
 io-surface = "0.16"
 libc = "0.2"
 libloading = "0.9"
-metal = "0.32"
+metal = "0.33"
 objc = "0.2"
 objc2 = "0.6.3"
 objc2-app-kit = { version = "0.3.2", default-features = false }
@@ -57,7 +57,7 @@ syn = { version = "2", features = ["full"] }
 thiserror = "2"
 toml_edit = "0.24"
 tracing = "0.1"
-wgpu = "27"
+wgpu = "28"
 winres = "0.1"
 x11-dl = "2"
 
@@ -66,5 +66,5 @@ version = "0.61"
 features = ["Win32_System_Environment", "Win32_System_LibraryLoader"]
 
 [workspace.dependencies.windows]
-version = "0.58"
+version = "0.62"
 features = ["Win32_Graphics_Direct3D12"]

@@ -38,7 +38,9 @@ pub struct ClientAppCustomScheme {
 
 impl ClientAppCustomScheme {
     pub fn new(name: &str, options: &[SchemeOptions]) -> Self {
-        let options = options.iter().fold(0, |acc, opt| acc | opt.get_raw()) as i32;
+        let options = options.iter().fold(0, |acc, opt| acc | opt.get_raw());
+        #[cfg(not(target_os = "windows"))]
+        let options = options as i32;
         Self {
             name: name.to_string(),
             options,

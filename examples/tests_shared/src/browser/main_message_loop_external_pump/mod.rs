@@ -61,7 +61,7 @@ impl MainMessageLoopExternalPump {
     pub fn new() -> Arc<Mutex<Self>> {
         let external_pump = Arc::new_cyclic(|weak_ref| {
             Mutex::new(Self {
-                standard_message_loop: MainMessageLoopStd::new(),
+                standard_message_loop: MainMessageLoopStd::new_message_loop_std(),
                 is_active: false,
                 reentrancy_detected: false,
                 inner: MainMessageLoopExternalPumpInner::new(weak_ref),

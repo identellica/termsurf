@@ -5,6 +5,7 @@ use crate::{
 use cef::*;
 use std::{
     path::{Path, PathBuf},
+    rc::Rc,
     sync::Arc,
 };
 
@@ -45,8 +46,8 @@ pub struct ClientAppBrowser {
 }
 
 impl ClientAppBrowser {
-    pub fn new(delegates: Vec<Box<dyn Delegate>>) -> Arc<Self> {
-        Arc::new(Self { delegates })
+    pub fn new(delegates: Vec<Box<dyn Delegate>>) -> Rc<Self> {
+        Rc::new(Self { delegates })
     }
 
     pub fn populate_settings(

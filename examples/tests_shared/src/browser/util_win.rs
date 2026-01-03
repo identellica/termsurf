@@ -27,16 +27,20 @@ pub fn get_time_now() -> u64 {
     ((current_time as f64 / *frequency) as i64).max(0) as u64
 }
 
-pub fn set_user_data_ptr(hwnd: HWND, data: *mut c_void) -> *mut c_void {
-    unsafe {
-        SetLastError(ERROR_SUCCESS);
-        let result = SetWindowLongPtrW(hwnd, GWLP_USERDATA, data as isize);
-        assert!(result != 0 || GetLastError() == ERROR_SUCCESS);
-        result as *mut _
-    }
+/// This function sets the user data pointer for a window.
+/// # Safety
+/// It is unsafe because it calls unsafe Win32 APIs with raw window handles and pointers.
+pub unsafe fn set_user_data_ptr(hwnd: HWND, data: *mut c_void) -> *mut c_void {
+    SetLastError(ERROR_SUCCESS);
+    let result = SetWindowLongPtrW(hwnd, GWLP_USERDATA, data as isize);
+    assert!(result != 0 || GetLastError() == ERROR_SUCCESS);
+    result as *mut _
 }
 
-pub fn set_user_data<T>(hwnd: HWND, data: Option<T>) -> Option<Box<T>> {
+/// This function sets the user data pointer for a window.
+/// # Safety
+/// It is unsafe because it calls unsafe Win32 APIs with raw window handles and pointers.
+pub unsafe fn set_user_data<T>(hwnd: HWND, data: Option<T>) -> Option<Box<T>> {
     let ptr: *mut T = set_user_data_ptr(
         hwnd,
         data.map(|data| Box::into_raw(Box::new(data)).cast())
@@ -46,26 +50,37 @@ pub fn set_user_data<T>(hwnd: HWND, data: Option<T>) -> Option<Box<T>> {
     if ptr.is_null() {
         None
     } else {
-        unsafe { Some(Box::from_raw(ptr)) }
+        Some(Box::from_raw(ptr))
     }
 }
 
-pub fn get_user_data<'a, T>(hwnd: HWND) -> Option<&'a mut T> {
-    unsafe {
-        let ptr = GetWindowLongPtrW(hwnd, GWLP_USERDATA) as *mut T;
-        ptr.as_mut()
-    }
+/// This function gets the user data pointer from a window.
+/// # Safety
+/// It is unsafe because it calls unsafe Win32 APIs with raw window handles and pointers.
+pub unsafe fn get_user_data<'a, T>(hwnd: HWND) -> Option<&'a mut T> {
+    let ptr = GetWindowLongPtrW(hwnd, GWLP_USERDATA) as *mut T;
+    ptr.as_mut()
 }
 
-pub fn set_window_proc_ptr(hwnd: HWND, proc: WNDPROC) -> WNDPROC {
-    Some(unsafe {
+/// This function replaces the window message handler procedure for a window.
+/// # Safety
+/// It is unsafe because it calls unsafe Win32 APIs with raw window handles and pointers.
+pub unsafe fn set_window_proc_ptr(hwnd: HWND, proc: WNDPROC) -> WNDPROC {
+    type WindowProcPtr = unsafe extern "system" fn(
+        param0: HWND,
+        param1: u32,
+        param2: WPARAM,
+        param3: LPARAM,
+    ) -> LRESULT;
+
+    Some({
         let old = GetWindowLongPtrW(hwnd, GWLP_WNDPROC);
         assert_ne!(old, 0);
         if let Some(proc) = proc {
-            let result = SetWindowLongPtrW(hwnd, GWLP_WNDPROC, mem::transmute(proc));
+            let result = SetWindowLongPtrW(hwnd, GWLP_WNDPROC, proc as usize as isize);
             assert!(result != 0 || GetLastError() == ERROR_SUCCESS);
         }
-        mem::transmute(old)
+        mem::transmute::<isize, WindowProcPtr>(old)
     })
 }
 

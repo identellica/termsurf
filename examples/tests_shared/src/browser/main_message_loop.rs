@@ -7,14 +7,16 @@ use std::{
 #[cfg(target_os = "windows")]
 use windows_sys::Win32::Foundation::HWND;
 
-static INSTANCE: OnceLock<Arc<Mutex<Option<Box<dyn MainMessageLoop>>>>> = OnceLock::new();
+pub type MainMessageLoopRef = Option<Box<dyn MainMessageLoop>>;
 
-pub fn get_main_message_loop() -> Arc<Mutex<Option<Box<dyn MainMessageLoop>>>> {
+static INSTANCE: OnceLock<Arc<Mutex<MainMessageLoopRef>>> = OnceLock::new();
+
+pub fn get_main_message_loop() -> Arc<Mutex<MainMessageLoopRef>> {
     INSTANCE.get_or_init(|| Arc::new(Mutex::new(None))).clone()
 }
 
 pub fn set_main_message_loop(
-    mut main_message_loop: Option<Box<dyn MainMessageLoop>>,
+    mut main_message_loop: MainMessageLoopRef,
 ) -> Option<Box<dyn MainMessageLoop>> {
     let instance = get_main_message_loop();
     let Ok(mut instance) = instance.lock() else {
@@ -68,9 +70,11 @@ pub fn main_post_repeating(closure: Box<dyn Send + FnMut()>) {
     instance.post_repeating(closure);
 }
 
+pub type OnceClosureCallback = Arc<Mutex<Option<Box<dyn Send + FnOnce()>>>>;
+
 wrap_task! {
     struct OnceClosure {
-        closure: Arc<Mutex<Option<Box<dyn Send + FnOnce()>>>>,
+        closure: OnceClosureCallback,
     }
 
     impl Task {
@@ -86,9 +90,11 @@ wrap_task! {
     }
 }
 
+pub type RepeatingClosureCallback = Arc<Mutex<Option<Box<dyn Send + FnMut()>>>>;
+
 wrap_task! {
     struct RepeatingClosure {
-        closure: Arc<Mutex<Option<Box<dyn Send + FnMut()>>>>,
+        closure: RepeatingClosureCallback,
     }
 
     impl Task {

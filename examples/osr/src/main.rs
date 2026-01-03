@@ -92,7 +92,7 @@ impl State {
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Cef Pipeline Layout"),
                 bind_group_layouts: &[&texture_bind_group_layout],
-                push_constant_ranges: &[],
+                immediate_size: 0,
             });
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Cef Render Pipeline"),
@@ -131,7 +131,7 @@ impl State {
                 mask: !0,
                 alpha_to_coverage_enabled: false,
             },
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
         let quad = Geometry::new(&device);

@@ -17,7 +17,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// See https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage.md#markdown-header-linux
 pub fn bundle(app_path: &Path, target_path: &Path, executable_name: &str) -> Result<PathBuf> {
     let cef_path = cef_dll_sys::get_cef_dir().unwrap();
-    copy_directory(&cef_path, &app_path)?;
+    copy_directory(&cef_path, app_path)?;
 
     const LOCALES_DIR: &str = "locales";
     copy_directory(&cef_path.join(LOCALES_DIR), &app_path.join(LOCALES_DIR))?;

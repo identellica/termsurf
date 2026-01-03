@@ -139,7 +139,7 @@ impl IOSurfaceImporter {
             };
 
             let texture = objc::msg_send![
-                std::mem::transmute::<_,&metal::NSObject>(hal_device.raw_device().lock().as_ref()),
+                std::mem::transmute::<_,&metal::NSObject>(hal_device.raw_device()),
                 newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(metal_desc.as_ref())
                 iosurface:io_surface
                 plane:0
