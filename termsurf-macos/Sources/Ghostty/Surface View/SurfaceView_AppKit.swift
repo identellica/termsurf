@@ -1050,6 +1050,13 @@ extension Ghostty {
                     return
                 }
 
+                // i → switch to insert mode (edit URL)
+                if chars == "i" {
+                    Ghostty.logger.info("  - 'i' pressed, calling focusURLField()")
+                    container.focusURLField()
+                    return
+                }
+
                 // Ctrl+C → close webview
                 if event.modifierFlags.contains(.control) && chars == "c" {
                     Ghostty.logger.info("  - Ctrl+C pressed, calling onClose")

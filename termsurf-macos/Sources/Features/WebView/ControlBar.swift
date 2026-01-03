@@ -5,18 +5,30 @@ private let logger = Logger(subsystem: "com.termsurf", category: "ControlBar")
 
 /// A visual control bar for the webview container.
 /// Displays URL on the left (truncated with ellipsis) and mode hint on the right.
-/// Keyboard handling is done by SurfaceView.
-class ControlBar: NSView {
-    /// The URL label (left side, truncates with ellipsis)
-    private let urlLabel: NSTextField
+/// Supports insert mode for URL editing.
+class ControlBar: NSView, NSTextFieldDelegate {
+    /// The URL text field (left side, truncates with ellipsis, editable in insert mode)
+    private let urlField: NSTextField
 
     /// The mode hint label (right side, fixed width)
     private let modeLabel: NSTextField
 
+    /// The actual current URL (stored separately so we can restore on cancel)
+    private var actualURL: URL?
+
+    /// Whether we're currently in insert mode
+    private(set) var isInsertMode: Bool = false
+
+    /// Callback when URL is submitted (Enter pressed in insert mode)
+    var onURLSubmitted: ((String) -> Void)?
+
+    /// Callback when insert mode is cancelled (Esc pressed in insert mode)
+    var onInsertCancelled: (() -> Void)?
+
     // MARK: - Initialization
 
     override init(frame: NSRect) {
-        urlLabel = NSTextField(labelWithString: "")
+        urlField = NSTextField(string: "")
         modeLabel = NSTextField(labelWithString: "")
         super.init(frame: frame)
         setupUI()
@@ -33,16 +45,18 @@ class ControlBar: NSView {
         wantsLayer = true
         layer?.backgroundColor = NSColor(white: 0.15, alpha: 1.0).cgColor
 
-        // URL label styling (left side, truncates, monospace font)
-        urlLabel.textColor = NSColor(white: 0.7, alpha: 1.0)
-        urlLabel.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
-        urlLabel.isBezeled = false
-        urlLabel.drawsBackground = false
-        urlLabel.isEditable = false
-        urlLabel.isSelectable = false
-        urlLabel.lineBreakMode = .byTruncatingTail
-        urlLabel.cell?.truncatesLastVisibleLine = true
-        addSubview(urlLabel)
+        // URL field styling (left side, truncates, monospace font)
+        urlField.textColor = NSColor(white: 0.7, alpha: 1.0)
+        urlField.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
+        urlField.isBezeled = false
+        urlField.drawsBackground = false
+        urlField.isEditable = false
+        urlField.isSelectable = false
+        urlField.lineBreakMode = .byTruncatingTail
+        urlField.cell?.truncatesLastVisibleLine = true
+        urlField.focusRingType = .none
+        urlField.delegate = self
+        addSubview(urlField)
 
         // Mode label styling (right side, fixed width)
         modeLabel.textColor = NSColor(white: 0.7, alpha: 1.0)
@@ -55,33 +69,109 @@ class ControlBar: NSView {
         addSubview(modeLabel)
 
         // Set initial text for control mode
-        updateText(isBrowseMode: false)
+        updateModeText(mode: .control)
+    }
+
+    // MARK: - Mode enum for text updates
+
+    enum Mode {
+        case control
+        case browse
+        case insert
     }
 
     // MARK: - Text Updates
 
-    /// Update the mode hint text based on current focus mode
-    func updateText(isBrowseMode: Bool) {
-        if isBrowseMode {
+    /// Update the mode hint text based on current mode
+    func updateModeText(mode: Mode) {
+        switch mode {
+        case .control:
+            modeLabel.stringValue = "i to edit, Enter to browse, ctrl+c to close"
+        case .browse:
             modeLabel.stringValue = "Esc to exit"
-        } else {
-            modeLabel.stringValue = "Enter to browse, ctrl+c to close"
+        case .insert:
+            modeLabel.stringValue = "Enter to go, Esc to cancel"
         }
         needsLayout = true
     }
 
-    /// Update the displayed URL
+    /// Update the displayed URL (called from WebViewOverlay when URL changes)
     func updateURL(_ url: URL?) {
-        urlLabel.stringValue = url?.absoluteString ?? ""
+        actualURL = url
+        if !isInsertMode {
+            urlField.stringValue = url?.absoluteString ?? ""
+        }
         needsLayout = true
     }
+
+    // MARK: - Insert Mode
+
+    /// Enter insert mode - make URL field editable and select all
+    func enterInsertMode() {
+        logger.info("Entering insert mode")
+        isInsertMode = true
+
+        // Make field editable
+        urlField.isEditable = true
+        urlField.isSelectable = true
+        urlField.drawsBackground = true
+        urlField.backgroundColor = NSColor(white: 0.1, alpha: 1.0)
+
+        // Become first responder and select all text
+        if let window = window {
+            window.makeFirstResponder(urlField)
+            urlField.selectText(nil)
+        }
+
+        updateModeText(mode: .insert)
+    }
+
+    /// Exit insert mode - restore to non-editable state
+    func exitInsertMode(restoreURL: Bool) {
+        logger.info("Exiting insert mode, restoreURL: \(restoreURL)")
+        isInsertMode = false
+
+        // Restore URL if cancelled
+        if restoreURL {
+            urlField.stringValue = actualURL?.absoluteString ?? ""
+        }
+
+        // Make field non-editable
+        urlField.isEditable = false
+        urlField.isSelectable = false
+        urlField.drawsBackground = false
+
+        updateModeText(mode: .control)
+    }
+
+    // MARK: - NSTextFieldDelegate
+
+    func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        if commandSelector == #selector(insertNewline(_:)) {
+            // Enter pressed - submit URL
+            logger.info("Enter pressed in insert mode, submitting URL")
+            let urlString = urlField.stringValue
+            exitInsertMode(restoreURL: false)
+            onURLSubmitted?(urlString)
+            return true
+        } else if commandSelector == #selector(cancelOperation(_:)) {
+            // Esc pressed - cancel
+            logger.info("Esc pressed in insert mode, cancelling")
+            exitInsertMode(restoreURL: true)
+            onInsertCancelled?()
+            return true
+        }
+        return false
+    }
+
+    // MARK: - Layout
 
     override func layout() {
         super.layout()
 
         let padding: CGFloat = 8
         let spacing: CGFloat = 12
-        let labelHeight = max(urlLabel.intrinsicContentSize.height, modeLabel.intrinsicContentSize.height)
+        let labelHeight = max(urlField.intrinsicContentSize.height, modeLabel.intrinsicContentSize.height)
 
         // Mode label: fixed width based on content, positioned at right
         // Add small buffer to intrinsicContentSize for proper text rendering
@@ -93,12 +183,12 @@ class ControlBar: NSView {
             height: labelHeight
         )
 
-        // URL label: fills remaining space on left
-        let urlLabelWidth = bounds.width - padding - modeLabelWidth - spacing - padding
-        urlLabel.frame = NSRect(
+        // URL field: fills remaining space on left
+        let urlFieldWidth = bounds.width - padding - modeLabelWidth - spacing - padding
+        urlField.frame = NSRect(
             x: padding,
             y: (bounds.height - labelHeight) / 2,
-            width: max(0, urlLabelWidth),
+            width: max(0, urlFieldWidth),
             height: labelHeight
         )
     }

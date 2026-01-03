@@ -5,9 +5,10 @@ private let logger = Logger(subsystem: "com.termsurf", category: "WebViewContain
 
 /// Container view that holds a WebViewOverlay and ControlBar with mode-based focus switching.
 ///
-/// Two modes:
+/// Three modes:
 /// - Control mode: SurfaceView is focused, all terminal keybindings work (ctrl+c, ctrl+h/j/k/l, etc.)
 /// - Browse mode: Webview is focused, browser has full control, only Esc escapes
+/// - Insert mode: URL field is focused, can edit URL, Enter navigates, Esc cancels
 class WebViewContainer: NSView {
     /// The webview ID
     let webviewId: String
@@ -28,6 +29,7 @@ class WebViewContainer: NSView {
     enum FocusMode {
         case control
         case browse
+        case insert
     }
 
     private(set) var focusMode: FocusMode = .browse {
@@ -40,6 +42,9 @@ class WebViewContainer: NSView {
 
     /// Public getter for SurfaceView to check if we're in control mode
     var isControlMode: Bool { focusMode == .control }
+
+    /// Public getter to check if we're in insert mode
+    var isInsertMode: Bool { focusMode == .insert }
 
     // MARK: - Initialization
 
@@ -134,6 +139,27 @@ class WebViewContainer: NSView {
                 self.webViewOverlay.blurWebContent()
             }
         }
+
+        // ControlBar: URL submitted -> navigate and switch to browse mode
+        controlBar.onURLSubmitted = { [weak self] urlString in
+            guard let self = self else { return }
+            logger.info("URL submitted: \(urlString)")
+
+            // Normalize URL (add https:// if no scheme)
+            let normalizedURL = self.normalizeURL(urlString)
+            if let url = URL(string: normalizedURL) {
+                self.webViewOverlay.navigate(to: url)
+                self.focusBrowser()
+            } else {
+                logger.warning("Invalid URL: \(urlString)")
+                self.focusControlBar()
+            }
+        }
+
+        // ControlBar: Insert cancelled -> switch back to control mode
+        controlBar.onInsertCancelled = { [weak self] in
+            self?.focusControlBar()
+        }
     }
 
     // MARK: - First Responder
@@ -145,11 +171,15 @@ class WebViewContainer: NSView {
         // redirect focus to the appropriate view based on current mode
         logger.debug("WebViewContainer asked to become first responder, redirecting to \(String(describing: self.focusMode))")
 
-        if focusMode == .browse {
+        switch focusMode {
+        case .browse:
             return webViewOverlay.webView.becomeFirstResponder()
-        } else {
+        case .control:
             // In control mode, parent SurfaceView should be first responder
             return superview?.becomeFirstResponder() ?? false
+        case .insert:
+            // In insert mode, URL field should keep focus
+            return true
         }
     }
 
@@ -189,6 +219,15 @@ class WebViewContainer: NSView {
         webViewOverlay.blurWebContent()
     }
 
+    /// Focus the URL field (insert mode)
+    func focusURLField() {
+        logger.info("focusURLField called for \(self.webviewId)")
+        focusMode = .insert
+        controlBar.enterInsertMode()
+        // Blur web content so keystrokes don't go to webview
+        webViewOverlay.blurWebContent()
+    }
+
     /// Sync internal state to control mode without changing first responder.
     /// Called when SurfaceView detects it's receiving keys but our state is out of sync
     /// (e.g., after pane switching).
@@ -200,8 +239,36 @@ class WebViewContainer: NSView {
     }
 
     private func updateFocusVisuals() {
-        let isBrowseMode = (focusMode == .browse)
-        controlBar.updateText(isBrowseMode: isBrowseMode)
+        let mode: ControlBar.Mode
+        switch focusMode {
+        case .control:
+            mode = .control
+        case .browse:
+            mode = .browse
+        case .insert:
+            mode = .insert
+        }
+        controlBar.updateModeText(mode: mode)
         logger.debug("Focus mode: \(String(describing: self.focusMode))")
+    }
+
+    // MARK: - Helpers
+
+    /// Normalize a URL string: prepend https:// if no scheme
+    private func normalizeURL(_ urlString: String) -> String {
+        let trimmed = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            return trimmed
+        }
+
+        // If already has a scheme, return as-is
+        if trimmed.hasPrefix("http://") ||
+           trimmed.hasPrefix("https://") ||
+           trimmed.hasPrefix("file://") {
+            return trimmed
+        }
+
+        // Prepend https://
+        return "https://\(trimmed)"
     }
 }

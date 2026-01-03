@@ -199,6 +199,12 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
         webView.load(URLRequest(url: url))
     }
 
+    /// Navigate to a new URL (public method for external navigation requests)
+    func navigate(to url: URL) {
+        logger.info("Navigating to: \(url.absoluteString)")
+        webView.load(URLRequest(url: url))
+    }
+
     // MARK: - WKScriptMessageHandler
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
