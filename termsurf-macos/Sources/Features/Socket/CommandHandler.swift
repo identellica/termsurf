@@ -43,7 +43,7 @@ class CommandHandler {
     }
 
     /// Default homepage when no URL is provided
-    private static let defaultHomepage = "https://hallucipedia.com"
+    private static let defaultHomepage = "https://kagi.com"
 
     private func handleOpen(_ request: TermsurfRequest) -> TermsurfResponse {
         guard let paneId = request.paneId else {
