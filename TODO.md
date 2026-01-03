@@ -442,7 +442,7 @@ termsurf open https://example.com
 # Expected: CLI exits with code 0
 ```
 
-### Phase 3G: Webview Stacking
+### Phase 3G: Webview Stacking ✓
 
 **Goal:** Support multiple concurrent webviews on the same pane, stacked with a
 visible indicator.
@@ -453,15 +453,16 @@ close from top down. Control bar shows stack position indicator.
 
 **Tasks:**
 
-- [ ] Add `paneStacks` dictionary to WebViewManager to track stack order per pane
-- [ ] When creating webview, add to pane's stack and calculate position
-- [ ] When closing webview, remove from stack and update positions for remaining
-- [ ] Add `stackPosition` and `stackTotal` properties to WebViewContainer
-- [ ] Add `stackLabel` to ControlBar showing "(1/2)", "(2/2)", etc.
-- [ ] Only show stack indicator when stackTotal > 1
-- [ ] Verify z-order: newer webviews appear on top (NSView natural order)
+- [x] Add `paneStacks` dictionary to WebViewManager to track stack order per pane
+- [x] When creating webview, add to pane's stack and calculate position
+- [x] When closing webview, remove from stack and update positions for remaining
+- [x] Add `stackPosition` and `stackTotal` properties to WebViewContainer
+- [x] Add `stackLabel` to ControlBar showing "(1/2)", "(2/2)", etc.
+- [x] Only show stack indicator when stackTotal > 1
+- [x] Verify z-order: newer webviews appear on top (NSView natural order)
+- [x] Fix keybindings to operate on topmost container (`subviews.last(where:)`)
 
-**Test:**
+**Test:** ✓
 
 ```bash
 # Run concurrent commands in same terminal pane:
@@ -542,7 +543,7 @@ fg
 | 3D    | Control bar + ctrl+c  | Enter/Esc/i mode switch, ctrl+c close                         | Mode switching works  | ✓      |
 | 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly | ✓      |
 | 3F    | Console bridging      | console.log in webview                                        | Output in terminal    | ✓      |
-| 3G    | Webview stacking      | Multiple concurrent opens                                     | Stack indicator works |        |
+| 3G    | Webview stacking      | Multiple concurrent opens                                     | Stack indicator works | ✓      |
 | 3H    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    |        |
 | 3I    | Multi-webview         | Open in two panes                                             | Independent operation |        |
 
