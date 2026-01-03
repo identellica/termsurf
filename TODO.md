@@ -352,7 +352,32 @@ termsurf open google.com --wait
 # Expected: Webview closes, CLI exits with code 0, terminal prompt returns
 ```
 
-### Phase 3E: Console Output Bridging
+### Phase 3E: Support Split Panes
+
+**Goal:** Allow navigating between terminal and webview panes using keybindings.
+
+**Background:** WKWebView intercepts certain keyboard shortcuts (like cmd+[ for browser back).
+We need to pass through pane navigation keybindings so users can move between panes.
+
+**Tasks:**
+
+- [ ] Override `performKeyEquivalent()` in WebViewOverlay
+- [ ] Pass through ctrl+h, ctrl+j, ctrl+k, ctrl+l (vim-style navigation)
+- [ ] Test navigation from webview → terminal and terminal → webview
+
+**Test:**
+
+```bash
+# Open split pane (cmd+d), open webview in left pane
+termsurf open google.com
+# Press ctrl+l to move to right pane (terminal)
+# Press ctrl+h to move back to left pane (webview)
+# Expected: Focus moves correctly between panes
+```
+
+**Note:** Future work will make this dynamic based on user's configured keybindings.
+
+### Phase 3F: Console Output Bridging
 
 **Goal:** Route webview console.log/error to the terminal's PTY.
 
@@ -372,7 +397,7 @@ termsurf open google.com --wait
 # Expected: Terminal shows "[log] Hello"
 ```
 
-### Phase 3F: Background/Foreground (ctrl+z / fg)
+### Phase 3G: Background/Foreground (ctrl+z / fg)
 
 **Goal:** ctrl+z hides webview and backgrounds CLI, fg restores both.
 
@@ -404,7 +429,7 @@ fg
 # Expected: Webview reappears with same page
 ```
 
-### Phase 3G: Multi-webview Tracking
+### Phase 3H: Multi-webview Tracking
 
 **Goal:** Support multiple webviews across panes, each with correct association.
 
@@ -417,7 +442,7 @@ fg
   - [ ] Webview ID → Pane association
   - [ ] Pane ID → Active webview (for keyboard routing)
 - [ ] Ensure ctrl+c/z only affects webview in focused pane
-- [ ] Ensure pane switching (cmd+[, cmd+]) works with webviews
+- [ ] Ensure pane navigation keybindings work with webviews
 
 **Test:**
 
@@ -427,7 +452,7 @@ fg
 # Right pane: termsurf open github.com
 # Expected: Each pane has its own webview
 # ctrl+c in left only closes left webview
-# cmd+[ and cmd+] switch between them
+# Pane navigation keybindings switch between them
 ```
 
 ### Phase 3 Summary
@@ -438,9 +463,10 @@ fg
 | 3B    | CLI tool                | `termsurf ping`                   | "pong" output              | ✓ |
 | 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            | ✓ |
 | 3D    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits | |
-| 3E    | Console bridging        | console.log in webview            | Output in terminal         | |
-| 3F    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         | |
-| 3G    | Multi-webview           | Open in two panes                 | Independent operation      | |
+| 3E    | Split pane navigation   | ctrl+h/j/k/l between panes        | Focus moves correctly      | |
+| 3F    | Console bridging        | console.log in webview            | Output in terminal         | |
+| 3G    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         | |
+| 3H    | Multi-webview           | Open in two panes                 | Independent operation      | |
 
 ### Key Files Reference
 
