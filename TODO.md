@@ -361,13 +361,18 @@ WebViewContainer (NSView)
   - [ ] Track webviewId → paneId for focus restoration
   - [ ] closeWebView() removes container and restores focus to terminal
 
+- [ ] Add visual mode indicator:
+  - [ ] Footer dimmed (alphaValue ~0.5) when webview is focused
+  - [ ] Footer normal (alphaValue 1.0) when footer is focused
+  - [ ] Webview always stays at full opacity (user needs to see content)
+
 **Test:**
 
 ```bash
 termsurf open google.com
-# Footer shows "TermSurf Browser", footer is focused
-# Press Enter → webview is focused, can interact with page
-# Press Esc → footer is focused again
+# Footer shows "TermSurf Browser", footer is focused (not dimmed)
+# Press Enter → webview is focused, footer dims
+# Press Esc → footer is focused again, footer undims
 # Press ctrl+c → webview closes, terminal has focus
 # Can also press ctrl+h/j/k/l to navigate panes (when footer focused)
 ```
