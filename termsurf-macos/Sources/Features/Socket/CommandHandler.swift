@@ -62,8 +62,9 @@ class CommandHandler {
         }
 
         let profile = request.getString("profile")
+        let jsApi = request.getBool("jsApi") ?? false
 
-        logger.info("Open webview: url=\(normalizedUrlString) paneId=\(paneId) profile=\(profile ?? "default")")
+        logger.info("Open webview: url=\(normalizedUrlString) paneId=\(paneId) profile=\(profile ?? "default") jsApi=\(jsApi)")
 
         // Create webview - WebViewManager handles main thread dispatch
         // Pass connection for console event streaming
@@ -71,6 +72,7 @@ class CommandHandler {
             url: url,
             paneId: paneId,
             profile: profile,
+            jsApi: jsApi,
             connection: connection,
             requestId: request.id
         )

@@ -588,17 +588,25 @@ func createWebView(profileName: String?) -> WKWebView {
   - [x] Documented in docs/keybindings.md
 - [ ] Consider command: `termsurf devtools` to open inspector
 
+### JavaScript API (`--js-api` flag) ✓
+
+- [x] Implement opt-in `--js-api` flag for CLI
+- [x] Conditionally inject `window.termsurf` object when flag is set
+- [x] Implement `window.termsurf.webviewId` property
+- [x] Implement `window.termsurf.exit(code)` to close webview with exit code
+- [x] Exit code flows through socket to CLI (0-255)
+- [x] Document in docs/console.md
+
 ### Additional Features
 
 - [ ] User agent customization
-- [ ] JavaScript injection API for automation
 - [ ] Download handling
 - [ ] Permission prompts (camera, microphone, location)
 
 ### Documentation
 
 - [ ] Update ARCHITECTURE.md with browser pane details
-- [ ] Document console bridging behavior
+- [x] Document console bridging behavior (docs/console.md)
 - [ ] Document profile system (if implemented)
 - [x] Document keyboard shortcuts (docs/keybindings.md)
 - [ ] Add usage examples to README

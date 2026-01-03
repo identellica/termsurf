@@ -19,6 +19,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     /// Callback when Esc is pressed (to switch to control mode)
     var onEscapePressed: (() -> Void)?
 
+    /// Callback when JS API exit() is called (with exit code)
+    var onExit: ((Int) -> Void)?
+
     /// Callback for console output (defaults to stdout/stderr)
     var onConsoleOutput: ((ConsoleLevel, String) -> Void)?
 
@@ -32,10 +35,14 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     /// KVO observation for URL changes
     private var urlObservation: NSKeyValueObservation?
 
+    /// Whether the JS API is enabled
+    private let jsApiEnabled: Bool
+
     // MARK: - Initialization
 
-    init(url: URL, webviewId: String, profile: String? = nil) {
+    init(url: URL, webviewId: String, profile: String? = nil, jsApi: Bool = false) {
         self.webviewId = webviewId
+        self.jsApiEnabled = jsApi
         super.init(frame: .zero)
 
         setupWebView(profile: profile)
@@ -134,6 +141,21 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
         }, true);
         """
 
+        // Optional JS API (window.termsurf) - only injected when --js-api flag is used
+        let jsApiScript = """
+        window.termsurf = {
+            webviewId: '\(webviewId)',
+            exit: function(code) {
+                var exitCode = typeof code === 'number' ? Math.floor(code) : 0;
+                exitCode = Math.max(0, Math.min(255, exitCode));
+                window.webkit.messageHandlers.termsurf.postMessage({
+                    action: 'exit',
+                    code: exitCode
+                });
+            }
+        };
+        """
+
         let consoleUserScript = WKUserScript(
             source: consoleScript,
             injectionTime: .atDocumentStart,
@@ -147,6 +169,17 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
 
         contentController.addUserScript(consoleUserScript)
         contentController.addUserScript(keyboardUserScript)
+
+        // Only inject JS API if enabled via --js-api flag
+        if jsApiEnabled {
+            let jsApiUserScript = WKUserScript(
+                source: jsApiScript,
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true
+            )
+            contentController.addUserScript(jsApiUserScript)
+            logger.info("JS API enabled for webview \(self.webviewId)")
+        }
 
         // Register message handlers
         contentController.add(self, name: "consoleLog")
@@ -257,6 +290,15 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
             logger.info("  - onEscapePressed callback exists: \(self.onEscapePressed != nil)")
             onEscapePressed?()
             logger.info("  - onEscapePressed callback invoked")
+
+        case "exit":
+            guard jsApiEnabled else {
+                logger.warning("Exit action received but JS API is not enabled")
+                return
+            }
+            let exitCode = (body["code"] as? Int) ?? 0
+            logger.info("Webview \(self.webviewId) requested exit with code \(exitCode)")
+            onExit?(exitCode)
 
         default:
             logger.warning("Unknown termsurf action: \(action)")

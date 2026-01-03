@@ -76,10 +76,10 @@ termsurf open http://localhost:3000 | jq 'select(.level == "error")'
 # Parse and filter JSON-structured logs
 ```
 
-## Optional JavaScript API (`--api` flag)
+## Optional JavaScript API (`--js-api` flag)
 
 By default, webpages have no special access to TermSurf functionality. With the
-`--api` flag, a `window.termsurf` object is injected that provides additional
+`--js-api` flag, a `window.termsurf` object is injected that provides additional
 capabilities.
 
 ### Security Rationale
@@ -88,7 +88,7 @@ The API is opt-in because:
 
 1. **Principle of least privilege** - Normal browsing doesn't need special APIs
 2. **Prevent surprises** - Random websites can't close your browser session
-3. **Clear intent** - Using `--api` signals you're running trusted code
+3. **Clear intent** - Using `--js-api` signals you're running trusted code
 
 The actual security risk is minimal (a page could only close itself), but opt-in
 ensures predictable behavior and clear user intent.
@@ -96,15 +96,24 @@ ensures predictable behavior and clear user intent.
 ### Enabling the API
 
 ```bash
-termsurf open http://localhost:3000 --api
+termsurf open http://localhost:3000 --js-api
 ```
 
 ### Available API
 
+#### `window.termsurf.webviewId`
+
+The unique identifier for this webview instance. Useful for debugging.
+
+```javascript
+console.log(window.termsurf.webviewId);
+// Output: wv-a1b2c3d4
+```
+
 #### `window.termsurf.exit(code)`
 
 Exit the webview with the specified exit code. The CLI process exits with this
-code.
+code. Exit code is clamped to 0-255.
 
 ```javascript
 // Exit successfully
@@ -112,11 +121,14 @@ window.termsurf.exit(0);
 
 // Exit with error
 window.termsurf.exit(1);
+
+// Exit code defaults to 0 if not provided or not a number
+window.termsurf.exit();
 ```
 
 ## Testing and Automation Use Cases
 
-The combination of console bridging and `--api` enables powerful testing
+The combination of console bridging and `--js-api` enables powerful testing
 workflows.
 
 ### Running Tests with Exit Codes
@@ -138,7 +150,7 @@ runTests();
 ```
 
 ```bash
-termsurf open http://localhost:3000/test --api
+termsurf open http://localhost:3000/test --js-api
 echo "Exit code: $?"
 ```
 
@@ -148,7 +160,7 @@ echo "Exit code: $?"
 #!/bin/bash
 # run-browser-tests.sh
 
-termsurf open http://localhost:3000/test --api > test-output.log 2>&1
+termsurf open http://localhost:3000/test --js-api > test-output.log 2>&1
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -ne 0 ]; then
@@ -170,7 +182,7 @@ fetch('/api/health')
 ```
 
 ```bash
-termsurf open http://localhost:3000/health-check.html --api
+termsurf open http://localhost:3000/health-check.html --js-api
 ```
 
 ## Future API Extensions
@@ -273,8 +285,8 @@ console.log(info.platform, info.arch, info.hostname);
 If TermSurf implements OS access, it would need a tiered permission system:
 
 1. **No flag** - No API, just console bridging
-2. **`--api`** - Basic API (exit, env read-only)
-3. **`--api=full`** or **`--trusted`** - Full OS access (filesystem, exec)
+2. **`--js-api`** - Basic API (exit, webviewId)
+3. **`--js-api=full`** or **`--trusted`** - Full OS access (filesystem, exec)
 
 The full access tier would only be used for:
 
@@ -286,7 +298,7 @@ Example workflow:
 
 ```bash
 # Local dev tool with full access
-termsurf open http://localhost:8080/admin --api=full
+termsurf open http://localhost:8080/admin --js-api=full
 
 # Public website, no special access
 termsurf open https://example.com
@@ -343,7 +355,8 @@ Flow:
 | Console capture (JS)        | Implemented |
 | stdout/stderr routing       | Implemented |
 | CLI event streaming         | Implemented |
-| `--api` flag                | Planned     |
-| `window.termsurf.exit()`    | Planned     |
+| `--js-api` flag             | Implemented |
+| `window.termsurf.exit()`    | Implemented |
+| `window.termsurf.webviewId` | Implemented |
 | Environment access          | Future      |
 | Full OS access (Tauri-like) | Future      |

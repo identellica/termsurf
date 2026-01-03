@@ -1058,10 +1058,10 @@ extension Ghostty {
                     return
                 }
 
-                // Ctrl+C → close webview
+                // Ctrl+C → close webview (exit code 0)
                 if event.modifierFlags.contains(.control) && chars == "c" {
                     Ghostty.logger.info("  - Ctrl+C pressed, calling onClose")
-                    container.onClose?(container.webviewId)
+                    container.onClose?(container.webviewId, 0)
                     return
                 }
             }

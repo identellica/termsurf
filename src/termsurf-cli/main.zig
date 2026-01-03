@@ -62,6 +62,7 @@ fn printUsage() !void {
         \\    help                    Show this help message
         \\
         \\OPTIONS (for open):
+        \\    --js-api                Enable window.termsurf JavaScript API
         \\    --profile, -p NAME      Use isolated browser profile
         \\
         \\ENVIRONMENT:
@@ -112,11 +113,14 @@ fn cmdPing(allocator: std.mem.Allocator) !void {
 fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
     var url: ?[]const u8 = null;
     var profile: ?[]const u8 = null;
+    var jsApi = false;
 
     var i: usize = 0;
     while (i < args.len) : (i += 1) {
         const arg = args[i];
-        if (std.mem.eql(u8, arg, "--profile") or std.mem.eql(u8, arg, "-p")) {
+        if (std.mem.eql(u8, arg, "--js-api")) {
+            jsApi = true;
+        } else if (std.mem.eql(u8, arg, "--profile") or std.mem.eql(u8, arg, "-p")) {
             i += 1;
             if (i >= args.len) {
                 std.debug.print("Error: --profile requires an argument\n", .{});
@@ -148,7 +152,7 @@ fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
     defer posix.close(socket);
 
     // Build and send request
-    const request = try buildOpenRequest(allocator, url, paneId, profile);
+    const request = try buildOpenRequest(allocator, url, paneId, profile, jsApi);
     defer allocator.free(request);
     _ = try posix.write(socket, request);
 
@@ -339,7 +343,7 @@ fn sendPingRequest(allocator: std.mem.Allocator) ![]u8 {
 }
 
 /// Build an open request JSON string (does not send it)
-fn buildOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]const u8, profile: ?[]const u8) ![]u8 {
+fn buildOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]const u8, profile: ?[]const u8, jsApi: bool) ![]u8 {
     var jsonBuf: std.ArrayListUnmanaged(u8) = .empty;
     errdefer jsonBuf.deinit(allocator);
 
@@ -375,6 +379,12 @@ fn buildOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]c
         try writer.writeAll("\"profile\":\"");
         try writer.writeAll(p);
         try writer.writeAll("\"");
+        hasField = true;
+    }
+
+    if (jsApi) {
+        if (hasField) try writer.writeAll(",");
+        try writer.writeAll("\"jsApi\":true");
     }
 
     try writer.writeAll("}}\n");

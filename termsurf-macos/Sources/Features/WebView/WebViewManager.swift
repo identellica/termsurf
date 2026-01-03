@@ -66,12 +66,14 @@ class WebViewManager {
     ///   - url: The URL to load
     ///   - paneId: The pane to attach the webview to
     ///   - profile: Optional browser profile for session isolation
+    ///   - jsApi: Whether to enable the window.termsurf JavaScript API
     ///   - connection: Optional socket connection for sending console events
     ///   - requestId: Request ID for event correlation (required if connection is provided)
     func createWebView(
         url: URL,
         paneId: String,
         profile: String? = nil,
+        jsApi: Bool = false,
         connection: SocketConnection? = nil,
         requestId: String? = nil
     ) -> String? {
@@ -114,9 +116,9 @@ class WebViewManager {
             self.lock.unlock()
 
             // Create the container on main thread
-            let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile)
-            container.onClose = { [weak self] id in
-                self?.closeWebView(id: id)
+            let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile, jsApi: jsApi)
+            container.onClose = { [weak self] id, exitCode in
+                self?.closeWebView(id: id, exitCode: exitCode)
             }
 
             // Wire up console output to send events via socket
@@ -146,7 +148,10 @@ class WebViewManager {
     }
 
     /// Close a webview by ID.
-    func closeWebView(id: String) {
+    /// - Parameters:
+    ///   - id: The webview ID to close
+    ///   - exitCode: Exit code to send to CLI (default 0)
+    func closeWebView(id: String, exitCode: Int = 0) {
         lock.lock()
         let container = containers.removeValue(forKey: id)
         let paneId = webviewToPaneId.removeValue(forKey: id)
@@ -164,10 +169,10 @@ class WebViewManager {
         if let connection = connectionRef?.connection, let requestId = requestId {
             let event = TermsurfEvent(id: requestId, event: "closed", data: [
                 "webviewId": .string(id),
-                "exitCode": .int(0)
+                "exitCode": .int(exitCode)
             ])
             connection.sendEvent(event)
-            logger.info("Sent closed event to CLI for webview \(id)")
+            logger.info("Sent closed event to CLI for webview \(id) with exit code \(exitCode)")
         }
 
         DispatchQueue.main.async {

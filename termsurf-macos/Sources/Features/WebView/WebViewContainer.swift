@@ -19,8 +19,8 @@ class WebViewContainer: NSView {
     /// The control bar
     let controlBar: ControlBar
 
-    /// Called when the webview should close
-    var onClose: ((String) -> Void)?
+    /// Called when the webview should close (webviewId, exitCode)
+    var onClose: ((String, Int) -> Void)?
 
     /// Called when console output is received (level, message)
     var onConsoleOutput: ((WebViewOverlay.ConsoleLevel, String) -> Void)? {
@@ -58,9 +58,9 @@ class WebViewContainer: NSView {
 
     // MARK: - Initialization
 
-    init(url: URL, webviewId: String, profile: String? = nil) {
+    init(url: URL, webviewId: String, profile: String? = nil, jsApi: Bool = false) {
         self.webviewId = webviewId
-        self.webViewOverlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile)
+        self.webViewOverlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile, jsApi: jsApi)
         self.controlBar = ControlBar()
         super.init(frame: .zero)
 
@@ -70,7 +70,7 @@ class WebViewContainer: NSView {
         // Ensure initial visual state is correct
         updateFocusVisuals()
 
-        logger.info("WebViewContainer \(webviewId) created")
+        logger.info("WebViewContainer \(webviewId) created with jsApi=\(jsApi)")
     }
 
     required init?(coder: NSCoder) {
@@ -171,6 +171,13 @@ class WebViewContainer: NSView {
         // ControlBar: Insert cancelled -> switch back to control mode
         controlBar.onInsertCancelled = { [weak self] in
             self?.focusControlBar()
+        }
+
+        // WebView: JS API exit() called -> close webview with exit code
+        webViewOverlay.onExit = { [weak self] exitCode in
+            guard let self = self else { return }
+            logger.info("JS API exit(\(exitCode)) called for \(self.webviewId)")
+            self.onClose?(self.webviewId, exitCode)
         }
     }
 
