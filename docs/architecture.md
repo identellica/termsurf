@@ -125,12 +125,12 @@ domain sockets for these reasons:
 | **Bidirectional** | No | **Yes** |
 | **Protocol** | String parsing | **Structured JSON** |
 | **Robustness** | Broken by pipes | **Always works** |
-| **`--wait` support** | Not possible | **Supported** |
+| **Blocking** | Not possible | **By default** |
 
 **Key advantages:**
 
 1. **No libghostty modification** - All code lives in `termsurf-macos/`
-2. **Bidirectional** - CLI can receive responses and events (e.g., `--wait`)
+2. **Bidirectional** - CLI can receive responses and events
 3. **Robust** - Works regardless of stdout redirection or piping
 4. **Structured** - JSON protocol avoids escaping issues
 
@@ -143,7 +143,7 @@ domain sockets for these reasons:
 // Response (App → CLI)
 {"id": "1", "status": "ok", "data": {"webviewId": "wv-456"}}
 
-// Event (App → CLI, for --wait)
+// Event (App → CLI, when webview closes)
 {"id": "1", "event": "closed", "data": {"exitCode": 0}}
 ```
 

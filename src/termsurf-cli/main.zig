@@ -62,7 +62,6 @@ fn printUsage() !void {
         \\    help                    Show this help message
         \\
         \\OPTIONS (for open):
-        \\    --wait, -w              Wait for webview to close
         \\    --profile, -p NAME      Use isolated browser profile
         \\
         \\ENVIRONMENT:
@@ -72,7 +71,7 @@ fn printUsage() !void {
         \\EXAMPLES:
         \\    termsurf                        Open default homepage
         \\    termsurf google.com             Open https://google.com
-        \\    termsurf open --wait localhost:3000
+        \\    termsurf open localhost:3000    Open local dev server
         \\
     );
     try stdout.flush();
@@ -112,15 +111,12 @@ fn cmdPing(allocator: std.mem.Allocator) !void {
 
 fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
     var url: ?[]const u8 = null;
-    var wait = false;
     var profile: ?[]const u8 = null;
 
     var i: usize = 0;
     while (i < args.len) : (i += 1) {
         const arg = args[i];
-        if (std.mem.eql(u8, arg, "--wait") or std.mem.eql(u8, arg, "-w")) {
-            wait = true;
-        } else if (std.mem.eql(u8, arg, "--profile") or std.mem.eql(u8, arg, "-p")) {
+        if (std.mem.eql(u8, arg, "--profile") or std.mem.eql(u8, arg, "-p")) {
             i += 1;
             if (i >= args.len) {
                 std.debug.print("Error: --profile requires an argument\n", .{});
@@ -141,7 +137,7 @@ fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
     // Get pane ID from environment
     const paneId = std.posix.getenv("TERMSURF_PANE_ID");
 
-    const response = try sendOpenRequest(allocator, url, paneId, wait, profile);
+    const response = try sendOpenRequest(allocator, url, paneId, profile);
     defer allocator.free(response);
 
     // Parse response
@@ -170,12 +166,6 @@ fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
                     try stdout.print("{s}\n", .{msg.string});
                 }
             }
-        }
-
-        // If --wait was specified, we would keep the connection open
-        // and wait for events. For now, just exit.
-        if (wait) {
-            try stdout.writeAll("Note: --wait not yet fully implemented\n");
         }
         try stdout.flush();
     } else {
@@ -237,7 +227,7 @@ fn sendPingRequest(allocator: std.mem.Allocator) ![]u8 {
     return sendJsonRequest(allocator, "{\"id\":\"1\",\"action\":\"ping\"}\n");
 }
 
-fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]const u8, wait: bool, profile: ?[]const u8) ![]u8 {
+fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]const u8, profile: ?[]const u8) ![]u8 {
     var jsonBuf: std.ArrayListUnmanaged(u8) = .empty;
     defer jsonBuf.deinit(allocator);
 
@@ -265,13 +255,6 @@ fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]co
         }
         try writer.writeAll("\"");
 
-        if (wait or profile != null) {
-            try writer.writeAll(",");
-        }
-    }
-
-    if (wait) {
-        try writer.writeAll("\"wait\":true");
         if (profile != null) {
             try writer.writeAll(",");
         }

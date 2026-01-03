@@ -86,7 +86,7 @@ sequences after careful analysis.
 | **Protocol**           | String parsing       | **Structured JSON**    |
 | **Robustness**         | Broken by pipes      | **Always works**       |
 | **Error handling**     | Silent failures      | **Explicit responses** |
-| **`--wait` support**   | Not possible         | **Supported**          |
+| **Blocking**           | Not possible         | **By default**         |
 
 **Key advantages of sockets:**
 
@@ -94,7 +94,7 @@ sequences after careful analysis.
 2. **Bidirectional communication** - CLI can receive responses and events
 3. **Structured protocol** - JSON avoids escaping issues, easy to extend
 4. **Robust** - Works regardless of stdout redirection or piping
-5. **`--wait` flag** - CLI can block until webview closes
+5. **Blocking** - CLI blocks until webview closes by default
 
 ### Protocol
 
@@ -134,7 +134,7 @@ sequences after careful analysis.
 // Response (App → CLI)
 {"id": "1", "status": "ok", "data": {"webviewId": "wv-456"}}
 
-// Event (App → CLI, for --wait)
+// Event (App → CLI, when webview closes)
 {"id": "1", "event": "closed", "data": {"exitCode": 0}}
 ```
 
@@ -245,7 +245,7 @@ echo '{"id":"1","action":"ping"}' | nc -U $TERMSURF_SOCKET
   - [x] Send JSON request, receive JSON response
 - [x] Implement subcommands:
   - [x] `termsurf ping` - Test connectivity
-  - [x] `termsurf open [--wait] [--profile NAME] URL` - Open webview
+  - [x] `termsurf open [--profile NAME] URL` - Open webview
   - [x] `termsurf close [WEBVIEW_ID]` - Close webview
 - [x] Error handling:
   - [x] `TERMSURF_SOCKET` not set → "Not running inside TermSurf"
@@ -458,7 +458,7 @@ changes. See `syncToControlMode()` in WebViewContainer and the
 **Test:**
 
 ```bash
-termsurf open google.com --wait
+termsurf open google.com
 # Press ctrl+z
 # Expected: Webview hides, shell shows "[1]+ Stopped ..."
 
