@@ -13,8 +13,11 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     /// The WKWebView instance
     private(set) var webView: WKWebView!
 
-    /// Callback when webview should close
+    /// Callback when webview should close (called from container, not JS anymore)
     var onClose: ((String) -> Void)?
+
+    /// Callback when Esc is pressed (to switch focus back to footer)
+    var onEscapePressed: (() -> Void)?
 
     /// Callback for console output (defaults to stdout/stderr)
     var onConsoleOutput: ((ConsoleLevel, String) -> Void)?
@@ -112,17 +115,14 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
         })();
         """
 
-        // Keyboard interception for ctrl+c and ctrl+z
+        // Keyboard interception for Esc only (to switch back to footer/terminal mode)
+        // All other keys go to the browser - ctrl+c, ctrl+z, etc. are handled by
+        // the FooterView when in terminal mode
         let keyboardScript = """
         document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey) {
-                if (e.key === 'c') {
-                    e.preventDefault();
-                    window.webkit.messageHandlers.termsurf.postMessage({action: 'close'});
-                } else if (e.key === 'z') {
-                    e.preventDefault();
-                    window.webkit.messageHandlers.termsurf.postMessage({action: 'background'});
-                }
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                window.webkit.messageHandlers.termsurf.postMessage({action: 'escape'});
             }
         }, true);
         """
@@ -228,13 +228,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
         }
 
         switch action {
-        case "close":
-            logger.info("Webview \(self.webviewId) requested close via ctrl+c")
-            onClose?(self.webviewId)
-
-        case "background":
-            logger.info("Webview \(self.webviewId) requested background via ctrl+z")
-            // TODO: Implement backgrounding - hide webview and send SIGTSTP to shell
+        case "escape":
+            logger.info("Webview \(self.webviewId) requested escape (switch to footer)")
+            onEscapePressed?()
 
         default:
             logger.warning("Unknown termsurf action: \(action)")

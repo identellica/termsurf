@@ -4,15 +4,18 @@ import os
 
 private let logger = Logger(subsystem: "com.termsurf", category: "WebViewManager")
 
-/// Manages webview overlays and their association with terminal panes.
+/// Manages webview containers and their association with terminal panes.
 class WebViewManager {
     static let shared = WebViewManager()
 
     /// Mapping of pane ID to surface view (weak references)
     private var paneRegistry = [String: WeakSurfaceRef]()
 
-    /// Mapping of webview ID to overlay
-    private var webviews = [String: WebViewOverlay]()
+    /// Mapping of webview ID to container
+    private var containers = [String: WebViewContainer]()
+
+    /// Mapping of webview ID to pane ID (for focus restoration on close)
+    private var webviewToPaneId = [String: String]()
 
     /// Lock for thread-safe access
     private let lock = NSLock()
@@ -50,8 +53,8 @@ class WebViewManager {
 
     // MARK: - Webview Management
 
-    /// Create a webview overlay on a pane.
-    /// Returns the webview ID immediately. The actual webview creation happens asynchronously.
+    /// Create a webview container on a pane.
+    /// Returns the webview ID immediately. The actual container creation happens asynchronously.
     /// Returns nil if the pane doesn't exist.
     func createWebView(
         url: URL,
@@ -72,7 +75,7 @@ class WebViewManager {
         let webviewId = "wv-\(UUID().uuidString.prefix(8))"
 
         // Dispatch the actual UI work asynchronously - don't block!
-        // This allows the response to be sent immediately while the webview
+        // This allows the response to be sent immediately while the container
         // is created in the next run loop iteration.
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -86,28 +89,29 @@ class WebViewManager {
             }
             self.lock.unlock()
 
-            // Create the overlay on main thread
-            let overlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile)
-            overlay.onClose = { [weak self] id in
+            // Create the container on main thread
+            let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile)
+            container.onClose = { [weak self] id in
                 self?.closeWebView(id: id)
             }
 
-            // Add overlay to surface
-            overlay.frame = currentSurface.bounds
-            overlay.autoresizingMask = [.width, .height]
-            currentSurface.addSubview(overlay)
+            // Add container to surface
+            container.frame = currentSurface.bounds
+            container.autoresizingMask = [.width, .height]
+            currentSurface.addSubview(container)
 
-            // Make webview the first responder
-            overlay.window?.makeFirstResponder(overlay.webView)
+            // Focus footer by default (terminal mode)
+            container.focusFooter()
 
             self.lock.lock()
-            self.webviews[webviewId] = overlay
+            self.containers[webviewId] = container
+            self.webviewToPaneId[webviewId] = paneId
             self.lock.unlock()
 
             logger.info("Created webview \(webviewId) on pane \(paneId) with URL: \(url.absoluteString)")
         }
 
-        // Return ID immediately - the webview will be created asynchronously
+        // Return ID immediately - the container will be created asynchronously
         logger.info("Queued webview \(webviewId) for creation on pane \(paneId)")
         return webviewId
     }
@@ -115,57 +119,68 @@ class WebViewManager {
     /// Close a webview by ID.
     func closeWebView(id: String) {
         lock.lock()
-        let overlay = webviews.removeValue(forKey: id)
+        let container = containers.removeValue(forKey: id)
+        let paneId = webviewToPaneId.removeValue(forKey: id)
+        let surface = paneId.flatMap { paneRegistry[$0]?.surface }
         lock.unlock()
 
-        guard let overlay = overlay else {
+        guard let container = container else {
             logger.warning("Cannot close webview: \(id) not found")
             return
         }
 
         DispatchQueue.main.async {
-            overlay.removeFromSuperview()
+            container.removeFromSuperview()
+
+            // Restore focus to the terminal surface
+            if let surface = surface {
+                surface.window?.makeFirstResponder(surface)
+                logger.info("Restored focus to terminal for pane \(paneId ?? "unknown")")
+            }
         }
 
         logger.info("Closed webview: \(id)")
     }
 
-    /// Look up a webview by ID.
-    func lookupWebView(id: String) -> WebViewOverlay? {
+    /// Look up a webview container by ID.
+    func lookupContainer(id: String) -> WebViewContainer? {
         lock.lock()
         defer { lock.unlock() }
-        return webviews[id]
+        return containers[id]
     }
 
     /// Close all webviews associated with a pane.
     func closeWebViewsForPane(paneId: String) {
         lock.lock()
         // Find webviews associated with this pane
-        // For now, we don't track pane → webview associations
-        // This will be added if needed
+        let webviewIds = webviewToPaneId.filter { $0.value == paneId }.map { $0.key }
         lock.unlock()
+
+        for id in webviewIds {
+            closeWebView(id: id)
+        }
     }
 
     /// Hide a webview (for ctrl+z backgrounding).
     func hideWebView(id: String) {
         lock.lock()
-        let overlay = webviews[id]
+        let container = containers[id]
         lock.unlock()
 
         DispatchQueue.main.async {
-            overlay?.isHidden = true
+            container?.isHidden = true
         }
     }
 
     /// Show a webview (for fg foregrounding).
     func showWebView(id: String) {
         lock.lock()
-        let overlay = webviews[id]
+        let container = containers[id]
         lock.unlock()
 
         DispatchQueue.main.async {
-            overlay?.isHidden = false
-            overlay?.window?.makeFirstResponder(overlay?.webView)
+            container?.isHidden = false
+            container?.focusFooter()
         }
     }
 
