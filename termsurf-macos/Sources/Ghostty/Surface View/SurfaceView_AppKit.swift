@@ -1050,9 +1050,10 @@ extension Ghostty {
                     return
                 }
 
-                // i → switch to insert mode (edit URL)
-                if chars == "i" {
-                    Ghostty.logger.info("  - 'i' pressed, calling focusURLField()")
+                // i (without modifiers) → switch to insert mode (edit URL)
+                let hasModifiers = !event.modifierFlags.intersection([.control, .command, .option]).isEmpty
+                if chars == "i" && !hasModifiers {
+                    Ghostty.logger.info("  - 'i' pressed (no modifiers), calling focusURLField()")
                     container.focusURLField()
                     return
                 }
