@@ -320,90 +320,98 @@ termsurf open google.com
 # Response: {"id":"1","status":"ok","data":{"webviewId":"wv-123"}}
 ```
 
-### Phase 3D: Footer-Based Mode Switching + ctrl+c
+### Phase 3D: Control Bar Mode Switching + ctrl+c ✓
 
-**Goal:** Add footer-based UI with mode switching. ctrl+c closes webview when
-footer is focused.
+**Goal:** Add control bar UI with three-mode switching. ctrl+c closes webview
+when in control mode.
 
 **Architecture:**
 
 ```
 WebViewContainer (NSView)
 ├── WebViewOverlay (fills most of container)
-└── FooterView (bottom strip, ~24px)
+└── ControlBar (bottom strip, ~24px) - shows URL + mode hints
 ```
 
-- Two modes: footer focused (terminal mode) vs webview focused (browser mode)
-- Footer focused by default when webview opens
-- In footer mode: all terminal keybindings work naturally (ctrl+c, ctrl+h/j/k/l)
-- In webview mode: browser has full control, only Esc escapes
+- Three modes:
+  - **Control mode**: SurfaceView is first responder, all ghostty keybindings work
+  - **Browse mode**: WKWebView is first responder, browser has full control
+  - **Insert mode**: URL field is editable, Enter navigates, Esc cancels
+- Starts in browse mode when webview opens
+- Control bar shows current URL and mode-specific hints
 
 **Tasks:**
 
-- [ ] Create `WebViewContainer.swift`:
-  - [ ] Contains WebViewOverlay (top) + FooterView (bottom)
-  - [ ] Tracks current focus mode (footer vs webview)
-  - [ ] Manages focus transitions between footer and webview
+- [x] Create `WebViewContainer.swift`:
+  - [x] Contains WebViewOverlay (top) + ControlBar (bottom)
+  - [x] Tracks current focus mode (control/browse/insert)
+  - [x] Manages focus transitions between modes
 
-- [ ] Create `FooterView.swift`:
-  - [ ] Simple NSView with "TermSurf Browser" label (placeholder for future URL bar)
-  - [ ] Accepts first responder
-  - [ ] keyDown handles Enter → focus webview
-  - [ ] keyDown handles ctrl+c → close container (via callback)
+- [x] Create `ControlBar.swift`:
+  - [x] Shows URL on left (monospace font, truncates with ellipsis)
+  - [x] Shows mode hints on right
+  - [x] Insert mode: URL field becomes editable with text selected
+  - [x] NSTextFieldDelegate for Enter/Esc handling in insert mode
 
-- [ ] Update `WebViewOverlay.swift`:
-  - [ ] Remove ctrl+c and ctrl+z JS interception (no longer needed)
-  - [ ] Add Esc JS interception → notify container to focus footer
-  - [ ] Add callback `onEscapePressed` for mode switching
+- [x] Update `WebViewOverlay.swift`:
+  - [x] Esc JS interception → notify container to switch to control mode
+  - [x] Add callback `onEscapePressed` for mode switching
+  - [x] Add callback `onURLChanged` for URL updates
+  - [x] KVO observation on webView.url for navigation tracking
 
-- [ ] Update `WebViewManager.swift`:
-  - [ ] Create WebViewContainer instead of raw WebViewOverlay
-  - [ ] Track webviewId → paneId for focus restoration
-  - [ ] closeWebView() removes container and restores focus to terminal
+- [x] Update `WebViewManager.swift`:
+  - [x] Create WebViewContainer instead of raw WebViewOverlay
+  - [x] Track webviewId → paneId for focus restoration
+  - [x] closeWebView() removes container and restores focus to terminal
 
-- [ ] Add visual mode indicator:
-  - [ ] Footer dimmed (alphaValue ~0.5) when webview is focused
-  - [ ] Footer normal (alphaValue 1.0) when footer is focused
-  - [ ] Webview always stays at full opacity (user needs to see content)
+- [x] Update `SurfaceView_AppKit.swift`:
+  - [x] keyDown handles Enter → switch to browse mode
+  - [x] keyDown handles 'i' (no modifiers) → switch to insert mode
+  - [x] keyDown handles ctrl+c → close webview
+  - [x] performKeyEquivalent blocks ghostty keybindings in browse mode
+  - [x] cmd+alt+i opens Safari Web Inspector in browse mode
 
-**Test:**
+**Test:** ✓
 
 ```bash
 termsurf open google.com
-# Footer shows "TermSurf Browser", footer is focused (not dimmed)
-# Press Enter → webview is focused, footer dims
-# Press Esc → footer is focused again, footer undims
-# Press ctrl+c → webview closes, terminal has focus
-# Can also press ctrl+h/j/k/l to navigate panes (when footer focused)
+# Webview opens in browse mode, control bar shows URL
+# Press Esc → control mode, hints show "i to edit, enter to browse, ctrl+c to close"
+# Press Enter → browse mode, hints show "Esc to exit browser"
+# Press Esc then i → insert mode, URL is selected, can edit
+# Press Enter → navigates to URL, switches to browse mode
+# Press Esc then ctrl+c → webview closes, terminal has focus
 ```
 
-### Phase 3E: Verify Split Pane Navigation
+### Phase 3E: Verify Split Pane Navigation ✓
 
-**Goal:** Verify that pane navigation works with the footer-based approach.
+**Goal:** Verify that pane navigation works with the control bar approach.
 
-**Background:** With the footer-based approach, when footer is focused, all
-terminal keybindings should flow through the normal responder chain. This phase
-verifies that pane navigation "just works" without additional code.
+**Background:** With the control bar approach, when in control mode, all
+terminal keybindings flow through the normal responder chain. This phase
+verifies that pane navigation works correctly.
 
 **Tasks:**
 
-- [ ] Test ctrl+h/j/k/l navigation between terminal and webview panes
-- [ ] Verify focus moves correctly in both directions
-- [ ] If issues found, debug responder chain
+- [x] Test ctrl+h/j/k/l navigation between terminal and webview panes
+- [x] Verify focus moves correctly in both directions
+- [x] Fixed focus state sync issue after pane switching (syncToControlMode)
+- [x] Fixed viewDidMoveToWindow incorrectly switching to browse mode on split
 
-**Test:**
+**Test:** ✓
 
 ```bash
 # Open split pane (cmd+d), open webview in left pane
 termsurf open google.com
-# Footer should be focused by default
+# Press Esc to enter control mode
 # Press ctrl+l to move to right pane (terminal)
-# Press ctrl+h to move back to left pane (webview footer)
-# Expected: Focus moves correctly between panes
+# Press ctrl+h to move back to left pane (webview)
+# Expected: Focus moves correctly, webview stays in control mode
 ```
 
-**Note:** If this works without changes, mark complete. Future work will ensure
-all user-configured keybindings work.
+**Note:** Required fixes for focus state synchronization when pane hierarchy
+changes. See `syncToControlMode()` in WebViewContainer and the
+`didInitialFocus` flag to prevent unwanted mode switches.
 
 ### Phase 3F: Console Output Bridging
 
@@ -486,16 +494,16 @@ fg
 
 ### Phase 3 Summary
 
-| Phase | Goal                  | Test                                                          | Success Criteria          | Status |
-| ----- | --------------------- | ------------------------------------------------------------- | ------------------------- | ------ |
-| 3A    | Socket server         | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response             | ✓      |
-| 3B    | CLI tool              | `termsurf ping`                                               | "pong" output             | ✓      |
-| 3C    | Webview overlay       | `termsurf open google.com`                                    | Webview appears           | ✓      |
-| 3D    | Footer + ctrl+c       | Enter/Esc mode switch, ctrl+c close                           | Mode switching works      |        |
-| 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly     |        |
-| 3F    | Console bridging      | console.log in webview                                        | Output in terminal        |        |
-| 3G    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works        |        |
-| 3H    | Multi-webview         | Open in two panes                                             | Independent operation     |        |
+| Phase | Goal                  | Test                                                          | Success Criteria      | Status |
+| ----- | --------------------- | ------------------------------------------------------------- | --------------------- | ------ |
+| 3A    | Socket server         | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response         | ✓      |
+| 3B    | CLI tool              | `termsurf ping`                                               | "pong" output         | ✓      |
+| 3C    | Webview overlay       | `termsurf open google.com`                                    | Webview appears       | ✓      |
+| 3D    | Control bar + ctrl+c  | Enter/Esc/i mode switch, ctrl+c close                         | Mode switching works  | ✓      |
+| 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly | ✓      |
+| 3F    | Console bridging      | console.log in webview                                        | Output in terminal    |        |
+| 3G    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    |        |
+| 3H    | Multi-webview         | Open in two panes                                             | Independent operation |        |
 
 ### Key Files Reference
 
@@ -515,11 +523,10 @@ Sources/Features/Socket/
 └── CommandHandler.swift         # Route commands to handlers
 
 Sources/Features/WebView/
-├── WebViewContainer.swift       # Container with footer + webview, mode switching
-├── FooterView.swift             # Footer bar (placeholder for URL bar)
+├── WebViewContainer.swift       # Container with control bar + webview, 3-mode switching
+├── ControlBar.swift             # URL display + mode hints, insert mode editing
 ├── WebViewOverlay.swift         # WKWebView with console capture
-├── WebViewManager.swift         # Track webviews by ID
-└── ConsoleCapture.swift         # JS injection
+└── WebViewManager.swift         # Track webviews by ID
 ```
 
 - Shell spawning code - Set `TERMSURF_SOCKET` and `TERMSURF_PANE_ID` env vars
@@ -552,12 +559,11 @@ func createWebView(profileName: String?) -> WKWebView {
 }
 ```
 
-- [ ] Implement profile support:
-  - [ ] Map profile names to deterministic UUIDs
-  - [ ] Store profile name → UUID mapping (or use hash-based generation)
-  - [ ] Default profile uses `.default()` data store
-  - [ ] Named profiles use `WKWebsiteDataStore(forIdentifier:)`
-  - [ ] Support `--profile NAME` flag in `termsurf open` command
+- [x] Implement profile support:
+  - [x] Map profile names to deterministic UUIDs (hash-based generation)
+  - [x] Default profile uses `.default()` data store
+  - [x] Named profiles use `WKWebsiteDataStore(forIdentifier:)` (macOS 14+)
+  - [x] Support `--profile NAME` flag in `termsurf open` command
   - [ ] Consider `--incognito` flag using `.nonPersistent()` for ephemeral
         sessions
 - [ ] Profile management:
@@ -566,10 +572,11 @@ func createWebView(profileName: String?) -> WKWebView {
 
 ### Developer Tools
 
-- [ ] Enable Safari Web Inspector for WKWebView:
-  - [ ] Set
+- [x] Enable Safari Web Inspector for WKWebView:
+  - [x] Set
         `webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")`
-  - [ ] Document how to access (Develop menu in Safari)
+  - [x] cmd+alt+i opens Web Inspector in browse mode (via private `_inspector` API)
+  - [x] Documented in docs/keybindings.md
 - [ ] Consider command: `termsurf devtools` to open inspector
 
 ### Additional Features
@@ -584,7 +591,7 @@ func createWebView(profileName: String?) -> WKWebView {
 - [ ] Update ARCHITECTURE.md with browser pane details
 - [ ] Document console bridging behavior
 - [ ] Document profile system (if implemented)
-- [ ] Document keyboard shortcuts
+- [x] Document keyboard shortcuts (docs/keybindings.md)
 - [ ] Add usage examples to README
 
 ---
