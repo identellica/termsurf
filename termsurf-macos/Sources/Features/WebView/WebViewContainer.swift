@@ -25,6 +25,9 @@ class WebViewContainer: NSView {
     /// Height of the control bar
     private let controlBarHeight: CGFloat = 24
 
+    /// Track whether initial focus setup has been done
+    private var didInitialFocus = false
+
     /// Current focus mode
     enum FocusMode {
         case control
@@ -77,7 +80,9 @@ class WebViewContainer: NSView {
         super.viewDidMoveToWindow()
         logger.info("viewDidMoveToWindow called, window: \(String(describing: self.window))")
 
-        if window != nil {
+        // Only do initial focus setup once (not when view hierarchy changes due to splits)
+        if window != nil && !didInitialFocus {
+            didInitialFocus = true
             // When we're added to a window, ensure webview has focus (start in browse mode)
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }

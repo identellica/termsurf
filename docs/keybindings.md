@@ -34,7 +34,7 @@ the browser, not libghostty. We handle this with a **modal approach**:
    - Enter switches to browse mode
    - i switches to insert mode (edit URL)
    - ctrl+c closes the webview
-   - ControlBar displays: "i to edit, Enter to browse, ctrl+c to close"
+   - ControlBar displays: "i to edit, enter to browse, ctrl+c to close"
 
 2. **Browse mode** (browser has full control)
    - WKWebView is the first responder
@@ -119,14 +119,15 @@ When a URL is submitted from insert mode, it is normalized before navigation:
 
 ### Current Hardcoded Bindings
 
-| Context | Key    | Action                          |
-| ------- | ------ | ------------------------------- |
-| Control | Enter  | Switch to browse                |
-| Control | i      | Switch to insert (edit URL)     |
-| Control | ctrl+c | Close webview                   |
-| Browse  | Esc    | Switch to control               |
-| Insert  | Enter  | Navigate to URL, switch to browse |
-| Insert  | Esc    | Cancel edit, switch to control  |
+| Context | Key       | Action                            |
+| ------- | --------- | --------------------------------- |
+| Control | Enter     | Switch to browse                  |
+| Control | i         | Switch to insert (edit URL)       |
+| Control | ctrl+c    | Close webview                     |
+| Browse  | Esc       | Switch to control                 |
+| Browse  | cmd+alt+i | Open Safari Web Inspector         |
+| Insert  | Enter     | Navigate to URL, switch to browse |
+| Insert  | Esc       | Cancel edit, switch to control    |
 
 These are not configurable via ghostty config. This may change in the future if
 we add TermSurf-specific configuration.
