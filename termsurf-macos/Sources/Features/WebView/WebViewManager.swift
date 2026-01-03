@@ -17,6 +17,12 @@ class WebViewManager {
     /// Mapping of webview ID to pane ID (for focus restoration on close)
     private var webviewToPaneId = [String: String]()
 
+    /// Mapping of webview ID to socket connection (weak to avoid retain cycles)
+    private var webviewConnections = [String: WeakConnectionRef]()
+
+    /// Mapping of webview ID to request ID (for sending events)
+    private var webviewRequestIds = [String: String]()
+
     /// Lock for thread-safe access
     private let lock = NSLock()
 
@@ -56,10 +62,18 @@ class WebViewManager {
     /// Create a webview container on a pane.
     /// Returns the webview ID immediately. The actual container creation happens asynchronously.
     /// Returns nil if the pane doesn't exist.
+    /// - Parameters:
+    ///   - url: The URL to load
+    ///   - paneId: The pane to attach the webview to
+    ///   - profile: Optional browser profile for session isolation
+    ///   - connection: Optional socket connection for sending console events
+    ///   - requestId: Request ID for event correlation (required if connection is provided)
     func createWebView(
         url: URL,
         paneId: String,
-        profile: String? = nil
+        profile: String? = nil,
+        connection: SocketConnection? = nil,
+        requestId: String? = nil
     ) -> String? {
         // Check if pane exists first
         lock.lock()
@@ -73,6 +87,16 @@ class WebViewManager {
 
         // Generate unique webview ID synchronously
         let webviewId = "wv-\(UUID().uuidString.prefix(8))"
+
+        // Store connection reference if provided (before async to ensure it's captured)
+        if let connection = connection, let requestId = requestId {
+            lock.lock()
+            webviewConnections[webviewId] = WeakConnectionRef(connection)
+            webviewRequestIds[webviewId] = requestId
+            // Subscribe connection to events for this request
+            connection.subscribeToEvents(requestId: requestId)
+            lock.unlock()
+        }
 
         // Dispatch the actual UI work asynchronously - don't block!
         // This allows the response to be sent immediately while the container
@@ -93,6 +117,11 @@ class WebViewManager {
             let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile)
             container.onClose = { [weak self] id in
                 self?.closeWebView(id: id)
+            }
+
+            // Wire up console output to send events via socket
+            container.onConsoleOutput = { [weak self] level, message in
+                self?.sendConsoleEvent(webviewId: webviewId, level: level, message: message)
             }
 
             // Add container to surface
@@ -122,11 +151,23 @@ class WebViewManager {
         let container = containers.removeValue(forKey: id)
         let paneId = webviewToPaneId.removeValue(forKey: id)
         let surface = paneId.flatMap { paneRegistry[$0]?.surface }
+        let connectionRef = webviewConnections.removeValue(forKey: id)
+        let requestId = webviewRequestIds.removeValue(forKey: id)
         lock.unlock()
 
         guard let container = container else {
             logger.warning("Cannot close webview: \(id) not found")
             return
+        }
+
+        // Send closed event to CLI if connection exists
+        if let connection = connectionRef?.connection, let requestId = requestId {
+            let event = TermsurfEvent(id: requestId, event: "closed", data: [
+                "webviewId": .string(id),
+                "exitCode": .int(0)
+            ])
+            connection.sendEvent(event)
+            logger.info("Sent closed event to CLI for webview \(id)")
         }
 
         DispatchQueue.main.async {
@@ -140,6 +181,25 @@ class WebViewManager {
         }
 
         logger.info("Closed webview: \(id)")
+    }
+
+    /// Send a console event to the CLI for a webview
+    private func sendConsoleEvent(webviewId: String, level: WebViewOverlay.ConsoleLevel, message: String) {
+        lock.lock()
+        let connectionRef = webviewConnections[webviewId]
+        let requestId = webviewRequestIds[webviewId]
+        lock.unlock()
+
+        guard let connection = connectionRef?.connection, let requestId = requestId else {
+            // No connection, fall back to stdout/stderr (handled by WebViewOverlay default)
+            return
+        }
+
+        let event = TermsurfEvent(id: requestId, event: "console", data: [
+            "level": .string(level.rawValue),
+            "message": .string(message)
+        ])
+        connection.sendEvent(event)
     }
 
     /// Look up a webview container by ID.
@@ -203,5 +263,14 @@ private class WeakSurfaceRef {
 
     init(_ surface: Ghostty.SurfaceView) {
         self.surface = surface
+    }
+}
+
+/// Weak reference wrapper for SocketConnection to avoid retain cycles.
+private class WeakConnectionRef {
+    weak var connection: SocketConnection?
+
+    init(_ connection: SocketConnection) {
+        self.connection = connection
     }
 }

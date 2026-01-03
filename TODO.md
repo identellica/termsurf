@@ -413,24 +413,33 @@ termsurf open google.com
 changes. See `syncToControlMode()` in WebViewContainer and the
 `didInitialFocus` flag to prevent unwanted mode switches.
 
-### Phase 3F: Console Output Bridging
+### Phase 3F: Console Output Bridging ✓
 
-**Goal:** Route webview console.log/error to the terminal's PTY.
+**Goal:** Route webview console.log/error to the terminal via CLI stdout/stderr.
+
+**Implementation:** Console events are streamed via socket to the blocking CLI, which
+writes to its stdout/stderr. This avoids needing PTY access and leverages the
+existing socket infrastructure.
 
 **Tasks:**
 
-- [ ] Get PTY file descriptor for the pane hosting the webview
-- [ ] Modify console message handler to write to PTY instead of stdout:
-  - [ ] Format: `[log] message\n`, `[error] message\n`, etc.
-- [ ] Handle high-frequency console output (buffering if needed)
+- [x] Add console callback to WebViewContainer
+- [x] Track socket connection per webview in WebViewManager
+- [x] Send console events via socket to CLI
+- [x] CLI enters event loop after open succeeds
+- [x] CLI writes console events to stdout/stderr based on level:
+  - `log`, `info` → stdout
+  - `warn`, `error` → stderr
+- [x] CLI exits when webview closes (receives `closed` event)
 
-**Test:**
+**Test:** ✓
 
 ```bash
-./zig-out/bin/termsurf open https://example.com
+termsurf open https://example.com
 # Open Safari Web Inspector, run: console.log("Hello")
-# Close webview manually
-# Expected: Terminal shows "[log] Hello"
+# Expected: "Hello" appears in terminal stdout
+# Press Esc, ctrl+c to close webview
+# Expected: CLI exits with code 0
 ```
 
 ### Phase 3G: Background/Foreground (ctrl+z / fg)
@@ -501,7 +510,7 @@ fg
 | 3C    | Webview overlay       | `termsurf open google.com`                                    | Webview appears       | ✓      |
 | 3D    | Control bar + ctrl+c  | Enter/Esc/i mode switch, ctrl+c close                         | Mode switching works  | ✓      |
 | 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly | ✓      |
-| 3F    | Console bridging      | console.log in webview                                        | Output in terminal    |        |
+| 3F    | Console bridging      | console.log in webview                                        | Output in terminal    | ✓      |
 | 3G    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    |        |
 | 3H    | Multi-webview         | Open in two panes                                             | Independent operation |        |
 

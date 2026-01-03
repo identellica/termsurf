@@ -137,7 +137,23 @@ fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
     // Get pane ID from environment
     const paneId = std.posix.getenv("TERMSURF_PANE_ID");
 
-    const response = try sendOpenRequest(allocator, url, paneId, profile);
+    // Get socket path from environment
+    const socketPath = std.posix.getenv("TERMSURF_SOCKET") orelse {
+        std.debug.print("Error: Not running inside TermSurf (TERMSURF_SOCKET not set)\n", .{});
+        std.process.exit(1);
+    };
+
+    // Connect to socket - keep connection open for event streaming
+    const socket = try connectToSocket(socketPath);
+    defer posix.close(socket);
+
+    // Build and send request
+    const request = try buildOpenRequest(allocator, url, paneId, profile);
+    defer allocator.free(request);
+    _ = try posix.write(socket, request);
+
+    // Read response
+    const response = try readResponse(allocator, socket);
     defer allocator.free(response);
 
     // Parse response
@@ -146,29 +162,25 @@ fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
     });
     defer parsed.deinit();
 
-    var stdout_buffer: [2048]u8 = undefined;
-    var stdout_writer = std.fs.File.stdout().writer(&stdout_buffer);
-    const stdout = &stdout_writer.interface;
-
-    var stderr_buffer: [1024]u8 = undefined;
-    var stderr_writer = std.fs.File.stderr().writer(&stderr_buffer);
-    const stderr = &stderr_writer.interface;
-
     if (std.mem.eql(u8, parsed.value.status, "ok")) {
+        // Extract webview ID for logging
+        var webviewIdStr: ?[]const u8 = null;
         if (parsed.value.data) |dataObj| {
             if (dataObj.object.get("webviewId")) |wvId| {
                 if (wvId == .string) {
-                    try stdout.print("Opened webview: {s}\n", .{wvId.string});
-                }
-            }
-            if (dataObj.object.get("message")) |msg| {
-                if (msg == .string) {
-                    try stdout.print("{s}\n", .{msg.string});
+                    webviewIdStr = wvId.string;
                 }
             }
         }
-        try stdout.flush();
+
+        // Enter event loop - block and stream console output until webview closes
+        const exitCode = try eventLoop(allocator, socket, webviewIdStr);
+        std.process.exit(exitCode);
     } else {
+        var stderr_buffer: [1024]u8 = undefined;
+        var stderr_writer = std.fs.File.stderr().writer(&stderr_buffer);
+        const stderr = &stderr_writer.interface;
+
         if (parsed.value.@"error") |err| {
             try stderr.print("Error: {s}\n", .{err});
         } else {
@@ -177,6 +189,99 @@ fn cmdOpen(allocator: std.mem.Allocator, args: []const []const u8) !void {
         try stderr.flush();
         std.process.exit(1);
     }
+}
+
+/// Event loop: read events from socket and handle them
+/// Returns exit code when webview closes
+fn eventLoop(allocator: std.mem.Allocator, socket: posix.socket_t, webviewId: ?[]const u8) !u8 {
+    _ = webviewId; // May be used for logging in the future
+
+    var buffer: [8192]u8 = undefined;
+    var accumulated: std.ArrayListUnmanaged(u8) = .empty;
+    defer accumulated.deinit(allocator);
+
+    while (true) {
+        const bytesRead = posix.read(socket, &buffer) catch |err| {
+            // Connection closed or error
+            if (err == error.BrokenPipe or err == error.ConnectionResetByPeer) {
+                return 0;
+            }
+            return err;
+        };
+
+        if (bytesRead == 0) {
+            // Server closed connection
+            return 0;
+        }
+
+        try accumulated.appendSlice(allocator, buffer[0..bytesRead]);
+
+        // Process all complete lines
+        while (std.mem.indexOfScalar(u8, accumulated.items, '\n')) |newlineIdx| {
+            const line = accumulated.items[0..newlineIdx];
+
+            // Parse and handle the event
+            const exitCode = try handleEvent(line);
+            if (exitCode) |code| {
+                return code;
+            }
+
+            // Remove processed line from buffer
+            const remaining = accumulated.items[newlineIdx + 1 ..];
+            std.mem.copyForwards(u8, accumulated.items[0..remaining.len], remaining);
+            accumulated.shrinkRetainingCapacity(remaining.len);
+        }
+    }
+}
+
+/// Handle a single event, returns exit code if webview closed
+fn handleEvent(line: []const u8) !?u8 {
+    const parsed = std.json.parseFromSlice(Event, std.heap.page_allocator, line, .{
+        .ignore_unknown_fields = true,
+    }) catch {
+        // Not a valid event, ignore
+        return null;
+    };
+    defer parsed.deinit();
+
+    const event = parsed.value;
+
+    if (std.mem.eql(u8, event.event, "console")) {
+        // Console output event
+        if (event.data) |dataObj| {
+            const level = if (dataObj.object.get("level")) |l| l.string else "log";
+            const message = if (dataObj.object.get("message")) |m| m.string else "";
+
+            // Route to stdout or stderr based on level
+            if (std.mem.eql(u8, level, "error") or std.mem.eql(u8, level, "warn")) {
+                var stderr_buffer: [8192]u8 = undefined;
+                var stderr_writer = std.fs.File.stderr().writer(&stderr_buffer);
+                const stderr = &stderr_writer.interface;
+                try stderr.print("{s}\n", .{message});
+                try stderr.flush();
+            } else {
+                var stdout_buffer: [8192]u8 = undefined;
+                var stdout_writer = std.fs.File.stdout().writer(&stdout_buffer);
+                const stdout = &stdout_writer.interface;
+                try stdout.print("{s}\n", .{message});
+                try stdout.flush();
+            }
+        }
+        return null;
+    } else if (std.mem.eql(u8, event.event, "closed")) {
+        // Webview closed event - extract exit code and return
+        var exitCode: u8 = 0;
+        if (event.data) |dataObj| {
+            if (dataObj.object.get("exitCode")) |code| {
+                if (code == .integer) {
+                    exitCode = @intCast(@max(0, @min(255, code.integer)));
+                }
+            }
+        }
+        return exitCode;
+    }
+
+    return null;
 }
 
 fn cmdClose(allocator: std.mem.Allocator, args: []const []const u8) !void {
@@ -223,13 +328,20 @@ const Response = struct {
     @"error": ?[]const u8 = null,
 };
 
+const Event = struct {
+    id: []const u8,
+    event: []const u8,
+    data: ?std.json.Value = null,
+};
+
 fn sendPingRequest(allocator: std.mem.Allocator) ![]u8 {
     return sendJsonRequest(allocator, "{\"id\":\"1\",\"action\":\"ping\"}\n");
 }
 
-fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]const u8, profile: ?[]const u8) ![]u8 {
+/// Build an open request JSON string (does not send it)
+fn buildOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]const u8, profile: ?[]const u8) ![]u8 {
     var jsonBuf: std.ArrayListUnmanaged(u8) = .empty;
-    defer jsonBuf.deinit(allocator);
+    errdefer jsonBuf.deinit(allocator);
 
     const writer = jsonBuf.writer(allocator);
     try writer.writeAll("{\"id\":\"1\",\"action\":\"open\"");
@@ -243,6 +355,7 @@ fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]co
     try writer.writeAll(",\"data\":{");
 
     // URL is optional - if not provided, app uses default homepage
+    var hasField = false;
     if (url) |u| {
         try writer.writeAll("\"url\":\"");
         // Escape URL for JSON
@@ -254,13 +367,11 @@ fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]co
             }
         }
         try writer.writeAll("\"");
-
-        if (profile != null) {
-            try writer.writeAll(",");
-        }
+        hasField = true;
     }
 
     if (profile) |p| {
+        if (hasField) try writer.writeAll(",");
         try writer.writeAll("\"profile\":\"");
         try writer.writeAll(p);
         try writer.writeAll("\"");
@@ -268,7 +379,33 @@ fn sendOpenRequest(allocator: std.mem.Allocator, url: ?[]const u8, paneId: ?[]co
 
     try writer.writeAll("}}\n");
 
-    return sendJsonRequest(allocator, jsonBuf.items);
+    return try jsonBuf.toOwnedSlice(allocator);
+}
+
+/// Read a single response from socket (up to newline)
+fn readResponse(allocator: std.mem.Allocator, socket: posix.socket_t) ![]u8 {
+    var responseBuf: std.ArrayListUnmanaged(u8) = .empty;
+    errdefer responseBuf.deinit(allocator);
+
+    var readBuf: [4096]u8 = undefined;
+    while (true) {
+        const bytesRead = try posix.read(socket, &readBuf);
+        if (bytesRead == 0) break;
+
+        try responseBuf.appendSlice(allocator, readBuf[0..bytesRead]);
+
+        // Check for newline (end of response)
+        if (std.mem.indexOfScalar(u8, responseBuf.items, '\n')) |_| {
+            break;
+        }
+    }
+
+    // Remove trailing newline if present
+    if (responseBuf.items.len > 0 and responseBuf.items[responseBuf.items.len - 1] == '\n') {
+        _ = responseBuf.pop();
+    }
+
+    return try responseBuf.toOwnedSlice(allocator);
 }
 
 fn sendCloseRequest(allocator: std.mem.Allocator, paneId: ?[]const u8, webviewId: ?[]const u8) ![]u8 {

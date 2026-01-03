@@ -10,7 +10,10 @@ class CommandHandler {
     private init() {}
 
     /// Handle a request and return a response
-    func handle(_ request: TermsurfRequest) -> TermsurfResponse {
+    /// - Parameters:
+    ///   - request: The incoming request
+    ///   - connection: The socket connection (optional, used for streaming events)
+    func handle(_ request: TermsurfRequest, connection: SocketConnection? = nil) -> TermsurfResponse {
         logger.info("Handling request: action=\(request.action) id=\(request.id)")
 
         switch request.action {
@@ -18,7 +21,7 @@ class CommandHandler {
             return handlePing(request)
 
         case "open":
-            return handleOpen(request)
+            return handleOpen(request, connection: connection)
 
         case "close":
             return handleClose(request)
@@ -45,7 +48,7 @@ class CommandHandler {
     /// Default homepage when no URL is provided
     private static let defaultHomepage = "https://hallucipedia.com"
 
-    private func handleOpen(_ request: TermsurfRequest) -> TermsurfResponse {
+    private func handleOpen(_ request: TermsurfRequest, connection: SocketConnection? = nil) -> TermsurfResponse {
         guard let paneId = request.paneId else {
             return .error(id: request.id, message: "Missing paneId")
         }
@@ -63,10 +66,13 @@ class CommandHandler {
         logger.info("Open webview: url=\(normalizedUrlString) paneId=\(paneId) profile=\(profile ?? "default")")
 
         // Create webview - WebViewManager handles main thread dispatch
+        // Pass connection for console event streaming
         let webviewId = WebViewManager.shared.createWebView(
             url: url,
             paneId: paneId,
-            profile: profile
+            profile: profile,
+            connection: connection,
+            requestId: request.id
         )
 
         if let webviewId = webviewId {

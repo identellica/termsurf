@@ -104,9 +104,10 @@ class SocketConnection {
             logger.debug("Received request: \(request.action) id=\(request.id)")
 
             // Handle on main thread for UI operations
+            // Pass self for connection-aware handlers (e.g., open with console streaming)
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                let response = CommandHandler.shared.handle(request)
+                let response = CommandHandler.shared.handle(request, connection: self)
                 self.sendResponse(response)
             }
         } catch {

@@ -326,17 +326,23 @@ Console output is captured via JavaScript injection at document start:
 
 ### Output Routing
 
-Currently, console output is written to stdout/stderr of the TermSurf app
-process. Future work (Phase 3F) will route output to the PTY of the pane hosting
-the webview, so it appears inline with other terminal output.
+Console output is streamed via the Unix socket to the blocking CLI process. The
+CLI writes to its stdout/stderr, which appears in the terminal. This approach
+avoids direct PTY access while still routing output to the correct terminal.
+
+Flow:
+1. WebView console.log() → Swift WKScriptMessageHandler
+2. Swift sends `{"event":"console","data":{"level":"log","message":"..."}}` via socket
+3. CLI receives event, writes to stdout (or stderr for warn/error)
+4. Output appears in terminal
 
 ### Current Implementation Status
 
 | Feature                     | Status      |
 | --------------------------- | ----------- |
 | Console capture (JS)        | Implemented |
-| stdout/stderr routing       | Planned     |
-| PTY integration             | Planned     |
+| stdout/stderr routing       | Implemented |
+| CLI event streaming         | Implemented |
 | `--api` flag                | Planned     |
 | `window.termsurf.exit()`    | Planned     |
 | Environment access          | Future      |

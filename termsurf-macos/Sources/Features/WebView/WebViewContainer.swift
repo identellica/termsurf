@@ -22,6 +22,13 @@ class WebViewContainer: NSView {
     /// Called when the webview should close
     var onClose: ((String) -> Void)?
 
+    /// Called when console output is received (level, message)
+    var onConsoleOutput: ((WebViewOverlay.ConsoleLevel, String) -> Void)? {
+        didSet {
+            webViewOverlay.onConsoleOutput = onConsoleOutput
+        }
+    }
+
     /// Height of the control bar
     private let controlBarHeight: CGFloat = 24
 
