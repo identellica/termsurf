@@ -23,6 +23,10 @@ class WebViewManager {
     /// Mapping of webview ID to request ID (for sending events)
     private var webviewRequestIds = [String: String]()
 
+    /// Ordered list of webview IDs per pane (index 0 = bottom, last = top)
+    /// Used for stacking multiple webviews on the same pane
+    private var paneStacks = [String: [String]]()
+
     /// Lock for thread-safe access
     private let lock = NSLock()
 
@@ -100,6 +104,16 @@ class WebViewManager {
             lock.unlock()
         }
 
+        // Add to pane stack and calculate position (before async to ensure order)
+        lock.lock()
+        if paneStacks[paneId] == nil {
+            paneStacks[paneId] = []
+        }
+        paneStacks[paneId]!.append(webviewId)
+        let stackPosition = paneStacks[paneId]!.count
+        let stackTotal = stackPosition  // At creation time, this is the newest
+        lock.unlock()
+
         // Dispatch the actual UI work asynchronously - don't block!
         // This allows the response to be sent immediately while the container
         // is created in the next run loop iteration.
@@ -111,12 +125,18 @@ class WebViewManager {
             guard let currentSurface = self.paneRegistry[paneId]?.surface else {
                 self.lock.unlock()
                 logger.warning("Surface for pane \(paneId) no longer exists")
+                // Remove from stack since we couldn't create it
+                if var stack = self.paneStacks[paneId] {
+                    stack.removeAll { $0 == webviewId }
+                    self.paneStacks[paneId] = stack.isEmpty ? nil : stack
+                }
                 return
             }
             self.lock.unlock()
 
-            // Create the container on main thread
-            let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile, jsApi: jsApi)
+            // Create the container on main thread with stack info
+            let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile, jsApi: jsApi,
+                                             stackPosition: stackPosition, stackTotal: stackTotal)
             container.onClose = { [weak self] id, exitCode in
                 self?.closeWebView(id: id, exitCode: exitCode)
             }
@@ -137,9 +157,19 @@ class WebViewManager {
             self.lock.lock()
             self.containers[webviewId] = container
             self.webviewToPaneId[webviewId] = paneId
+
+            // Update stack totals for all webviews on this pane
+            if let stack = self.paneStacks[paneId] {
+                let newTotal = stack.count
+                for (index, existingId) in stack.enumerated() {
+                    if let existingContainer = self.containers[existingId] {
+                        existingContainer.updateStackInfo(position: index + 1, total: newTotal)
+                    }
+                }
+            }
             self.lock.unlock()
 
-            logger.info("Created webview \(webviewId) on pane \(paneId) with URL: \(url.absoluteString)")
+            logger.info("Created webview \(webviewId) on pane \(paneId) with URL: \(url.absoluteString) [stack: \(stackPosition)/\(stackTotal)]")
         }
 
         // Return ID immediately - the container will be created asynchronously
@@ -158,6 +188,24 @@ class WebViewManager {
         let surface = paneId.flatMap { paneRegistry[$0]?.surface }
         let connectionRef = webviewConnections.removeValue(forKey: id)
         let requestId = webviewRequestIds.removeValue(forKey: id)
+
+        // Remove from pane stack and update remaining webviews
+        var remainingContainers: [(WebViewContainer, Int, Int)] = []
+        if let paneId = paneId, var stack = paneStacks[paneId] {
+            stack.removeAll { $0 == id }
+            if stack.isEmpty {
+                paneStacks.removeValue(forKey: paneId)
+            } else {
+                paneStacks[paneId] = stack
+                // Collect remaining containers to update (while holding lock)
+                let newTotal = stack.count
+                for (index, webviewId) in stack.enumerated() {
+                    if let existingContainer = containers[webviewId] {
+                        remainingContainers.append((existingContainer, index + 1, newTotal))
+                    }
+                }
+            }
+        }
         lock.unlock()
 
         guard let container = container else {
@@ -178,8 +226,13 @@ class WebViewManager {
         DispatchQueue.main.async {
             container.removeFromSuperview()
 
-            // Restore focus to the terminal surface
-            if let surface = surface {
+            // Update stack info for remaining webviews on this pane
+            for (existingContainer, position, total) in remainingContainers {
+                existingContainer.updateStackInfo(position: position, total: total)
+            }
+
+            // Restore focus to the terminal surface (only if no webviews remain on this pane)
+            if remainingContainers.isEmpty, let surface = surface {
                 surface.window?.makeFirstResponder(surface)
                 logger.info("Restored focus to terminal for pane \(paneId ?? "unknown")")
             }

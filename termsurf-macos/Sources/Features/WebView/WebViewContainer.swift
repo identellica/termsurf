@@ -35,6 +35,12 @@ class WebViewContainer: NSView {
     /// Track whether initial focus setup has been done
     private var didInitialFocus = false
 
+    /// Stack position (1-indexed, 1 = bottom of stack)
+    private(set) var stackPosition: Int = 1
+
+    /// Total number of webviews in the stack
+    private(set) var stackTotal: Int = 1
+
     /// Current focus mode
     enum FocusMode {
         case control
@@ -58,8 +64,11 @@ class WebViewContainer: NSView {
 
     // MARK: - Initialization
 
-    init(url: URL, webviewId: String, profile: String? = nil, jsApi: Bool = false) {
+    init(url: URL, webviewId: String, profile: String? = nil, jsApi: Bool = false,
+         stackPosition: Int = 1, stackTotal: Int = 1) {
         self.webviewId = webviewId
+        self.stackPosition = stackPosition
+        self.stackTotal = stackTotal
         self.webViewOverlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile, jsApi: jsApi)
         self.controlBar = ControlBar()
         super.init(frame: .zero)
@@ -70,7 +79,10 @@ class WebViewContainer: NSView {
         // Ensure initial visual state is correct
         updateFocusVisuals()
 
-        logger.info("WebViewContainer \(webviewId) created with jsApi=\(jsApi)")
+        // Set initial stack info on control bar
+        controlBar.updateStackInfo(position: stackPosition, total: stackTotal)
+
+        logger.info("WebViewContainer \(webviewId) created with jsApi=\(jsApi) [stack: \(stackPosition)/\(stackTotal)]")
     }
 
     required init?(coder: NSCoder) {
@@ -269,6 +281,17 @@ class WebViewContainer: NSView {
         }
         controlBar.updateModeText(mode: mode)
         logger.debug("Focus mode: \(String(describing: self.focusMode))")
+    }
+
+    // MARK: - Stack Management
+
+    /// Update the stack position and total for this webview.
+    /// Called by WebViewManager when webviews are added/removed from the pane.
+    func updateStackInfo(position: Int, total: Int) {
+        self.stackPosition = position
+        self.stackTotal = total
+        controlBar.updateStackInfo(position: position, total: total)
+        logger.debug("WebViewContainer \(self.webviewId) stack updated: \(position)/\(total)")
     }
 
     // MARK: - Helpers

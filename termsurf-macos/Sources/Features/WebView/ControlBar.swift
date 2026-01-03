@@ -7,7 +7,10 @@ private let logger = Logger(subsystem: "com.termsurf", category: "ControlBar")
 /// Displays URL on the left (truncated with ellipsis) and mode hint on the right.
 /// Supports insert mode for URL editing.
 class ControlBar: NSView, NSTextFieldDelegate {
-    /// The URL text field (left side, truncates with ellipsis, editable in insert mode)
+    /// Stack indicator label (left side, shows "(1/2)" etc. when stacked)
+    private let stackLabel: NSTextField
+
+    /// The URL text field (after stack label, truncates with ellipsis, editable in insert mode)
     private let urlField: NSTextField
 
     /// The mode hint label (right side, fixed width)
@@ -19,6 +22,12 @@ class ControlBar: NSView, NSTextFieldDelegate {
     /// Whether we're currently in insert mode
     private(set) var isInsertMode: Bool = false
 
+    /// Current stack position (1-indexed)
+    private var stackPosition: Int = 1
+
+    /// Total number of webviews in the stack
+    private var stackTotal: Int = 1
+
     /// Callback when URL is submitted (Enter pressed in insert mode)
     var onURLSubmitted: ((String) -> Void)?
 
@@ -28,6 +37,7 @@ class ControlBar: NSView, NSTextFieldDelegate {
     // MARK: - Initialization
 
     override init(frame: NSRect) {
+        stackLabel = NSTextField(labelWithString: "")
         urlField = NSTextField(string: "")
         modeLabel = NSTextField(labelWithString: "")
         super.init(frame: frame)
@@ -45,7 +55,17 @@ class ControlBar: NSView, NSTextFieldDelegate {
         wantsLayer = true
         layer?.backgroundColor = NSColor(white: 0.15, alpha: 1.0).cgColor
 
-        // URL field styling (left side, truncates, monospace font)
+        // Stack label styling (left side, shows stack position when multiple webviews)
+        stackLabel.textColor = NSColor(white: 0.9, alpha: 1.0)
+        stackLabel.font = .monospacedSystemFont(ofSize: 11, weight: .medium)
+        stackLabel.isBezeled = false
+        stackLabel.drawsBackground = false
+        stackLabel.isEditable = false
+        stackLabel.isSelectable = false
+        stackLabel.isHidden = true  // Hidden by default (only shown when stacked)
+        addSubview(stackLabel)
+
+        // URL field styling (after stack label, truncates, monospace font)
         urlField.textColor = NSColor(white: 0.7, alpha: 1.0)
         urlField.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         urlField.isBezeled = false
@@ -100,6 +120,20 @@ class ControlBar: NSView, NSTextFieldDelegate {
         actualURL = url
         if !isInsertMode {
             urlField.stringValue = url?.absoluteString ?? ""
+        }
+        needsLayout = true
+    }
+
+    /// Update the stack indicator (called when webviews are added/removed from the pane)
+    func updateStackInfo(position: Int, total: Int) {
+        self.stackPosition = position
+        self.stackTotal = total
+
+        if total > 1 {
+            stackLabel.stringValue = "(\(position)/\(total))"
+            stackLabel.isHidden = false
+        } else {
+            stackLabel.isHidden = true
         }
         needsLayout = true
     }
@@ -171,6 +205,7 @@ class ControlBar: NSView, NSTextFieldDelegate {
 
         let padding: CGFloat = 8
         let spacing: CGFloat = 12
+        let stackSpacing: CGFloat = 6
         let labelHeight = max(urlField.intrinsicContentSize.height, modeLabel.intrinsicContentSize.height)
 
         // Mode label: fixed width based on content, positioned at right
@@ -183,10 +218,23 @@ class ControlBar: NSView, NSTextFieldDelegate {
             height: labelHeight
         )
 
-        // URL field: fills remaining space on left
-        let urlFieldWidth = bounds.width - padding - modeLabelWidth - spacing - padding
+        // Stack label: positioned at left (if visible)
+        var urlFieldX = padding
+        if !stackLabel.isHidden {
+            let stackLabelWidth = stackLabel.intrinsicContentSize.width + 4
+            stackLabel.frame = NSRect(
+                x: padding,
+                y: (bounds.height - labelHeight) / 2,
+                width: stackLabelWidth,
+                height: labelHeight
+            )
+            urlFieldX = padding + stackLabelWidth + stackSpacing
+        }
+
+        // URL field: fills remaining space (after stack label, before mode label)
+        let urlFieldWidth = bounds.width - urlFieldX - modeLabelWidth - spacing - padding
         urlField.frame = NSRect(
-            x: padding,
+            x: urlFieldX,
             y: (bounds.height - labelHeight) / 2,
             width: max(0, urlFieldWidth),
             height: labelHeight

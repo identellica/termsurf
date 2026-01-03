@@ -1034,7 +1034,8 @@ extension Ghostty {
             // Check for webview overlay - if SurfaceView is receiving keyDown and there's a
             // WebViewContainer, we are effectively in "control mode" (terminal has focus).
             // This handles the case where pane switching causes focus state to get out of sync.
-            if let container = subviews.first(where: { $0 is WebViewContainer }) as? WebViewContainer {
+            // Use last(where:) to get the topmost container when multiple are stacked.
+            if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer {
                 Ghostty.logger.info("  - WebViewContainer found, isControlMode: \(container.isControlMode)")
 
                 // Sync focus state if it got out of sync (e.g., after pane switching)
@@ -1227,7 +1228,8 @@ extension Ghostty {
 
             // If there's a webview in browse mode, give it total control over key equivalents.
             // This prevents ghostty keybindings from intercepting keys meant for the browser.
-            if let container = subviews.first(where: { $0 is WebViewContainer }) as? WebViewContainer,
+            // Use last(where:) to get the topmost container when multiple are stacked.
+            if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer,
                !container.isControlMode {
                 // Handle cmd+alt+i specifically to open Safari Web Inspector
                 let hasCmd = event.modifierFlags.contains(.command)
