@@ -62,14 +62,14 @@ class FooterView: NSView {
     override func layout() {
         super.layout()
 
-        // Position label with left padding, vertically centered
+        // Position label with left padding, vertically centered, full available width
         let padding: CGFloat = 8
-        let labelSize = label.intrinsicContentSize
+        let labelHeight = label.intrinsicContentSize.height
         label.frame = NSRect(
             x: padding,
-            y: (bounds.height - labelSize.height) / 2,
-            width: labelSize.width,
-            height: labelSize.height
+            y: (bounds.height - labelHeight) / 2,
+            width: bounds.width - (padding * 2),
+            height: labelHeight
         )
     }
 
