@@ -79,14 +79,14 @@ sequences after careful analysis.
 
 ### Why Unix Sockets Over Escape Sequences?
 
-| Aspect | OSC Escape Sequences | Unix Domain Sockets |
-|--------|---------------------|---------------------|
-| **libghostty changes** | Required (fork) | **None** |
-| **Bidirectional** | No | **Yes** |
-| **Protocol** | String parsing | **Structured JSON** |
-| **Robustness** | Broken by pipes | **Always works** |
-| **Error handling** | Silent failures | **Explicit responses** |
-| **`--wait` support** | Not possible | **Supported** |
+| Aspect                 | OSC Escape Sequences | Unix Domain Sockets    |
+| ---------------------- | -------------------- | ---------------------- |
+| **libghostty changes** | Required (fork)      | **None**               |
+| **Bidirectional**      | No                   | **Yes**                |
+| **Protocol**           | String parsing       | **Structured JSON**    |
+| **Robustness**         | Broken by pipes      | **Always works**       |
+| **Error handling**     | Silent failures      | **Explicit responses** |
+| **`--wait` support**   | Not possible         | **Supported**          |
 
 **Key advantages of sockets:**
 
@@ -356,8 +356,9 @@ termsurf open google.com --wait
 
 **Goal:** Allow navigating between terminal and webview panes using keybindings.
 
-**Background:** WKWebView intercepts certain keyboard shortcuts (like cmd+[ for browser back).
-We need to pass through pane navigation keybindings so users can move between panes.
+**Background:** WKWebView intercepts certain keyboard shortcuts (like cmd+[ for
+browser back). We need to pass through pane navigation keybindings so users can
+move between panes.
 
 **Tasks:**
 
@@ -375,7 +376,8 @@ termsurf open google.com
 # Expected: Focus moves correctly between panes
 ```
 
-**Note:** Future work will make this dynamic based on user's configured keybindings.
+**Note:** Future work will make this dynamic based on user's configured
+keybindings.
 
 ### Phase 3F: Console Output Bridging
 
@@ -410,7 +412,8 @@ termsurf open google.com
   - [ ] Send `{"event":"backgrounded"}` to waiting CLI
   - [ ] Return focus to terminal
 - [ ] CLI tool: Add SIGCONT signal handler:
-  - [ ] On SIGCONT, send `{"action":"show","data":{"webviewId":"..."}}` via socket
+  - [ ] On SIGCONT, send `{"action":"show","data":{"webviewId":"..."}}` via
+        socket
 - [ ] Handle `show` command in Swift:
   - [ ] Find webview by ID
   - [ ] Set `isHidden = false`
@@ -457,16 +460,16 @@ fg
 
 ### Phase 3 Summary
 
-| Phase | Goal                    | Test                              | Success Criteria           | Status |
-| ----- | ----------------------- | --------------------------------- | -------------------------- | ------ |
-| 3A    | Socket server           | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response | ✓ |
-| 3B    | CLI tool                | `termsurf ping`                   | "pong" output              | ✓ |
-| 3C    | Webview overlay         | `termsurf open google.com`        | Webview appears            | ✓ |
-| 3D    | ctrl+c close            | `termsurf open url --wait` + ctrl+c | Webview closes, CLI exits | |
-| 3E    | Split pane navigation   | ctrl+h/j/k/l between panes        | Focus moves correctly      | |
-| 3F    | Console bridging        | console.log in webview            | Output in terminal         | |
-| 3G    | ctrl+z / fg             | ctrl+z then fg                    | Hide/restore works         | |
-| 3H    | Multi-webview           | Open in two panes                 | Independent operation      | |
+| Phase | Goal                  | Test                                                          | Success Criteria          | Status |
+| ----- | --------------------- | ------------------------------------------------------------- | ------------------------- | ------ |
+| 3A    | Socket server         | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response             | ✓      |
+| 3B    | CLI tool              | `termsurf ping`                                               | "pong" output             | ✓      |
+| 3C    | Webview overlay       | `termsurf open google.com`                                    | Webview appears           | ✓      |
+| 3D    | ctrl+c close          | `termsurf open url --wait` + ctrl+c                           | Webview closes, CLI exits |        |
+| 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly     |        |
+| 3F    | Console bridging      | console.log in webview                                        | Output in terminal        |        |
+| 3G    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works        |        |
+| 3H    | Multi-webview         | Open in two panes                                             | Independent operation     |        |
 
 ### Key Files Reference
 
@@ -497,10 +500,12 @@ Sources/Features/WebView/
 
 ### Profile/Session Isolation
 
-WKWebView supports named profiles via `WKWebsiteDataStore(forIdentifier:)` (macOS 14+).
-Each profile gets completely isolated: cookies, localStorage, IndexedDB, cache, service workers.
+WKWebView supports named profiles via `WKWebsiteDataStore(forIdentifier:)`
+(macOS 14+). Each profile gets completely isolated: cookies, localStorage,
+IndexedDB, cache, service workers.
 
-**Requires:** macOS 14+ (Sonoma) - acceptable for target audience (web developers)
+**Requires:** macOS 14+ (Sonoma) - acceptable for target audience (web
+developers)
 
 ```swift
 // Example implementation
@@ -525,7 +530,8 @@ func createWebView(profileName: String?) -> WKWebView {
   - [ ] Default profile uses `.default()` data store
   - [ ] Named profiles use `WKWebsiteDataStore(forIdentifier:)`
   - [ ] Support `--profile NAME` flag in `termsurf open` command
-  - [ ] Consider `--incognito` flag using `.nonPersistent()` for ephemeral sessions
+  - [ ] Consider `--incognito` flag using `.nonPersistent()` for ephemeral
+        sessions
 - [ ] Profile management:
   - [ ] List existing profiles
   - [ ] Delete profile data (`WKWebsiteDataStore.remove(forIdentifier:)`)
