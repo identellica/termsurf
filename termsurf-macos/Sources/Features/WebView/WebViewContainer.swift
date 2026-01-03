@@ -3,13 +3,11 @@ import os
 
 private let logger = Logger(subsystem: "com.termsurf", category: "WebViewContainer")
 
-/// Container view that holds a WebViewOverlay and FooterView with mode-based focus switching.
+/// Container view that holds a WebViewOverlay and ControlBar with mode-based focus switching.
 ///
 /// Two modes:
-/// - Footer mode: Footer is focused, all terminal keybindings work (ctrl+c, ctrl+h/j/k/l, etc.)
-/// - Webview mode: Webview is focused, browser has full control, only Esc escapes
-///
-/// Visual indicator: Footer is dimmed when webview is focused.
+/// - Control mode: SurfaceView is focused, all terminal keybindings work (ctrl+c, ctrl+h/j/k/l, etc.)
+/// - Browse mode: Webview is focused, browser has full control, only Esc escapes
 class WebViewContainer: NSView {
     /// The webview ID
     let webviewId: String
@@ -17,22 +15,22 @@ class WebViewContainer: NSView {
     /// The webview overlay (WKWebView wrapper)
     let webViewOverlay: WebViewOverlay
 
-    /// The footer bar
-    let footerView: FooterView
+    /// The control bar
+    let controlBar: ControlBar
 
     /// Called when the webview should close
     var onClose: ((String) -> Void)?
 
-    /// Height of the footer bar
-    private let footerHeight: CGFloat = 24
+    /// Height of the control bar
+    private let controlBarHeight: CGFloat = 24
 
     /// Current focus mode
     enum FocusMode {
-        case footer
-        case webview
+        case control
+        case browse
     }
 
-    private(set) var focusMode: FocusMode = .webview {
+    private(set) var focusMode: FocusMode = .browse {
         didSet {
             if oldValue != focusMode {
                 updateFocusVisuals()
@@ -40,15 +38,15 @@ class WebViewContainer: NSView {
         }
     }
 
-    /// Public getter for SurfaceView to check if we're in footer mode
-    var isFooterMode: Bool { focusMode == .footer }
+    /// Public getter for SurfaceView to check if we're in control mode
+    var isControlMode: Bool { focusMode == .control }
 
     // MARK: - Initialization
 
     init(url: URL, webviewId: String, profile: String? = nil) {
         self.webviewId = webviewId
         self.webViewOverlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile)
-        self.footerView = FooterView()
+        self.controlBar = ControlBar()
         super.init(frame: .zero)
 
         setupSubviews()
@@ -75,11 +73,11 @@ class WebViewContainer: NSView {
         logger.info("viewDidMoveToWindow called, window: \(String(describing: self.window))")
 
         if window != nil {
-            // When we're added to a window, ensure webview has focus
+            // When we're added to a window, ensure webview has focus (start in browse mode)
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 logger.info("viewDidMoveToWindow async block executing for \(self.webviewId)")
-                self.focusWebView()
+                self.focusBrowser()
             }
         }
     }
@@ -87,43 +85,43 @@ class WebViewContainer: NSView {
     // MARK: - Setup
 
     private func setupSubviews() {
-        // Footer at bottom
-        addSubview(footerView)
+        // Control bar at bottom
+        addSubview(controlBar)
 
-        // WebView fills rest (above footer)
+        // WebView fills rest (above control bar)
         addSubview(webViewOverlay)
     }
 
     override func layout() {
         super.layout()
 
-        // Footer at bottom
-        footerView.frame = NSRect(
+        // Control bar at bottom
+        controlBar.frame = NSRect(
             x: 0,
             y: 0,
             width: bounds.width,
-            height: footerHeight
+            height: controlBarHeight
         )
 
-        // WebView fills rest (above footer)
+        // WebView fills rest (above control bar)
         webViewOverlay.frame = NSRect(
             x: 0,
-            y: footerHeight,
+            y: controlBarHeight,
             width: bounds.width,
-            height: bounds.height - footerHeight
+            height: bounds.height - controlBarHeight
         )
     }
 
     private func setupCallbacks() {
-        // WebView: Esc -> focus footer (switch to terminal mode)
+        // WebView: Esc -> switch to control mode
         webViewOverlay.onEscapePressed = { [weak self] in
-            self?.focusFooter()
+            self?.focusControlBar()
         }
 
         // WebView: Navigation finished -> re-establish proper focus state
         webViewOverlay.onNavigationFinished = { [weak self] in
             guard let self = self else { return }
-            if self.focusMode == .webview {
+            if self.focusMode == .browse {
                 // Re-focus web content after navigation so cursor is in the right place
                 self.webViewOverlay.focusWebContent()
             } else {
@@ -142,23 +140,23 @@ class WebViewContainer: NSView {
         // redirect focus to the appropriate view based on current mode
         logger.debug("WebViewContainer asked to become first responder, redirecting to \(String(describing: self.focusMode))")
 
-        if focusMode == .webview {
+        if focusMode == .browse {
             return webViewOverlay.webView.becomeFirstResponder()
         } else {
-            // In footer mode, parent SurfaceView should be first responder
+            // In control mode, parent SurfaceView should be first responder
             return superview?.becomeFirstResponder() ?? false
         }
     }
 
     // MARK: - Focus Management
 
-    /// Focus the webview (browser mode)
-    func focusWebView() {
-        logger.info("focusWebView called for \(self.webviewId)")
+    /// Focus the browser (browse mode)
+    func focusBrowser() {
+        logger.info("focusBrowser called for \(self.webviewId)")
         logger.info("  - window: \(String(describing: self.window))")
         logger.info("  - webViewOverlay.webView: \(String(describing: self.webViewOverlay.webView))")
 
-        focusMode = .webview
+        focusMode = .browse
         let success = window?.makeFirstResponder(webViewOverlay.webView) ?? false
         logger.info("  - makeFirstResponder result: \(success)")
         logger.info("  - actual firstResponder after: \(String(describing: self.window?.firstResponder))")
@@ -167,14 +165,14 @@ class WebViewContainer: NSView {
         webViewOverlay.focusWebContent()
     }
 
-    /// Focus the footer (terminal mode)
+    /// Focus the control bar (control mode)
     /// Makes parent SurfaceView the first responder so ghostty keybindings work
-    func focusFooter() {
-        logger.info("focusFooter called for \(self.webviewId)")
+    func focusControlBar() {
+        logger.info("focusControlBar called for \(self.webviewId)")
         logger.info("  - superview: \(String(describing: self.superview))")
         logger.info("  - window: \(String(describing: self.window))")
 
-        focusMode = .footer
+        focusMode = .control
         if let surfaceView = superview {
             let success = window?.makeFirstResponder(surfaceView) ?? false
             logger.info("  - makeFirstResponder result: \(success)")
@@ -186,19 +184,19 @@ class WebViewContainer: NSView {
         webViewOverlay.blurWebContent()
     }
 
-    /// Sync internal state to footer mode without changing first responder.
+    /// Sync internal state to control mode without changing first responder.
     /// Called when SurfaceView detects it's receiving keys but our state is out of sync
     /// (e.g., after pane switching).
-    func syncToFooterMode() {
-        logger.info("syncToFooterMode called for \(self.webviewId)")
-        focusMode = .footer
+    func syncToControlMode() {
+        logger.info("syncToControlMode called for \(self.webviewId)")
+        focusMode = .control
         // Blur web content to ensure keystrokes don't leak to webview
         webViewOverlay.blurWebContent()
     }
 
     private func updateFocusVisuals() {
-        let isWebviewFocused = (focusMode == .webview)
-        footerView.updateText(isWebviewFocused: isWebviewFocused)
+        let isBrowseMode = (focusMode == .browse)
+        controlBar.updateText(isBrowseMode: isBrowseMode)
         logger.debug("Focus mode: \(String(describing: self.focusMode))")
     }
 }

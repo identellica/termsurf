@@ -28,34 +28,34 @@ the browser, not libghostty. We handle this with a **modal approach**:
 
 ### Two Modes
 
-1. **Footer mode** (terminal keybindings work)
+1. **Control mode** (terminal keybindings work)
    - SurfaceView is the first responder
    - All ghostty keybindings work naturally (pane navigation, splits, etc.)
-   - Enter switches to webview mode
+   - Enter switches to browse mode
    - ctrl+c closes the webview
-   - FooterView displays: "Enter to browse, ctrl+c to close"
+   - ControlBar displays: "Enter to browse, ctrl+c to close"
 
-2. **Webview mode** (browser has full control)
+2. **Browse mode** (browser has full control)
    - WKWebView is the first responder
    - All keys go to the browser
-   - Esc (intercepted via injected JS) switches to footer mode
-   - FooterView displays: "Esc to exit browser"
+   - Esc (intercepted via injected JS) switches to control mode
+   - ControlBar displays: "Esc to exit browser"
 
 ### Implementation
 
-**Footer mode** keybindings are handled in `SurfaceView_AppKit.swift`:
+**Control mode** keybindings are handled in `SurfaceView_AppKit.swift`:
 
 - At the start of `keyDown()`, check if a WebViewContainer subview exists
 - If so, intercept Enter and ctrl+c before passing to libghostty
 - All other keys flow through to libghostty normally
 
-**Webview mode** keybindings are handled via JavaScript injection in
+**Browse mode** keybindings are handled via JavaScript injection in
 `WebViewOverlay.swift`:
 
 - Only Esc is intercepted, sent via `postMessage` to Swift
-- Swift calls `onEscapePressed` callback → `focusFooter()`
+- Swift calls `onEscapePressed` callback → `focusControlBar()`
 
-**FooterView** (`FooterView.swift`) is visual-only:
+**ControlBar** (`ControlBar.swift`) is visual-only:
 
 - Displays mode-specific hint text
 - No keyboard handling
@@ -64,41 +64,41 @@ the browser, not libghostty. We handle this with a **modal approach**:
 
 When switching between panes, ghostty makes the target pane's SurfaceView the
 first responder. If returning to a pane with a webview, WebViewContainer's
-internal `focusMode` may be stale (still set to `.webview` from before).
+internal `focusMode` may be stale (still set to `.browse` from before).
 
 This is handled in `SurfaceView_AppKit.swift`:
 
 ```swift
 if let container = subviews.first(where: { $0 is WebViewContainer }) ... {
-    // If SurfaceView is receiving keys but container thinks it's in webview mode,
+    // If SurfaceView is receiving keys but container thinks it's in browse mode,
     // sync the state
-    if !container.isFooterMode {
-        container.syncToFooterMode()
+    if !container.isControlMode {
+        container.syncToControlMode()
     }
     // Then handle Enter/ctrl+c
 }
 ```
 
-`syncToFooterMode()` updates the internal state and footer text without changing
-the first responder (since SurfaceView already has focus).
+`syncToControlMode()` updates the internal state and control bar text without
+changing the first responder (since SurfaceView already has focus).
 
 ### Why Keep SurfaceView as First Responder?
 
-The key insight: keeping SurfaceView as first responder in footer mode means
+The key insight: keeping SurfaceView as first responder in control mode means
 **all ghostty keybindings work automatically**. Events flow through SurfaceView
 → libghostty → action dispatch, just like a normal terminal pane.
 
-Previous attempts to make FooterView the first responder required forwarding key
-events back to SurfaceView, which broke due to focus guards in the responder
-chain.
+Previous attempts to make a separate view the first responder required
+forwarding key events back to SurfaceView, which broke due to focus guards in
+the responder chain.
 
 ### Current Hardcoded Bindings
 
-| Context | Key    | Action        |
-| ------- | ------ | ------------- |
-| Footer  | Enter  | Focus webview |
-| Footer  | ctrl+c | Close webview |
-| Webview | Esc    | Focus footer  |
+| Context | Key    | Action             |
+| ------- | ------ | ------------------ |
+| Control | Enter  | Switch to browse   |
+| Control | ctrl+c | Close webview      |
+| Browse  | Esc    | Switch to control  |
 
 These are not configurable via ghostty config. This may change in the future if
 we add TermSurf-specific configuration.

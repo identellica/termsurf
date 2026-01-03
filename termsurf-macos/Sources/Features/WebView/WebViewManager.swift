@@ -100,8 +100,8 @@ class WebViewManager {
             container.autoresizingMask = [.width, .height]
             currentSurface.addSubview(container)
 
-            // Focus webview by default (browser mode) for immediate interaction
-            container.focusWebView()
+            // Focus browser by default (browse mode) for immediate interaction
+            container.focusBrowser()
 
             self.lock.lock()
             self.containers[webviewId] = container
@@ -180,7 +180,7 @@ class WebViewManager {
 
         DispatchQueue.main.async {
             container?.isHidden = false
-            container?.focusFooter()
+            container?.focusControlBar()
         }
     }
 

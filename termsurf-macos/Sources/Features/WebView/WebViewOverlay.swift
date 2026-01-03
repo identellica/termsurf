@@ -16,7 +16,7 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     /// Callback when webview should close (called from container, not JS anymore)
     var onClose: ((String) -> Void)?
 
-    /// Callback when Esc is pressed (to switch focus back to footer)
+    /// Callback when Esc is pressed (to switch to control mode)
     var onEscapePressed: (() -> Void)?
 
     /// Callback for console output (defaults to stdout/stderr)
@@ -115,9 +115,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
         })();
         """
 
-        // Keyboard interception for Esc only (to switch back to footer/terminal mode)
+        // Keyboard interception for Esc only (to switch back to control mode)
         // All other keys go to the browser - ctrl+c, ctrl+z, etc. are handled by
-        // the FooterView when in terminal mode
+        // SurfaceView when in control mode
         let keyboardScript = """
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -235,7 +235,7 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
 
         switch action {
         case "escape":
-            logger.info("Webview \(self.webviewId) requested escape (switch to footer)")
+            logger.info("Webview \(self.webviewId) requested escape (switch to control mode)")
             logger.info("  - onEscapePressed callback exists: \(self.onEscapePressed != nil)")
             onEscapePressed?()
             logger.info("  - onEscapePressed callback invoked")

@@ -1,11 +1,11 @@
 import Cocoa
 import os
 
-private let logger = Logger(subsystem: "com.termsurf", category: "FooterView")
+private let logger = Logger(subsystem: "com.termsurf", category: "ControlBar")
 
-/// A visual footer bar for the webview container.
+/// A visual control bar for the webview container.
 /// Displays mode-specific hint text. Keyboard handling is done by SurfaceView.
-class FooterView: NSView {
+class ControlBar: NSView {
     /// The text label
     private let label: NSTextField
 
@@ -37,15 +37,15 @@ class FooterView: NSView {
         label.isSelectable = false
         addSubview(label)
 
-        // Set initial text for footer mode
-        updateText(isWebviewFocused: false)
+        // Set initial text for control mode
+        updateText(isBrowseMode: false)
     }
 
     // MARK: - Text Updates
 
     /// Update the label text based on current focus mode
-    func updateText(isWebviewFocused: Bool) {
-        if isWebviewFocused {
+    func updateText(isBrowseMode: Bool) {
+        if isBrowseMode {
             label.stringValue = "Esc to exit browser"
         } else {
             label.stringValue = "Enter to browse, ctrl+c to close"
