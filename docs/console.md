@@ -103,8 +103,8 @@ termsurf open http://localhost:3000 --api
 
 #### `window.termsurf.exit(code)`
 
-Exit the webview with the specified exit code. When used with `--wait`, the CLI
-process exits with this code.
+Exit the webview with the specified exit code. The CLI process exits with this
+code.
 
 ```javascript
 // Exit successfully
@@ -116,8 +116,8 @@ window.termsurf.exit(1);
 
 ## Testing and Automation Use Cases
 
-The combination of console bridging, `--api`, and `--wait` enables powerful
-testing workflows.
+The combination of console bridging and `--api` enables powerful testing
+workflows.
 
 ### Running Tests with Exit Codes
 
@@ -138,7 +138,7 @@ runTests();
 ```
 
 ```bash
-termsurf open http://localhost:3000/test --wait --api
+termsurf open http://localhost:3000/test --api
 echo "Exit code: $?"
 ```
 
@@ -148,7 +148,7 @@ echo "Exit code: $?"
 #!/bin/bash
 # run-browser-tests.sh
 
-termsurf open http://localhost:3000/test --wait --api > test-output.log 2>&1
+termsurf open http://localhost:3000/test --api > test-output.log 2>&1
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -ne 0 ]; then
@@ -170,7 +170,7 @@ fetch('/api/health')
 ```
 
 ```bash
-termsurf open http://localhost:3000/health-check.html --wait --api
+termsurf open http://localhost:3000/health-check.html --api
 ```
 
 ## Future API Extensions
