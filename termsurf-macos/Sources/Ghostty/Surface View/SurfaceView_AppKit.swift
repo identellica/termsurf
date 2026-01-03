@@ -1225,6 +1225,27 @@ extension Ghostty {
             // to receive any other event type here.
             guard event.type == .keyDown else { return false }
 
+            // If there's a webview in browse mode, give it total control over key equivalents.
+            // This prevents ghostty keybindings from intercepting keys meant for the browser.
+            if let container = subviews.first(where: { $0 is WebViewContainer }) as? WebViewContainer,
+               !container.isControlMode {
+                // Handle cmd+alt+i specifically to open Safari Web Inspector
+                let hasCmd = event.modifierFlags.contains(.command)
+                let hasOpt = event.modifierFlags.contains(.option)
+                let isI = event.charactersIgnoringModifiers == "i"
+
+                if hasCmd && hasOpt && isI {
+                    // Show Safari Web Inspector via private API
+                    if let inspector = container.webViewOverlay.webView.value(forKey: "_inspector") as? NSObject {
+                        inspector.perform(Selector(("show")))
+                        return true
+                    }
+                }
+
+                // For all other keys in browse mode, don't intercept - let them flow to webview
+                return false
+            }
+
             // Only process events if we're focused. Some key events like C-/ macOS
             // appears to send to the first view in the hierarchy rather than the
             // the first responder (I don't know why). This prevents us from handling it.
