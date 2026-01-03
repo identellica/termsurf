@@ -207,9 +207,10 @@ class WebViewContainer: NSView {
     private func updateFocusVisuals() {
         // Dim footer when webview is focused, full opacity when footer is focused
         // Webview always stays at full opacity (user needs to see content)
-        let footerAlpha: CGFloat = (focusMode == .footer) ? 1.0 : 0.5
-        footerView.alphaValue = footerAlpha
+        let isWebviewFocused = (focusMode == .webview)
+        footerView.alphaValue = isWebviewFocused ? 0.5 : 1.0
+        footerView.updateText(isWebviewFocused: isWebviewFocused)
 
-        logger.debug("Focus mode: \(String(describing: self.focusMode)), footer alpha: \(footerAlpha)")
+        logger.debug("Focus mode: \(String(describing: self.focusMode))")
     }
 }

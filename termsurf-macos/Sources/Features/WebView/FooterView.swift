@@ -42,6 +42,21 @@ class FooterView: NSView {
         label.isEditable = false
         label.isSelectable = false
         addSubview(label)
+
+        // Set initial text for footer mode
+        updateText(isWebviewFocused: false)
+    }
+
+    // MARK: - Text Updates
+
+    /// Update the label text based on current focus mode
+    func updateText(isWebviewFocused: Bool) {
+        if isWebviewFocused {
+            label.stringValue = "Esc to exit browser"
+        } else {
+            label.stringValue = "Enter to browse, ctrl+c to close"
+        }
+        needsLayout = true
     }
 
     override func layout() {
