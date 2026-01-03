@@ -29,35 +29,68 @@ the browser, not libghostty. We handle this with a **modal approach**:
 ### Two Modes
 
 1. **Footer mode** (terminal keybindings work)
-   - FooterView is the first responder
-   - Pane navigation (ctrl+h/j/k/l) works via responder chain → menu system →
-     ghostty actions
-   - ctrl+c closes the webview
+   - SurfaceView is the first responder
+   - All ghostty keybindings work naturally (pane navigation, splits, etc.)
    - Enter switches to webview mode
+   - ctrl+c closes the webview
+   - FooterView displays: "Enter to browse, ctrl+c to close"
 
 2. **Webview mode** (browser has full control)
    - WKWebView is the first responder
    - All keys go to the browser
    - Esc (intercepted via injected JS) switches to footer mode
+   - FooterView displays: "Esc to exit browser"
 
 ### Implementation
 
-Footer keybindings are handled in `FooterView.swift`:
+**Footer mode** keybindings are handled in `SurfaceView_AppKit.swift`:
 
-- Enter, ctrl+c are intercepted in `keyDown()`
-- Other keys pass through `super.keyDown()` to reach the responder chain
+- At the start of `keyDown()`, check if a WebViewContainer subview exists
+- If so, intercept Enter and ctrl+c before passing to libghostty
+- All other keys flow through to libghostty normally
 
-Webview keybindings are handled via JavaScript injection in
+**Webview mode** keybindings are handled via JavaScript injection in
 `WebViewOverlay.swift`:
 
 - Only Esc is intercepted, sent via `postMessage` to Swift
+- Swift calls `onEscapePressed` callback → `focusFooter()`
 
-### Why Not Use libghostty?
+**FooterView** (`FooterView.swift`) is visual-only:
 
-libghostty's keybinding system requires events to flow through a terminal
-surface. When the webview is focused, this path doesn't exist. Rather than fight
-the architecture, we accept that webview mode is a separate input context with
-its own minimal bindings.
+- Displays mode-specific hint text
+- No keyboard handling
+
+### Focus State Synchronization
+
+When switching between panes, ghostty makes the target pane's SurfaceView the
+first responder. If returning to a pane with a webview, WebViewContainer's
+internal `focusMode` may be stale (still set to `.webview` from before).
+
+This is handled in `SurfaceView_AppKit.swift`:
+
+```swift
+if let container = subviews.first(where: { $0 is WebViewContainer }) ... {
+    // If SurfaceView is receiving keys but container thinks it's in webview mode,
+    // sync the state
+    if !container.isFooterMode {
+        container.syncToFooterMode()
+    }
+    // Then handle Enter/ctrl+c
+}
+```
+
+`syncToFooterMode()` updates the internal state and footer text without changing
+the first responder (since SurfaceView already has focus).
+
+### Why Keep SurfaceView as First Responder?
+
+The key insight: keeping SurfaceView as first responder in footer mode means
+**all ghostty keybindings work automatically**. Events flow through SurfaceView
+→ libghostty → action dispatch, just like a normal terminal pane.
+
+Previous attempts to make FooterView the first responder required forwarding key
+events back to SurfaceView, which broke due to focus guards in the responder
+chain.
 
 ### Current Hardcoded Bindings
 
