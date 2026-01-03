@@ -50,6 +50,8 @@ class WebViewContainer: NSView {
 
         setupSubviews()
         setupCallbacks()
+
+        // Ensure initial visual state is correct
         updateFocusVisuals()
 
         logger.info("WebViewContainer \(webviewId) created")
@@ -60,7 +62,49 @@ class WebViewContainer: NSView {
     }
 
     deinit {
+        NotificationCenter.default.removeObserver(self)
         logger.info("WebViewContainer \(self.webviewId) deallocated")
+    }
+
+    // MARK: - View Lifecycle
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+
+        if let window = window {
+            // When we're added to a window, ensure footer has focus
+            DispatchQueue.main.async { [weak self] in
+                self?.focusFooter()
+            }
+
+            // Observe first responder changes to intercept when parent surface gets focus
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(windowDidUpdate),
+                name: NSWindow.didUpdateNotification,
+                object: window
+            )
+        } else {
+            // Remove observer when removed from window
+            NotificationCenter.default.removeObserver(self, name: NSWindow.didUpdateNotification, object: nil)
+        }
+    }
+
+    @objc private func windowDidUpdate(_ notification: Notification) {
+        // Check if the first responder is our parent surface (the terminal behind us)
+        // If so, redirect focus to our footer
+        guard let window = window,
+              let firstResponder = window.firstResponder as? NSView else {
+            return
+        }
+
+        // If the surface (our superview) became first responder, redirect to footer
+        if firstResponder === superview {
+            logger.debug("Parent surface got focus, redirecting to footer")
+            DispatchQueue.main.async { [weak self] in
+                self?.focusFooter()
+            }
+        }
     }
 
     // MARK: - Setup
@@ -109,6 +153,22 @@ class WebViewContainer: NSView {
         // WebView: Esc -> focus footer
         webViewOverlay.onEscapePressed = { [weak self] in
             self?.focusFooter()
+        }
+    }
+
+    // MARK: - First Responder
+
+    override var acceptsFirstResponder: Bool { true }
+
+    override func becomeFirstResponder() -> Bool {
+        // When the container is asked to become first responder (e.g., from pane navigation),
+        // redirect focus to the appropriate subview based on current mode
+        logger.debug("WebViewContainer asked to become first responder, redirecting to \(String(describing: self.focusMode))")
+
+        if focusMode == .webview {
+            return webViewOverlay.webView.becomeFirstResponder()
+        } else {
+            return footerView.becomeFirstResponder()
         }
     }
 

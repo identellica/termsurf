@@ -63,10 +63,10 @@ class WebViewManager {
     ) -> String? {
         // Check if pane exists first
         lock.lock()
-        let surface = paneRegistry[paneId]?.surface
+        let paneExists = paneRegistry[paneId]?.surface != nil
         lock.unlock()
 
-        guard let surface = surface else {
+        guard paneExists else {
             logger.error("Cannot create webview: pane \(paneId) not found")
             return nil
         }
