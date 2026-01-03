@@ -442,40 +442,71 @@ termsurf open https://example.com
 # Expected: CLI exits with code 0
 ```
 
-### Phase 3G: Background/Foreground (ctrl+z / fg)
+### Phase 3G: Webview Stacking
+
+**Goal:** Support multiple concurrent webviews on the same pane, stacked with a
+visible indicator.
+
+**Background:** Users may run multiple `termsurf open` commands concurrently in
+the same terminal pane. Webviews stack with the most recent on top. User must
+close from top down. Control bar shows stack position indicator.
+
+**Tasks:**
+
+- [ ] Add `paneStacks` dictionary to WebViewManager to track stack order per pane
+- [ ] When creating webview, add to pane's stack and calculate position
+- [ ] When closing webview, remove from stack and update positions for remaining
+- [ ] Add `stackPosition` and `stackTotal` properties to WebViewContainer
+- [ ] Add `stackLabel` to ControlBar showing "(1/2)", "(2/2)", etc.
+- [ ] Only show stack indicator when stackTotal > 1
+- [ ] Verify z-order: newer webviews appear on top (NSView natural order)
+
+**Test:**
+
+```bash
+# Run concurrent commands in same terminal pane:
+termsurf open google.com &
+termsurf open github.com &
+termsurf open example.com
+
+# Expected: example.com visible on top, showing "(3/3)" in control bar
+# Press Esc, ctrl+c to close top webview
+# Expected: github.com now visible, showing "(2/2)"
+# Repeat ctrl+c to close remaining webviews
+```
+
+### Phase 3H: Background/Foreground (ctrl+z / fg)
 
 **Goal:** ctrl+z hides webview and backgrounds CLI, fg restores both.
 
 **Tasks:**
 
-- [ ] Add JS key interception for ctrl+z
-- [ ] Handle background message in Swift:
+- [ ] Add ctrl+z handling in control mode (SurfaceView_AppKit.swift)
+- [ ] Add `onSuspend` callback to WebViewContainer
+- [ ] Add `suspendWebView()` to WebViewManager:
   - [ ] Hide webview (set `isHidden = true`, don't destroy)
-  - [ ] Write `0x1a` (ctrl+z byte) to PTY master
-  - [ ] Send `{"event":"backgrounded"}` to waiting CLI
-  - [ ] Return focus to terminal
-- [ ] CLI tool: Add SIGCONT signal handler:
-  - [ ] On SIGCONT, send `{"action":"show","data":{"webviewId":"..."}}` via
-        socket
-- [ ] Handle `show` command in Swift:
-  - [ ] Find webview by ID
+  - [ ] Send `{"event":"suspended"}` to waiting CLI
+- [ ] CLI: Store webviewId from initial open response
+- [ ] CLI: Handle "suspended" event:
+  - [ ] Call `raise(SIGTSTP)` to suspend CLI process
+  - [ ] On resume (after SIGCONT), send `{"action":"show"}` to restore webview
+- [ ] Handle `show` command in Swift (already exists):
   - [ ] Set `isHidden = false`
-  - [ ] Give webview focus
-  - [ ] Return success response
-- [ ] CLI tool: Track webview ID from initial `open` response
+  - [ ] Focus control bar (control mode)
 
 **Test:**
 
 ```bash
 termsurf open google.com
+# Press Esc to enter control mode
 # Press ctrl+z
 # Expected: Webview hides, shell shows "[1]+ Stopped ..."
 
 fg
-# Expected: Webview reappears with same page
+# Expected: Webview reappears in control mode
 ```
 
-### Phase 3H: Multi-webview Tracking
+### Phase 3I: Multi-webview Tracking
 
 **Goal:** Support multiple webviews across panes, each with correct association.
 
@@ -511,8 +542,9 @@ fg
 | 3D    | Control bar + ctrl+c  | Enter/Esc/i mode switch, ctrl+c close                         | Mode switching works  | ✓      |
 | 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly | ✓      |
 | 3F    | Console bridging      | console.log in webview                                        | Output in terminal    | ✓      |
-| 3G    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    |        |
-| 3H    | Multi-webview         | Open in two panes                                             | Independent operation |        |
+| 3G    | Webview stacking      | Multiple concurrent opens                                     | Stack indicator works |        |
+| 3H    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    |        |
+| 3I    | Multi-webview         | Open in two panes                                             | Independent operation |        |
 
 ### Key Files Reference
 
