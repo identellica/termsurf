@@ -100,8 +100,8 @@ class WebViewManager {
             container.autoresizingMask = [.width, .height]
             currentSurface.addSubview(container)
 
-            // Focus footer by default (terminal mode)
-            container.focusFooter()
+            // Focus webview by default (browser mode) for immediate interaction
+            container.focusWebView()
 
             self.lock.lock()
             self.containers[webviewId] = container

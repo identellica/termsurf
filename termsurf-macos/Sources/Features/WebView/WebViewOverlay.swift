@@ -243,11 +243,38 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
         logger.debug("Navigation started for \(self.webviewId)")
     }
 
+    /// Callback when navigation finishes (for re-establishing focus)
+    var onNavigationFinished: (() -> Void)?
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         logger.info("Navigation finished for \(self.webviewId): \(webView.url?.absoluteString ?? "unknown")")
 
         // Make background opaque once loaded
         webView.setValue(true, forKey: "drawsBackground")
+
+        // Notify container that navigation finished (to re-establish focus)
+        onNavigationFinished?()
+    }
+
+    // MARK: - Web Content Focus
+
+    /// Blur the web content (unfocus any focused element)
+    func blurWebContent() {
+        webView.evaluateJavaScript("document.activeElement?.blur(); window.focus();") { _, error in
+            if let error = error {
+                logger.debug("Blur JS error (ignorable): \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// Focus the web content (focus the document body)
+    func focusWebContent() {
+        // First make sure the webview window is key, then focus the document
+        webView.evaluateJavaScript("document.body.focus(); window.focus();") { _, error in
+            if let error = error {
+                logger.debug("Focus JS error (ignorable): \(error.localizedDescription)")
+            }
+        }
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

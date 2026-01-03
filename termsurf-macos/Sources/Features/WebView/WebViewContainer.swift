@@ -32,7 +32,7 @@ class WebViewContainer: NSView {
         case webview
     }
 
-    private(set) var focusMode: FocusMode = .footer {
+    private(set) var focusMode: FocusMode = .webview {
         didSet {
             if oldValue != focusMode {
                 updateFocusVisuals()
@@ -72,9 +72,9 @@ class WebViewContainer: NSView {
         super.viewDidMoveToWindow()
 
         if let window = window {
-            // When we're added to a window, ensure footer has focus
+            // When we're added to a window, ensure webview has focus
             DispatchQueue.main.async { [weak self] in
-                self?.focusFooter()
+                self?.focusWebView()
             }
 
             // Observe first responder changes to intercept when parent surface gets focus
@@ -154,6 +154,18 @@ class WebViewContainer: NSView {
         webViewOverlay.onEscapePressed = { [weak self] in
             self?.focusFooter()
         }
+
+        // WebView: Navigation finished -> re-establish proper focus state
+        webViewOverlay.onNavigationFinished = { [weak self] in
+            guard let self = self else { return }
+            if self.focusMode == .webview {
+                // Re-focus web content after navigation so cursor is in the right place
+                self.webViewOverlay.focusWebContent()
+            } else {
+                // Re-blur web content after navigation (page may have auto-focused an element)
+                self.webViewOverlay.blurWebContent()
+            }
+        }
     }
 
     // MARK: - First Responder
@@ -179,6 +191,8 @@ class WebViewContainer: NSView {
         logger.info("Focusing webview for \(self.webviewId)")
         focusMode = .webview
         window?.makeFirstResponder(webViewOverlay.webView)
+        // Also focus web content so cursor appears in input fields
+        webViewOverlay.focusWebContent()
     }
 
     /// Focus the footer (terminal mode)
@@ -186,6 +200,8 @@ class WebViewContainer: NSView {
         logger.info("Focusing footer for \(self.webviewId)")
         focusMode = .footer
         window?.makeFirstResponder(footerView)
+        // Blur web content so keystrokes don't go to webview
+        webViewOverlay.blurWebContent()
     }
 
     private func updateFocusVisuals() {
