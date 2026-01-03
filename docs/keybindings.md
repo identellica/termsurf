@@ -26,14 +26,15 @@ passes events to libghostty.
 Webviews introduce a problem: when WKWebView is focused, keyboard events go to
 the browser, not libghostty. We handle this with a **modal approach**:
 
-### Two Modes
+### Three Modes
 
 1. **Control mode** (terminal keybindings work)
    - SurfaceView is the first responder
    - All ghostty keybindings work naturally (pane navigation, splits, etc.)
    - Enter switches to browse mode
+   - i switches to insert mode (edit URL)
    - ctrl+c closes the webview
-   - ControlBar displays: "Enter to browse, ctrl+c to close"
+   - ControlBar displays: "i to edit, Enter to browse, ctrl+c to close"
 
 2. **Browse mode** (browser has full control)
    - WKWebView is the first responder
@@ -41,12 +42,20 @@ the browser, not libghostty. We handle this with a **modal approach**:
    - Esc (intercepted via injected JS) switches to control mode
    - ControlBar displays: "Esc to exit browser"
 
+3. **Insert mode** (edit URL)
+   - URL text field is the first responder
+   - Normal text editing controls work (arrow keys, selection, etc.)
+   - URL is selected by default when entering insert mode
+   - Enter navigates to the URL and switches to browse mode
+   - Esc cancels editing, restores original URL, switches to control mode
+   - ControlBar displays: "Enter to go, Esc to cancel"
+
 ### Implementation
 
 **Control mode** keybindings are handled in `SurfaceView_AppKit.swift`:
 
 - At the start of `keyDown()`, check if a WebViewContainer subview exists
-- If so, intercept Enter and ctrl+c before passing to libghostty
+- If so, intercept Enter, i, and ctrl+c before passing to libghostty
 - All other keys flow through to libghostty normally
 
 **Browse mode** keybindings are handled via JavaScript injection in
@@ -55,10 +64,19 @@ the browser, not libghostty. We handle this with a **modal approach**:
 - Only Esc is intercepted, sent via `postMessage` to Swift
 - Swift calls `onEscapePressed` callback → `focusControlBar()`
 
-**ControlBar** (`ControlBar.swift`) is visual-only:
+**Insert mode** keybindings are handled in `ControlBar.swift`:
 
-- Displays mode-specific hint text
-- No keyboard handling
+- ControlBar implements `NSTextFieldDelegate`
+- `control(_:textView:doCommandBy:)` intercepts Enter and Esc
+- Enter triggers `onURLSubmitted` callback with the edited URL string
+- Esc triggers `onInsertCancelled` callback and restores the original URL
+- WebViewContainer wires these callbacks to navigate and switch modes
+
+**ControlBar** (`ControlBar.swift`):
+
+- Displays URL on the left (monospace font, truncates with ellipsis)
+- Displays mode-specific hint text on the right
+- In insert mode, URL field becomes editable with text selected
 
 ### Focus State Synchronization
 
@@ -75,7 +93,7 @@ if let container = subviews.first(where: { $0 is WebViewContainer }) ... {
     if !container.isControlMode {
         container.syncToControlMode()
     }
-    // Then handle Enter/ctrl+c
+    // Then handle Enter/i/ctrl+c
 }
 ```
 
@@ -92,13 +110,23 @@ Previous attempts to make a separate view the first responder required
 forwarding key events back to SurfaceView, which broke due to focus guards in
 the responder chain.
 
+### URL Normalization
+
+When a URL is submitted from insert mode, it is normalized before navigation:
+
+- URLs without a scheme (e.g., `example.com`) get `https://` prepended
+- URLs with `http://`, `https://`, or `file://` are used as-is
+
 ### Current Hardcoded Bindings
 
-| Context | Key    | Action             |
-| ------- | ------ | ------------------ |
-| Control | Enter  | Switch to browse   |
-| Control | ctrl+c | Close webview      |
-| Browse  | Esc    | Switch to control  |
+| Context | Key    | Action                          |
+| ------- | ------ | ------------------------------- |
+| Control | Enter  | Switch to browse                |
+| Control | i      | Switch to insert (edit URL)     |
+| Control | ctrl+c | Close webview                   |
+| Browse  | Esc    | Switch to control               |
+| Insert  | Enter  | Navigate to URL, switch to browse |
+| Insert  | Esc    | Cancel edit, switch to control  |
 
 These are not configurable via ghostty config. This may change in the future if
 we add TermSurf-specific configuration.
