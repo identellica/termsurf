@@ -59,7 +59,10 @@ extension Ghostty {
       // We only do this on macOS because other Apple platforms do not have the
       // same filesystem concept.
       #if os(macOS)
-        ghostty_config_load_default_files(cfg)
+        // Load from TermSurf's config directories:
+        //   - Preferred: ~/.config/termsurf/
+        //   - Fallback: ~/Library/Application Support/com.termsurf/
+        ghostty_config_load_files(cfg, "termsurf", "com.termsurf")
 
         // We only load CLI args when not running in Xcode because in Xcode we
         // pass some special parameters to control the debugger.

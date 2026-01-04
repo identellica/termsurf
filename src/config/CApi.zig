@@ -65,6 +65,23 @@ export fn ghostty_config_load_default_files(self: *Config) void {
     };
 }
 
+/// Load the configuration from custom directories specified by app_name and bundle_id.
+/// On all platforms, loads from `$XDG_CONFIG_HOME/{app_name}/` (preferred).
+/// On macOS, also loads from `~/Library/Application Support/{bundle_id}/` as fallback.
+export fn ghostty_config_load_files(
+    self: *Config,
+    app_name: [*:0]const u8,
+    bundle_id: [*:0]const u8,
+) void {
+    self.loadFiles(
+        state.alloc,
+        std.mem.sliceTo(app_name, 0),
+        std.mem.sliceTo(bundle_id, 0),
+    ) catch |err| {
+        log.err("error loading config err={}", .{err});
+    };
+}
+
 /// Load the configuration from the user-specified configuration
 /// file locations in the previously loaded configuration. This will
 /// recursively continue to load up to a built-in limit.

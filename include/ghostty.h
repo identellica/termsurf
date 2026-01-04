@@ -1003,6 +1003,7 @@ void ghostty_config_free(ghostty_config_t);
 ghostty_config_t ghostty_config_clone(ghostty_config_t);
 void ghostty_config_load_cli_args(ghostty_config_t);
 void ghostty_config_load_default_files(ghostty_config_t);
+void ghostty_config_load_files(ghostty_config_t, const char* app_name, const char* bundle_id);
 void ghostty_config_load_recursive_files(ghostty_config_t);
 void ghostty_config_finalize(ghostty_config_t);
 bool ghostty_config_get(ghostty_config_t, void*, const char*, uintptr_t);

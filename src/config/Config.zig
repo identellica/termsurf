@@ -3741,6 +3741,77 @@ fn writeConfigTemplate(path: []const u8) !void {
     );
 }
 
+/// Load configurations from custom configuration directories.
+///
+/// On all platforms, loads from `$XDG_CONFIG_HOME/{app_name}/` (preferred).
+/// On macOS, also loads from `~/Library/Application Support/{bundle_id}/` as fallback.
+///
+/// Both `config` and `config.ghostty` files are loaded if present.
+/// XDG location is preferred over Application Support.
+pub fn loadFiles(self: *Config, alloc: Allocator, app_name: []const u8, bundle_id: []const u8) !void {
+    // Build XDG paths
+    const xdg_legacy_subdir = try std.fmt.allocPrint(alloc, "{s}/config", .{app_name});
+    defer alloc.free(xdg_legacy_subdir);
+    const xdg_subdir = try std.fmt.allocPrint(alloc, "{s}/config.ghostty", .{app_name});
+    defer alloc.free(xdg_subdir);
+
+    const legacy_xdg_path = try internal_os.xdg.config(alloc, .{ .subdir = xdg_legacy_subdir });
+    defer alloc.free(legacy_xdg_path);
+    const xdg_path = try internal_os.xdg.config(alloc, .{ .subdir = xdg_subdir });
+    defer alloc.free(xdg_path);
+
+    // Load XDG first (preferred)
+    const xdg_loaded: bool = xdg_loaded: {
+        const legacy_xdg_action = self.loadOptionalFile(alloc, legacy_xdg_path);
+        const xdg_action = self.loadOptionalFile(alloc, xdg_path);
+        if (xdg_action != .not_found and legacy_xdg_action != .not_found) {
+            log.warn("both config files `{s}` and `{s}` exist.", .{ legacy_xdg_path, xdg_path });
+            log.warn("loading them both in that order", .{});
+            break :xdg_loaded true;
+        }
+
+        break :xdg_loaded xdg_action != .not_found or
+            legacy_xdg_action != .not_found;
+    };
+
+    // On macOS, load from app support directory as fallback (only if XDG not found)
+    if (comptime builtin.os.tag == .macos) {
+        if (!xdg_loaded) {
+            const legacy_app_support_path = try internal_os.macos.appSupportDirWithBundleId(alloc, bundle_id, "config");
+            defer alloc.free(legacy_app_support_path);
+            const app_support_path = try internal_os.macos.appSupportDirWithBundleId(alloc, bundle_id, "config.ghostty");
+            defer alloc.free(app_support_path);
+
+            const app_support_loaded: bool = loaded: {
+                const legacy_app_support_action = self.loadOptionalFile(alloc, legacy_app_support_path);
+                const app_support_action = self.loadOptionalFile(alloc, app_support_path);
+                if (app_support_action != .not_found and legacy_app_support_action != .not_found) {
+                    log.warn("both config files `{s}` and `{s}` exist.", .{ legacy_app_support_path, app_support_path });
+                    log.warn("loading them both in that order", .{});
+                    break :loaded true;
+                }
+
+                break :loaded app_support_action != .not_found or
+                    legacy_app_support_action != .not_found;
+            };
+
+            // If no config found anywhere, create template in XDG location
+            if (!app_support_loaded) {
+                writeConfigTemplate(legacy_xdg_path) catch |err| {
+                    log.warn("error creating template config file err={}", .{err});
+                };
+            }
+        }
+    } else {
+        // Non-macOS: create template in XDG if not found
+        if (!xdg_loaded) {
+            writeConfigTemplate(legacy_xdg_path) catch |err| {
+                log.warn("error creating template config file err={}", .{err});
+            };
+        }
+    }
+}
+
 /// Load configurations from the default configuration files. The default
 /// configuration file is at `$XDG_CONFIG_HOME/ghostty/config.ghostty`.
 ///

@@ -32,6 +32,21 @@ pub fn appSupportDir(
     );
 }
 
+/// Return the path to the application support directory for a custom bundle ID
+/// with the given sub path joined. This allocates the result using the
+/// given allocator.
+pub fn appSupportDirWithBundleId(
+    alloc: Allocator,
+    bundle_id: []const u8,
+    sub_path: []const u8,
+) AppSupportDirError![]const u8 {
+    return try commonDir(
+        alloc,
+        .NSApplicationSupportDirectory,
+        &.{ bundle_id, sub_path },
+    );
+}
+
 pub const CacheDirError = Allocator.Error || error{AppleAPIFailed};
 
 /// Return the path to the system cache directory with the given sub path joined.
