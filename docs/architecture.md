@@ -274,9 +274,11 @@ termsurf/
 │   ├── architecture.md           # This file
 │   ├── console.md                # Console bridging and JS API
 │   ├── keybindings.md            # Keyboard shortcuts
+│   ├── libghostty.md             # Changes to libghostty (for upstream PR)
 │   └── cef.md                    # CEF reference (deferred approach)
 └── TODO.md                       # Active task checklist
 ```
 
-**Key point:** libghostty (`src/`) remains completely unmodified. All TermSurf
-functionality is implemented in the Swift app and CLI tool.
+**Key point:** TermSurf makes minimal, additive changes to libghostty (`src/`)
+to support embedding. These changes are tracked in [docs/libghostty.md](libghostty.md)
+and will be submitted upstream after MVP.
