@@ -215,7 +215,7 @@ class CommandHandler {
         id: request.id,
         data: [
           "title": .string(bookmark.title),
-          "url": .string(bookmark.url),
+          "url": .string(bookmark.url)
         ])
     } else {
       return .error(id: request.id, message: "Bookmark '\(name)' not found")
@@ -232,7 +232,7 @@ class CommandHandler {
     for (name, bookmark) in bookmarks {
       bookmarksDict[name] = .dictionary([
         "title": .string(bookmark.title),
-        "url": .string(bookmark.url),
+        "url": .string(bookmark.url)
       ])
     }
 
