@@ -39,7 +39,7 @@ the browser, not libghostty. We handle this with a **modal approach**:
 2. **Browse mode** (browser has full control)
    - WKWebView is the first responder
    - All keys go to the browser
-   - Esc (intercepted via injected JS) switches to control mode
+   - Esc (intercepted via local event monitor) switches to control mode
    - ControlBar displays: "Esc to exit browser"
 
 3. **Insert mode** (edit URL)
@@ -58,11 +58,12 @@ the browser, not libghostty. We handle this with a **modal approach**:
 - If so, intercept Enter, i, and ctrl+c before passing to libghostty
 - All other keys flow through to libghostty normally
 
-**Browse mode** keybindings are handled via JavaScript injection in
-`WebViewOverlay.swift`:
+**Browse mode** Esc is handled via a local event monitor in
+`WebViewContainer.swift`:
 
-- Only Esc is intercepted, sent via `postMessage` to Swift
-- Swift calls `onEscapePressed` callback → `focusControlBar()`
+- `NSEvent.addLocalMonitorForEvents` intercepts Esc at the application level
+- When in browse mode, Esc triggers `focusControlBar()` and consumes the event
+- This is invisible to websites and cannot be overridden by them
 
 **Insert mode** keybindings are handled in `ControlBar.swift`:
 
@@ -165,6 +166,27 @@ First responder receives performKeyEquivalent
 If returns true → event consumed
 If returns false → bubbles up, eventually becomes menu action
 ```
+
+### Local Event Monitors
+
+For keys without modifiers (like Esc) that need to be intercepted before the
+first responder sees them, `performKeyEquivalent` doesn't work—it's primarily
+called for key equivalents (keys with modifiers like cmd or ctrl).
+
+The solution is `NSEvent.addLocalMonitorForEvents`:
+
+```
+User presses key (e.g., Esc)
+    ↓
+Local event monitor intercepts BEFORE any view
+    ↓
+If returns nil → event consumed, no view sees it
+If returns event → normal processing continues
+```
+
+This is how we handle Esc in browse mode: the monitor in `WebViewContainer`
+intercepts Esc before WKWebView can see it, making it invisible to websites
+and impossible for them to override.
 
 ## Menu System and Ghostty Keybindings
 
@@ -310,3 +332,7 @@ When adding new keybindings that need to work in webviews:
    `performKeyEquivalent` to let them flow normally
 3. **Command keys that WKWebView breaks** - Intercept in `performKeyEquivalent`
    and convert to `NSApp.sendAction` to trigger the menu action directly
+4. **Keys without modifiers that must be intercepted** - Use a local event
+   monitor (`NSEvent.addLocalMonitorForEvents`). This intercepts events before
+   any view sees them. Use sparingly—only when the key absolutely must not
+   reach the first responder (e.g., Esc in browse mode).
