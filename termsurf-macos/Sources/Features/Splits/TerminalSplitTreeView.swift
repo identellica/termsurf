@@ -178,8 +178,7 @@ private struct TerminalSplitLeaf: View {
       guard let provider = providers.first else { return false }
 
       // Capture action before the async closure
-      _ = provider.loadTransferable(type: Ghostty.SurfaceView.self) {
-        [weak destinationSurface] result in
+      _ = provider.loadTransferable(type: Ghostty.SurfaceView.self) { [weak destinationSurface] result in
         switch result {
         case .success(let sourceSurface):
           DispatchQueue.main.async {

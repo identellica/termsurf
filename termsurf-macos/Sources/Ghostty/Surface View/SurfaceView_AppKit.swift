@@ -54,8 +54,7 @@ extension Ghostty {
 
         // If we have a new progress report, start a timer to remove it after 15 seconds
         if progressReport != nil {
-          progressReportTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) {
-            [weak self] _ in
+          progressReportTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { [weak self] _ in
             self?.progressReport = nil
             self?.progressReportTimer = nil
           }
@@ -305,8 +304,7 @@ extension Ghostty {
       }
 
       // Set a timer to show the ghost emoji after 500ms if no title is set
-      titleFallbackTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) {
-        [weak self] _ in
+      titleFallbackTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
         if let self = self, self.title.isEmpty {
           self.title = "👻"
         }
@@ -1079,8 +1077,7 @@ extension Ghostty {
           }
 
           // i (without modifiers) → switch to insert mode (edit URL)
-          let hasModifiers = !event.modifierFlags.intersection([.control, .command, .option])
-            .isEmpty
+          let hasModifiers = !event.modifierFlags.isDisjoint(with: [.control, .command, .option])
           if chars == "i" && !hasModifiers {
             Ghostty.logger.info("  - 'i' pressed (no modifiers), calling focusURLField()")
             container.focusURLField()

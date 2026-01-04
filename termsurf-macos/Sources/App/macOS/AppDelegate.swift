@@ -863,8 +863,7 @@ class AppDelegate: NSObject,
     switch config.windowSaveState {
     case "never": UserDefaults.standard.setValue(false, forKey: "NSQuitAlwaysKeepsWindows")
     case "always": UserDefaults.standard.setValue(true, forKey: "NSQuitAlwaysKeepsWindows")
-    case "default": fallthrough
-    default: UserDefaults.standard.removeObject(forKey: "NSQuitAlwaysKeepsWindows")
+    case "default", _: UserDefaults.standard.removeObject(forKey: "NSQuitAlwaysKeepsWindows")
     }
 
     // Sync our auto-update settings. If SUEnableAutomaticChecks (in our Info.plist) is
@@ -879,7 +878,7 @@ class AppDelegate: NSObject,
         autoUpdate == .check || autoUpdate == .download
       updateController.updater.automaticallyDownloadsUpdates =
         autoUpdate == .download
-      /**
+      /*
        To test `auto-update` easily, uncomment the line below and
        delete `SUEnableAutomaticChecks` in Ghostty-Info.plist.
       
@@ -1104,10 +1103,8 @@ class AppDelegate: NSObject,
 
   func findSurface(forUUID uuid: UUID) -> Ghostty.SurfaceView? {
     for c in TerminalController.all {
-      for view in c.surfaceTree {
-        if view.id == uuid {
-          return view
-        }
+      for view in c.surfaceTree where view.id == uuid {
+        return view
       }
     }
 

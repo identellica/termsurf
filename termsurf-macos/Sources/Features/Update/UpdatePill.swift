@@ -40,33 +40,36 @@ struct UpdatePill: View {
   /// The pill-shaped button view that displays the update badge and text
   @ViewBuilder
   private var pillButton: some View {
-    Button(action: {
-      if case .notFound(let notFound) = model.state {
-        model.state = .idle
-        notFound.acknowledgement()
-      } else {
-        showPopover.toggle()
-      }
-    }) {
-      HStack(spacing: 6) {
-        UpdateBadge(model: model)
-          .frame(width: 14, height: 14)
+    Button(
+      action: {
+        if case .notFound(let notFound) = model.state {
+          model.state = .idle
+          notFound.acknowledgement()
+        } else {
+          showPopover.toggle()
+        }
+      },
+      label: {
+        HStack(spacing: 6) {
+          UpdateBadge(model: model)
+            .frame(width: 14, height: 14)
 
-        Text(model.text)
-          .font(Font(textFont))
-          .lineLimit(1)
-          .truncationMode(.tail)
-          .frame(width: textWidth)
+          Text(model.text)
+            .font(Font(textFont))
+            .lineLimit(1)
+            .truncationMode(.tail)
+            .frame(width: textWidth)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+          Capsule()
+            .fill(model.backgroundColor)
+        )
+        .foregroundColor(model.foregroundColor)
+        .contentShape(Capsule())
       }
-      .padding(.horizontal, 8)
-      .padding(.vertical, 4)
-      .background(
-        Capsule()
-          .fill(model.backgroundColor)
-      )
-      .foregroundColor(model.foregroundColor)
-      .contentShape(Capsule())
-    }
+    )
     .buttonStyle(.plain)
     .help(model.text)
     .accessibilityLabel(model.text)

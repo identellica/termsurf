@@ -1,7 +1,7 @@
 import Foundation
 
-/// Protocol messages for CLI-to-app communication over Unix domain sockets.
-/// All messages are JSON-encoded with newline delimiters.
+// Protocol messages for CLI-to-app communication over Unix domain sockets.
+// All messages are JSON-encoded with newline delimiters.
 
 // MARK: - Request (CLI → App)
 

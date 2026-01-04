@@ -110,13 +110,13 @@ struct SplitView<L: View, R: View>: View {
     var result = CGRect(x: 0, y: 0, width: size.width, height: size.height)
     switch direction {
     case .horizontal:
-      result.size.width = result.size.width * split
+      result.size.width *= split
       result.size.width -= splitterVisibleSize / 2
       result.size.width -= result.size.width.truncatingRemainder(
         dividingBy: self.resizeIncrements.width)
 
     case .vertical:
-      result.size.height = result.size.height * split
+      result.size.height *= split
       result.size.height -= splitterVisibleSize / 2
       result.size.height -= result.size.height.truncatingRemainder(
         dividingBy: self.resizeIncrements.height)

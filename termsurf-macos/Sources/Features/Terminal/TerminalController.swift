@@ -406,8 +406,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
           fallthrough
         }
 
-      case "current": fallthrough
-      default:
+      case "current", _:
         parent.addTabbedWindow(window, ordered: .above)
       }
     }
@@ -1048,8 +1047,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
       case .contentIntrinsicSize:
         // Content intrinsic size requires a short delay so that AppKit
         // can layout our SwiftUI views.
-        DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(10_000)) {
-          [weak self, weak window] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(10_000)) { [weak self, weak window] in
           guard let self, let window else { return }
           defaultSize.apply(to: window)
           if let screen = window.screen ?? NSScreen.main {
@@ -1572,7 +1570,7 @@ extension TerminalController {
     case #selector(closeTabsOnTheRight):
       guard let window, let tabGroup = window.tabGroup else { return false }
       guard let currentIndex = tabGroup.windows.firstIndex(of: window) else { return false }
-      return tabGroup.windows.enumerated().contains { $0.offset > currentIndex }
+      return tabGroup.windows.indices.contains { $0 > currentIndex }
 
     case #selector(returnToDefaultSize):
       guard let window else { return false }
