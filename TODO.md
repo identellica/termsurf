@@ -334,7 +334,8 @@ WebViewContainer (NSView)
 ```
 
 - Three modes:
-  - **Control mode**: SurfaceView is first responder, all ghostty keybindings work
+  - **Control mode**: SurfaceView is first responder, all ghostty keybindings
+    work
   - **Browse mode**: WKWebView is first responder, browser has full control
   - **Insert mode**: URL field is editable, Enter navigates, Esc cancels
 - Starts in browse mode when webview opens
@@ -410,16 +411,16 @@ termsurf open google.com
 ```
 
 **Note:** Required fixes for focus state synchronization when pane hierarchy
-changes. See `syncToControlMode()` in WebViewContainer and the
-`didInitialFocus` flag to prevent unwanted mode switches.
+changes. See `syncToControlMode()` in WebViewContainer and the `didInitialFocus`
+flag to prevent unwanted mode switches.
 
 ### Phase 3F: Console Output Bridging ✓
 
 **Goal:** Route webview console.log/error to the terminal via CLI stdout/stderr.
 
-**Implementation:** Console events are streamed via socket to the blocking CLI, which
-writes to its stdout/stderr. This avoids needing PTY access and leverages the
-existing socket infrastructure.
+**Implementation:** Console events are streamed via socket to the blocking CLI,
+which writes to its stdout/stderr. This avoids needing PTY access and leverages
+the existing socket infrastructure.
 
 **Tasks:**
 
@@ -453,7 +454,8 @@ close from top down. Control bar shows stack position indicator.
 
 **Tasks:**
 
-- [x] Add `paneStacks` dictionary to WebViewManager to track stack order per pane
+- [x] Add `paneStacks` dictionary to WebViewManager to track stack order per
+      pane
 - [x] When creating webview, add to pane's stack and calculate position
 - [x] When closing webview, remove from stack and update positions for remaining
 - [x] Add `stackPosition` and `stackTotal` properties to WebViewContainer
@@ -476,36 +478,19 @@ termsurf open example.com
 # Repeat ctrl+c to close remaining webviews
 ```
 
-### Phase 3H: Background/Foreground (ctrl+z / fg)
+### Phase 3H: Background/Foreground (ctrl+z / fg) - DEFERRED
 
-**Goal:** ctrl+z hides webview and backgrounds CLI, fg restores both.
+**Status:** Deferred due to complexity. See [./docs/ctrl-z.md](docs/ctrl-z.md)
+for full analysis.
 
-**Tasks:**
+**Summary:** ctrl+z/fg conflicts with webview stacking (Phase 3G). When multiple
+webviews are opened via parallel commands (`par-each`), Unix job control doesn't
+work correctly because the parent process blocks waiting for children.
+Additionally, all ctrl+z use cases are already solved by pane switching
+(ctrl+h/j/k/l).
 
-- [ ] Add ctrl+z handling in control mode (SurfaceView_AppKit.swift)
-- [ ] Add `onSuspend` callback to WebViewContainer
-- [ ] Add `suspendWebView()` to WebViewManager:
-  - [ ] Hide webview (set `isHidden = true`, don't destroy)
-  - [ ] Send `{"event":"suspended"}` to waiting CLI
-- [ ] CLI: Store webviewId from initial open response
-- [ ] CLI: Handle "suspended" event:
-  - [ ] Call `raise(SIGTSTP)` to suspend CLI process
-  - [ ] On resume (after SIGCONT), send `{"action":"show"}` to restore webview
-- [ ] Handle `show` command in Swift (already exists):
-  - [ ] Set `isHidden = false`
-  - [ ] Focus control bar (control mode)
-
-**Test:**
-
-```bash
-termsurf open google.com
-# Press Esc to enter control mode
-# Press ctrl+z
-# Expected: Webview hides, shell shows "[1]+ Stopped ..."
-
-fg
-# Expected: Webview reappears in control mode
-```
+**Decision:** Keep stacking (already implemented), skip freezing. Pane switching
+is the "TermSurf way" to multitask.
 
 ### Phase 3I: Multi-webview Tracking
 
@@ -535,17 +520,17 @@ fg
 
 ### Phase 3 Summary
 
-| Phase | Goal                  | Test                                                          | Success Criteria      | Status |
-| ----- | --------------------- | ------------------------------------------------------------- | --------------------- | ------ |
-| 3A    | Socket server         | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response         | ✓      |
-| 3B    | CLI tool              | `termsurf ping`                                               | "pong" output         | ✓      |
-| 3C    | Webview overlay       | `termsurf open google.com`                                    | Webview appears       | ✓      |
-| 3D    | Control bar + ctrl+c  | Enter/Esc/i mode switch, ctrl+c close                         | Mode switching works  | ✓      |
-| 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly | ✓      |
-| 3F    | Console bridging      | console.log in webview                                        | Output in terminal    | ✓      |
-| 3G    | Webview stacking      | Multiple concurrent opens                                     | Stack indicator works | ✓      |
-| 3H    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    |        |
-| 3I    | Multi-webview         | Open in two panes                                             | Independent operation |        |
+| Phase | Goal                  | Test                                                          | Success Criteria      | Status   |
+| ----- | --------------------- | ------------------------------------------------------------- | --------------------- | -------- |
+| 3A    | Socket server         | `echo '{"id":"1","action":"ping"}' \| nc -U $TERMSURF_SOCKET` | JSON response         | ✓        |
+| 3B    | CLI tool              | `termsurf ping`                                               | "pong" output         | ✓        |
+| 3C    | Webview overlay       | `termsurf open google.com`                                    | Webview appears       | ✓        |
+| 3D    | Control bar + ctrl+c  | Enter/Esc/i mode switch, ctrl+c close                         | Mode switching works  | ✓        |
+| 3E    | Split pane navigation | ctrl+h/j/k/l between panes                                    | Focus moves correctly | ✓        |
+| 3F    | Console bridging      | console.log in webview                                        | Output in terminal    | ✓        |
+| 3G    | Webview stacking      | Multiple concurrent opens                                     | Stack indicator works | ✓        |
+| 3H    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    | Deferred |
+| 3I    | Multi-webview         | Open in two panes                                             | Independent operation |          |
 
 ### Key Files Reference
 
@@ -617,7 +602,8 @@ func createWebView(profileName: String?) -> WKWebView {
 - [x] Enable Safari Web Inspector for WKWebView:
   - [x] Set
         `webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")`
-  - [x] cmd+alt+i opens Web Inspector in browse mode (via private `_inspector` API)
+  - [x] cmd+alt+i opens Web Inspector in browse mode (via private `_inspector`
+        API)
   - [x] Documented in docs/keybindings.md
 - [ ] Consider command: `termsurf devtools` to open inspector
 
