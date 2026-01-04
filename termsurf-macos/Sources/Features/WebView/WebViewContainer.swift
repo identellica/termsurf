@@ -3,6 +3,16 @@ import os
 
 private let logger = Logger(subsystem: "com.termsurf", category: "WebViewContainer")
 
+/// A dim overlay that calls a closure when clicked.
+/// Used to switch modes when clicking on the inactive area of a webview pane.
+private class ClickableDimOverlay: NSView {
+  var onClick: (() -> Void)?
+
+  override func mouseDown(with event: NSEvent) {
+    onClick?()
+  }
+}
+
 /// Container view that holds a WebViewOverlay and ControlBar with mode-based focus switching.
 ///
 /// Three modes:
@@ -20,10 +30,12 @@ class WebViewContainer: NSView {
   let controlBar: ControlBar
 
   /// Dim overlay for webview (shown when webview is inactive: control/insert mode)
-  private let webViewDimOverlay: NSView
+  /// Clicking switches to browse mode.
+  private let webViewDimOverlay: ClickableDimOverlay
 
   /// Dim overlay for control bar (shown when control bar is inactive: browse mode)
-  private let controlBarDimOverlay: NSView
+  /// Clicking switches to control mode.
+  private let controlBarDimOverlay: ClickableDimOverlay
 
   /// Called when the webview should close (webviewId, exitCode)
   var onClose: ((String, Int) -> Void)?
@@ -86,8 +98,8 @@ class WebViewContainer: NSView {
     self.webViewOverlay = WebViewOverlay(
       url: url, webviewId: webviewId, profile: profile, incognito: incognito, jsApi: jsApi)
     self.controlBar = ControlBar()
-    self.webViewDimOverlay = NSView()
-    self.controlBarDimOverlay = NSView()
+    self.webViewDimOverlay = ClickableDimOverlay()
+    self.controlBarDimOverlay = ClickableDimOverlay()
     super.init(frame: .zero)
 
     setupSubviews()
@@ -172,13 +184,21 @@ class WebViewContainer: NSView {
     }()
 
     // Dim overlay for control bar (on top of control bar)
+    // Visible in browse mode; clicking switches to control mode
     controlBarDimOverlay.wantsLayer = true
     controlBarDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: dimOpacity).cgColor
+    controlBarDimOverlay.onClick = { [weak self] in
+      self?.focusControlBar()
+    }
     addSubview(controlBarDimOverlay)
 
     // Dim overlay for webview (on top of webview)
+    // Visible in control/insert mode; clicking switches to browse mode
     webViewDimOverlay.wantsLayer = true
     webViewDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: dimOpacity).cgColor
+    webViewDimOverlay.onClick = { [weak self] in
+      self?.focusBrowser()
+    }
     addSubview(webViewDimOverlay)
   }
 
