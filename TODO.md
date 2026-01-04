@@ -492,22 +492,22 @@ Additionally, all ctrl+z use cases are already solved by pane switching
 **Decision:** Keep stacking (already implemented), skip freezing. Pane switching
 is the "TermSurf way" to multitask.
 
-### Phase 3I: Multi-webview Tracking
+### Phase 3I: Multi-webview Tracking ✓
 
 **Goal:** Support multiple webviews across panes, each with correct association.
 
 **Tasks:**
 
-- [ ] Each pane gets unique `TERMSURF_PANE_ID` env var
-- [ ] CLI includes `paneId` in all requests (from env var)
-- [ ] `WebViewManager` tracks:
-  - [ ] Webview ID → WebViewOverlay instance
-  - [ ] Webview ID → Pane association
-  - [ ] Pane ID → Active webview (for keyboard routing)
-- [ ] Ensure ctrl+c/z only affects webview in focused pane
-- [ ] Ensure pane navigation keybindings work with webviews
+- [x] Each pane gets unique `TERMSURF_PANE_ID` env var
+- [x] CLI includes `paneId` in all requests (from env var)
+- [x] `WebViewManager` tracks:
+  - [x] Webview ID → WebViewOverlay instance
+  - [x] Webview ID → Pane association
+  - [x] Pane ID → Active webview (for keyboard routing)
+- [x] Ensure ctrl+c/z only affects webview in focused pane
+- [x] Ensure pane navigation keybindings work with webviews
 
-**Test:**
+**Test:** ✓
 
 ```bash
 # Open two panes side by side
@@ -530,7 +530,7 @@ is the "TermSurf way" to multitask.
 | 3F    | Console bridging      | console.log in webview                                        | Output in terminal    | ✓        |
 | 3G    | Webview stacking      | Multiple concurrent opens                                     | Stack indicator works | ✓        |
 | 3H    | ctrl+z / fg           | ctrl+z then fg                                                | Hide/restore works    | Deferred |
-| 3I    | Multi-webview         | Open in two panes                                             | Independent operation |          |
+| 3I    | Multi-webview         | Open in two panes                                             | Independent operation | ✓        |
 
 ### Key Files Reference
 
