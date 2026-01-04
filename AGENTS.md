@@ -38,6 +38,7 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 - **TODO.md: `TODO.md`** - Active checklist of tasks to launch (keep up to date!)
 - Documentation: `docs/`
   - `docs/architecture.md` - Technical decisions and design rationale
+  - `docs/bookmarks.md` - Bookmarks implementation plan and checklist
   - `docs/console.md` - Console bridging and JavaScript API (`--js-api`)
   - `docs/keybindings.md` - Webview keyboard shortcuts and modes
   - `docs/libghostty.md` - Changes to libghostty (tracking for upstream PRs)
