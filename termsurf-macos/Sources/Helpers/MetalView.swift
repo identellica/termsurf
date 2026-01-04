@@ -1,26 +1,26 @@
-import SwiftUI
 import MetalKit
+import SwiftUI
 
 /// Renders an MTKView with the given renderer class.
 struct MetalView<V: MTKView>: View {
-    @State private var metalView = V()
+  @State private var metalView = V()
 
-    var body: some View {
-        MetalViewRepresentable(metalView: $metalView)
-    }
+  var body: some View {
+    MetalViewRepresentable(metalView: $metalView)
+  }
 }
 
-fileprivate struct MetalViewRepresentable<V: MTKView>: NSViewRepresentable {
-    @Binding var metalView: V
+private struct MetalViewRepresentable<V: MTKView>: NSViewRepresentable {
+  @Binding var metalView: V
 
-    func makeNSView(context: Context) -> some NSView {
-        metalView
-    }
+  func makeNSView(context: Context) -> some NSView {
+    metalView
+  }
 
-    func updateNSView(_ view: NSViewType, context: Context) {
-        updateMetalView()
-    }
+  func updateNSView(_ view: NSViewType, context: Context) {
+    updateMetalView()
+  }
 
-    func updateMetalView() {
-    }
+  func updateMetalView() {
+  }
 }

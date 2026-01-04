@@ -9,5 +9,5 @@ import SwiftUI
 /// This is useful for titlebar accessories that contain interactive elements
 /// (buttons, links, etc.) where you don't want accidental window dragging.
 class NonDraggableHostingView<Content: View>: NSHostingView<Content> {
-    override var mouseDownCanMoveWindow: Bool { false }
+  override var mouseDownCanMoveWindow: Bool { false }
 }
