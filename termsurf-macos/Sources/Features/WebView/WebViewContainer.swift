@@ -50,6 +50,9 @@ class WebViewContainer: NSView {
   /// Total number of webviews in the stack
   private(set) var stackTotal: Int = 1
 
+  /// Local event monitor for Esc key (to escape browse mode)
+  private var escapeMonitor: Any?
+
   /// Current focus mode
   enum FocusMode {
     case control
@@ -89,6 +92,7 @@ class WebViewContainer: NSView {
 
     setupSubviews()
     setupCallbacks()
+    setupEscapeMonitor()
 
     // Ensure initial visual state is correct
     updateFocusVisuals()
@@ -106,6 +110,9 @@ class WebViewContainer: NSView {
   }
 
   deinit {
+    if let monitor = escapeMonitor {
+      NSEvent.removeMonitor(monitor)
+    }
     logger.info("WebViewContainer \(self.webviewId) deallocated")
   }
 
@@ -199,12 +206,27 @@ class WebViewContainer: NSView {
     webViewDimOverlay.frame = webViewOverlay.frame
   }
 
-  private func setupCallbacks() {
-    // WebView: Esc -> switch to control mode
-    webViewOverlay.onEscapePressed = { [weak self] in
-      self?.focusControlBar()
-    }
+  private func setupEscapeMonitor() {
+    // Local event monitor intercepts Esc before it reaches WKWebView.
+    // This is invisible to websites and cannot be overridden by them.
+    escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+      guard let self = self else { return event }
 
+      // Only handle Esc key (keyCode 53)
+      guard event.keyCode == 53 else { return event }
+
+      // Only handle when in browse mode
+      guard self.focusMode == .browse else { return event }
+
+      // Switch to control mode
+      self.focusControlBar()
+
+      // Consume the event (return nil to prevent further processing)
+      return nil
+    }
+  }
+
+  private func setupCallbacks() {
     // WebView: URL changed -> update control bar
     webViewOverlay.onURLChanged = { [weak self] url in
       self?.controlBar.updateURL(url)

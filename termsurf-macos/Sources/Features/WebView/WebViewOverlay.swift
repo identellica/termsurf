@@ -16,9 +16,6 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
   /// Callback when webview should close (called from container, not JS anymore)
   var onClose: ((String) -> Void)?
 
-  /// Callback when Esc is pressed (to switch to control mode)
-  var onEscapePressed: (() -> Void)?
-
   /// Callback when JS API exit() is called (with exit code)
   var onExit: ((Int) -> Void)?
 
@@ -132,18 +129,6 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
       })();
       """
 
-    // Keyboard interception for Esc only (to switch back to control mode)
-    // All other keys go to the browser - ctrl+c, ctrl+z, etc. are handled by
-    // SurfaceView when in control mode
-    let keyboardScript = """
-      document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-              e.preventDefault();
-              window.webkit.messageHandlers.termsurf.postMessage({action: 'escape'});
-          }
-      }, true);
-      """
-
     // Optional JS API (window.termsurf) - only injected when --js-api flag is used
     let jsApiScript = """
       window.termsurf = {
@@ -164,14 +149,8 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
       injectionTime: .atDocumentStart,
       forMainFrameOnly: false
     )
-    let keyboardUserScript = WKUserScript(
-      source: keyboardScript,
-      injectionTime: .atDocumentStart,
-      forMainFrameOnly: true
-    )
 
     contentController.addUserScript(consoleUserScript)
-    contentController.addUserScript(keyboardUserScript)
 
     // Only inject JS API if enabled via --js-api flag
     if jsApiEnabled {
@@ -298,12 +277,6 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     logger.info("  - action: \(action)")
 
     switch action {
-    case "escape":
-      logger.info("Webview \(self.webviewId) requested escape (switch to control mode)")
-      logger.info("  - onEscapePressed callback exists: \(self.onEscapePressed != nil)")
-      onEscapePressed?()
-      logger.info("  - onEscapePressed callback invoked")
-
     case "exit":
       guard jsApiEnabled else {
         logger.warning("Exit action received but JS API is not enabled")
