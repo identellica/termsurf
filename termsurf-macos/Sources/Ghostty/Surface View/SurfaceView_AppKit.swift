@@ -1257,10 +1257,9 @@ extension Ghostty {
                     }
                 }
 
-                // Forward all other keys to webview and consume event to prevent
-                // ghostty menu shortcuts from intercepting browser keys
-                _ = container.webViewOverlay.webView.performKeyEquivalent(with: event)
-                return true
+                // Forward to webview - return its result so unhandled events
+                // can continue to Edit menu (cmd+c, cmd+v) or other system handlers
+                return container.webViewOverlay.webView.performKeyEquivalent(with: event)
             }
 
             // Only process events if we're focused. Some key events like C-/ macOS
