@@ -19,6 +19,12 @@ class WebViewContainer: NSView {
     /// The control bar
     let controlBar: ControlBar
 
+    /// Dim overlay for webview (shown when webview is inactive: control/insert mode)
+    private let webViewDimOverlay: NSView
+
+    /// Dim overlay for control bar (shown when control bar is inactive: browse mode)
+    private let controlBarDimOverlay: NSView
+
     /// Called when the webview should close (webviewId, exitCode)
     var onClose: ((String, Int) -> Void)?
 
@@ -74,6 +80,8 @@ class WebViewContainer: NSView {
         self.stackTotal = stackTotal
         self.webViewOverlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile, incognito: incognito, jsApi: jsApi)
         self.controlBar = ControlBar()
+        self.webViewDimOverlay = NSView()
+        self.controlBarDimOverlay = NSView()
         super.init(frame: .zero)
 
         setupSubviews()
@@ -142,6 +150,16 @@ class WebViewContainer: NSView {
 
         // WebView fills rest (above control bar)
         addSubview(webViewOverlay)
+
+        // Dim overlay for control bar (on top of control bar)
+        controlBarDimOverlay.wantsLayer = true
+        controlBarDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: 0.5).cgColor
+        addSubview(controlBarDimOverlay)
+
+        // Dim overlay for webview (on top of webview)
+        webViewDimOverlay.wantsLayer = true
+        webViewDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: 0.5).cgColor
+        addSubview(webViewDimOverlay)
     }
 
     override func layout() {
@@ -162,6 +180,10 @@ class WebViewContainer: NSView {
             width: bounds.width,
             height: bounds.height - controlBarHeight
         )
+
+        // Dim overlays match their target views
+        controlBarDimOverlay.frame = controlBar.frame
+        webViewDimOverlay.frame = webViewOverlay.frame
     }
 
     private func setupCallbacks() {
@@ -297,10 +319,19 @@ class WebViewContainer: NSView {
         switch focusMode {
         case .control:
             mode = .control
+            // Control bar is active, webview is inactive
+            controlBarDimOverlay.isHidden = true
+            webViewDimOverlay.isHidden = false
         case .browse:
             mode = .browse
+            // Webview is active, control bar is inactive
+            controlBarDimOverlay.isHidden = false
+            webViewDimOverlay.isHidden = true
         case .insert:
             mode = .insert
+            // Control bar is active (editing URL), webview is inactive
+            controlBarDimOverlay.isHidden = true
+            webViewDimOverlay.isHidden = false
         }
         controlBar.updateModeText(mode: mode)
         logger.debug("Focus mode: \(String(describing: self.focusMode))")
