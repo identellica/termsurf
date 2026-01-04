@@ -778,6 +778,14 @@ extension Ghostty {
         // MARK: - NSView
 
         override func becomeFirstResponder() -> Bool {
+            // If there's a webview in browse mode, redirect focus to it
+            // so keyboard events go to the webview, not the terminal
+            if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer {
+                if container.focusMode == .browse {
+                    return window?.makeFirstResponder(container.webViewOverlay.webView) ?? false
+                }
+            }
+
             let result = super.becomeFirstResponder()
             if (result) { focusDidChange(true) }
             return result
