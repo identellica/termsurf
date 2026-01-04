@@ -1044,40 +1044,39 @@ extension Ghostty {
             let keyCode = event.keyCode
             Ghostty.logger.info("SurfaceView.keyDown: chars='\(chars)' keyCode=\(keyCode) mods=\(event.modifierFlags.rawValue)")
 
-            // Check for webview overlay - if SurfaceView is receiving keyDown and there's a
-            // WebViewContainer, we are effectively in "control mode" (terminal has focus).
-            // This handles the case where pane switching causes focus state to get out of sync.
+            // Check for webview overlay
             // Use last(where:) to get the topmost container when multiple are stacked.
             if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer {
                 Ghostty.logger.info("  - WebViewContainer found, isControlMode: \(container.isControlMode)")
 
-                // Sync focus state if it got out of sync (e.g., after pane switching)
-                if !container.isControlMode {
-                    Ghostty.logger.info("  - Focus state out of sync, syncing to control mode")
-                    container.syncToControlMode()
+                // Handle control mode special keys
+                if container.isControlMode {
+                    // Enter → switch to browse mode
+                    if chars == "\r" {
+                        Ghostty.logger.info("  - Enter pressed, calling focusBrowser()")
+                        container.focusBrowser()
+                        return
+                    }
+
+                    // i (without modifiers) → switch to insert mode (edit URL)
+                    let hasModifiers = !event.modifierFlags.intersection([.control, .command, .option]).isEmpty
+                    if chars == "i" && !hasModifiers {
+                        Ghostty.logger.info("  - 'i' pressed (no modifiers), calling focusURLField()")
+                        container.focusURLField()
+                        return
+                    }
+
+                    // Ctrl+C → close webview (exit code 0)
+                    if event.modifierFlags.contains(.control) && chars == "c" {
+                        Ghostty.logger.info("  - Ctrl+C pressed, calling onClose")
+                        container.onClose?(container.webviewId, 0)
+                        return
+                    }
                 }
 
-                // Enter → switch to browse mode
-                if chars == "\r" {
-                    Ghostty.logger.info("  - Enter pressed, calling focusBrowser()")
-                    container.focusBrowser()
-                    return
-                }
-
-                // i (without modifiers) → switch to insert mode (edit URL)
-                let hasModifiers = !event.modifierFlags.intersection([.control, .command, .option]).isEmpty
-                if chars == "i" && !hasModifiers {
-                    Ghostty.logger.info("  - 'i' pressed (no modifiers), calling focusURLField()")
-                    container.focusURLField()
-                    return
-                }
-
-                // Ctrl+C → close webview (exit code 0)
-                if event.modifierFlags.contains(.control) && chars == "c" {
-                    Ghostty.logger.info("  - Ctrl+C pressed, calling onClose")
-                    container.onClose?(container.webviewId, 0)
-                    return
-                }
+                // Webview is visible - don't let terminal process ANY other keys
+                Ghostty.logger.info("  - Webview visible, not processing key in terminal")
+                return
             }
 
             guard let surface = self.surface else {
@@ -1239,12 +1238,10 @@ extension Ghostty {
             // to receive any other event type here.
             guard event.type == .keyDown else { return false }
 
-            // If there's a webview in browse mode, give it total control over key equivalents.
-            // This prevents ghostty keybindings from intercepting keys meant for the browser.
+            // If there's a webview visible, don't let terminal intercept key equivalents.
             // Use last(where:) to get the topmost container when multiple are stacked.
-            if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer,
-               !container.isControlMode {
-                // Handle cmd+alt+i specifically to open Safari Web Inspector
+            if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer {
+                // Handle cmd+alt+i specifically to open Safari Web Inspector (works in any mode)
                 let hasCmd = event.modifierFlags.contains(.command)
                 let hasOpt = event.modifierFlags.contains(.option)
                 let isI = event.charactersIgnoringModifiers == "i"
@@ -1257,9 +1254,9 @@ extension Ghostty {
                     }
                 }
 
-                // Forward to webview - return its result so unhandled events
-                // can continue to Edit menu (cmd+c, cmd+v) or other system handlers
-                return container.webViewOverlay.webView.performKeyEquivalent(with: event)
+                // Don't let terminal handle key equivalents when webview is visible.
+                // Return false so events flow to Edit menu (cmd+c/x/v) or other system handlers.
+                return false
             }
 
             // Only process events if we're focused. Some key events like C-/ macOS
