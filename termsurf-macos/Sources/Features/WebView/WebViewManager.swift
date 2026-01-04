@@ -70,6 +70,7 @@ class WebViewManager {
     ///   - url: The URL to load
     ///   - paneId: The pane to attach the webview to
     ///   - profile: Optional browser profile for session isolation
+    ///   - incognito: Whether to use ephemeral session (no data persisted)
     ///   - jsApi: Whether to enable the window.termsurf JavaScript API
     ///   - connection: Optional socket connection for sending console events
     ///   - requestId: Request ID for event correlation (required if connection is provided)
@@ -77,6 +78,7 @@ class WebViewManager {
         url: URL,
         paneId: String,
         profile: String? = nil,
+        incognito: Bool = false,
         jsApi: Bool = false,
         connection: SocketConnection? = nil,
         requestId: String? = nil
@@ -135,8 +137,8 @@ class WebViewManager {
             self.lock.unlock()
 
             // Create the container on main thread with stack info
-            let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile, jsApi: jsApi,
-                                             stackPosition: stackPosition, stackTotal: stackTotal)
+            let container = WebViewContainer(url: url, webviewId: webviewId, profile: profile, incognito: incognito,
+                                             jsApi: jsApi, stackPosition: stackPosition, stackTotal: stackTotal)
             container.onClose = { [weak self] id, exitCode in
                 self?.closeWebView(id: id, exitCode: exitCode)
             }

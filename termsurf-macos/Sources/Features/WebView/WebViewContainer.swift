@@ -64,12 +64,12 @@ class WebViewContainer: NSView {
 
     // MARK: - Initialization
 
-    init(url: URL, webviewId: String, profile: String? = nil, jsApi: Bool = false,
-         stackPosition: Int = 1, stackTotal: Int = 1) {
+    init(url: URL, webviewId: String, profile: String? = nil, incognito: Bool = false,
+         jsApi: Bool = false, stackPosition: Int = 1, stackTotal: Int = 1) {
         self.webviewId = webviewId
         self.stackPosition = stackPosition
         self.stackTotal = stackTotal
-        self.webViewOverlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile, jsApi: jsApi)
+        self.webViewOverlay = WebViewOverlay(url: url, webviewId: webviewId, profile: profile, incognito: incognito, jsApi: jsApi)
         self.controlBar = ControlBar()
         super.init(frame: .zero)
 

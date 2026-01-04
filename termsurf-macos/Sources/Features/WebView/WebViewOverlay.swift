@@ -40,12 +40,12 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
 
     // MARK: - Initialization
 
-    init(url: URL, webviewId: String, profile: String? = nil, jsApi: Bool = false) {
+    init(url: URL, webviewId: String, profile: String? = nil, incognito: Bool = false, jsApi: Bool = false) {
         self.webviewId = webviewId
         self.jsApiEnabled = jsApi
         super.init(frame: .zero)
 
-        setupWebView(profile: profile)
+        setupWebView(profile: profile, incognito: incognito)
         loadURL(url)
     }
 
@@ -60,7 +60,7 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
 
     // MARK: - Setup
 
-    private func setupWebView(profile: String?) {
+    private func setupWebView(profile: String?, incognito: Bool) {
         let config = WKWebViewConfiguration()
         let contentController = WKUserContentController()
 
@@ -187,8 +187,12 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
 
         config.userContentController = contentController
 
-        // Configure data store for profile isolation (macOS 14+)
-        if let profile = profile {
+        // Configure data store for session isolation
+        // Incognito takes precedence over profile
+        if incognito {
+            config.websiteDataStore = .nonPersistent()
+            logger.info("Using incognito mode (non-persistent data store)")
+        } else if let profile = profile {
             if #available(macOS 14.0, *) {
                 // Create deterministic UUID from profile name using a hash
                 let hash = profile.hash

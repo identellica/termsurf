@@ -591,7 +591,7 @@ func createWebView(profileName: String?) -> WKWebView {
   - [x] Default profile uses `.default()` data store
   - [x] Named profiles use `WKWebsiteDataStore(forIdentifier:)` (macOS 14+)
   - [x] Support `--profile NAME` flag in `termsurf open` command
-  - [ ] Consider `--incognito` flag using `.nonPersistent()` for ephemeral
+  - [x] Support `--incognito` flag using `.nonPersistent()` for ephemeral
         sessions
 - [ ] Profile management:
   - [ ] List existing profiles
