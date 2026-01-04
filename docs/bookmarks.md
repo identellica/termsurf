@@ -76,12 +76,15 @@ struct Bookmark: Codable {
 - `saveProfile(name: String, profile: Profile)` - Save profile to disk
 - `getProfilePath(name: String) -> URL` - Returns
   `~/.config/termsurf/{name}.json`
-- `uuidForProfile(name: String) -> UUID` - Deterministic hash-based UUID from name
+- `uuidForProfile(name: String) -> UUID` - Deterministic hash-based UUID from
+  name
 - Thread-safe access (serial queue for all operations)
 
 **UUID Generation:**
 
-Use the same deterministic hash-based approach already in `WebViewOverlay.swift`:
+Use the same deterministic hash-based approach already in
+`WebViewOverlay.swift`:
+
 - Hash the profile name to generate a consistent UUID
 - This ensures the same profile name always maps to the same UUID
 - Also save the UUID to the JSON file for reverse lookup (UUID -> profile name)
@@ -100,13 +103,15 @@ profile name (e.g., listing all profiles, UI that shows profile names).
 ### Checklist
 
 - [ ] Create `ProfileManager.swift` with Profile/Bookmark structs
-- [ ] Implement `uuidForProfile(name:)` - deterministic hash-based UUID generation
-- [ ] Implement `loadProfile(name:)` - loads existing or creates new with hashed UUID
+- [ ] Implement `uuidForProfile(name:)` - deterministic hash-based UUID
+      generation
+- [ ] Implement `loadProfile(name:)` - loads existing or creates new with hashed
+      UUID
 - [ ] Implement `saveProfile(name:profile:)` - writes JSON to disk
 - [ ] Implement `getProfilePath(name:)` - returns correct path in config dir
 - [ ] Add serial DispatchQueue for thread-safe access
 - [ ] Update `WebViewOverlay.swift` to call ProfileManager when profile is used
-  (ensures JSON file is created with UUID for reverse lookup)
+      (ensures JSON file is created with UUID for reverse lookup)
 - [ ] Test: Create profile, verify JSON file created with correct UUID
 - [ ] Test: Reopen profile, verify same UUID is used (hash is deterministic)
 

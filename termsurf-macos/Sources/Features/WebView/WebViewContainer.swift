@@ -407,6 +407,47 @@ class WebViewContainer: NSView {
     logger.debug("WebViewContainer \(self.webviewId) stack updated: \(position)/\(total)")
   }
 
+  // MARK: - Bookmarking
+
+  /// Bookmark the current page
+  /// Returns true on success, false on failure (e.g., bookmark already exists)
+  func bookmarkCurrentPage() -> Bool {
+    guard let url = webViewOverlay.webView.url else {
+      logger.warning("Cannot bookmark: no URL")
+      controlBar.showTemporaryMessage("No URL to bookmark")
+      return false
+    }
+
+    // Derive name from URL (first meaningful part of domain)
+    let name = ProfileManager.deriveNameFromURL(url)
+
+    // Get title from webview, fallback to name
+    let title = webViewOverlay.webView.title ?? name
+
+    // Use the webview's profile, or "default"
+    let profile = webViewOverlay.profileName ?? "default"
+
+    do {
+      try ProfileManager.shared.addBookmark(
+        profile: profile,
+        name: name,
+        title: title,
+        url: url.absoluteString
+      )
+      logger.info("Bookmarked '\(name)' -> \(url.absoluteString)")
+      controlBar.showTemporaryMessage("Bookmarked as '\(name)'")
+      return true
+    } catch let error as BookmarkError {
+      logger.warning("Bookmark failed: \(error.localizedDescription)")
+      controlBar.showTemporaryMessage(error.localizedDescription)
+      return false
+    } catch {
+      logger.error("Bookmark failed: \(error.localizedDescription)")
+      controlBar.showTemporaryMessage("Bookmark failed")
+      return false
+    }
+  }
+
   // MARK: - Helpers
 
   /// Normalize a URL string: prepend https:// if no scheme

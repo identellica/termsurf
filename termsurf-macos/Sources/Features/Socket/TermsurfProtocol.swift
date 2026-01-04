@@ -9,8 +9,11 @@ struct TermsurfRequest: Codable {
   /// Unique request ID for matching responses
   let id: String
 
-  /// Action to perform: "ping", "open", "close", "show", "hide"
+  /// Action to perform: "ping", "open", "close", "show", "hide", "bookmark"
   let action: String
+
+  /// Sub-action for compound actions (e.g., bookmark: "add", "get", "list", "update", "delete")
+  let subaction: String?
 
   /// Target pane ID (from TERMSURF_PANE_ID env var)
   let paneId: String?
@@ -18,9 +21,13 @@ struct TermsurfRequest: Codable {
   /// Action-specific data
   let data: [String: AnyCodableValue]?
 
-  init(id: String, action: String, paneId: String? = nil, data: [String: AnyCodableValue]? = nil) {
+  init(
+    id: String, action: String, subaction: String? = nil, paneId: String? = nil,
+    data: [String: AnyCodableValue]? = nil
+  ) {
     self.id = id
     self.action = action
+    self.subaction = subaction
     self.paneId = paneId
     self.data = data
   }
@@ -77,6 +84,8 @@ enum AnyCodableValue: Codable, Equatable {
   case int(Int)
   case double(Double)
   case bool(Bool)
+  case dictionary([String: AnyCodableValue])
+  case array([AnyCodableValue])
   case null
 
   init(from decoder: Decoder) throws {
@@ -92,6 +101,10 @@ enum AnyCodableValue: Codable, Equatable {
       self = .double(double)
     } else if let string = try? container.decode(String.self) {
       self = .string(string)
+    } else if let dict = try? container.decode([String: AnyCodableValue].self) {
+      self = .dictionary(dict)
+    } else if let arr = try? container.decode([AnyCodableValue].self) {
+      self = .array(arr)
     } else {
       throw DecodingError.typeMismatch(
         AnyCodableValue.self,
@@ -107,6 +120,8 @@ enum AnyCodableValue: Codable, Equatable {
     case .int(let value): try container.encode(value)
     case .double(let value): try container.encode(value)
     case .bool(let value): try container.encode(value)
+    case .dictionary(let value): try container.encode(value)
+    case .array(let value): try container.encode(value)
     case .null: try container.encodeNil()
     }
   }
@@ -123,6 +138,16 @@ enum AnyCodableValue: Codable, Equatable {
 
   var boolValue: Bool? {
     if case .bool(let value) = self { return value }
+    return nil
+  }
+
+  var dictionaryValue: [String: AnyCodableValue]? {
+    if case .dictionary(let value) = self { return value }
+    return nil
+  }
+
+  var arrayValue: [AnyCodableValue]? {
+    if case .array(let value) = self { return value }
     return nil
   }
 }

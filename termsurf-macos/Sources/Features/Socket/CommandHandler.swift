@@ -32,6 +32,9 @@ class CommandHandler {
     case "hide":
       return handleHide(request)
 
+    case "bookmark":
+      return handleBookmark(request)
+
     default:
       logger.warning("Unknown action: \(request.action)")
       return .error(id: request.id, message: "Unknown action: \(request.action)")
@@ -153,6 +156,134 @@ class CommandHandler {
       data: [
         "hidden": .string(webviewId)
       ])
+  }
+
+  // MARK: - Bookmark Handlers
+
+  private func handleBookmark(_ request: TermsurfRequest) -> TermsurfResponse {
+    guard let subaction = request.subaction else {
+      return .error(id: request.id, message: "Missing subaction for bookmark")
+    }
+
+    switch subaction {
+    case "add":
+      return handleBookmarkAdd(request)
+    case "get":
+      return handleBookmarkGet(request)
+    case "list":
+      return handleBookmarkList(request)
+    case "update":
+      return handleBookmarkUpdate(request)
+    case "delete":
+      return handleBookmarkDelete(request)
+    default:
+      return .error(id: request.id, message: "Unknown bookmark subaction: \(subaction)")
+    }
+  }
+
+  private func handleBookmarkAdd(_ request: TermsurfRequest) -> TermsurfResponse {
+    let profile = request.getString("profile") ?? "default"
+
+    guard let name = request.getString("name") else {
+      return .error(id: request.id, message: "Missing 'name' in data")
+    }
+    guard let url = request.getString("url") else {
+      return .error(id: request.id, message: "Missing 'url' in data")
+    }
+
+    let title = request.getString("title") ?? name
+
+    do {
+      try ProfileManager.shared.addBookmark(profile: profile, name: name, title: title, url: url)
+      return .ok(id: request.id)
+    } catch let error as BookmarkError {
+      return .error(id: request.id, message: error.localizedDescription)
+    } catch {
+      return .error(id: request.id, message: "Failed to add bookmark: \(error.localizedDescription)")
+    }
+  }
+
+  private func handleBookmarkGet(_ request: TermsurfRequest) -> TermsurfResponse {
+    let profile = request.getString("profile") ?? "default"
+
+    guard let name = request.getString("name") else {
+      return .error(id: request.id, message: "Missing 'name' in data")
+    }
+
+    if let bookmark = ProfileManager.shared.getBookmark(profile: profile, name: name) {
+      return .ok(
+        id: request.id,
+        data: [
+          "title": .string(bookmark.title),
+          "url": .string(bookmark.url),
+        ])
+    } else {
+      return .error(id: request.id, message: "Bookmark '\(name)' not found")
+    }
+  }
+
+  private func handleBookmarkList(_ request: TermsurfRequest) -> TermsurfResponse {
+    let profile = request.getString("profile") ?? "default"
+
+    let bookmarks = ProfileManager.shared.listBookmarks(profile: profile)
+
+    // Convert bookmarks to nested dictionary format
+    var bookmarksDict: [String: AnyCodableValue] = [:]
+    for (name, bookmark) in bookmarks {
+      bookmarksDict[name] = .dictionary([
+        "title": .string(bookmark.title),
+        "url": .string(bookmark.url),
+      ])
+    }
+
+    return .ok(
+      id: request.id,
+      data: [
+        "bookmarks": .dictionary(bookmarksDict)
+      ])
+  }
+
+  private func handleBookmarkUpdate(_ request: TermsurfRequest) -> TermsurfResponse {
+    let profile = request.getString("profile") ?? "default"
+
+    guard let name = request.getString("name") else {
+      return .error(id: request.id, message: "Missing 'name' in data")
+    }
+
+    let title = request.getString("title")
+    let url = request.getString("url")
+
+    if title == nil && url == nil {
+      return .error(id: request.id, message: "Must provide 'title' or 'url' to update")
+    }
+
+    do {
+      try ProfileManager.shared.updateBookmark(profile: profile, name: name, title: title, url: url)
+      return .ok(id: request.id)
+    } catch let error as BookmarkError {
+      return .error(id: request.id, message: error.localizedDescription)
+    } catch {
+      return .error(
+        id: request.id, message: "Failed to update bookmark: \(error.localizedDescription)")
+    }
+  }
+
+  private func handleBookmarkDelete(_ request: TermsurfRequest) -> TermsurfResponse {
+    let profile = request.getString("profile") ?? "default"
+
+    guard let name = request.getString("name") else {
+      return .error(id: request.id, message: "Missing 'name' in data")
+    }
+
+    do {
+      try ProfileManager.shared.deleteBookmark(profile: profile, name: name)
+      return .ok(id: request.id)
+    } catch let error as BookmarkError {
+      return .error(id: request.id, message: error.localizedDescription)
+    } catch {
+      return .error(
+        id: request.id, message: "Failed to delete bookmark: \(error.localizedDescription)")
+    }
   }
 
   // MARK: - Helpers

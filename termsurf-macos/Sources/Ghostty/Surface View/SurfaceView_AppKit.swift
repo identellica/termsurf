@@ -1261,6 +1261,17 @@ extension Ghostty {
       // If there's a webview visible, don't let terminal intercept key equivalents.
       // Use last(where:) to get the topmost container when multiple are stacked.
       if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer {
+        // Only handle webview keys if this pane is focused (first responder is within our hierarchy).
+        // This prevents ctrl+c from closing a webview in another pane.
+        let firstResponder = window?.firstResponder
+        let isFocusedHierarchy =
+          firstResponder === self
+          || firstResponder === container
+          || firstResponder === container.webViewOverlay
+          || firstResponder === container.webViewOverlay.webView
+        guard isFocusedHierarchy else {
+          return false
+        }
         let hasCmd = event.modifierFlags.contains(.command)
         let hasOpt = event.modifierFlags.contains(.option)
         let char = event.charactersIgnoringModifiers
@@ -1300,6 +1311,12 @@ extension Ghostty {
         let hasCtrl = event.modifierFlags.contains(.control)
         if hasCtrl && !hasCmd && !hasOpt && char == "c" {
           container.onClose?(container.webviewId, 0)
+          return true
+        }
+
+        // Handle cmd+b to bookmark current page (works in all modes).
+        if hasCmd && !hasOpt && char == "b" {
+          _ = container.bookmarkCurrentPage()
           return true
         }
 

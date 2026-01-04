@@ -35,6 +35,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
   /// Whether the JS API is enabled
   private let jsApiEnabled: Bool
 
+  /// The profile name (for bookmarking)
+  let profileName: String?
+
   // MARK: - Initialization
 
   init(
@@ -43,6 +46,7 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
   ) {
     self.webviewId = webviewId
     self.jsApiEnabled = jsApi
+    self.profileName = profile
     super.init(frame: .zero)
 
     setupWebView(profile: profile, incognito: incognito)
@@ -176,19 +180,13 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
       logger.info("Using incognito mode (non-persistent data store)")
     } else if let profile = profile {
       if #available(macOS 14.0, *) {
-        // Create deterministic UUID from profile name using a hash
-        let hash = profile.hash
-        let hashStr = String(
-          format: "%08x%08x%04x%04x%012x",
-          UInt32(truncatingIfNeeded: hash),
-          UInt32(truncatingIfNeeded: hash >> 32),
-          UInt16(truncatingIfNeeded: hash >> 48),
-          UInt16(truncatingIfNeeded: hash >> 56),
-          UInt64(truncatingIfNeeded: hash))
-        let uuidStr =
-          "\(hashStr.prefix(8))-\(hashStr.dropFirst(8).prefix(4))-\(hashStr.dropFirst(12).prefix(4))-\(hashStr.dropFirst(16).prefix(4))-\(hashStr.dropFirst(20).prefix(12))"
-        let profileUUID = UUID(uuidString: uuidStr) ?? UUID()
+        // Get UUID from ProfileManager (ensures profile JSON file exists)
+        let profileUUID = ProfileManager.shared.uuidForProfile(name: profile)
         config.websiteDataStore = WKWebsiteDataStore(forIdentifier: profileUUID)
+
+        // Ensure the profile JSON file exists (for reverse UUID -> name lookup)
+        ProfileManager.shared.ensureProfileExists(name: profile)
+
         logger.info("Using profile '\(profile)' with data store UUID: \(profileUUID)")
       } else {
         logger.warning("Profile isolation requires macOS 14+, using default data store")

@@ -138,6 +138,28 @@ class ControlBar: NSView, NSTextFieldDelegate {
     needsLayout = true
   }
 
+  // MARK: - Temporary Messages
+
+  /// Timer for restoring URL after temporary message
+  private var messageTimer: Timer?
+
+  /// Show a temporary message in the URL field (auto-clears after ~2 seconds)
+  func showTemporaryMessage(_ message: String) {
+    // Cancel any existing timer
+    messageTimer?.invalidate()
+
+    // Store the message
+    let previousText = urlField.stringValue
+    urlField.stringValue = message
+
+    // Restore after 2 seconds
+    messageTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] _ in
+      guard let self = self, !self.isInsertMode else { return }
+      // Restore actual URL
+      self.urlField.stringValue = self.actualURL?.absoluteString ?? previousText
+    }
+  }
+
   // MARK: - Insert Mode
 
   /// Enter insert mode - make URL field editable and select all
