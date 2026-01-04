@@ -125,9 +125,134 @@ When a URL is submitted from insert mode, it is normalized before navigation:
 | Control | i         | Switch to insert (edit URL)       |
 | Control | ctrl+c    | Close webview                     |
 | Browse  | Esc       | Switch to control                 |
+| Browse  | cmd+c     | Copy (via menu action)            |
+| Browse  | cmd+x     | Cut (via menu action)             |
+| Browse  | cmd+v     | Paste (via menu action)           |
 | Browse  | cmd+alt+i | Open Safari Web Inspector         |
 | Insert  | Enter     | Navigate to URL, switch to browse |
 | Insert  | Esc       | Cancel edit, switch to control    |
 
 These are not configurable via ghostty config. This may change in the future if
 we add TermSurf-specific configuration.
+
+## AppKit Keyboard Event Types
+
+AppKit has two completely separate code paths for keyboard events:
+
+1. **`keyDown`** - Regular key events (letters, arrows, shift+arrow, escape, etc.)
+2. **`performKeyEquivalent`** - Command-key events (cmd+c, cmd+v, cmd+a, etc.)
+
+Understanding this distinction is critical for handling keyboard input when both
+terminal and webview need to coexist.
+
+### keyDown Flow
+
+```
+User presses key (e.g., shift+arrow)
+    ↓
+First responder receives keyDown
+    ↓
+If not handled, bubbles up responder chain
+```
+
+### performKeyEquivalent Flow
+
+```
+User presses cmd+key (e.g., cmd+c)
+    ↓
+First responder receives performKeyEquivalent
+    ↓
+If returns true → event consumed
+If returns false → bubbles up, eventually becomes menu action
+```
+
+## SurfaceView Key Handling Implementation
+
+When a webview is visible, SurfaceView must decide which keys to handle itself
+(for terminal) vs which to let the webview handle.
+
+### Regular Keys (keyDown)
+
+In `SurfaceView_AppKit.swift`, `keyDown` checks for webview presence:
+
+```swift
+if let container = subviews.last(where: { $0 is WebViewContainer }) ... {
+    if container.isControlMode {
+        // Handle control mode special keys: Enter, i, ctrl+c
+        // ...
+    }
+    // Webview visible - return early, let first responder (webview) handle
+    return
+}
+// No webview - send to terminal via libghostty
+```
+
+This works because WKWebView correctly handles regular key events when it's the
+first responder.
+
+### Command Keys (performKeyEquivalent)
+
+Command keys are trickier due to a **WKWebView quirk**:
+
+> WKWebView's `performKeyEquivalent` claims cmd+c/x/v (returns `true`) but
+> doesn't actually execute the copy/cut operation. However, WKWebView's `copy:`
+> action method works correctly when triggered via the Edit menu.
+
+The workaround is to intercept cmd+c/x/v and convert them to menu actions:
+
+```swift
+override func performKeyEquivalent(with event: NSEvent) -> Bool {
+    if let container = subviews.last(where: { $0 is WebViewContainer }) ... {
+        if hasCmd && !hasOpt {
+            switch char {
+            case "c":
+                NSApp.sendAction(#selector(NSText.copy(_:)), to: nil, from: self)
+                return true
+            case "x":
+                NSApp.sendAction(#selector(NSText.cut(_:)), to: nil, from: self)
+                return true
+            case "v":
+                NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: self)
+                return true
+            default:
+                break
+            }
+        }
+        // Other cmd+keys: return false to let system handle
+        return false
+    }
+    // No webview - send to terminal
+}
+```
+
+### Menu Item Validation
+
+To ensure the menu action reaches WKWebView (not SurfaceView), we also return
+`false` from `validateMenuItem` for copy/cut/paste when a webview is visible:
+
+```swift
+func validateMenuItem(_ item: NSMenuItem) -> Bool {
+    if subviews.contains(where: { $0 is WebViewContainer }) {
+        switch item.action {
+        case #selector(copy(_:)), #selector(cut(_:)), #selector(paste(_:)):
+            return false  // Don't claim these - let webview handle
+        default:
+            break
+        }
+    }
+    // ... rest of validation
+}
+```
+
+This tells AppKit "SurfaceView can't handle copy/cut/paste right now" so the
+action continues down the responder chain to WKWebView.
+
+## Pattern for Future Keybindings
+
+When adding new keybindings that need to work in webviews:
+
+1. **Regular keys** - Let first responder handle by returning early from `keyDown`
+2. **Command keys that WKWebView handles correctly** - Return `false` from
+   `performKeyEquivalent` to let them flow normally
+3. **Command keys that WKWebView breaks** - Intercept in `performKeyEquivalent`
+   and convert to `NSApp.sendAction` to trigger the menu action directly
