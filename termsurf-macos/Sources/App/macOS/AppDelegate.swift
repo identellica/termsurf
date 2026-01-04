@@ -396,9 +396,9 @@ class AppDelegate: NSObject,
 
         // We have some visible window. Show an app-wide modal to confirm quitting.
         let alert = NSAlert()
-        alert.messageText = "Quit Ghostty?"
+        alert.messageText = "Quit TermSurf?"
         alert.informativeText = "All terminal sessions will be terminated."
-        alert.addButton(withTitle: "Close Ghostty")
+        alert.addButton(withTitle: "Close TermSurf")
         alert.addButton(withTitle: "Cancel")
         alert.alertStyle = .warning
         switch (alert.runModal()) {
