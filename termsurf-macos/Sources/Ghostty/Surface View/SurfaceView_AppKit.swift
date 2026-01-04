@@ -1241,12 +1241,12 @@ extension Ghostty {
             // If there's a webview visible, don't let terminal intercept key equivalents.
             // Use last(where:) to get the topmost container when multiple are stacked.
             if let container = subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer {
-                // Handle cmd+alt+i specifically to open Safari Web Inspector (works in any mode)
                 let hasCmd = event.modifierFlags.contains(.command)
                 let hasOpt = event.modifierFlags.contains(.option)
-                let isI = event.charactersIgnoringModifiers == "i"
+                let char = event.charactersIgnoringModifiers
 
-                if hasCmd && hasOpt && isI {
+                // Handle cmd+alt+i specifically to open Safari Web Inspector (works in any mode)
+                if hasCmd && hasOpt && char == "i" {
                     // Show Safari Web Inspector via private API
                     if let inspector = container.webViewOverlay.webView.value(forKey: "_inspector") as? NSObject {
                         inspector.perform(Selector(("show")))
@@ -1254,8 +1254,26 @@ extension Ghostty {
                     }
                 }
 
-                // Don't let terminal handle key equivalents when webview is visible.
-                // Return false so events flow to Edit menu (cmd+c/x/v) or other system handlers.
+                // Handle cmd+c/x/v by converting to menu actions.
+                // WKWebView's performKeyEquivalent claims these but doesn't copy/cut properly.
+                // The menu action (Edit > Copy) works correctly, so we trigger that instead.
+                if hasCmd && !hasOpt {
+                    switch char {
+                    case "c":
+                        NSApp.sendAction(#selector(NSText.copy(_:)), to: nil, from: self)
+                        return true
+                    case "x":
+                        NSApp.sendAction(#selector(NSText.cut(_:)), to: nil, from: self)
+                        return true
+                    case "v":
+                        NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: self)
+                        return true
+                    default:
+                        break
+                    }
+                }
+
+                // Don't let terminal handle other key equivalents when webview is visible.
                 return false
             }
 
@@ -1536,12 +1554,27 @@ extension Ghostty {
 
         // MARK: Menu Handlers
 
+        // DIAGNOSTIC: Return early without doing anything to test if WKWebView handles copy/cut
         @IBAction func copy(_ sender: Any?) {
+            // If webview is visible, don't do terminal copy - let action continue
+            if subviews.contains(where: { $0 is WebViewContainer }) {
+                return
+            }
+
             guard let surface = self.surface else { return }
             let action = "copy_to_clipboard"
             if (!ghostty_surface_binding_action(surface, action, UInt(action.lengthOfBytes(using: .utf8)))) {
                 AppDelegate.logger.warning("action failed action=\(action)")
             }
+        }
+
+        @IBAction func cut(_ sender: Any?) {
+            // If webview is visible, don't intercept - let action continue
+            if subviews.contains(where: { $0 is WebViewContainer }) {
+                return
+            }
+
+            // Terminal doesn't support cut (output is read-only)
         }
 
         @IBAction func paste(_ sender: Any?) {
@@ -2106,6 +2139,16 @@ extension Ghostty.SurfaceView: NSServicesMenuRequestor {
 
 extension Ghostty.SurfaceView: NSMenuItemValidation {
     func validateMenuItem(_ item: NSMenuItem) -> Bool {
+        // When webview is visible, don't claim copy/cut/paste - let webview handle them
+        if subviews.contains(where: { $0 is WebViewContainer }) {
+            switch item.action {
+            case #selector(copy(_:)), #selector(cut(_:)), #selector(paste(_:)):
+                return false
+            default:
+                break
+            }
+        }
+
         switch item.action {
         case #selector(pasteSelection):
             let pb = NSPasteboard.ghosttySelection
