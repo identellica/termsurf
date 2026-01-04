@@ -119,18 +119,18 @@ When a URL is submitted from insert mode, it is normalized before navigation:
 
 ### Current Hardcoded Bindings
 
-| Context | Key       | Action                            |
-| ------- | --------- | --------------------------------- |
-| Control | Enter     | Switch to browse                  |
-| Control | i         | Switch to insert (edit URL)       |
-| Control | ctrl+c    | Close webview                     |
-| Browse  | Esc       | Switch to control                 |
-| Browse  | cmd+c     | Copy (via menu action)            |
-| Browse  | cmd+x     | Cut (via menu action)             |
-| Browse  | cmd+v     | Paste (via menu action)           |
-| Browse  | cmd+alt+i | Open Safari Web Inspector         |
-| Insert  | Enter     | Navigate to URL, switch to browse |
-| Insert  | Esc       | Cancel edit, switch to control    |
+| Context   | Key       | Action                            |
+| --------- | --------- | --------------------------------- |
+| Control   | Enter     | Switch to browse                  |
+| Control   | i         | Switch to insert (edit URL)       |
+| All modes | ctrl+c    | Close webview                     |
+| Browse    | Esc       | Switch to control                 |
+| All modes | cmd+c     | Copy (via menu action)            |
+| All modes | cmd+x     | Cut (via menu action)             |
+| All modes | cmd+v     | Paste (via menu action)           |
+| All modes | cmd+alt+i | Open Safari Web Inspector         |
+| Insert    | Enter     | Navigate to URL, switch to browse |
+| Insert    | Esc       | Cancel edit, switch to control    |
 
 These are not configurable via ghostty config. This may change in the future if
 we add TermSurf-specific configuration.
@@ -166,6 +166,50 @@ If returns true → event consumed
 If returns false → bubbles up, eventually becomes menu action
 ```
 
+## Menu System and Ghostty Keybindings
+
+A critical discovery: **Ghostty keybindings work from browse mode because they're
+synced to menu items**.
+
+### How It Works
+
+1. In `AppDelegate.swift`, `syncMenuShortcut` syncs Ghostty keybindings to menu
+   items:
+
+   ```swift
+   syncMenuShortcut(config, action: "goto_split:left", menuItem: self.menuSelectSplitLeft)
+   syncMenuShortcut(config, action: "goto_split:right", menuItem: self.menuSelectSplitRight)
+   // etc.
+   ```
+
+2. When a key is pressed (e.g., ctrl+l for `goto_split:left`):
+   - `performKeyEquivalent` is called on the view hierarchy
+   - SurfaceView returns `false` (webview is visible)
+   - **macOS automatically tries `performKeyEquivalent` on the main menu**
+   - Menu finds ctrl+l matches `goto_split:left` menu item
+   - Menu action fires → Ghostty navigates splits
+
+3. This means any Ghostty keybinding that has a corresponding menu item will
+   work from browse mode automatically.
+
+### Implications for Custom Keybindings
+
+Keys that are NOT menu shortcuts must be handled explicitly in
+`performKeyEquivalent`. For example, ctrl+c (close webview) is not a Ghostty
+keybinding with a menu item, so we intercept it directly:
+
+```swift
+// In performKeyEquivalent, before returning false:
+let hasCtrl = event.modifierFlags.contains(.control)
+if hasCtrl && !hasCmd && !hasOpt && char == "c" {
+    container.onClose?(container.webviewId, 0)
+    return true
+}
+```
+
+If we didn't do this, ctrl+c would fall through to WKWebView (which might
+consume it or ignore it) and never reach our close handler.
+
 ## SurfaceView Key Handling Implementation
 
 When a webview is visible, SurfaceView must decide which keys to handle itself
@@ -198,11 +242,13 @@ Command keys are trickier due to a **WKWebView quirk**:
 > doesn't actually execute the copy/cut operation. However, WKWebView's `copy:`
 > action method works correctly when triggered via the Edit menu.
 
-The workaround is to intercept cmd+c/x/v and convert them to menu actions:
+The workaround is to intercept cmd+c/x/v and convert them to menu actions.
+We also intercept ctrl+c here to close the webview (since it's not a menu item):
 
 ```swift
 override func performKeyEquivalent(with event: NSEvent) -> Bool {
     if let container = subviews.last(where: { $0 is WebViewContainer }) ... {
+        // Handle cmd+c/x/v via menu actions (WKWebView bug workaround)
         if hasCmd && !hasOpt {
             switch char {
             case "c":
@@ -218,7 +264,15 @@ override func performKeyEquivalent(with event: NSEvent) -> Bool {
                 break
             }
         }
-        // Other cmd+keys: return false to let system handle
+
+        // Handle ctrl+c to close webview (works in all modes)
+        let hasCtrl = event.modifierFlags.contains(.control)
+        if hasCtrl && !hasCmd && !hasOpt && char == "c" {
+            container.onClose?(container.webviewId, 0)
+            return true
+        }
+
+        // Other keys: return false to let menu system handle (for Ghostty keybindings)
         return false
     }
     // No webview - send to terminal
