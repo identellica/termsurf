@@ -529,6 +529,19 @@ extension Ghostty {
                 // We ignore unknown shapes.
                 return
             }
+
+            // Invalidate cursor rects so resetCursorRects() is called with the new cursor
+            window?.invalidateCursorRects(for: self)
+        }
+
+        // MARK: - Cursor Rects
+
+        override func resetCursorRects() {
+            // If a webview is visible, don't set cursor rect - let it handle its own cursor
+            if subviews.contains(where: { $0 is WebViewContainer }) {
+                return
+            }
+            addCursorRect(bounds, cursor: pointerStyle.cursor)
         }
 
         func setCursorVisibility(_ visible: Bool) {

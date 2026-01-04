@@ -143,13 +143,8 @@ class SurfaceScrollView: NSView {
                 }
             }
             .store(in: &cancellables)
-        // TEMPORARY: Commented out to test if documentCursor is causing webview cursor issues
-        // surfaceView.$pointerStyle
-        //     .receive(on: DispatchQueue.main)
-        //     .sink { [weak self] newStyle in
-        //         self?.scrollView.documentCursor = newStyle.cursor
-        //     }
-        //     .store(in: &cancellables)
+        // Note: Cursor handling is done via SurfaceView.resetCursorRects() instead of
+        // documentCursor, allowing subviews (like WebViewContainer) to manage their own cursors.
     }
     
     required init?(coder: NSCoder) {

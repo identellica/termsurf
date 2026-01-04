@@ -35,6 +35,9 @@ class WebViewContainer: NSView {
     /// Track whether initial focus setup has been done
     private var didInitialFocus = false
 
+    /// Captured superview before removal (for cursor rect invalidation)
+    private weak var previousSuperview: NSView?
+
     /// Stack position (1-indexed, 1 = bottom of stack)
     private(set) var stackPosition: Int = 1
 
@@ -94,6 +97,26 @@ class WebViewContainer: NSView {
     }
 
     // MARK: - View Lifecycle
+
+    override func viewWillMove(toSuperview newSuperview: NSView?) {
+        // Capture current superview before change (for cursor invalidation on removal)
+        previousSuperview = superview
+        super.viewWillMove(toSuperview: newSuperview)
+    }
+
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+
+        // Invalidate cursor rects on superview so it can update based on our presence
+        if let newSuperview = superview {
+            // Added to a superview - invalidate its cursor rects
+            newSuperview.window?.invalidateCursorRects(for: newSuperview)
+        } else if let oldSuperview = previousSuperview {
+            // Removed from superview - invalidate old superview's cursor rects
+            oldSuperview.window?.invalidateCursorRects(for: oldSuperview)
+        }
+        previousSuperview = nil
+    }
 
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
