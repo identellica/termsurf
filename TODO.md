@@ -119,7 +119,7 @@ sequences after careful analysis.
                               │ Unix Socket (JSON)
                               │
                     ┌─────────┴─────────┐
-                    │ termsurf CLI      │
+                    │ web CLI           │
                     │ (reads env vars,  │
                     │  sends commands)  │
                     └───────────────────┘

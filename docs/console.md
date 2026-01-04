@@ -278,7 +278,7 @@ console.log(info.platform, info.arch, info.hostname);
 | **Packaging**    | Bundled application    | Opens any URL                 |
 | **Use case**     | Ship desktop apps      | Dev tools, local automation   |
 | **Shell access** | Via command API        | Native (already in terminal)  |
-| **Distribution** | App stores, installers | Just a URL + termsurf command |
+| **Distribution** | App stores, installers | Just a URL + `web` command    |
 
 ### Security Model for OS Access
 

@@ -55,8 +55,8 @@ pub fn build(b: *std.Build) !void {
         "Update translation files",
     );
     const termsurf_cli_step = b.step(
-        "termsurf-cli",
-        "Build the TermSurf CLI tool",
+        "web",
+        "Build the web CLI tool",
     );
 
     // Ghostty resources like terminfo, shell integration, themes, etc.
@@ -340,7 +340,7 @@ pub fn build(b: *std.Build) !void {
             .optimize = config.optimize,
         });
         const termsurf_cli = b.addExecutable(.{
-            .name = "termsurf",
+            .name = "web",
             .root_module = termsurf_cli_mod,
         });
         b.installArtifact(termsurf_cli);

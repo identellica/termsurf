@@ -110,7 +110,7 @@ We use Unix domain sockets for CLI-to-app communication:
                               ▲
                               │ Unix Socket (JSON)
                     ┌─────────┴─────────┐
-                    │ termsurf CLI      │
+                    │ web CLI           │
                     └───────────────────┘
 ```
 

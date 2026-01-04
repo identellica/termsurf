@@ -39,7 +39,7 @@ fn printVersion() !void {
     var buffer: [256]u8 = undefined;
     var stdout_writer = std.fs.File.stdout().writer(&buffer);
     const stdout = &stdout_writer.interface;
-    try stdout.print("termsurf {s}\n", .{version});
+    try stdout.print("web {s}\n", .{version});
     try stdout.flush();
 }
 
@@ -48,11 +48,11 @@ fn printUsage() !void {
     var stdout_writer = std.fs.File.stdout().writer(&buffer);
     const stdout = &stdout_writer.interface;
     try stdout.writeAll(
-        \\termsurf - CLI tool for TermSurf browser pane integration
+        \\web - CLI tool for TermSurf browser pane integration
         \\
         \\USAGE:
-        \\    termsurf [url]              Open URL (or default homepage)
-        \\    termsurf <command> [options]
+        \\    web [url]              Open URL (or default homepage)
+        \\    web <command> [options]
         \\
         \\COMMANDS:
         \\    open [options] [url]    Open a URL in a browser pane
@@ -71,9 +71,9 @@ fn printUsage() !void {
         \\    TERMSURF_PANE_ID        Current pane identifier
         \\
         \\EXAMPLES:
-        \\    termsurf                        Open default homepage
-        \\    termsurf google.com             Open https://google.com
-        \\    termsurf open localhost:3000    Open local dev server
+        \\    web                        Open default homepage
+        \\    web google.com             Open https://google.com
+        \\    web open localhost:3000    Open local dev server
         \\
     );
     try stdout.flush();
