@@ -151,14 +151,22 @@ class WebViewContainer: NSView {
         // WebView fills rest (above control bar)
         addSubview(webViewOverlay)
 
+        // Get user's unfocused opacity from config (default 0.15 if not available)
+        let dimOpacity: CGFloat = {
+            if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+                return CGFloat(appDelegate.ghostty.config.unfocusedSplitOpacity)
+            }
+            return 0.15  // Default: matches Ghostty's default (1 - 0.85)
+        }()
+
         // Dim overlay for control bar (on top of control bar)
         controlBarDimOverlay.wantsLayer = true
-        controlBarDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: 0.5).cgColor
+        controlBarDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: dimOpacity).cgColor
         addSubview(controlBarDimOverlay)
 
         // Dim overlay for webview (on top of webview)
         webViewDimOverlay.wantsLayer = true
-        webViewDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: 0.5).cgColor
+        webViewDimOverlay.layer?.backgroundColor = NSColor(white: 0.0, alpha: dimOpacity).cgColor
         addSubview(webViewDimOverlay)
     }
 
