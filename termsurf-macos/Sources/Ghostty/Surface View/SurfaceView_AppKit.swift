@@ -1295,6 +1295,14 @@ extension Ghostty {
           }
         }
 
+        // Handle ctrl+c to close webview (works in all modes, including browse mode).
+        // This must be in performKeyEquivalent to intercept before WKWebView gets the event.
+        let hasCtrl = event.modifierFlags.contains(.control)
+        if hasCtrl && !hasCmd && !hasOpt && char == "c" {
+          container.onClose?(container.webviewId, 0)
+          return true
+        }
+
         // Don't let terminal handle other key equivalents when webview is visible.
         return false
       }
