@@ -131,7 +131,7 @@ struct CommandPaletteView: View {
             ? 0
             : current + 1
 
-        case .move(_):
+        case .move:
           // Unknown, ignore
           break
         }
@@ -236,7 +236,7 @@ struct CommandPaletteView: View {
 /// The text field for building the query for the command palette.
 private struct CommandPaletteQuery: View {
   @Binding var query: String
-  var onEvent: ((KeyboardEvent) -> Void)? = nil
+  var onEvent: ((KeyboardEvent) -> Void)?
   @FocusState private var isTextFieldFocused: Bool
 
   init(

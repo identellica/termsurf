@@ -224,7 +224,7 @@ class WebViewManager {
         id: requestId, event: "closed",
         data: [
           "webviewId": .string(id),
-          "exitCode": .int(exitCode),
+          "exitCode": .int(exitCode)
         ])
       connection.sendEvent(event)
       logger.info("Sent closed event to CLI for webview \(id) with exit code \(exitCode)")
@@ -266,7 +266,7 @@ class WebViewManager {
       id: requestId, event: "console",
       data: [
         "level": .string(level.rawValue),
-        "message": .string(message),
+        "message": .string(message)
       ])
     connection.sendEvent(event)
   }

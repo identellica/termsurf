@@ -26,7 +26,7 @@ extension Ghostty {
     static let unsupportedActionKeys: [String] = [
       "toggle_tab_overview",
       "toggle_window_decorations",
-      "show_gtk_inspector",
+      "show_gtk_inspector"
     ]
 
     init(cValue: ghostty_command_s) {

@@ -225,7 +225,7 @@ class TitlebarTabsTahoeTerminalWindow: TransparentTitlebarTerminalWindow, NSTool
       accessoryView.leftAnchor.constraint(equalTo: clipView.leftAnchor),
       accessoryView.rightAnchor.constraint(equalTo: clipView.rightAnchor),
       accessoryView.topAnchor.constraint(equalTo: clipView.topAnchor),
-      accessoryView.heightAnchor.constraint(equalTo: clipView.heightAnchor),
+      accessoryView.heightAnchor.constraint(equalTo: clipView.heightAnchor)
     ])
 
     clipView.needsLayout = true

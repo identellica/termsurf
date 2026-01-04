@@ -298,7 +298,7 @@ extension Ghostty {
 
     // This is the last size that we processed. This is how we handle our
     // timer state.
-    @State var lastSize: CGSize? = nil
+    @State var lastSize: CGSize?
 
     // Ready is set to true after a short delay. This avoids some of the
     // challenges of initial view sizing from SwiftUI.
@@ -638,19 +638,19 @@ extension Ghostty {
   /// libghostty, usually from the Ghostty configuration.
   struct SurfaceConfiguration {
     /// Explicit font size to use in points
-    var fontSize: Float32? = nil
+    var fontSize: Float32?
 
     /// Explicit working directory to set
-    var workingDirectory: String? = nil
+    var workingDirectory: String?
 
     /// Explicit command to set
-    var command: String? = nil
+    var command: String?
 
     /// Environment variables to set for the terminal
     var environmentVariables: [String: String] = [:]
 
     /// Extra input to send as stdin
-    var initialInput: String? = nil
+    var initialInput: String?
 
     /// Wait after the command
     var waitAfterCommand: Bool = false
@@ -862,7 +862,7 @@ extension Ghostty {
           // Key sequence indicator
           if !keySequence.isEmpty {
             HStack(alignment: .center, spacing: 4) {
-              ForEach(Array(keySequence.enumerated()), id: \.offset) { index, key in
+              ForEach(Array(keySequence.enumerated()), id: \.offset) { _, key in
                 KeyCap(key.description)
               }
 
@@ -1010,7 +1010,7 @@ extension Ghostty {
               gradient: Gradient(colors: [
                 Color.accentColor.opacity(0.12),
                 Color.accentColor.opacity(0.03),
-                Color.clear,
+                Color.clear
               ]),
               center: .center,
               startRadius: 0,
@@ -1024,7 +1024,7 @@ extension Ghostty {
               gradient: Gradient(colors: [
                 Color.accentColor.opacity(0.8),
                 Color.accentColor.opacity(0.5),
-                Color.accentColor.opacity(0.8),
+                Color.accentColor.opacity(0.8)
               ]),
               startPoint: .topLeading,
               endPoint: .bottomTrailing
@@ -1261,8 +1261,8 @@ extension FocusedValues {
 extension Ghostty.SurfaceView {
   class SearchState: ObservableObject {
     @Published var needle: String = ""
-    @Published var selected: UInt? = nil
-    @Published var total: UInt? = nil
+    @Published var selected: UInt?
+    @Published var total: UInt?
 
     init(from startSearch: Ghostty.Action.StartSearch) {
       self.needle = startSearch.needle ?? ""

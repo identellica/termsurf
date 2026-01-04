@@ -16,11 +16,11 @@ class GlobalEventTap {
 
   // The event tap used for global event listening. This is non-nil if it is
   // created.
-  private var eventTap: CFMachPort? = nil
+  private var eventTap: CFMachPort?
 
   // This is the timer used to retry enabling the global event tap if we
   // don't have permissions.
-  private var enableTimer: Timer? = nil
+  private var enableTimer: Timer?
 
   // Private init so it can't be constructed outside of our singleton
   private init() {}

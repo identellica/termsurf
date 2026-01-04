@@ -396,7 +396,7 @@ class SurfaceScrollView: NSView {
         rect: convert(scroller.bounds, from: scroller),
         options: [
           .mouseMoved,
-          .activeInKeyWindow,
+          .activeInKeyWindow
         ],
         owner: self,
         userInfo: nil))

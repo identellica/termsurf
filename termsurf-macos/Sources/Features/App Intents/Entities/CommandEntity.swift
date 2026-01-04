@@ -25,11 +25,6 @@ struct CommandEntity: AppEntity {
   struct ID: Hashable {
     let terminalId: TerminalEntity.ID
     let actionKey: String
-
-    init(terminalId: TerminalEntity.ID, actionKey: String) {
-      self.terminalId = terminalId
-      self.actionKey = actionKey
-    }
   }
 
   static var typeDisplayRepresentation: TypeDisplayRepresentation {

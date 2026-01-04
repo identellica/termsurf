@@ -27,7 +27,7 @@ extension Ghostty {
 
     // The current pwd of the surface as defined by the pty. This can be
     // changed with escape codes.
-    @Published var pwd: String? = nil
+    @Published var pwd: String?
 
     // The cell size of this surface. This is set by the core when the
     // surface is first created and any time the cell size changes (i.e.
@@ -40,13 +40,13 @@ extension Ghostty {
     @Published var healthy: Bool = true
 
     // Any error while initializing the surface.
-    @Published var error: Error? = nil
+    @Published var error: Error?
 
     // The hovered URL string
-    @Published var hoverUrl: String? = nil
+    @Published var hoverUrl: String?
 
     // The progress report (if any)
-    @Published var progressReport: Action.ProgressReport? = nil {
+    @Published var progressReport: Action.ProgressReport? {
       didSet {
         // Cancel any existing timer
         progressReportTimer?.invalidate()
@@ -70,7 +70,7 @@ extension Ghostty {
     @Published var keyTables: [String] = []
 
     // The current search state. When non-nil, the search overlay should be shown.
-    @Published var searchState: SearchState? = nil {
+    @Published var searchState: SearchState? {
       didSet {
         if let searchState {
           // I'm not a Combine expert so if there is a better way to do this I'm
@@ -109,11 +109,11 @@ extension Ghostty {
 
     // The time this surface last became focused. This is a ContinuousClock.Instant
     // on supported platforms.
-    @Published var focusInstant: ContinuousClock.Instant? = nil
+    @Published var focusInstant: ContinuousClock.Instant?
 
     // Returns sizing information for the surface. This is the raw C
     // structure because I'm lazy.
-    @Published var surfaceSize: ghostty_surface_size_s? = nil
+    @Published var surfaceSize: ghostty_surface_size_s?
 
     // Whether the pointer should be visible or not
     @Published private(set) var pointerStyle: CursorStyle = .horizontalText
@@ -123,7 +123,7 @@ extension Ghostty {
 
     /// The background color within the color palette of the surface. This is only set if it is
     /// dynamically updated. Otherwise, the background color is the default background color.
-    @Published private(set) var backgroundColor: Color? = nil
+    @Published private(set) var backgroundColor: Color?
 
     /// True when the bell is active. This is set inactive on focus or event.
     @Published private(set) var bell: Bool = false
@@ -136,7 +136,7 @@ extension Ghostty {
 
     // An initial size to request for a window. This will only affect
     // then the view is moved to a new window.
-    var initialSize: NSSize? = nil
+    var initialSize: NSSize?
 
     // A content size received through sizeDidChange that may in some cases
     // be different from the frame size.
@@ -211,10 +211,10 @@ extension Ghostty {
     private var markedText: NSMutableAttributedString
     private(set) var focused: Bool = true
     private var prevPressureStage: Int = 0
-    private var appearanceObserver: NSKeyValueObservation? = nil
+    private var appearanceObserver: NSKeyValueObservation?
 
     // This is set to non-null during keyDown to accumulate insertText contents
-    private var keyTextAccumulator: [String]? = nil
+    private var keyTextAccumulator: [String]?
 
     // A small delay that is introduced before a title change to avoid flickers
     private var titleChangeTimer: Timer?
@@ -235,7 +235,7 @@ extension Ghostty {
     private(set) var cachedVisibleContents: CachedValue<String>
 
     /// Event monitor (see individual events for why)
-    private var eventMonitor: Any? = nil
+    private var eventMonitor: Any?
 
     // We need to support being a first responder so that we can get input events
     override var acceptsFirstResponder: Bool { return true }
@@ -260,7 +260,7 @@ extension Ghostty {
       // Initialize with some default frame size. The important thing is that this
       // is non-zero so that our layer bounds are non-zero so that our renderer
       // can do SOMETHING.
-      super.init(frame: NSMakeRect(0, 0, 800, 600))
+      super.init(frame: NSRect(x: 0, y: 0, width: 800, height: 600))
 
       // Our cache of screen data
       cachedScreenContents = .init(duration: .milliseconds(500)) { [weak self] in
@@ -373,7 +373,7 @@ extension Ghostty {
           // "acceptsFirstMouse" because that forces us to also handle the
           // event and encode the event to the pty which we want to avoid.
           // (Issue 2595)
-          .leftMouseDown,
+          .leftMouseDown
         ]
       ) { [weak self] event in self?.localEventHandler(event) }
 
@@ -830,7 +830,7 @@ extension Ghostty {
 
             // We want active always because we want to still send mouse reports
             // even if we're not focused or key.
-            .activeAlways,
+            .activeAlways
           ],
           owner: self,
           userInfo: nil))
@@ -1502,7 +1502,7 @@ extension Ghostty {
       }
 
       // Ghostty coordinate system is top-left, convert to bottom-left for AppKit
-      let pt = NSMakePoint(text.tl_px_x, frame.size.height - text.tl_px_y)
+      let pt = NSPoint(x: text.tl_px_x, y: frame.size.height - text.tl_px_y)
       let str = NSAttributedString.init(string: String(cString: text.text), attributes: attributes)
       self.showDefinition(for: str, at: pt)
     }
@@ -1978,7 +1978,7 @@ extension Ghostty.SurfaceView: NSTextInputClient {
 
   func firstRect(forCharacterRange range: NSRange, actualRange: NSRangePointer?) -> NSRect {
     guard let surface = self.surface else {
-      return NSMakeRect(frame.origin.x, frame.origin.y, 0, 0)
+      return NSRect(x: frame.origin.x, y: frame.origin.y, width: 0, height: 0)
     }
 
     // Ghostty will tell us where it thinks an IME keyboard should render.
@@ -2020,10 +2020,10 @@ extension Ghostty.SurfaceView: NSTextInputClient {
     // when there's is no characters selected,
     // width should be 0 so that dictation indicator
     // can start in the right place
-    let viewRect = NSMakeRect(
-      x,
-      frame.size.height - y,
-      width,
+    let viewRect = NSRect(x: 
+      x,y: 
+      frame.size.height - y,width: 
+      width,height: 
       max(height, cellSize.height))
 
     // Convert the point to the window coordinates
@@ -2230,7 +2230,7 @@ extension Ghostty.SurfaceView {
   static let dropTypes: Set<NSPasteboard.PasteboardType> = [
     .string,
     .fileURL,
-    .URL,
+    .URL
   ]
 
   override func draggingEntered(_ sender: any NSDraggingInfo) -> NSDragOperation {
@@ -2275,7 +2275,7 @@ extension Ghostty.SurfaceView {
       DispatchQueue.main.async {
         self.insertText(
           content,
-          replacementRange: NSMakeRange(0, 0)
+          replacementRange: NSRange(location: 0, length: 0)
         )
       }
       return true

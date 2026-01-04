@@ -145,7 +145,7 @@ struct TabColorMenuView: View {
 
   static let paletteRows: [[TerminalTabColor]] = [
     [.none, .blue, .purple, .pink, .red],
-    [.orange, .yellow, .green, .teal, .graphite],
+    [.orange, .yellow, .green, .teal, .graphite]
   ]
 
   /// Leading padding to align with the menu's icon gutter.

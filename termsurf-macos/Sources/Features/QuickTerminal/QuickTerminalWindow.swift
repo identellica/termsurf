@@ -32,7 +32,7 @@ class QuickTerminalWindow: NSPanel {
 
   /// This is set to the frame prior to setting `contentView`. This is purely a hack to workaround
   /// bugs in older macOS versions (Ventura): https://github.com/ghostty-org/ghostty/pull/8026
-  var initialFrame: NSRect? = nil
+  var initialFrame: NSRect?
 
   override func setFrame(_ frameRect: NSRect, display flag: Bool) {
     // Upon first adding this Window to its host view, older SwiftUI

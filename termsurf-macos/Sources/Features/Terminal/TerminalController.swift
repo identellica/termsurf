@@ -59,7 +59,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
   private var surfaceAppearanceCancellables: Set<AnyCancellable> = []
 
   /// This will be set to the initial frame of the window from the xib on load.
-  private var initialFrame: NSRect? = nil
+  private var initialFrame: NSRect?
 
   init(
     _ ghostty: Ghostty.App,
@@ -193,7 +193,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
   // to find the preferred window to attach new tabs, perform actions, etc. We
   // always prefer the main window but if there isn't any (because we're triggered
   // by something like an App Intent) then we prefer the most previous main.
-  static private(set) weak var lastMain: TerminalController? = nil
+  static private(set) weak var lastMain: TerminalController?
 
   /// The "new window" action.
   static func newWindow(
@@ -470,7 +470,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
     return controller
   }
 
-  //MARK: - Methods
+  // MARK: - Methods
 
   @objc private func ghosttyConfigDidChange(_ notification: Notification) {
     // Get our managed configuration object out
@@ -999,7 +999,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
       tabColor: (window as? TerminalWindow)?.tabColor ?? .none)
   }
 
-  //MARK: - NSWindowController
+  // MARK: - NSWindowController
 
   override func windowWillLoad() {
     // We do NOT want to cascade because we handle this manually from the manager.
@@ -1137,7 +1137,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         // https://github.com/ghostty-org/ghostty/issues/2565
         let oldFrame = focusedWindow.frame
 
-        Self.lastCascadePoint = focusedWindow.cascadeTopLeft(from: NSZeroPoint)
+        Self.lastCascadePoint = focusedWindow.cascadeTopLeft(from: NSPoint.zero)
 
         if focusedWindow.frame != oldFrame {
           focusedWindow.setFrame(oldFrame, display: true)
@@ -1328,7 +1328,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
     ghostty.toggleTerminalInspector(surface: surface)
   }
 
-  //MARK: - TerminalViewDelegate
+  // MARK: - TerminalViewDelegate
 
   override func focusedSurfaceDidChange(to: Ghostty.SurfaceView?) {
     super.focusedSurfaceDidChange(to: to)
@@ -1364,7 +1364,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
     }
   }
 
-  //MARK: - Notifications
+  // MARK: - Notifications
 
   @objc private func onMoveTab(notification: SwiftUI.Notification) {
     guard let target = notification.object as? Ghostty.SurfaceView else { return }

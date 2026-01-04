@@ -1,0 +1,33 @@
+# SwiftLint Configuration for TermSurf
+# Minimal/permissive config to start with
+
+included:
+  - termsurf-macos/Sources
+
+excluded:
+  - termsurf-macos/Tests
+
+disabled_rules:
+  # Style rules (swift-format handles these)
+  - trailing_whitespace
+  - opening_brace
+  - colon
+  - comma
+  - statement_position
+
+  # Length rules (often too restrictive)
+  - line_length
+  - function_body_length
+  - type_body_length
+  - file_length
+  - large_tuple
+
+  # Naming rules (short names are fine)
+  - identifier_name
+  - type_name
+
+  # Other permissive exclusions
+  - cyclomatic_complexity
+  - function_parameter_count
+  - nesting
+  - todo

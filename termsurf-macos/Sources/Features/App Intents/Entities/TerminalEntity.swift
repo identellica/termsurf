@@ -72,7 +72,7 @@ extension TerminalEntity {
 
     static var caseDisplayRepresentations: [Self: DisplayRepresentation] = [
       .normal: .init(title: "Normal"),
-      .quick: .init(title: "Quick"),
+      .quick: .init(title: "Quick")
     ]
   }
 }

@@ -33,7 +33,7 @@ struct ClipboardConfirmationView: View {
   let request: Ghostty.ClipboardRequest
 
   /// Optional delegate to get results. If this is nil, then this view will never close on its own.
-  weak var delegate: ClipboardConfirmationViewDelegate? = nil
+  weak var delegate: ClipboardConfirmationViewDelegate?
 
   /// Used to track if we should rehide on disappear
   @State private var cursorHiddenCount: UInt = 0

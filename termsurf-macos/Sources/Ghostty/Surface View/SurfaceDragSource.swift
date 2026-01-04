@@ -5,7 +5,7 @@ extension Ghostty {
   /// A preference key that propagates the ID of the SurfaceView currently being dragged,
   /// or nil if no surface is being dragged.
   struct DraggingSurfaceKey: PreferenceKey {
-    static var defaultValue: SurfaceView.ID? = nil
+    static var defaultValue: SurfaceView.ID?
 
     static func reduce(value: inout SurfaceView.ID?, nextValue: () -> SurfaceView.ID?) {
       value = nextValue() ?? value

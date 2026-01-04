@@ -319,7 +319,7 @@ enum KeyEventMods: String, AppEnum, CaseIterable {
     .shift: "Shift",
     .control: "Control",
     .option: "Option",
-    .command: "Command",
+    .command: "Command"
   ]
 
   var ghosttyMod: Ghostty.Input.Mods {

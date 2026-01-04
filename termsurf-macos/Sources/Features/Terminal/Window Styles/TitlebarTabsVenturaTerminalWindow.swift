@@ -176,7 +176,7 @@ class TitlebarTabsVenturaTerminalWindow: TerminalWindow {
     backgroundColor.luminance < 0.05
   }
 
-  private var newTabButtonImageLayer: VibrantLayer? = nil
+  private var newTabButtonImageLayer: VibrantLayer?
 
   func updateTabBar() {
     newTabButtonImageLayer = nil
@@ -316,9 +316,9 @@ class TitlebarTabsVenturaTerminalWindow: TerminalWindow {
 
   // MARK: - Titlebar Tabs
 
-  private var windowButtonsBackdrop: WindowButtonsBackdropView? = nil
+  private var windowButtonsBackdrop: WindowButtonsBackdropView?
 
-  private var windowDragHandle: WindowDragView? = nil
+  private var windowDragHandle: WindowDragView?
 
   // Used by the window controller to enable/disable titlebar tabs.
   var titlebarTabs = false {

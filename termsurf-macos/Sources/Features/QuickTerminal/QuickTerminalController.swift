@@ -16,16 +16,16 @@ class QuickTerminalController: BaseTerminalController {
   /// The previously running application when the terminal is shown. This is NEVER Ghostty.
   /// If this is set then when the quick terminal is animated out then we will restore this
   /// application to the front.
-  private var previousApp: NSRunningApplication? = nil
+  private var previousApp: NSRunningApplication?
 
   // The active space when the quick terminal was last shown.
-  private var previousActiveSpace: CGSSpace? = nil
+  private var previousActiveSpace: CGSSpace?
 
   /// Cache for per-screen window state.
   let screenStateCache: QuickTerminalScreenStateCache
 
   /// Non-nil if we have hidden dock state.
-  private var hiddenDock: HiddenDock? = nil
+  private var hiddenDock: HiddenDock?
 
   /// The configuration derived from the Ghostty config so we don't need to rely on references.
   private var derivedConfig: DerivedConfig

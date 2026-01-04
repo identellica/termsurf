@@ -32,7 +32,7 @@ class HiddenTitlebarTerminalWindow: TerminalWindow {
 
     .resizable,
     .closable,
-    .miniaturizable,
+    .miniaturizable
   ]
 
   /// Apply the hidden titlebar style.

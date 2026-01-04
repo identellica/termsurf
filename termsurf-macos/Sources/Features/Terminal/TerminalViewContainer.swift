@@ -42,7 +42,7 @@ class TerminalViewContainer<ViewModel: TerminalViewModel>: NSView {
       terminalView.topAnchor.constraint(equalTo: topAnchor),
       terminalView.leadingAnchor.constraint(equalTo: leadingAnchor),
       terminalView.bottomAnchor.constraint(equalTo: bottomAnchor),
-      terminalView.trailingAnchor.constraint(equalTo: trailingAnchor),
+      terminalView.trailingAnchor.constraint(equalTo: trailingAnchor)
     ])
 
     NotificationCenter.default.addObserver(
@@ -102,7 +102,7 @@ extension TerminalViewContainer {
           glassTopConstraint,
           effectView.leadingAnchor.constraint(equalTo: leadingAnchor),
           effectView.bottomAnchor.constraint(equalTo: bottomAnchor),
-          effectView.trailingAnchor.constraint(equalTo: trailingAnchor),
+          effectView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
       }
       glassEffectView = effectView

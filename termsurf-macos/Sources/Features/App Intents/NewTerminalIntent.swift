@@ -174,6 +174,6 @@ extension NewTerminalLocation: AppEnum {
     .splitLeft: .init(title: "Split Left"),
     .splitRight: .init(title: "Split Right"),
     .splitUp: .init(title: "Split Up"),
-    .splitDown: .init(title: "Split Down"),
+    .splitDown: .init(title: "Split Down")
   ]
 }

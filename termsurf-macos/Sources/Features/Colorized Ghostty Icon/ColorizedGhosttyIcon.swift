@@ -43,7 +43,7 @@ struct ColorizedGhosttyIcon {
         ghost,
         tintedGhost,
         crt,
-        gloss,
+        gloss
       ],
       blendingModes: [
         .normal,
@@ -52,7 +52,7 @@ struct ColorizedGhosttyIcon {
         .normal,
         .color,
         .overlay,
-        .normal,
+        .normal
       ])
   }
 }

@@ -31,7 +31,7 @@ extension Ghostty {
 
     /// The ghostty app instance. We only have one of these for the entire app, although I guess
     /// in theory you can have multiple... I don't know why you would...
-    @Published var app: ghostty_app_t? = nil {
+    @Published var app: ghostty_app_t? {
       didSet {
         guard let old = oldValue else { return }
         ghostty_app_free(old)
@@ -370,7 +370,7 @@ extension Ghostty {
           userInfo: [
             Notification.ConfirmClipboardStrKey: valueStr,
             Notification.ConfirmClipboardStateKey: state as Any,
-            Notification.ConfirmClipboardRequestKey: request,
+            Notification.ConfirmClipboardRequestKey: request
           ]
         )
       }
@@ -435,7 +435,7 @@ extension Ghostty {
           userInfo: [
             Notification.ConfirmClipboardStrKey: textPlainContent.data,
             Notification.ConfirmClipboardRequestKey: Ghostty.ClipboardRequest.osc_52_write(
-              pasteboard),
+              pasteboard)
           ]
         )
       }
@@ -861,7 +861,7 @@ extension Ghostty {
             userInfo: [
               "direction": direction,
               Notification.NewSurfaceConfigKey: SurfaceConfiguration(
-                from: ghostty_surface_inherited_config(surface)),
+                from: ghostty_surface_inherited_config(surface))
             ]
           )
 
@@ -1297,7 +1297,7 @@ extension Ghostty {
             object: surfaceView,
             userInfo: [
               Notification.ResizeSplitDirectionKey: resizeDirection,
-              Notification.ResizeSplitAmountKey: resize.amount,
+              Notification.ResizeSplitAmountKey: resize.amount
             ]
           )
 
@@ -1687,7 +1687,7 @@ extension Ghostty {
         case GHOSTTY_TARGET_SURFACE:
           guard let surface = target.target.surface else { return }
           guard let surfaceView = self.surfaceView(from: surface) else { return }
-          surfaceView.initialSize = NSMakeSize(Double(v.width), Double(v.height))
+          surfaceView.initialSize = NSSize(width: Double(v.width), height: Double(v.height))
 
         default:
           assertionFailure()

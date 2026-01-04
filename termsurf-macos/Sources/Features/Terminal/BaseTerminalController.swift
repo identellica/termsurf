@@ -37,7 +37,7 @@ class BaseTerminalController: NSWindowController,
   let ghostty: Ghostty.App
 
   /// The currently focused surface.
-  var focusedSurface: Ghostty.SurfaceView? = nil {
+  var focusedSurface: Ghostty.SurfaceView? {
     didSet { syncFocusToSurfaceTree() }
   }
 
@@ -58,19 +58,19 @@ class BaseTerminalController: NSWindowController,
   }
 
   /// Non-nil when an alert is active so we don't overlap multiple.
-  private var alert: NSAlert? = nil
+  private var alert: NSAlert?
 
   /// The clipboard confirmation window, if shown.
-  private var clipboardConfirmation: ClipboardConfirmationController? = nil
+  private var clipboardConfirmation: ClipboardConfirmationController?
 
   /// Fullscreen state management.
   private(set) var fullscreenStyle: FullscreenStyle?
 
   /// Event monitor (see individual events for why)
-  private var eventMonitor: Any? = nil
+  private var eventMonitor: Any?
 
   /// The previous frame information from the window
-  private var savedFrame: SavedFrame? = nil
+  private var savedFrame: SavedFrame?
 
   /// Cache previously applied appearance to avoid unnecessary updates
   private var appliedColorScheme: ghostty_color_scheme_e?
@@ -86,7 +86,7 @@ class BaseTerminalController: NSWindowController,
 
   /// An override title for the tab/window set by the user via prompt_tab_title.
   /// When set, this takes precedence over the computed title from the terminal.
-  var titleOverride: String? = nil {
+  var titleOverride: String? {
     didSet { applyTitleToWindow() }
   }
 

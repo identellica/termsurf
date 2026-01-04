@@ -21,7 +21,7 @@ enum QuickTerminalSpaceBehavior {
   var collectionBehavior: NSWindow.CollectionBehavior {
     let commonBehavior: [NSWindow.CollectionBehavior] = [
       .ignoresCycle,
-      .fullScreenAuxiliary,
+      .fullScreenAuxiliary
     ]
 
     switch self {

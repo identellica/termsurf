@@ -66,6 +66,6 @@ extension TerminalDetail: AppEnum {
     .workingDirectory: .init(title: "Working Directory"),
     .allContents: .init(title: "Full Contents"),
     .selectedText: .init(title: "Selected Text"),
-    .visibleText: .init(title: "Visible Text"),
+    .visibleText: .init(title: "Visible Text")
   ]
 }

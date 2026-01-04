@@ -141,16 +141,16 @@ class AppDelegate: NSObject,
   }
 
   /// Tracks the windows that we hid for toggleVisibility.
-  private(set) var hiddenState: ToggleVisibilityState? = nil
+  private(set) var hiddenState: ToggleVisibilityState?
 
   /// The observer for the app appearance.
-  private var appearanceObserver: NSKeyValueObservation? = nil
+  private var appearanceObserver: NSKeyValueObservation?
 
   /// Signals
   private var signals: [DispatchSourceSignal] = []
 
   /// The custom app icon image that is currently in use.
-  @Published private(set) var appIcon: NSImage? = nil
+  @Published private(set) var appIcon: NSImage?
 
   override init() {
     super.init()
@@ -158,7 +158,7 @@ class AppDelegate: NSObject,
     ghostty.delegate = self
   }
 
-  //MARK: - NSApplicationDelegate
+  // MARK: - NSApplicationDelegate
 
   func applicationWillFinishLaunching(_ notification: Notification) {
     UserDefaults.standard.register(defaults: [
@@ -174,7 +174,7 @@ class AppDelegate: NSObject,
       // Practically, this means things like SMS autofill don't work, but that is
       // a desirable behavior to NOT have happen for a terminal, so this is a win.
       // Manual autofill via the `Edit => AutoFill` menu item still work as expected.
-      "NSAutoFillHeuristicControllerEnabled": false,
+      "NSAutoFillHeuristicControllerEnabled": false
     ])
   }
 
@@ -886,7 +886,7 @@ class AppDelegate: NSObject,
        Note: When `auto-update = download`, you may need to
        `Clean Build Folder` if a background install has already begun.
        */
-      //updateController.updater.checkForUpdatesInBackground()
+      // updateController.updater.checkForUpdatesInBackground()
     }
 
     // Config could change keybindings, so update everything that depends on that
@@ -955,7 +955,6 @@ class AppDelegate: NSObject,
     case .official:
       // Discard saved icon name
       appIconName = nil
-      break
     case .blueprint:
       appIcon = NSImage(named: "BlueprintImage")!
 
@@ -1043,7 +1042,7 @@ class AppDelegate: NSObject,
     UserDefaults.standard.set(currentBuild, forKey: "CustomGhosttyIconBuild")
   }
 
-  //MARK: - Restorable State
+  // MARK: - Restorable State
 
   /// We support NSSecureCoding for restorable state. Required as of macOS Sonoma (14) but a good idea anyways.
   func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
@@ -1080,7 +1079,7 @@ class AppDelegate: NSObject,
     }
   }
 
-  //MARK: - UNUserNotificationCenterDelegate
+  // MARK: - UNUserNotificationCenterDelegate
 
   func userNotificationCenter(
     _ center: UNUserNotificationCenter,
@@ -1101,7 +1100,7 @@ class AppDelegate: NSObject,
     withCompletionHandler(options)
   }
 
-  //MARK: - GhosttyAppDelegate
+  // MARK: - GhosttyAppDelegate
 
   func findSurface(forUUID uuid: UUID) -> Ghostty.SurfaceView? {
     for c in TerminalController.all {
@@ -1115,7 +1114,7 @@ class AppDelegate: NSObject,
     return nil
   }
 
-  //MARK: - Dock Menu
+  // MARK: - Dock Menu
 
   private func reloadDockMenu() {
     let newWindow = NSMenuItem(title: "New Window", action: #selector(newWindow), keyEquivalent: "")
@@ -1126,7 +1125,7 @@ class AppDelegate: NSObject,
     dockMenu.addItem(newTab)
   }
 
-  //MARK: - Global State
+  // MARK: - Global State
 
   func setSecureInput(_ mode: Ghostty.SetSecureInput) {
     let input = SecureInput.shared
@@ -1144,7 +1143,7 @@ class AppDelegate: NSObject,
     UserDefaults.standard.set(input.global, forKey: "SecureInput")
   }
 
-  //MARK: - IB Actions
+  // MARK: - IB Actions
 
   @IBAction func openConfig(_ sender: Any?) {
     Ghostty.App.openConfig()
@@ -1156,7 +1155,7 @@ class AppDelegate: NSObject,
 
   @IBAction func checkForUpdates(_ sender: Any?) {
     updateController.checkForUpdates()
-    //UpdateSimulator.happyPath.simulate(with: updateViewModel)
+    // UpdateSimulator.happyPath.simulate(with: updateViewModel)
   }
 
   @IBAction func newWindow(_ sender: Any?) {
@@ -1363,6 +1362,6 @@ private enum QuickTerminalState {
 }
 
 @globalActor
-fileprivate actor AppIconActor: GlobalActor {
+private actor AppIconActor: GlobalActor {
   static let shared = AppIconActor()
 }

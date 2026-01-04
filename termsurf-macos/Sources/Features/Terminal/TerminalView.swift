@@ -45,7 +45,7 @@ struct TerminalView<ViewModel: TerminalViewModel>: View {
   @ObservedObject var viewModel: ViewModel
 
   // An optional delegate to receive information about terminal changes.
-  weak var delegate: (any TerminalViewDelegate)? = nil
+  weak var delegate: (any TerminalViewDelegate)?
 
   // The most recently focused surface, equal to focusedSurface when
   // it is non-nil.

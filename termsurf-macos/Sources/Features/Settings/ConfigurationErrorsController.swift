@@ -20,7 +20,7 @@ class ConfigurationErrorsController: NSWindowController, NSWindowDelegate,
     }
   }
 
-  //MARK: - NSWindowController
+  // MARK: - NSWindowController
 
   override func windowWillLoad() {
     shouldCascadeWindows = false

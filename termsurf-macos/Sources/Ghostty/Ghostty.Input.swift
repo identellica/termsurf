@@ -96,7 +96,7 @@ extension Ghostty {
     GHOSTTY_KEY_ENTER: .return,
     GHOSTTY_KEY_TAB: .tab,
     GHOSTTY_KEY_BACKSPACE: .delete,
-    GHOSTTY_KEY_SPACE: .space,
+    GHOSTTY_KEY_SPACE: .space
   ]
 }
 
@@ -220,7 +220,7 @@ extension Ghostty.Input.Action: AppEnum {
   static var caseDisplayRepresentations: [Ghostty.Input.Action: DisplayRepresentation] = [
     .release: "Release",
     .press: "Press",
-    .repeat: "Repeat",
+    .repeat: "Repeat"
   ]
 }
 
@@ -334,7 +334,7 @@ extension Ghostty.Input.MouseState: AppEnum {
 
   static var caseDisplayRepresentations: [Ghostty.Input.MouseState: DisplayRepresentation] = [
     .release: "Release",
-    .press: "Press",
+    .press: "Press"
   ]
 }
 
@@ -366,13 +366,13 @@ extension Ghostty.Input.MouseButton: AppEnum {
     .unknown: "Unknown",
     .left: "Left",
     .right: "Right",
-    .middle: "Middle",
+    .middle: "Middle"
   ]
 
   static var allCases: [Ghostty.Input.MouseButton] = [
     .left,
     .right,
-    .middle,
+    .middle
   ]
 }
 
@@ -453,7 +453,7 @@ extension Ghostty.Input.Momentum: AppEnum {
     .changed: "Changed",
     .ended: "Ended",
     .cancelled: "Cancelled",
-    .mayBegin: "May Begin",
+    .mayBegin: "May Begin"
   ]
 }
 
@@ -1162,7 +1162,7 @@ extension Ghostty.Input.Key: AppEnum {
       .intlBackslash, .intlRo, .intlYen,
 
       // Other
-      .contextMenu,
+      .contextMenu
     ]
   }
 
@@ -1252,6 +1252,6 @@ extension Ghostty.Input.Key: AppEnum {
     .intlYen: "International Yen",
 
     // Other
-    .contextMenu: "Context Menu",
+    .contextMenu: "Context Menu"
   ]
 }

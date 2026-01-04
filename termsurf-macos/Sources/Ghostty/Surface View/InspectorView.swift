@@ -99,7 +99,7 @@ extension Ghostty {
   class InspectorView: MTKView, NSTextInputClient {
     let commandQueue: MTLCommandQueue
 
-    var surfaceView: SurfaceView? = nil {
+    var surfaceView: SurfaceView? {
       didSet { surfaceViewDidChange() }
     }
 
@@ -223,7 +223,7 @@ extension Ghostty {
 
             // We want active always because we want to still send mouse reports
             // even if we're not focused or key.
-            .activeAlways,
+            .activeAlways
           ],
           owner: self,
           userInfo: nil))
@@ -400,7 +400,7 @@ extension Ghostty {
     }
 
     func firstRect(forCharacterRange range: NSRange, actualRange: NSRangePointer?) -> NSRect {
-      return NSMakeRect(frame.origin.x, frame.origin.y, 0, 0)
+      return NSRect(x: frame.origin.x, y: frame.origin.y, width: 0, height: 0)
     }
 
     func insertText(_ string: Any, replacementRange: NSRange) {
