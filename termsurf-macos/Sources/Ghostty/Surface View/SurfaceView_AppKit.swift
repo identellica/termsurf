@@ -1498,6 +1498,29 @@ extension Ghostty {
       }
     }
 
+    /// Check if a key event matches a ghostty keybinding and process it if so.
+    /// Called from WebViewContainer to intercept keybindings before they reach WKWebView.
+    /// Returns true if the event was a keybinding and was processed.
+    func processKeyBindingIfMatched(_ event: NSEvent) -> Bool {
+      guard let surface = self.surface else { return false }
+
+      var ghosttyEvent = event.ghosttyKeyEvent(GHOSTTY_ACTION_PRESS)
+      let isBinding = (event.characters ?? "").withCString { ptr in
+        ghosttyEvent.text = ptr
+        return ghostty_surface_key_is_binding(surface, ghosttyEvent)
+      }
+
+      guard isBinding else { return false }
+
+      // Process the keybinding by calling ghostty_surface_key
+      _ = (event.characters ?? "").withCString { ptr in
+        ghosttyEvent.text = ptr
+        return ghostty_surface_key(surface, ghosttyEvent)
+      }
+
+      return true
+    }
+
     override func quickLook(with event: NSEvent) {
       guard let surface = self.surface else { return super.quickLook(with: event) }
 

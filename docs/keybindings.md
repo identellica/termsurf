@@ -36,11 +36,12 @@ the browser, not libghostty. We handle this with a **modal approach**:
    - ctrl+c closes the webview
    - ControlBar displays: "i to edit, enter to browse, ctrl+c to close"
 
-2. **Browse mode** (browser has full control)
+2. **Browse mode** (browser has focus, ghostty keybindings still work)
    - WKWebView is the first responder
-   - All keys go to the browser
+   - Most keys go to the browser
+   - Ghostty keybindings are intercepted via local event monitor and processed
    - Esc (intercepted via local event monitor) switches to control mode
-   - ControlBar displays: "Esc to exit browser"
+   - ControlBar displays: "Esc to exit"
 
 3. **Insert mode** (edit URL)
    - URL text field is the first responder
@@ -58,11 +59,14 @@ the browser, not libghostty. We handle this with a **modal approach**:
 - If so, intercept Enter, i, and ctrl+c before passing to libghostty
 - All other keys flow through to libghostty normally
 
-**Browse mode** Esc is handled via a local event monitor in
+**Browse mode** keybindings are handled via a local event monitor in
 `WebViewContainer.swift`:
 
-- `NSEvent.addLocalMonitorForEvents` intercepts Esc at the application level
-- When in browse mode, Esc triggers `focusControlBar()` and consumes the event
+- `NSEvent.addLocalMonitorForEvents` intercepts all keyDown events
+- When in browse mode, checks if the key matches a ghostty keybinding
+- If it's a keybinding, routes to SurfaceView and consumes the event
+- If not, lets the event pass through to WKWebView
+- Esc is always intercepted to exit browse mode
 - This is invisible to websites and cannot be overridden by them
 
 **Insert mode** keybindings are handled in `ControlBar.swift`:
@@ -188,49 +192,107 @@ This is how we handle Esc in browse mode: the monitor in `WebViewContainer`
 intercepts Esc before WKWebView can see it, making it invisible to websites
 and impossible for them to override.
 
-## Menu System and Ghostty Keybindings
+## Ghostty Keybindings and Mode Priority
 
-A critical discovery: **Ghostty keybindings work from browse mode because they're
-synced to menu items**.
+Keybinding priority differs by mode:
 
-### How It Works
+| Mode | Priority | Behavior |
+|------|----------|----------|
+| **Browse** | Webview first | Webview keybindings work; ghostty gets unhandled keys |
+| **Control** | Ghostty first | All ghostty keybindings work; webview doesn't receive keys |
+| **Insert** | URL field | Normal text editing in URL field |
 
-1. In `AppDelegate.swift`, `syncMenuShortcut` syncs Ghostty keybindings to menu
-   items:
+**Special case**: Esc is ALWAYS intercepted in browse mode to exit to control mode.
+This ensures the user can always regain full control of keybindings.
 
-   ```swift
-   syncMenuShortcut(config, action: "goto_split:left", menuItem: self.menuSelectSplitLeft)
-   syncMenuShortcut(config, action: "goto_split:right", menuItem: self.menuSelectSplitRight)
-   // etc.
-   ```
+### Implementation
 
-2. When a key is pressed (e.g., ctrl+l for `goto_split:left`):
-   - `performKeyEquivalent` is called on the view hierarchy
-   - SurfaceView returns `false` (webview is visible)
-   - **macOS automatically tries `performKeyEquivalent` on the main menu**
-   - Menu finds ctrl+l matches `goto_split:left` menu item
-   - Menu action fires → Ghostty navigates splits
+Two mechanisms work together:
 
-3. This means any Ghostty keybinding that has a corresponding menu item will
-   work from browse mode automatically.
+**1. Local Event Monitor** (in `WebViewContainer.swift`)
 
-### Implications for Custom Keybindings
-
-Keys that are NOT menu shortcuts must be handled explicitly in
-`performKeyEquivalent`. For example, ctrl+c (close webview) is not a Ghostty
-keybinding with a menu item, so we intercept it directly:
+Intercepts `keyDown` events before any view sees them:
 
 ```swift
-// In performKeyEquivalent, before returning false:
-let hasCtrl = event.modifierFlags.contains(.control)
-if hasCtrl && !hasCmd && !hasOpt && char == "c" {
-    container.onClose?(container.webviewId, 0)
+switch self.focusMode {
+case .browse:
+    // Only intercept Esc to exit browse mode
+    if event.keyCode == 53 {
+        self.focusControlBar()
+        return nil
+    }
+    return event  // Let webview handle other keys
+
+case .control:
+    // Ghostty has priority - check keybindings first
+    if let surfaceView = self.superview as? Ghostty.SurfaceView {
+        if surfaceView.processKeyBindingIfMatched(event) {
+            return nil  // Ghostty handled it
+        }
+    }
+    return event  // Let SurfaceView handle (Enter, i, ctrl+c, etc.)
+
+case .insert:
+    return event  // URL field handles keys
+}
+```
+
+**2. performKeyEquivalent Override** (in `WebViewContainer.swift`)
+
+Catches modifier keys (ctrl+key, cmd+key) that webview doesn't handle:
+
+```swift
+override func performKeyEquivalent(with event: NSEvent) -> Bool {
+    if focusMode == .browse {
+        // Let webview try first
+        if super.performKeyEquivalent(with: event) {
+            return true  // Webview handled it
+        }
+
+        // Webview didn't handle - check ghostty keybinding
+        if let surfaceView = superview as? Ghostty.SurfaceView {
+            if surfaceView.processKeyBindingIfMatched(event) {
+                return true  // Ghostty handled it
+            }
+        }
+    }
+    return super.performKeyEquivalent(with: event)
+}
+```
+
+**3. processKeyBindingIfMatched** (in `SurfaceView_AppKit.swift`)
+
+Checks if a key matches a ghostty keybinding and processes it:
+
+```swift
+func processKeyBindingIfMatched(_ event: NSEvent) -> Bool {
+    guard let surface = self.surface else { return false }
+
+    var ghosttyEvent = event.ghosttyKeyEvent(GHOSTTY_ACTION_PRESS)
+    let isBinding = (event.characters ?? "").withCString { ptr in
+        ghosttyEvent.text = ptr
+        return ghostty_surface_key_is_binding(surface, ghosttyEvent)
+    }
+
+    guard isBinding else { return false }
+
+    _ = (event.characters ?? "").withCString { ptr in
+        ghosttyEvent.text = ptr
+        return ghostty_surface_key(surface, ghosttyEvent)
+    }
+
     return true
 }
 ```
 
-If we didn't do this, ctrl+c would fall through to WKWebView (which might
-consume it or ignore it) and never reach our close handler.
+### Why This Architecture?
+
+- **Browse mode**: Webview keybindings (like ctrl+c for copy in some web apps) work
+  correctly. Ghostty only handles keys the webview doesn't use.
+- **Control mode**: User has full control of ghostty keybindings regardless of what
+  the webview might want.
+- **Esc guarantee**: User can always exit browse mode, ensuring they're never
+  "trapped" in a webview that consumes all keys.
 
 ## SurfaceView Key Handling Implementation
 

@@ -62,8 +62,8 @@ class WebViewContainer: NSView {
   /// Total number of webviews in the stack
   private(set) var stackTotal: Int = 1
 
-  /// Local event monitor for Esc key (to escape browse mode)
-  private var escapeMonitor: Any?
+  /// Local event monitor for key events (intercepts ghostty keybindings before WKWebView)
+  private var keyMonitor: Any?
 
   /// Current focus mode
   enum FocusMode {
@@ -104,7 +104,7 @@ class WebViewContainer: NSView {
 
     setupSubviews()
     setupCallbacks()
-    setupEscapeMonitor()
+    setupKeyMonitor()
 
     // Ensure initial visual state is correct
     updateFocusVisuals()
@@ -122,7 +122,7 @@ class WebViewContainer: NSView {
   }
 
   deinit {
-    if let monitor = escapeMonitor {
+    if let monitor = keyMonitor {
       NSEvent.removeMonitor(monitor)
     }
     logger.info("WebViewContainer \(self.webviewId) deallocated")
@@ -226,23 +226,42 @@ class WebViewContainer: NSView {
     webViewDimOverlay.frame = webViewOverlay.frame
   }
 
-  private func setupEscapeMonitor() {
-    // Local event monitor intercepts Esc before it reaches WKWebView.
-    // This is invisible to websites and cannot be overridden by them.
-    escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+  private func setupKeyMonitor() {
+    // Local event monitor intercepts keys before they reach any view.
+    // Behavior depends on focus mode:
+    // - Browse: Only intercept Esc (to exit). Other keys go to webview first.
+    // - Control: Intercept all keys. Ghostty keybindings have priority.
+    // - Insert: Pass through (URL field handles keys).
+    keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
       guard let self = self else { return event }
 
-      // Only handle Esc key (keyCode 53)
-      guard event.keyCode == 53 else { return event }
+      switch self.focusMode {
+      case .browse:
+        // SPECIAL CASE: Always intercept Esc to exit browse mode.
+        // This ensures the user can always escape the webview to regain keybindings.
+        if event.keyCode == 53 {
+          self.focusControlBar()
+          return nil
+        }
+        // All other keys: pass through to webview (webview has priority).
+        // Unhandled modifier keys will be caught by performKeyEquivalent.
+        return event
 
-      // Only handle when in browse mode
-      guard self.focusMode == .browse else { return event }
+      case .control:
+        // In control mode, ghostty keybindings have priority.
+        // Intercept all keys and check if they're ghostty keybindings.
+        if let surfaceView = self.superview as? Ghostty.SurfaceView {
+          if surfaceView.processKeyBindingIfMatched(event) {
+            return nil  // Ghostty handled it
+          }
+        }
+        // Let non-ghostty keys flow to SurfaceView (handles Enter, i, ctrl+c, etc.)
+        return event
 
-      // Switch to control mode
-      self.focusControlBar()
-
-      // Consume the event (return nil to prevent further processing)
-      return nil
+      case .insert:
+        // In insert mode, let URL field handle keys normally
+        return event
+      }
     }
   }
 
@@ -314,6 +333,26 @@ class WebViewContainer: NSView {
       // In insert mode, URL field should keep focus
       return true
     }
+  }
+
+  override func performKeyEquivalent(with event: NSEvent) -> Bool {
+    // In browse mode, let webview try first, then check ghostty keybindings.
+    // This gives webview priority for modifier keys (ctrl+key, cmd+key, etc.).
+    if focusMode == .browse {
+      // Let subviews (WKWebView) try first
+      if super.performKeyEquivalent(with: event) {
+        return true  // Webview handled it
+      }
+
+      // Webview didn't handle it - check if it's a ghostty keybinding
+      if let surfaceView = superview as? Ghostty.SurfaceView {
+        if surfaceView.processKeyBindingIfMatched(event) {
+          return true  // Ghostty handled it
+        }
+      }
+    }
+
+    return super.performKeyEquivalent(with: event)
   }
 
   // MARK: - Focus Management
