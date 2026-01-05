@@ -72,7 +72,7 @@ class WebViewContainer: NSView {
     case insert
   }
 
-  private(set) var focusMode: FocusMode = .browse {
+  private(set) var focusMode: FocusMode = .control {
     didSet {
       if oldValue != focusMode {
         updateFocusVisuals()
@@ -157,11 +157,11 @@ class WebViewContainer: NSView {
     // Only do initial focus setup once (not when view hierarchy changes due to splits)
     if window != nil && !didInitialFocus {
       didInitialFocus = true
-      // When we're added to a window, ensure webview has focus (start in browse mode)
+      // Start in control mode (like vim's normal mode) - user presses Enter to browse
       DispatchQueue.main.async { [weak self] in
         guard let self = self else { return }
         logger.info("viewDidMoveToWindow async block executing for \(self.webviewId)")
-        self.focusBrowser()
+        self.focusControlBar()
       }
     }
   }
