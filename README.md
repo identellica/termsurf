@@ -9,8 +9,7 @@ TermSurf is a terminal designed for web developers. It combines a high-quality
 native terminal (via libghostty) with the ability to open browsers directly
 inside terminal panes. This enables workflows like:
 
-- Run `termsurf open https://localhost:3000` to preview your dev server in a
-  pane
+- Run `web open https://localhost:3000` to preview your dev server in a pane
 - View documentation alongside your terminal
 - Debug web applications with terminal and browser side-by-side
 - Script the terminal using TypeScript instead of Lua
@@ -23,10 +22,11 @@ developers.
 ## Key Features
 
 **Implemented:**
-- **Browser Panes**: Open browsers as first-class panes via `termsurf open`
+- **Browser Panes**: Open browsers as first-class panes via `web open`
   - Safari/WebKit (via WKWebView) - current engine
 - **Browser Profiles**: Isolated sessions with `--profile` flag (separate
   cookies, localStorage)
+- **Bookmarks**: Save and recall URLs with `web bookmark add/get/list/delete`
 - **Unified Focus Management**: Navigate between terminal and browser panes with
   vim-style keybindings (ctrl+h/j/k/l)
 - **Console Bridging**: `console.log` → stdout, `console.error` → stderr
@@ -40,10 +40,14 @@ developers.
 
 ```bash
 # Example usage
-termsurf open google.com                        # Open in WebKit
-termsurf open --profile work google.com         # With isolated profile
-termsurf open --js-api localhost:3000           # Enable JS API for automation
-termsurf open --browser chromium google.com     # Chromium (planned)
+web open google.com                          # Open in WebKit
+web open --profile work google.com           # With isolated profile
+web open --js-api localhost:3000             # Enable JS API for automation
+
+# Bookmarks
+web bookmark add --name google --url https://google.com
+web bookmark list
+web open google                              # Open by bookmark name
 ```
 
 ## Architecture
@@ -54,7 +58,7 @@ This project is structured as a fork of Ghostty with TermSurf code in the
 ```
 termsurf/                    # Root (Ghostty fork)
 ├── src/                     # libghostty (Zig) - shared core
-│   └── termsurf-cli/        # CLI tool (termsurf open, etc.)
+│   └── termsurf-cli/        # CLI tool (web open, web bookmark, etc.)
 ├── macos/                   # Original Ghostty macOS app
 ├── docs/                    # Documentation
 │   ├── architecture.md      # Technical decisions
@@ -148,6 +152,15 @@ xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Debug bui
 ```
 
 Or open `termsurf-macos/TermSurf.xcodeproj` in Xcode and build from there.
+
+### Build for Release
+
+To build both libghostty and the Swift app in release mode:
+
+```bash
+./scripts/build-release.sh         # Build only
+./scripts/build-release.sh --open  # Build and open the app
+```
 
 ### Updating the App Icon
 
