@@ -235,6 +235,16 @@ class WebViewContainer: NSView {
     keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
       guard let self = self else { return event }
 
+      // Only handle keys if this pane is focused (first responder is within our hierarchy).
+      // This prevents intercepting keys meant for other panes (e.g., Esc in neovim).
+      guard let firstResponder = self.window?.firstResponder as? NSView else { return event }
+      let isFocusedHierarchy =
+        firstResponder === self.superview  // SurfaceView (control mode)
+        || firstResponder.isDescendant(of: self)  // WebView, ControlBar, or URL field
+      guard isFocusedHierarchy else {
+        return event  // Not our pane, let event pass through
+      }
+
       switch self.focusMode {
       case .browse:
         // SPECIAL CASE: Always intercept Esc to exit browse mode.
