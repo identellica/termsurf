@@ -41,7 +41,7 @@ the browser, not libghostty. We handle this with a **modal approach**:
    - Most keys go to the browser
    - Ghostty keybindings are intercepted via local event monitor and processed
    - Esc (intercepted via local event monitor) switches to control mode
-   - ControlBar displays: "Esc to exit"
+   - ControlBar displays: "Esc to control"
 
 3. **Insert mode** (edit URL)
    - URL text field is the first responder
