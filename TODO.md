@@ -8,6 +8,10 @@
        inside a post on x.com do not work. We will most likely need to detect
        the "open this link in a new window" api call from the webview and then
        do something with that command, like run "web open ..." in a new tab.
+3. [ ] You should be able to press cmd+c to copy the current url when in control
+       mode.
+4. [ ] Basic copy/paste commands cmd+c/x/v should work in insert mode (currently
+       they do not, although shift+right/left does work)
 
 ## TODO
 
