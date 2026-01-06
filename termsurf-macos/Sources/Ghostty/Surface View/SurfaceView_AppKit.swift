@@ -1320,6 +1320,12 @@ extension Ghostty {
           return true
         }
 
+        // Handle cmd+r to refresh webview (works in all modes).
+        if hasCmd && !hasOpt && char == "r" {
+          container.webViewOverlay.webView.reload()
+          return true
+        }
+
         // Don't let terminal handle other key equivalents when webview is visible.
         return false
       }

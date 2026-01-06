@@ -133,6 +133,7 @@ When a URL is submitted from insert mode, it is normalized before navigation:
 | All modes | cmd+c     | Copy (via menu action)            |
 | All modes | cmd+x     | Cut (via menu action)             |
 | All modes | cmd+v     | Paste (via menu action)           |
+| All modes | cmd+r     | Refresh webview                   |
 | All modes | cmd+alt+i | Open Safari Web Inspector         |
 | Insert    | Enter     | Navigate to URL, switch to browse |
 | Insert    | Esc       | Cancel edit, switch to control    |
