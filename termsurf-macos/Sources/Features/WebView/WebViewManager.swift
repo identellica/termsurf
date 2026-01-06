@@ -154,8 +154,8 @@ class WebViewManager {
       container.autoresizingMask = [.width, .height]
       currentSurface.addSubview(container)
 
-      // Start in control mode (like vim's normal mode) for user empowerment
-      container.focusControlBar()
+      // Start in browse mode so user can interact with the page immediately
+      container.focusBrowser()
 
       self.lock.lock()
       self.containers[webviewId] = container
