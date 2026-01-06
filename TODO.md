@@ -35,6 +35,7 @@
 - **CEF Integration** - Chrome DevTools and Blink rendering engine. Deferred due
   to Swift-to-C marshalling issues. See `docs/cef.md` for details.
 - **Firefox Integration**.
+- **Ladybird Integration**.
 - **RSS Feeds** - Built-in feed reader functionality
 - Support Linux
 - Support Windows
