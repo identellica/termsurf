@@ -192,6 +192,45 @@ This is how we handle Esc in browse mode: the monitor in `WebViewContainer`
 intercepts Esc before WKWebView can see it, making it invisible to websites
 and impossible for them to override.
 
+### Critical: Two-Level Focus Check
+
+Local event monitors are **app-global**—they fire for ALL keyDown events across
+all windows. When multiple tabs have webviews, each WebViewContainer has its own
+monitor running. Without proper guards, an inactive tab's monitor can intercept
+keys meant for the active tab.
+
+**Required checks before handling any key in a local event monitor:**
+
+1. **Active tab check (`isKeyWindow`)** - Is our window the key window?
+2. **Active pane check (`firstResponder`)** - Is the first responder in our hierarchy?
+
+```swift
+// In the local event monitor closure:
+
+// CHECK 1: Only handle if our window is the key window (active tab)
+guard self.window?.isKeyWindow ?? false else { return event }
+
+// CHECK 2: Only handle if first responder is in our view hierarchy (active pane)
+guard let firstResponder = self.window?.firstResponder as? NSView else { return event }
+let isFocusedHierarchy =
+  firstResponder === self.superview  // SurfaceView (control mode)
+  || firstResponder.isDescendant(of: self)  // WebView, URL field, etc.
+guard isFocusedHierarchy else { return event }
+```
+
+**Why both checks are necessary:**
+
+| Scenario | isKeyWindow | firstResponder in hierarchy | Should handle? |
+|----------|-------------|----------------------------|----------------|
+| Active tab, active pane | ✓ | ✓ | Yes |
+| Active tab, different pane | ✓ | ✗ | No |
+| Inactive tab | ✗ | (irrelevant) | No |
+
+**Bug history:** Originally only the pane check existed. This caused issues when
+webviews were open on multiple tabs—the inactive tab's monitor would intercept
+keys because its window still had a valid firstResponder pointing to its own
+view hierarchy.
+
 ## Ghostty Keybindings and Mode Priority
 
 Keybinding priority differs by mode:
@@ -214,6 +253,13 @@ Two mechanisms work together:
 Intercepts `keyDown` events before any view sees them:
 
 ```swift
+// First: two-level focus check (see "Critical: Two-Level Focus Check" above)
+guard self.window?.isKeyWindow ?? false else { return event }
+guard let firstResponder = self.window?.firstResponder as? NSView else { return event }
+let isFocusedHierarchy = firstResponder === self.superview || firstResponder.isDescendant(of: self)
+guard isFocusedHierarchy else { return event }
+
+// Then: mode-specific handling
 switch self.focusMode {
 case .browse:
     // Only intercept Esc to exit browse mode
@@ -398,3 +444,9 @@ When adding new keybindings that need to work in webviews:
    monitor (`NSEvent.addLocalMonitorForEvents`). This intercepts events before
    any view sees them. Use sparingly—only when the key absolutely must not
    reach the first responder (e.g., Esc in browse mode).
+
+**Critical:** When using local event monitors, always implement the two-level
+focus check (see "Critical: Two-Level Focus Check" above). Monitors are
+app-global and will fire for events in ALL windows/tabs. Without the
+`isKeyWindow` and `firstResponder` checks, inactive tabs will incorrectly
+intercept keystrokes.
