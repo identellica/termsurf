@@ -201,13 +201,13 @@ keys meant for the active tab.
 
 **Required checks before handling any key in a local event monitor:**
 
-1. **Active tab check (`isKeyWindow`)** - Is our window the key window?
+1. **Active window/tab check (`isKeyWindow`)** - Is our window the key window?
 2. **Active pane check (`firstResponder`)** - Is the first responder in our hierarchy?
 
 ```swift
 // In the local event monitor closure:
 
-// CHECK 1: Only handle if our window is the key window (active tab)
+// CHECK 1: Only handle if our window is the key window (active tab/window)
 guard self.window?.isKeyWindow ?? false else { return event }
 
 // CHECK 2: Only handle if first responder is in our view hierarchy (active pane)
@@ -218,13 +218,27 @@ let isFocusedHierarchy =
 guard isFocusedHierarchy else { return event }
 ```
 
+**Why `isKeyWindow` covers both tabs and windows:**
+
+In TermSurf/Ghostty, each tab is a separate `NSWindow` grouped via `NSWindowTabGroup`.
+The "visual window" you see is actually multiple NSWindows in a tab group. There is
+only one key window across the entire application at any time—the window receiving
+keyboard input. This means `isKeyWindow` will be `false` for:
+
+- Inactive tabs in the same tab group (visual window)
+- Tabs/windows in a different window entirely
+- All windows when the app is in the background
+
+No separate "active window" check is needed beyond `isKeyWindow`.
+
 **Why both checks are necessary:**
 
 | Scenario | isKeyWindow | firstResponder in hierarchy | Should handle? |
 |----------|-------------|----------------------------|----------------|
 | Active tab, active pane | ✓ | ✓ | Yes |
 | Active tab, different pane | ✓ | ✗ | No |
-| Inactive tab | ✗ | (irrelevant) | No |
+| Inactive tab (same window) | ✗ | (irrelevant) | No |
+| Different window entirely | ✗ | (irrelevant) | No |
 
 **Bug history:** Originally only the pane check existed. This caused issues when
 webviews were open on multiple tabs—the inactive tab's monitor would intercept
