@@ -2,7 +2,9 @@
 
 ## Issues
 
-1. [ ] Links that open in a new window don't work. For instance, all links
+1. [x] cmd+r does not refresh the page. it does nothing. we probably need to
+       handle cmd+r in a similar way as ctrl+c. it is not a menu item.
+2. [ ] Links that open in a new window don't work. For instance, all links
        inside a post on x.com do not work. We will most likely need to detect
        the "open this link in a new window" api call from the webview and then
        do something with that command, like run "web open ..." in a new tab.
