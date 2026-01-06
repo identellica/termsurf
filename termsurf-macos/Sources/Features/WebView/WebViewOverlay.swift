@@ -6,7 +6,7 @@ private let logger = Logger(subsystem: "com.termsurf", category: "WebViewOverlay
 
 /// A view that displays a WKWebView overlay on top of a terminal pane.
 /// Includes console capture that routes console.log/error to the underlying terminal.
-class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
+class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUIDelegate {
   /// The webview ID
   let webviewId: String
 
@@ -199,6 +199,7 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
     // Create webview
     webView = WKWebView(frame: bounds, configuration: config)
     webView.navigationDelegate = self
+    webView.uiDelegate = self
     webView.autoresizingMask = [.width, .height]
 
     // Make background semi-transparent while loading
@@ -345,6 +346,23 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate {
   ) {
     logger.error(
       "Provisional navigation failed for \(self.webviewId): \(error.localizedDescription)")
+  }
+
+  // MARK: - WKUIDelegate
+
+  func webView(
+    _ webView: WKWebView,
+    createWebViewWith configuration: WKWebViewConfiguration,
+    for navigationAction: WKNavigationAction,
+    windowFeatures: WKWindowFeatures
+  ) -> WKWebView? {
+    // Handle target="_blank" links by loading in the same webview.
+    // This is a simple solution that works for most cases.
+    // Future: open in new tab via `web open <url>` command.
+    if navigationAction.targetFrame == nil {
+      webView.load(navigationAction.request)
+    }
+    return nil
   }
 
   // MARK: - Focus Handling
