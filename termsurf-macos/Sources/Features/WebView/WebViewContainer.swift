@@ -235,6 +235,10 @@ class WebViewContainer: NSView {
     keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
       guard let self = self else { return event }
 
+      // Only handle keys if our window is the key window (active tab).
+      // This prevents intercepting keys meant for other tabs with webviews.
+      guard self.window?.isKeyWindow ?? false else { return event }
+
       // Only handle keys if this pane is focused (first responder is within our hierarchy).
       // This prevents intercepting keys meant for other panes (e.g., Esc in neovim).
       guard let firstResponder = self.window?.firstResponder as? NSView else { return event }
