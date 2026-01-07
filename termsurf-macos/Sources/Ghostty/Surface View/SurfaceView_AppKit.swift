@@ -1269,6 +1269,7 @@ extension Ghostty {
           || firstResponder === container
           || firstResponder === container.webViewOverlay
           || firstResponder === container.webViewOverlay.webView
+          || (firstResponder as? NSView)?.isDescendant(of: container) == true
         guard isFocusedHierarchy else {
           return false
         }
@@ -1645,7 +1646,6 @@ extension Ghostty {
 
     // MARK: Menu Handlers
 
-    // DIAGNOSTIC: Return early without doing anything to test if WKWebView handles copy/cut
     @IBAction func copy(_ sender: Any?) {
       // If webview is visible, don't do terminal copy - let action continue
       if subviews.contains(where: { $0 is WebViewContainer }) {
