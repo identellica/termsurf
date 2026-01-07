@@ -9,15 +9,34 @@ This document describes how to make a new release of TermSurf.
 
 ## Steps
 
-### 1. Update Version in build.zig.zon
+### 1. Update Version Numbers
 
-Edit `build.zig.zon` and update the version field to the new version:
+Update the version in **two places**:
+
+#### a) build.zig.zon
+
+Edit `build.zig.zon` and update the version field:
 
 ```zig
 .version = "X.Y.Z",
 ```
 
 **Important:** The version here must match the git tag you'll create (without the `v` prefix). The build system enforces this—if they don't match, `zig build` will fail with "tagged releases must be in vX.Y.Z format matching build.zig".
+
+#### b) Xcode Project (MARKETING_VERSION)
+
+Update `MARKETING_VERSION` in the Xcode project. This controls the version shown in the About box.
+
+**Option 1 - In Xcode:**
+1. Open `termsurf-macos/TermSurf.xcodeproj`
+2. Select the TermSurf target → Build Settings → Search for "marketing"
+3. Update `MARKETING_VERSION` to `X.Y.Z`
+
+**Option 2 - Via command line:**
+```bash
+sed -i '' 's/MARKETING_VERSION = [0-9]*\.[0-9]*\.[0-9]*/MARKETING_VERSION = X.Y.Z/g' \
+  termsurf-macos/TermSurf.xcodeproj/project.pbxproj
+```
 
 ### 2. Update CHANGELOG.md
 
