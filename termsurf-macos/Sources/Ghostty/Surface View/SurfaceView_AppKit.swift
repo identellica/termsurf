@@ -1302,6 +1302,13 @@ extension Ghostty {
           case "v":
             NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: self)
             return true
+          case "z":
+            if event.modifierFlags.contains(.shift) {
+              NSApp.sendAction(Selector(("redo:")), to: nil, from: self)
+            } else {
+              NSApp.sendAction(Selector(("undo:")), to: nil, from: self)
+            }
+            return true
           default:
             break
           }
