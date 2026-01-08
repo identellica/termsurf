@@ -53,11 +53,11 @@ class ControlBar: NSView, NSTextFieldDelegate {
   private func setupUI() {
     // Background
     wantsLayer = true
-    layer?.backgroundColor = NSColor(white: 0.15, alpha: 1.0).cgColor
+    layer?.backgroundColor = NSColor.controlBackgroundColor.cgColor
 
     // Stack label styling (left side, shows stack position when multiple webviews)
-    stackLabel.textColor = NSColor(white: 0.9, alpha: 1.0)
-    stackLabel.font = .monospacedSystemFont(ofSize: 11, weight: .medium)
+    stackLabel.textColor = NSColor.labelColor
+    stackLabel.font = .systemFont(ofSize: 12, weight: .medium)
     stackLabel.isBezeled = false
     stackLabel.drawsBackground = false
     stackLabel.isEditable = false
@@ -65,22 +65,23 @@ class ControlBar: NSView, NSTextFieldDelegate {
     stackLabel.isHidden = true  // Hidden by default (only shown when stacked)
     addSubview(stackLabel)
 
-    // URL field styling (after stack label, truncates, monospace font)
-    urlField.textColor = NSColor(white: 0.7, alpha: 1.0)
-    urlField.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
-    urlField.isBezeled = false
+    // URL field styling (after stack label, truncates, system font, native bezel)
+    urlField.textColor = NSColor.textColor
+    urlField.font = .systemFont(ofSize: 12)
+    urlField.isBezeled = true
+    urlField.bezelStyle = .roundedBezel
     urlField.drawsBackground = false
     urlField.isEditable = false
     urlField.isSelectable = false
     urlField.lineBreakMode = .byTruncatingTail
     urlField.cell?.truncatesLastVisibleLine = true
-    urlField.focusRingType = .none
+    urlField.focusRingType = .default
     urlField.delegate = self
     addSubview(urlField)
 
     // Mode label styling (right side, fixed width)
-    modeLabel.textColor = NSColor(white: 0.7, alpha: 1.0)
-    modeLabel.font = .systemFont(ofSize: 11)
+    modeLabel.textColor = NSColor.secondaryLabelColor
+    modeLabel.font = .systemFont(ofSize: 12)
     modeLabel.isBezeled = false
     modeLabel.drawsBackground = false
     modeLabel.isEditable = false
@@ -171,7 +172,7 @@ class ControlBar: NSView, NSTextFieldDelegate {
     urlField.isEditable = true
     urlField.isSelectable = true
     urlField.drawsBackground = true
-    urlField.backgroundColor = NSColor(white: 0.1, alpha: 1.0)
+    urlField.backgroundColor = NSColor.textBackgroundColor
 
     // Become first responder and select all text
     if let window = window {

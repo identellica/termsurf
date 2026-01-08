@@ -48,7 +48,7 @@ class WebViewContainer: NSView {
   }
 
   /// Height of the control bar
-  private let controlBarHeight: CGFloat = 24
+  private let controlBarHeight: CGFloat = 28
 
   /// Track whether initial focus setup has been done
   private var didInitialFocus = false
