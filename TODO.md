@@ -10,7 +10,8 @@
        do something with that command, like run "web open ..." in a new tab.
 3. [x] Be able to press cmd+c/v/x in insert mode in the control panel.
 4. [x] Be able to press cmd+z/Z (undo, redo) in insert mode.
-5. [ ] Be able to press cmd+c/v in control mode in the control panel.
+5. [ ] Make the control panel bar look more like native widgets (native input
+       box?)
 6. [ ] Be able to open an html file in the current directory with
        `web open [filename]` or maybe `web file [filename]`.
 7. [ ] You should be able to press cmd+c to copy the current url when in control
