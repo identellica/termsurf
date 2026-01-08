@@ -231,39 +231,43 @@ class ControlBar: NSView, NSTextFieldDelegate {
     let padding: CGFloat = 8
     let spacing: CGFloat = 12
     let stackSpacing: CGFloat = 6
-    let labelHeight = max(
-      urlField.intrinsicContentSize.height, modeLabel.intrinsicContentSize.height)
+    let verticalCenter = bounds.height / 2
 
-    // Mode label: fixed width based on content, positioned at right
-    // Add small buffer to intrinsicContentSize for proper text rendering
+    // URL field height determines its own vertical positioning
+    let urlFieldHeight = urlField.intrinsicContentSize.height
+    let urlFieldY = verticalCenter - urlFieldHeight / 2
+
+    // Mode label: centered vertically relative to control bar center
     let modeLabelWidth = modeLabel.intrinsicContentSize.width + 4
+    let modeLabelHeight = modeLabel.intrinsicContentSize.height
     modeLabel.frame = NSRect(
       x: bounds.width - padding - modeLabelWidth,
-      y: (bounds.height - labelHeight) / 2,
+      y: verticalCenter - modeLabelHeight / 2,
       width: modeLabelWidth,
-      height: labelHeight
+      height: modeLabelHeight
     )
 
-    // Stack label: positioned at left (if visible)
+    // Stack label: centered vertically relative to control bar center
     var urlFieldX = padding
     if !stackLabel.isHidden {
       let stackLabelWidth = stackLabel.intrinsicContentSize.width + 4
+      let stackLabelHeight = stackLabel.intrinsicContentSize.height
       stackLabel.frame = NSRect(
         x: padding,
-        y: (bounds.height - labelHeight) / 2,
+        y: verticalCenter - stackLabelHeight / 2,
         width: stackLabelWidth,
-        height: labelHeight
+        height: stackLabelHeight
       )
       urlFieldX = padding + stackLabelWidth + stackSpacing
     }
 
-    // URL field: fills remaining space (after stack label, before mode label)
+    // URL field: fills remaining space, centered vertically
     let urlFieldWidth = bounds.width - urlFieldX - modeLabelWidth - spacing - padding
     urlField.frame = NSRect(
       x: urlFieldX,
-      y: (bounds.height - labelHeight) / 2,
+      y: urlFieldY,
       width: max(0, urlFieldWidth),
-      height: labelHeight
+      height: urlFieldHeight
     )
   }
 }
