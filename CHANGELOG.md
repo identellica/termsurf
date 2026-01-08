@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.1.2
+
+### Fixes
+
+- **cmd+c/v/x in insert mode**: Copy, paste, and cut now work in the URL field
+  when editing
+- **cmd+z/Z in insert mode**: Undo and redo now work in the URL field when
+  editing
+
+### Improvements
+
+- **Native control bar styling**: The webview control bar now uses native macOS
+  colors and widgets that respect light/dark mode
+
 ## v0.1.1
 
 ### Fixes
