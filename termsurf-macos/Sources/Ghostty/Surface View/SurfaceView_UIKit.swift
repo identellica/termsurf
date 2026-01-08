@@ -12,7 +12,7 @@ extension Ghostty {
     // The current title of the surface as defined by the pty. This can be
     // changed with escape codes. This is public because the callbacks go
     // to the app level and it is set from there.
-    @Published var title: String = "👻"
+    @Published var title: String = "🏄"
 
     // The current pwd of the surface.
     @Published var pwd: String?
