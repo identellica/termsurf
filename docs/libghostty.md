@@ -69,6 +69,39 @@ This is purely additive:
 
 ---
 
+### 2. CLI Branding (TermSurf-Specific)
+
+**Note:** Unlike other changes in this document, these modifications are
+TermSurf-specific branding and are NOT intended for upstream submission.
+
+**Files modified:**
+
+- `src/cli/help.zig` - Changed usage text and app name references
+- `src/cli/version.zig` - Changed version banner from "Ghostty" to "TermSurf"
+- `src/cli/list_themes.zig` - Changed theme preview title
+
+**Changes:**
+
+- `Usage: ghostty` → `Usage: termsurf`
+- `Ghostty terminal emulator` → `TermSurf terminal emulator`
+- `ghostty -e top` → `termsurf -e top`
+- `open -na Ghostty.app` → `open -na TermSurf.app`
+- `Ghostty {version}` → `TermSurf {version}`
+- `👻 Ghostty Theme Preview 👻` → `🏄 TermSurf Theme Preview 🏄`
+
+**Why this change:**
+
+TermSurf is a distinct product with its own branding. Users running CLI
+commands should see "TermSurf" rather than "Ghostty" to avoid confusion.
+
+**Upstream compatibility:**
+
+These are string-only changes in isolated locations. When merging upstream
+updates, these files may have conflicts but they will be trivial to resolve
+(just keep the TermSurf strings).
+
+---
+
 ## Future Changes
 
 (This section will be updated as we make additional modifications to libghostty)
