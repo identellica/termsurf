@@ -12,11 +12,12 @@
 4. [x] Be able to press cmd+z/Z (undo, redo) in insert mode.
 5. [x] Make the control panel bar look more like native widgets (native input
        box?)
-6. [ ] Be able to open an html file in the current directory with
+6. [ ] Change the name of the cli tool from `ghostty` to `termsurf`.
+7. [ ] Be able to open an html file in the current directory with
        `web open [filename]` or maybe `web file [filename]`.
-7. [ ] You should be able to press cmd+c to copy the current url when in control
+8. [ ] You should be able to press cmd+c to copy the current url when in control
        mode.
-8. [ ] Basic copy/paste commands cmd+c/x/v should work in insert mode (currently
+9. [ ] Basic copy/paste commands cmd+c/x/v should work in insert mode (currently
        they do not, although shift+right/left does work)
 
 ## TODO
