@@ -20,6 +20,7 @@ pub const Options = struct {
 ///
 /// Subcommands:
 ///   open [options] [url]    Open a URL in a browser pane
+///   file <filename>         Open a local file in a browser pane
 ///   close [webview-id]      Close a browser pane
 ///   ping                    Test connectivity to TermSurf
 ///   bookmark <subcommand>   Manage bookmarks
@@ -60,6 +61,8 @@ pub fn run(alloc: Allocator) !u8 {
         return cmdPing(alloc);
     } else if (std.mem.eql(u8, command, "open")) {
         return cmdOpen(alloc, args[1..]);
+    } else if (std.mem.eql(u8, command, "file")) {
+        return cmdFile(alloc, args[1..]);
     } else if (std.mem.eql(u8, command, "close")) {
         return cmdClose(alloc, args[1..]);
     } else if (std.mem.eql(u8, command, "bookmark")) {
@@ -222,6 +225,158 @@ fn cmdOpen(allocator: Allocator, args: []const []const u8) !u8 {
         try stderr.flush();
         return 1;
     }
+}
+
+fn cmdFile(allocator: Allocator, args: []const []const u8) !u8 {
+    var stderr_buffer: [1024]u8 = undefined;
+    var stderr_writer = std.fs.File.stderr().writer(&stderr_buffer);
+    const stderr = &stderr_writer.interface;
+
+    var filepath: ?[]const u8 = null;
+    var profile: ?[]const u8 = null;
+    var incognito = false;
+    var jsApi = false;
+
+    var i: usize = 0;
+    while (i < args.len) : (i += 1) {
+        const arg = args[i];
+        if (std.mem.eql(u8, arg, "--js-api")) {
+            jsApi = true;
+        } else if (std.mem.eql(u8, arg, "--incognito")) {
+            incognito = true;
+        } else if (std.mem.eql(u8, arg, "--profile") or std.mem.eql(u8, arg, "-p")) {
+            i += 1;
+            if (i >= args.len) {
+                try stderr.writeAll("Error: --profile requires an argument\n");
+                try stderr.flush();
+                return 1;
+            }
+            profile = args[i];
+        } else if (!std.mem.startsWith(u8, arg, "-")) {
+            filepath = arg;
+        } else {
+            try stderr.print("Error: unknown option: {s}\n", .{arg});
+            try stderr.flush();
+            return 1;
+        }
+    }
+
+    if (filepath == null) {
+        try stderr.writeAll("Error: file command requires a filename\n");
+        try stderr.writeAll("Usage: web file <filename> [--profile <name>] [--incognito] [--js-api]\n");
+        try stderr.flush();
+        return 1;
+    }
+
+    // Resolve to absolute path
+    const abs_path = try resolveToAbsolutePath(allocator, filepath.?);
+    defer allocator.free(abs_path);
+
+    // Check if file exists (need null-terminated path for fs operations)
+    const abs_path_z = try allocator.dupeZ(u8, abs_path);
+    defer allocator.free(abs_path_z);
+
+    std.fs.accessAbsolute(abs_path_z, .{}) catch {
+        try stderr.print("Error: file not found: {s}\n", .{abs_path});
+        try stderr.flush();
+        return 1;
+    };
+
+    // Build file:// URL
+    const file_url = try std.fmt.allocPrint(allocator, "file://{s}", .{abs_path});
+    defer allocator.free(file_url);
+
+    // Debug: print the URL being opened
+    std.debug.print("Opening: {s}\n", .{file_url});
+
+    // Get pane ID from environment
+    const paneId = std.posix.getenv("TERMSURF_PANE_ID");
+
+    // Get socket path from environment
+    const socketPath = std.posix.getenv("TERMSURF_SOCKET") orelse {
+        try stderr.writeAll("Error: Not running inside TermSurf (TERMSURF_SOCKET not set)\n");
+        try stderr.flush();
+        return 1;
+    };
+
+    // Connect to socket
+    const socket = try connectToSocket(socketPath);
+    defer posix.close(socket);
+
+    // Build and send request
+    const request = try buildOpenRequest(allocator, file_url, paneId, profile, incognito, jsApi);
+    defer allocator.free(request);
+    _ = try posix.write(socket, request);
+
+    // Read response
+    const response = try readResponse(allocator, socket);
+    defer allocator.free(response);
+
+    // Parse response
+    const parsed = try std.json.parseFromSlice(Response, allocator, response, .{
+        .ignore_unknown_fields = true,
+    });
+    defer parsed.deinit();
+
+    if (std.mem.eql(u8, parsed.value.status, "ok")) {
+        // Extract webview ID for logging
+        var webviewIdStr: ?[]const u8 = null;
+        if (parsed.value.data) |dataObj| {
+            if (dataObj.object.get("webviewId")) |wvId| {
+                if (wvId == .string) {
+                    webviewIdStr = wvId.string;
+                }
+            }
+        }
+
+        // Enter event loop - block and stream console output until webview closes
+        return try eventLoop(allocator, socket, webviewIdStr);
+    } else {
+        if (parsed.value.@"error") |err| {
+            try stderr.print("Error: {s}\n", .{err});
+        } else {
+            try stderr.writeAll("Error: Unknown error\n");
+        }
+        try stderr.flush();
+        return 1;
+    }
+}
+
+/// Resolve a path to an absolute path
+/// - Absolute paths (starting with /) are returned as-is
+/// - Paths starting with ~ are expanded to home directory
+/// - Relative paths are resolved against cwd
+fn resolveToAbsolutePath(allocator: Allocator, path: []const u8) ![]u8 {
+    // Already absolute
+    if (path.len > 0 and path[0] == '/') {
+        return try allocator.dupe(u8, path);
+    }
+
+    // Home directory expansion
+    if (path.len > 0 and path[0] == '~') {
+        const home = std.posix.getenv("HOME") orelse return error.HomeNotSet;
+        if (path.len == 1) {
+            return try allocator.dupe(u8, home);
+        }
+        // ~/ or ~/something
+        if (path[1] == '/') {
+            return try std.fmt.allocPrint(allocator, "{s}{s}", .{ home, path[1..] });
+        }
+        // ~username - not supported, treat as relative
+    }
+
+    // Relative path - resolve against cwd
+    const cwd = try std.process.getCwdAlloc(allocator);
+    defer allocator.free(cwd);
+
+    if (path.len == 0 or std.mem.eql(u8, path, ".")) {
+        return try allocator.dupe(u8, cwd);
+    }
+
+    // Handle ./ prefix
+    const clean_path = if (std.mem.startsWith(u8, path, "./")) path[2..] else path;
+
+    return try std.fs.path.join(allocator, &.{ cwd, clean_path });
 }
 
 /// Event loop: read events from socket and handle them
