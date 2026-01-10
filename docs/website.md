@@ -6,36 +6,44 @@ Project page for TermSurf showing commit history and project info.
 
 - **Runtime:** Bun
 - **Framework:** TanStack Start (React)
-- **Styling:** Plain CSS (Tokyo Night theme)
+- **Styling:** Tailwind CSS v4 + shadcn/ui (Tokyo Night theme, dark mode only)
 
 ## Dependencies
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `@tanstack/react-start` | ^1.147.0 | Full-stack React framework |
-| `@tanstack/react-router` | ^1.147.0 | Type-safe routing |
-| `vite` | ^6.0.0 | Build tool (required by TanStack Start) |
-| `react` | ^19.0.0 | UI library |
-| `react-dom` | ^19.0.0 | React DOM bindings |
-| `vinxi` | ^0.5.0 | Server framework (TanStack Start dependency) |
+| Package                  | Version  | Purpose                                 |
+| ------------------------ | -------- | --------------------------------------- |
+| `@tanstack/react-start`  | ^1.147.0 | Full-stack React framework              |
+| `@tanstack/react-router` | ^1.147.0 | Type-safe routing                       |
+| `vite`                   | ^6.0.0   | Build tool                              |
+| `react`                  | ^19.0.0  | UI library                              |
+| `react-dom`              | ^19.0.0  | React DOM bindings                      |
+| `tailwindcss`            | ^4.0.0   | Utility-first CSS framework             |
+| `@tailwindcss/vite`      | ^4.0.0   | Tailwind Vite plugin                    |
+| `clsx`                   | ^2.1.0   | Class name utility                      |
+| `tailwind-merge`         | ^2.6.0   | Merge Tailwind classes                  |
+
+Note: shadcn/ui components are installed on-demand via CLI, not as a package dependency.
 
 ## Directory Structure
 
 ```
 website/
 ├── package.json
-├── app.config.ts           # TanStack Start configuration
+├── vite.config.ts          # Vite + TanStack Start configuration
 ├── tsconfig.json
-├── app/
+├── src/
+│   ├── router.tsx          # Router configuration
+│   ├── globals.css         # Tailwind imports + Tokyo Night theme
+│   ├── vite-env.d.ts       # Vite type declarations
 │   ├── routes/
 │   │   ├── __root.tsx      # Root layout
 │   │   └── index.tsx       # Home page (commit log)
 │   ├── components/
+│   │   ├── ui/             # shadcn/ui components (future)
 │   │   ├── Header.tsx      # Site header
 │   │   └── CommitLog.tsx   # Commit list display
-│   ├── styles/
-│   │   └── global.css      # Tokyo Night theme
-│   └── client.tsx          # Client entry
+│   └── lib/
+│       └── utils.ts        # Utility functions (cn helper)
 ├── data/
 │   └── commits.json        # Pre-built commit data
 ├── scripts/
@@ -46,47 +54,51 @@ website/
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `bun run dev` | Start development server with hot reload |
-| `bun run build` | Production build |
-| `bun run start` | Start production server |
-| `bun run build:commits` | Fetch commits from GitHub and write to data/commits.json |
+| Command                 | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `bun run dev`           | Start development server with hot reload                 |
+| `bun run build`         | Production build                                         |
+| `bun run start`         | Start production server                                  |
+| `bun run build:commits` | Fetch commits from git and write to data/commits.json    |
 
 ## MVP Checklist
 
 ### Phase 1: Project Setup
 
-- [ ] Create `website/` directory
-- [ ] Initialize with `bun create @tanstack/start@latest`
-- [ ] Configure app.config.ts for Bun
-- [ ] Verify dev server runs with `bun run dev`
+- [x] Create `website/` directory
+- [x] Initialize TanStack Start project manually
+- [x] Configure vite.config.ts with TanStack Start plugin
+- [x] Install dependencies with `bun install`
+- [x] Verify dev server runs with `bun run dev`
 
-### Phase 2: Commit Data Pipeline
+### Phase 2: Tailwind Setup
 
-- [ ] Create `scripts/build-commits.ts` to fetch commits from GitHub API
-- [ ] Output commit data to `data/commits.json`
-- [ ] Add `build:commits` script to package.json
-- [ ] Test: `bun run build:commits` generates valid JSON
+- [x] Install Tailwind CSS v4 and Vite plugin
+- [x] Create `globals.css` with Tailwind imports and Tokyo Night theme
+- [x] Configure Vite to use Tailwind plugin
+- [ ] Initialize shadcn/ui (`bunx shadcn@latest init`) - deferred
+- [ ] Install any needed shadcn components - deferred
 
-### Phase 3: Styling
+### Phase 3: Commit Data Pipeline
 
-- [ ] Create `app/styles/global.css` with Tokyo Night theme
-- [ ] Import styles in root layout
-- [ ] Add base typography and layout styles
+- [x] Create `scripts/build-commits.ts` to fetch commits from git
+- [x] Output commit data to `data/commits.json`
+- [x] Add `build:commits` script to package.json
+- [x] Test: `bun run build:commits` generates valid JSON
 
 ### Phase 4: Components
 
-- [ ] Create `Header.tsx` with TermSurf branding
-- [ ] Create `CommitLog.tsx` to render commit list
-- [ ] Each commit shows: short hash, message, author, relative date
+- [x] Create `Header.tsx` with TermSurf branding
+- [x] Create `CommitLog.tsx` to render commit list
+- [x] Each commit shows: short hash, message, author, relative date
+- [x] Use Tailwind classes for styling
 
 ### Phase 5: Home Page
 
-- [ ] Build `index.tsx` route
-- [ ] Load commits from `data/commits.json`
-- [ ] Render Header and CommitLog components
-- [ ] Verify SSR works correctly
+- [x] Build `index.tsx` route
+- [x] Load commits from `data/commits.json`
+- [x] Render Header and CommitLog components
+- [x] Verify SSR works correctly
 
 ### Phase 6: Polish & Deploy Prep
 
@@ -112,24 +124,27 @@ website/
 }
 ```
 
-## Tokyo Night Colors
+## Tokyo Night Theme
+
+Dark mode only. Colors defined in `src/globals.css` using Tailwind v4 `@theme` directive:
 
 ```css
-:root {
-  --bg: #1a1b26;
-  --bg-dark: #16161e;
-  --bg-highlight: #292e42;
-  --fg: #c0caf5;
-  --fg-dark: #a9b1d6;
-  --blue: #7aa2f7;
-  --cyan: #7dcfff;
-  --green: #9ece6a;
-  --magenta: #bb9af7;
-  --red: #f7768e;
-  --yellow: #e0af68;
-  --orange: #ff9e64;
-  --comment: #565f89;
-  --border: #3b4261;
+@import "tailwindcss";
+
+@theme {
+  --color-background: #1a1b26;
+  --color-background-dark: #16161e;
+  --color-background-highlight: #292e42;
+  --color-foreground: #c0caf5;
+  --color-foreground-dark: #a9b1d6;
+  --color-primary: #7aa2f7;      /* blue */
+  --color-secondary: #bb9af7;    /* magenta */
+  --color-accent: #7dcfff;       /* cyan */
+  --color-success: #9ece6a;      /* green */
+  --color-warning: #e0af68;      /* yellow */
+  --color-danger: #f7768e;       /* red */
+  --color-muted: #565f89;        /* comment */
+  --color-border: #3b4261;
 }
 ```
 
