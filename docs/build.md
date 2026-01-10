@@ -42,13 +42,16 @@ Swift):
 # 1. Clear SPM cache for Sparkle dependency
 rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts/*Sparkle*
 
-# 2. Clear Xcode DerivedData
+# 2. Clear local build directory (release script output)
+rm -rf build
+
+# 3. Clear Xcode DerivedData (debug builds)
 rm -rf ~/Library/Developer/Xcode/DerivedData/TermSurf-*
 
-# 3. Clear Zig build cache
+# 4. Clear Zig build cache
 rm -rf zig-out zig-cache .zig-cache
 
-# 4. Clear SPM package resolution in project
+# 5. Clear SPM package resolution in project
 rm -rf termsurf-macos/.build
 rm -rf termsurf-macos/Package.resolved
 ```
@@ -69,12 +72,13 @@ rm -rf ~/Library/Caches/org.swift.swiftpm
 
 ## What Each Cache Contains
 
-| Cache         | Location                                           | Contents                                 |
-| ------------- | -------------------------------------------------- | ---------------------------------------- |
-| Zig build     | `zig-out`, `zig-cache`, `.zig-cache`               | Compiled Zig objects, libghostty         |
-| DerivedData   | `~/Library/Developer/Xcode/DerivedData/TermSurf-*` | Compiled Swift, linked app bundle        |
-| SPM artifacts | `~/Library/Caches/org.swift.swiftpm/artifacts/`    | Downloaded binary dependencies (Sparkle) |
-| SPM packages  | `termsurf-macos/.build`                            | Resolved package versions                |
+| Cache           | Location                                           | Contents                                 |
+| --------------- | -------------------------------------------------- | ---------------------------------------- |
+| Zig build       | `zig-out`, `zig-cache`, `.zig-cache`               | Compiled Zig objects, libghostty         |
+| Release build   | `build/`                                           | Release script output (predictable path) |
+| DerivedData     | `~/Library/Developer/Xcode/DerivedData/TermSurf-*` | Debug builds from Xcode                  |
+| SPM artifacts   | `~/Library/Caches/org.swift.swiftpm/artifacts/`    | Downloaded binary dependencies (Sparkle) |
+| SPM packages    | `termsurf-macos/.build`                            | Resolved package versions                |
 
 ## CLI Access
 
@@ -85,24 +89,36 @@ The TermSurf app binary doubles as a CLI tool. You can run commands like
 
 After building, the executable is located at:
 
-| Build Type | Location                                                                                                       |
-| ---------- | -------------------------------------------------------------------------------------------------------------- |
-| Debug      | `~/Library/Developer/Xcode/DerivedData/TermSurf-*/Build/Products/Debug/TermSurf.app/Contents/MacOS/termsurf`   |
-| Release    | `~/Library/Developer/Xcode/DerivedData/TermSurf-*/Build/Products/Release/TermSurf.app/Contents/MacOS/termsurf` |
+| Build Type              | Location                                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Debug (Xcode cmd+r)     | `~/Library/Developer/Xcode/DerivedData/TermSurf-*/Build/Products/Debug/TermSurf.app/Contents/MacOS/termsurf` |
+| Release (build script)  | `<project>/build/Build/Products/Release/TermSurf.app/Contents/MacOS/termsurf`                                |
+| Installed               | `/Applications/TermSurf.app/Contents/MacOS/termsurf`                                                         |
 
-### Shell Alias
+The release build script uses a predictable output path (`build/`) so you can
+add it to your PATH.
 
-For convenience, add an alias to your shell config (`~/.zshrc` or `~/.bashrc`):
+### Adding to PATH
+
+Add the release binary directory to your PATH in `~/.zshrc`:
 
 ```bash
-# For development (Debug build)
+path=(
+  $HOME/dev/termsurf/build/Build/Products/Release/TermSurf.app/Contents/MacOS
+  $path
+)
+```
+
+### Shell Aliases (Alternative)
+
+Or use aliases in your shell config (`~/.zshrc` or `~/.bashrc`):
+
+```bash
+# For development (Debug build via Xcode)
 alias termsurf-dev='~/Library/Developer/Xcode/DerivedData/TermSurf-*/Build/Products/Debug/TermSurf.app/Contents/MacOS/termsurf'
 
-# For release testing
-alias termsurf-release='~/Library/Developer/Xcode/DerivedData/TermSurf-*/Build/Products/Release/TermSurf.app/Contents/MacOS/termsurf'
-
-# Or if installed to /Applications
-alias termsurf='/Applications/TermSurf.app/Contents/MacOS/termsurf'
+# For release (predictable path)
+alias termsurf='~/dev/termsurf/build/Build/Products/Release/TermSurf.app/Contents/MacOS/termsurf'
 ```
 
 ### Example Commands

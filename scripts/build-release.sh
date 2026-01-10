@@ -29,6 +29,8 @@ if [ "$CLEAN" = true ]; then
     echo "=== Cleaning build caches ==="
     rm -rf "$ROOT_DIR/zig-out" "$ROOT_DIR/zig-cache" "$ROOT_DIR/.zig-cache"
     echo "Cleared Zig cache"
+    rm -rf "$ROOT_DIR/build"
+    echo "Cleared local build directory"
     rm -rf ~/Library/Developer/Xcode/DerivedData/TermSurf-*
     echo "Cleared Xcode DerivedData"
 fi
@@ -41,13 +43,13 @@ echo ""
 echo "=== Building TermSurf.app (Release) ==="
 cd "$MACOS_DIR"
 if [ "$CLEAN" = true ]; then
-    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Release clean build | tail -5
+    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Release -derivedDataPath "$ROOT_DIR/build" clean build | tail -5
 else
-    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Release build | tail -5
+    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Release -derivedDataPath "$ROOT_DIR/build" build | tail -5
 fi
 
-# Get the build products directory
-APP_PATH=$(xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Release -showBuildSettings 2>/dev/null | grep "BUILT_PRODUCTS_DIR" | head -1 | awk '{print $3}')/TermSurf.app
+# Predictable build output location
+APP_PATH="$ROOT_DIR/build/Build/Products/Release/TermSurf.app"
 
 echo ""
 echo "=== Build Complete ==="
