@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.1.6
+
+### Upstream Merge
+
+- Merged 113 commits from upstream Ghostty, bringing in numerous bug fixes and
+  improvements
+
+### New Features
+
+- **Use Selection for Find**: New menu item (Edit > Find > Use Selection for
+  Find) to search for selected text
+- **Jump to Selection**: New menu item (Edit > Find > Jump to Selection) to
+  scroll to the current selection
+
+### Fixes
+
+- **Window drag bug (#10110)**: Fixed pane grab handles incorrectly triggering
+  window drag instead of pane drag
+- **Search focus race condition**: Fixed intermittent issue where search field
+  wouldn't receive focus
+- **Bell indicator in title override**: Bell indicator now correctly appears
+  when using a title override
+- **Memory leak**: Fixed memory leak when pruning scrollback with non-standard
+  pages
+
+### Improvements
+
+- **Key binding handling**: Improved integration with system menu for key
+  bindings
+- **SplitTree API**: Refactored to use more idiomatic Swift naming conventions
+- **Repository moved**: Now at github.com/termsurf/termsurf
+- **Bundle identifiers**: Fixed to use com.termsurf.* namespace
+
 ## v0.1.5
 
 ### Fixes
