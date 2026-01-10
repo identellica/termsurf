@@ -102,6 +102,56 @@ updates, these files may have conflicts but they will be trivial to resolve
 
 ---
 
+### 3. Web CLI Command (TermSurf-Specific)
+
+**Note:** This is a TermSurf-specific feature, NOT intended for upstream submission.
+
+**Files added:**
+
+- `src/cli/web.zig` - Browser pane CLI commands
+
+**Files modified:**
+
+- `src/cli/ghostty.zig` - Registered `web` action in CLI
+
+**Usage:**
+
+```bash
+termsurf +web                        # Open default homepage
+termsurf +web open [url]             # Open URL in browser pane
+termsurf +web open --profile work    # Open with isolated profile
+termsurf +web open --incognito       # Open in incognito mode
+termsurf +web open --js-api          # Enable JavaScript API
+termsurf +web close [id]             # Close browser pane
+termsurf +web ping                   # Test connectivity to TermSurf
+termsurf +web bookmark add <name> --url <url>   # Add bookmark
+termsurf +web bookmark get <name>    # Get bookmark URL
+termsurf +web bookmark list          # List all bookmarks
+termsurf +web bookmark update <name> # Update bookmark
+termsurf +web bookmark delete <name> # Delete bookmark
+```
+
+**Why this change:**
+
+TermSurf extends the terminal with browser panes. The `+web` command provides
+CLI access to browser functionality, enabling:
+
+- Opening URLs from scripts and command line
+- Managing browser profiles and bookmarks
+- Console output streaming from webviews to terminal
+
+**Environment variables:**
+
+- `TERMSURF_SOCKET` - Path to TermSurf Unix socket (required)
+- `TERMSURF_PANE_ID` - Current pane identifier (optional)
+
+**Upstream compatibility:**
+
+This is a purely additive feature that adds a new CLI action. It won't conflict
+with any existing or future Ghostty commands.
+
+---
+
 ## Future Changes
 
 (This section will be updated as we make additional modifications to libghostty)
