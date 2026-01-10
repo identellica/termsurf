@@ -27,25 +27,23 @@ pub const Options = struct {
 ///
 /// This command requires running inside TermSurf (TERMSURF_SOCKET must be set).
 pub fn run(alloc: Allocator) !u8 {
-    // Get all remaining arguments after "+web"
+    // Get all arguments
     var iter = try std.process.argsWithAllocator(alloc);
     defer iter.deinit();
 
-    // Skip the executable name
+    // Skip the executable name (e.g., "termsurf" or "web")
     _ = iter.next();
 
-    // Find and skip past "+web" in the arguments
-    while (iter.next()) |arg| {
-        if (std.mem.eql(u8, arg, "+web")) {
-            break;
-        }
-    }
-
-    // Collect remaining arguments
+    // Collect remaining arguments, skipping "+web" if present
+    // (When invoked via symlink "web", there's no "+web" in argv)
     var argsList: std.ArrayList([]const u8) = .empty;
     defer argsList.deinit(alloc);
 
     while (iter.next()) |arg| {
+        // Skip the "+web" flag if present (explicit invocation)
+        if (std.mem.eql(u8, arg, "+web")) {
+            continue;
+        }
         try argsList.append(alloc, arg);
     }
 
