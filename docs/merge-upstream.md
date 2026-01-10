@@ -1,13 +1,13 @@
 # Merging Upstream (Ghostty)
 
-This document describes how to merge changes from the upstream Ghostty repository
-into TermSurf while preserving our modifications.
+This document describes how to merge changes from the upstream Ghostty
+repository into TermSurf while preserving our modifications.
 
 ## Overview
 
-TermSurf is a fork of [Ghostty](https://github.com/ghostty-org/ghostty). We track
-upstream in a remote called `upstream` and periodically merge to get bug fixes,
-performance improvements, and new features.
+TermSurf is a fork of [Ghostty](https://github.com/ghostty-org/ghostty). We
+track upstream in a remote called `upstream` and periodically merge to get bug
+fixes, performance improvements, and new features.
 
 Our modifications fall into two categories:
 
@@ -25,39 +25,39 @@ See [libghostty.md](libghostty.md) for detailed documentation of our changes.
 
 These are additive changes that don't modify existing Ghostty code paths:
 
-| File | Change | Notes |
-|------|--------|-------|
-| `include/ghostty.h` | Added `ghostty_config_load_files` declaration | End of file |
-| `src/config/Config.zig` | Added `loadFiles` method | New public method |
-| `src/config/CApi.zig` | Added C API wrapper | New function |
-| `src/os/macos.zig` | Added `appSupportDirWithBundleId` helper | New function |
+| File                    | Change                                        | Notes             |
+| ----------------------- | --------------------------------------------- | ----------------- |
+| `include/ghostty.h`     | Added `ghostty_config_load_files` declaration | End of file       |
+| `src/config/Config.zig` | Added `loadFiles` method                      | New public method |
+| `src/config/CApi.zig`   | Added C API wrapper                           | New function      |
+| `src/os/macos.zig`      | Added `appSupportDirWithBundleId` helper      | New function      |
 
 ### TermSurf-Specific (Branding)
 
 Simple string replacements, easy to re-apply if conflicts occur:
 
-| File | Change |
-|------|--------|
-| `src/cli/help.zig` | "ghostty" → "termsurf", app name references |
-| `src/cli/version.zig` | "Ghostty" → "TermSurf" in version banner |
+| File                      | Change                                      |
+| ------------------------- | ------------------------------------------- |
+| `src/cli/help.zig`        | "ghostty" → "termsurf", app name references |
+| `src/cli/version.zig`     | "Ghostty" → "TermSurf" in version banner    |
 | `src/cli/list_themes.zig` | Ghost emoji → surfer emoji in preview title |
 
 ### TermSurf-Specific (Functional)
 
 These modify existing Ghostty code and have higher conflict risk:
 
-| File | Change | Conflict Risk |
-|------|--------|---------------|
-| `src/cli/ghostty.zig` | Added `web` action, `detectMultiCall` | **High** |
-| `src/cli/action.zig` | Multi-call binary detection via `argv[0]` | **High** |
-| `src/cli/web.zig` | **New file** (no conflict) | None |
+| File                  | Change                                    | Conflict Risk |
+| --------------------- | ----------------------------------------- | ------------- |
+| `src/cli/ghostty.zig` | Added `web` action, `detectMultiCall`     | **High**      |
+| `src/cli/action.zig`  | Multi-call binary detection via `argv[0]` | **High**      |
+| `src/cli/web.zig`     | **New file** (no conflict)                | None          |
 
 ### Build System
 
-| File | Change |
-|------|--------|
-| `build.zig` | XCFramework output to both `macos/` and `termsurf-macos/` |
-| `src/build/GhosttyXCFramework.zig` | Dual output paths |
+| File                               | Change                                                    |
+| ---------------------------------- | --------------------------------------------------------- |
+| `build.zig`                        | XCFramework output to both `macos/` and `termsurf-macos/` |
+| `src/build/GhosttyXCFramework.zig` | Dual output paths                                         |
 
 ## Pre-Merge Checklist
 
@@ -121,11 +121,13 @@ git merge upstream/main -m "Merge upstream Ghostty"
 ```
 
 **Pros:**
+
 - Preserves full history
 - Easy to see what came from upstream vs our changes
 - Can be reverted cleanly
 
 **Cons:**
+
 - Creates merge commits in history
 
 ### Alternative: Rebase
@@ -135,10 +137,12 @@ git rebase upstream/main
 ```
 
 **Pros:**
+
 - Linear history
 - Our commits stay on top
 
 **Cons:**
+
 - Rewrites history (problematic if already pushed)
 - Each of our commits may need conflict resolution
 
@@ -150,11 +154,13 @@ major restructuring when you want a clean history.
 ### src/cli/ghostty.zig
 
 This file defines the CLI entry point. We added:
+
 - Import for `web.zig`
 - `detectMultiCall` function
 - `web` case in the action switch
 
 **Resolution strategy:**
+
 1. Keep all upstream changes to existing code
 2. Re-add our `web` import at the top
 3. Re-add `detectMultiCall` function (search for it in our version)
@@ -172,10 +178,11 @@ fn detectMultiCall(argv0: []const u8) ?Action.Tag { ... }
 
 ### src/cli/action.zig
 
-We added multi-call binary detection. Look for our changes to the `init` function
-that checks `argv[0]` for "web".
+We added multi-call binary detection. Look for our changes to the `init`
+function that checks `argv[0]` for "web".
 
 **Resolution strategy:**
+
 1. Accept upstream changes
 2. Re-add our multi-call detection logic in `init`
 
@@ -184,6 +191,7 @@ that checks `argv[0]` for "web".
 Simple branding changes. If conflicts occur:
 
 **Resolution strategy:**
+
 1. Accept upstream changes (they may have added new text)
 2. Re-apply our branding substitutions:
    - "ghostty" → "termsurf"
@@ -195,6 +203,7 @@ Simple branding changes. If conflicts occur:
 We added new methods/functions. These are additive and unlikely to conflict.
 
 **Resolution strategy:**
+
 1. Accept upstream changes
 2. Verify our added functions are still present
 3. If removed by conflict, re-add them
@@ -204,6 +213,7 @@ We added new methods/functions. These are additive and unlikely to conflict.
 We added a single function declaration at the end.
 
 **Resolution strategy:**
+
 1. Accept upstream changes
 2. Ensure our declaration is still at the end:
    ```c
@@ -215,6 +225,7 @@ We added a single function declaration at the end.
 We modified build output paths.
 
 **Resolution strategy:**
+
 1. Accept upstream changes
 2. Re-add our dual output path logic
 
@@ -284,6 +295,7 @@ git revert -m 1 <merge-commit-hash>
 ## Merge Frequency
 
 **Recommended:** Merge upstream monthly, or more frequently if:
+
 - A security fix is released
 - A bug affecting TermSurf is fixed
 - A feature we want is added
