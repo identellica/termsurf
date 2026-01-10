@@ -264,6 +264,57 @@ cd termsurf-macos && xcodebuild -scheme TermSurf -configuration Debug build
 # - Check About window shows correct version
 ```
 
+## Review macOS App Changes
+
+After merging upstream, review changes to `macos/` (Ghostty's macOS app) and port
+relevant updates to `termsurf-macos/`.
+
+### Why This Is Needed
+
+The `termsurf-macos/` app is a separate copy of `macos/` with TermSurf-specific
+modifications. When upstream updates `macos/`, those changes are NOT automatically
+applied to `termsurf-macos/`. We must manually review and port relevant changes.
+
+### Review Process
+
+```bash
+# 1. List files changed in macos/ during the merge
+git diff --name-only <pre-merge-commit>..HEAD -- macos/Sources/
+
+# 2. See detailed changes
+git diff <pre-merge-commit>..HEAD -- macos/Sources/
+
+# 3. For each changed file, check if termsurf-macos has a corresponding file
+ls termsurf-macos/Sources/Ghostty/  # Compare with macos/Sources/Ghostty/
+```
+
+### Categorize Changes
+
+For each changed file in `macos/Sources/`:
+
+1. **Bug fixes** - Port these to termsurf-macos
+2. **New features** - Port unless they conflict with TermSurf features
+3. **API adaptations** - Usually already fixed during build (e.g., new function signatures)
+4. **Refactoring** - Evaluate based on whether we've diverged in that area
+
+### Files to Watch
+
+| macos/ file | termsurf-macos/ equivalent | Notes |
+|-------------|---------------------------|-------|
+| `Ghostty.App.swift` | `Ghostty.App.swift` | Core app logic, high divergence |
+| `SurfaceView_AppKit.swift` | `SurfaceView_AppKit.swift` | Keyboard handling, medium divergence |
+| `Ghostty.Surface.swift` | `Ghostty.Surface.swift` | Surface wrapper, low divergence |
+| `Terminal*.swift` | `Terminal*.swift` | Terminal views, low divergence |
+
+### Porting Changes
+
+For clean changes (no TermSurf modifications in that area):
+- Copy the updated code directly
+
+For areas where we've diverged:
+- Manually review and adapt the upstream change to work with our modifications
+- Document any changes we intentionally skip
+
 ## Post-Merge Testing
 
 - [ ] `zig build` succeeds

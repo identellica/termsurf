@@ -149,7 +149,6 @@
 				Helpers/AppInfo.swift,
 				Helpers/CodableBridge.swift,
 				Helpers/Cursor.swift,
-				Helpers/DraggableWindowView.swift,
 				Helpers/ExpiringUndoManager.swift,
 				"Helpers/Extensions/Double+Extension.swift",
 				"Helpers/Extensions/EventModifiers+Extension.swift",
@@ -432,6 +431,27 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		81F82BD02E82815D001EDFA8 /* Create web symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create web symlink";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Create symlink for multi-call binary support\ncd \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}\"\nln -sf termsurf web\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A54F45EF2E1F047A0046BD5C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -455,27 +475,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		81F82BD02E82815D001EDFA8 /* Create web symlink */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Create web symlink";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Create symlink for multi-call binary support\ncd \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}\"\nln -sf termsurf web\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		A54F45F82E1F047A0046BD5C /* PBXTargetDependency */ = {
@@ -920,7 +919,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 0.1.5;
 				"OTHER_LDFLAGS[arch=*]" = "-lstdc++";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.termsurf.ios";
+				PRODUCT_BUNDLE_IDENTIFIER = com.termsurf.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -959,7 +958,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 0.1.5;
 				"OTHER_LDFLAGS[arch=*]" = "-lstdc++";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.termsurf.ios";
+				PRODUCT_BUNDLE_IDENTIFIER = com.termsurf.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -998,7 +997,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 0.1.5;
 				"OTHER_LDFLAGS[arch=*]" = "-lstdc++";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.termsurf.ios";
+				PRODUCT_BUNDLE_IDENTIFIER = com.termsurf.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;

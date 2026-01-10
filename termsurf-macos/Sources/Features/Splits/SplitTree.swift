@@ -121,10 +121,10 @@ extension SplitTree {
 
   /// Insert a new view at the given view point by creating a split in the given direction.
   /// This will always reset the zoomed state of the tree.
-  func insert(view: ViewType, at: ViewType, direction: NewDirection) throws -> Self {
+  func inserting(view: ViewType, at: ViewType, direction: NewDirection) throws -> Self {
     guard let root else { throw SplitError.viewNotFound }
     return .init(
-      root: try root.insert(view: view, at: at, direction: direction),
+      root: try root.inserting(view: view, at: at, direction: direction),
       zoomed: nil)
   }
   /// Find a node containing a view with the specified ID.
@@ -137,7 +137,7 @@ extension SplitTree {
 
   /// Remove a node from the tree. If the node being removed is part of a split,
   /// the sibling node takes the place of the parent split.
-  func remove(_ target: Node) -> Self {
+  func removing(_ target: Node) -> Self {
     guard let root else { return self }
 
     // If we're removing the root itself, return an empty tree
@@ -146,7 +146,7 @@ extension SplitTree {
     }
 
     // Otherwise, try to remove from the tree
-    let newRoot = root.remove(target)
+    let newRoot = root.removing(target)
 
     // Update zoomed if it was the removed node
     let newZoomed = (zoomed == target) ? nil : zoomed
@@ -155,7 +155,7 @@ extension SplitTree {
   }
 
   /// Replace a node in the tree with a new node.
-  func replace(node: Node, with newNode: Node) throws -> Self {
+  func replacing(node: Node, with newNode: Node) throws -> Self {
     guard let root else { throw SplitError.viewNotFound }
 
     // Get the path to the node we want to replace
@@ -164,7 +164,7 @@ extension SplitTree {
     }
 
     // Replace the node
-    let newRoot = try root.replaceNode(at: path, with: newNode)
+    let newRoot = try root.replacingNode(at: path, with: newNode)
 
     // Update zoomed if it was the replaced node
     let newZoomed = (zoomed == node) ? newNode : zoomed
@@ -233,7 +233,7 @@ extension SplitTree {
 
   /// Equalize all splits in the tree so that each split's ratio is based on the
   /// relative weight (number of leaves) of its children.
-  func equalize() -> Self {
+  func equalized() -> Self {
     guard let root else { return self }
     let newRoot = root.equalize()
     return .init(root: newRoot, zoomed: zoomed)
@@ -256,7 +256,7 @@ extension SplitTree {
   ///   - bounds: The bounds used to construct the spatial tree representation
   /// - Returns: A new SplitTree with the adjusted split ratios
   /// - Throws: SplitError.viewNotFound if the node is not found in the tree or no suitable parent split exists
-  func resize(node: Node, by pixels: UInt16, in direction: Spatial.Direction, with bounds: CGRect)
+  func resizing(node: Node, by pixels: UInt16, in direction: Spatial.Direction, with bounds: CGRect)
     throws -> Self
   {
     guard let root else { throw SplitError.viewNotFound }
@@ -336,7 +336,7 @@ extension SplitTree {
     )
 
     // Replace the split node with the new one
-    let newRoot = try root.replaceNode(at: splitPath, with: .split(newSplit))
+    let newRoot = try root.replacingNode(at: splitPath, with: .split(newSplit))
     return .init(root: newRoot, zoomed: nil)
   }
 
@@ -518,7 +518,7 @@ extension SplitTree.Node {
   ///
   /// - Note: If the existing view (`at`) is not found in the tree, this method does nothing. We should
   /// maybe throw instead but at the moment we just do nothing.
-  func insert(view: ViewType, at: ViewType, direction: NewDirection) throws -> Self {
+  func inserting(view: ViewType, at: ViewType, direction: NewDirection) throws -> Self {
     // Get the path to our insertion point. If it doesn't exist we do
     // nothing.
     guard let path = path(to: .leaf(view: at)) else {
@@ -555,11 +555,11 @@ extension SplitTree.Node {
       ))
 
     // Replace the node at the path with the new split
-    return try replaceNode(at: path, with: newSplit)
+    return try replacingNode(at: path, with: newSplit)
   }
 
   /// Helper function to replace a node at the given path from the root
-  func replaceNode(at path: Path, with newNode: Self) throws -> Self {
+  func replacingNode(at path: Path, with newNode: Self) throws -> Self {
     // If path is empty, replace the root
     if path.isEmpty {
       return newNode
@@ -607,7 +607,7 @@ extension SplitTree.Node {
 
   /// Remove a node from the tree. Returns the modified tree, or nil if removing
   /// the node results in an empty tree.
-  func remove(_ target: Node) -> Node? {
+  func removing(_ target: Node) -> Node? {
     // If we're removing ourselves, return nil
     if self == target {
       return nil
@@ -621,8 +621,8 @@ extension SplitTree.Node {
     case .split(let split):
       // Neither child is directly the target, so we need to recursively
       // try to remove from both children
-      let newLeft = split.left.remove(target)
-      let newRight = split.right.remove(target)
+      let newLeft = split.left.removing(target)
+      let newRight = split.right.removing(target)
 
       // If both are nil then we remove everything. This shouldn't ever
       // happen because duplicate nodes shouldn't exist, but we want to
@@ -649,7 +649,7 @@ extension SplitTree.Node {
   /// Resize a split node to the specified ratio.
   /// For leaf nodes, this returns the node unchanged.
   /// For split nodes, this creates a new split with the updated ratio.
-  func resize(to ratio: Double) -> Self {
+  func resizing(to ratio: Double) -> Self {
     switch self {
     case .leaf:
       // Leaf nodes don't have a ratio to resize

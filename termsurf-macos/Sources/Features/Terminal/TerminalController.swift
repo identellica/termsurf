@@ -168,6 +168,26 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
     }
   }
 
+  override func replaceSurfaceTree(
+    _ newTree: SplitTree<Ghostty.SurfaceView>,
+    moveFocusTo newView: Ghostty.SurfaceView? = nil,
+    moveFocusFrom oldView: Ghostty.SurfaceView? = nil,
+    undoAction: String? = nil
+  ) {
+    // We have a special case if our tree is empty to close our tab immediately.
+    // This makes it so that undo is handled properly.
+    if newTree.isEmpty {
+      closeTabImmediately()
+      return
+    }
+
+    super.replaceSurfaceTree(
+      newTree,
+      moveFocusTo: newView,
+      moveFocusFrom: oldView,
+      undoAction: undoAction)
+  }
+
   // MARK: Terminal Creation
 
   /// Returns all the available terminal controllers present in the app currently.

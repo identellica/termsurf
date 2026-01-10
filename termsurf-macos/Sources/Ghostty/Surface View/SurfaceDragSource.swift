@@ -112,6 +112,18 @@ extension Ghostty {
       }
     }
 
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+      // Ensure this view gets the mouse event before window dragging handlers
+      return true
+    }
+
+    override func mouseDown(with event: NSEvent) {
+      // Consume the mouseDown event to prevent it from propagating to the
+      // window's drag handler. This fixes issue #10110 where grab handles
+      // would drag the window instead of initiating pane drags.
+      // Don't call super - the drag will be initiated in mouseDragged.
+    }
+
     override func updateTrackingAreas() {
       super.updateTrackingAreas()
 
