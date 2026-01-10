@@ -39,9 +39,12 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 - Documentation: `docs/`
   - `docs/architecture.md` - Technical decisions and design rationale
   - `docs/bookmarks.md` - Bookmarks implementation plan and checklist
+  - `docs/build.md` - Build instructions and troubleshooting
   - `docs/console.md` - Console bridging and JavaScript API (`--js-api`)
   - `docs/keybindings.md` - Webview keyboard shortcuts and modes
   - `docs/libghostty.md` - Changes to libghostty (tracking for upstream PRs)
+  - `docs/release.md` - Release procedure and versioning
+  - `docs/target-blank.md` - target="_blank" link handling
   - `docs/ctrl-z.md` - ctrl+z/fg analysis (deferred, documented for future reference)
   - `docs/cef.md` - CEF integration attempt (deferred, documented for future reference)
 
@@ -84,10 +87,10 @@ CEF (Chromium) integration is deferred due to Swift-to-C marshalling challenges.
 - `SocketConnection.swift` - Client connection handling
 - `CommandHandler.swift` - Request routing (open, close, etc.)
 - `TermsurfProtocol.swift` - JSON protocol definitions
-
-**Terminal integration**:
-- `SurfaceView_AppKit.swift` - Keyboard handling for webview modes
 - `TermsurfEnvironment.swift` - Injects TERMSURF_SOCKET and TERMSURF_PANE_ID env vars
+
+**Terminal integration** (`termsurf-macos/Sources/Ghostty/Surface View/`):
+- `SurfaceView_AppKit.swift` - Keyboard handling for webview modes
 
 ## Icon Generation
 
