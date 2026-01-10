@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.1.7
+
+### Improvements
+
+- **URL input click to highlight**: Click on the URL input box to highlight all
+  text for easy replacement
+- **ctrl+c to exit browse mode**: Press ctrl+c to exit browse mode and return to
+  control mode
+
+### Internal
+
+- **Skills directory restructure**: Reorganized `.claude/skills/` to use proper
+  folder structure with `SKILL.md` files
+
 ## v0.1.6
 
 ### Upstream Merge
