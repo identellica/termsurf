@@ -249,9 +249,8 @@ Apply same patterns to Ghostty's GTK app:
 
 ```
 termsurf/
-├── src/                          # libghostty (Zig) - shared core (UNMODIFIED)
-├── src/termsurf-cli/             # CLI tool
-│   └── main.zig                  # Socket client, command parsing, event loop
+├── src/                          # libghostty (Zig) - shared core
+│   └── cli/web.zig               # CLI web command (termsurf +web / web)
 ├── macos/                        # Original Ghostty macOS app
 ├── termsurf-macos/               # TermSurf macOS app
 │   ├── Sources/

@@ -58,7 +58,7 @@ This project is structured as a fork of Ghostty with TermSurf code in the
 ```
 termsurf/                    # Root (Ghostty fork)
 ├── src/                     # libghostty (Zig) - shared core
-│   └── termsurf-cli/        # CLI tool (web open, web bookmark, etc.)
+│   └── cli/web.zig          # CLI web command (termsurf +web)
 ├── macos/                   # Original Ghostty macOS app
 ├── docs/                    # Documentation
 │   ├── architecture.md      # Technical decisions

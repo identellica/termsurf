@@ -281,7 +281,7 @@ web bookmark delete <name> [--profile <profile>]
 - `update`: Silent on success
 - `delete`: Silent on success
 
-**File to modify:** `src/termsurf-cli/main.zig`
+**File to modify:** `src/cli/web.zig`
 
 **Implementation:**
 
