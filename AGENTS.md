@@ -45,7 +45,7 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
   - `docs/libghostty.md` - Changes to libghostty (tracking for upstream PRs)
   - `docs/release.md` - Release procedure and versioning
   - `docs/target-blank.md` - target="_blank" link handling
-  - `docs/wkwebview.md` - WKWebView implementation details and workarounds
+  - `docs/webview.md` - WebView implementation, API checklist, and workarounds
   - `docs/ctrl-z.md` - ctrl+z/fg analysis (deferred, documented for future reference)
   - `docs/cef.md` - CEF integration attempt (deferred, documented for future reference)
 
@@ -74,7 +74,7 @@ CEF (Chromium) integration is deferred due to Swift-to-C marshalling challenges.
 - `termsurf-macos/Sources/Features/Socket/` - CLI-app socket communication
 - `src/cli/web.zig` - CLI web command (integrated into termsurf binary)
 - `docs/console.md` - Console bridging and JS API documentation
-- `docs/wkwebview.md` - WKWebView quirks and workarounds
+- `docs/webview.md` - WebView implementation and API checklist
 
 ## Key Files for TermSurf Development
 

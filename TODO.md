@@ -32,7 +32,7 @@
 
 1. [x] Fix Google.com (and other sites) displaying incorrectly in WKWebView
        (wrong layout, light mode instead of dark). Root cause: missing
-       `Upgrade-Insecure-Requests` HTTP header. See `docs/wkwebview.md`.
+       `Upgrade-Insecure-Requests` HTTP header. See `docs/webview.md`.
 2. [x] Set Safari User-Agent string to avoid mobile/simplified layouts.
 
 ### Future
