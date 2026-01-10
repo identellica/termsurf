@@ -49,7 +49,7 @@ class CommandHandler {
   }
 
   /// Default homepage when no URL is provided
-  private static let defaultHomepage = "https://hallucipedia.com"
+  private static let defaultHomepage = "https://termsurf.com"
 
   private func handleOpen(_ request: TermsurfRequest, connection: SocketConnection? = nil)
     -> TermsurfResponse
