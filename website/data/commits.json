@@ -1,0 +1,305 @@
+{
+  "generatedAt": "2026-01-10T20:05:00.126Z",
+  "commits": [
+    {
+      "hash": "eab3e204bc675d9960d16d45b00ebde270e72782",
+      "message": "website plan",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T13:57:36-06:00"
+    },
+    {
+      "hash": "f62dc432c9382a262d2143d2fa5ca279588bc770",
+      "message": "web file command",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T13:19:09-06:00"
+    },
+    {
+      "hash": "ddd47609b970bfcb46eed7008569f0de9821581e",
+      "message": "remove done issues - they're in the changelog",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T12:21:28-06:00"
+    },
+    {
+      "hash": "99eb1a7ddce60be95ee9153c15a66b099d489c0b",
+      "message": "Bump version to 0.1.7",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T12:01:01-06:00"
+    },
+    {
+      "hash": "93b59a41ae7cc7790371ed2205aaebdb8238f694",
+      "message": "be able to click on url input box to highlight it",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T11:55:22-06:00"
+    },
+    {
+      "hash": "7e8661d332b4875118c7911b2d59ae928c3f8a02",
+      "message": "fix text",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T11:52:20-06:00"
+    },
+    {
+      "hash": "27e850262e358a4f3f45f7d0c37e3f08477d1a86",
+      "message": "ctrl+c to exit browse mode",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T11:51:14-06:00"
+    },
+    {
+      "hash": "a86e1e5d8751855b6ee85e74a5d8f42822002f17",
+      "message": "Replace .agents with .claude/skills",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:53:25-06:00"
+    },
+    {
+      "hash": "8b0aec6bd2a9888d037c875348200db7a79d84bf",
+      "message": "Bump version to 0.1.6",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:30:43-06:00"
+    },
+    {
+      "hash": "0915aed1cd1560369d4ba3ba93f9dad455eaecd7",
+      "message": "Add \"Use Selection for Find\" and \"Jump to Selection\" menu items",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:26:43-06:00"
+    },
+    {
+      "hash": "c99ff32af3a5f39f51278c623c8ed7c4843e5ed1",
+      "message": "Port upstream Ghostty macOS app changes to termsurf-macos",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:23:10-06:00"
+    },
+    {
+      "hash": "9f74ae953e099224b9baf688c50743f763683eea",
+      "message": "Fix build after upstream merge: update API calls",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:11:06-06:00"
+    },
+    {
+      "hash": "b47c8e9993da6e818f89df067461dcfdcd69d55c",
+      "message": "Merge upstream Ghostty (113 commits)",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:05:18-06:00"
+    },
+    {
+      "hash": "e1220cce89d35a6c88b4bcc71d7b2a360730d9e1",
+      "message": "format merge upstream doc",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:03:03-06:00"
+    },
+    {
+      "hash": "6fcdd36a0057c5a613cd13198dcaff3e3a39d028",
+      "message": "Add docs/merge-upstream.md",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T10:02:30-06:00"
+    },
+    {
+      "hash": "a94afd9321428c60aed9b9ea6c69e12af54b8d05",
+      "message": "Update repo URL and fix bundle identifiers",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T09:58:29-06:00"
+    },
+    {
+      "hash": "17da13840dc71ba36b0deb2c0e85097840630ad5",
+      "message": "Fix memory leak when pruning scrollback with non-standard pages (#10251)",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-10T07:54:32-08:00"
+    },
+    {
+      "hash": "2c0cefd1902ac84a1939a26824f463e66ea1d0ff",
+      "message": "Merge webview docs into unified docs/webview.md",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T09:42:41-06:00"
+    },
+    {
+      "hash": "509f0733667d7631266f787ea800ba05d3672cec",
+      "message": "terminal: fix up our total row and pin accounting during reuse",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-10T06:58:19-08:00"
+    },
+    {
+      "hash": "235eebfa9295ef2877321656b35f160d8a3d0b5c",
+      "message": "terminal: during test, use the testing allocator for pages",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-10T06:55:21-08:00"
+    },
+    {
+      "hash": "9ee78d82c02f3b3c3e79c20c02406f2de09196b1",
+      "message": "terminal: fix memory leak when grow attempts to reuse non-standard page",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T20:17:33-08:00"
+    },
+    {
+      "hash": "1d63045c2ffe006847716bb39720259e670ea96d",
+      "message": "terminal: use tagged memory for PageList ops",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T20:17:33-08:00"
+    },
+    {
+      "hash": "7406f2763eec102b8c0163bba669d58c563046fe",
+      "message": "webview api audit doc",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T08:04:26-06:00"
+    },
+    {
+      "hash": "0321df93eabb21f3c8aa6467177fd3cd7e28d6f9",
+      "message": "Remove Ghostty CI/CD workflows",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T07:44:48-06:00"
+    },
+    {
+      "hash": "e0696367edbd3bb44af2b1d96e38ade51532c3b3",
+      "message": "Bump MARKETING_VERSION to 0.1.5",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T07:41:20-06:00"
+    },
+    {
+      "hash": "8cab169b6886fc8463175f4cb3b2cbba9227123f",
+      "message": "document changes and new release",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T07:36:52-06:00"
+    },
+    {
+      "hash": "2ccaffb38859cfccab6e1ac413b45a02055e1888",
+      "message": "fix google.com by sending prefer secure header",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T07:27:25-06:00"
+    },
+    {
+      "hash": "72e766948657edf35deb099c6a6a63604f57791d",
+      "message": "update agents.md",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T06:22:33-06:00"
+    },
+    {
+      "hash": "e3df38bec626d8c8dece5a37ef4f96d7e2cae407",
+      "message": "Bump version to 0.1.4",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T06:17:53-06:00"
+    },
+    {
+      "hash": "2972725405ca1554e238591534d3051d588399ba",
+      "message": "fix web cli tool",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T06:15:43-06:00"
+    },
+    {
+      "hash": "98faf15c7f40518c341cc98645ffea33dcac34b6",
+      "message": "Bump version to 0.1.3",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T05:59:40-06:00"
+    },
+    {
+      "hash": "f155c54aa7ccc7ef5d89a657e364dd2164fed915",
+      "message": "old tool gone",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T05:57:35-06:00"
+    },
+    {
+      "hash": "93873ae8d74888eb138ddb92649662b93e04d77e",
+      "message": "remove obsolete 'web' cli tool",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T05:52:25-06:00"
+    },
+    {
+      "hash": "473de2925c8990141e456b788ca7d0c041bef2d6",
+      "message": "link the new 'web' command to 'termsurf +web ...'",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T05:38:13-06:00"
+    },
+    {
+      "hash": "9b0ab88464cb31c82359b337e7ea9708ce7a527a",
+      "message": "put web command inside termsurf, i.e.",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T05:19:37-06:00"
+    },
+    {
+      "hash": "f4e1e0689e7de0a069a63107992253d8104446a7",
+      "message": "predictable release build location for PATH",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T04:25:13-06:00"
+    },
+    {
+      "hash": "b426a682973202bdc09328c7bc5751ac9d6fa66c",
+      "message": "os: mach taggedPageAllocator",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T20:17:33-08:00"
+    },
+    {
+      "hash": "6f1544b4a3c68c80dd70dfb9acd6edc4d55cac60",
+      "message": "os: add mach VM tags",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T20:17:33-08:00"
+    },
+    {
+      "hash": "ec2912dbafe50cc32b786d2327dcd0213c83ecc6",
+      "message": "docs: bell border feature is available on macOS (#10242)",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T11:40:12-08:00"
+    },
+    {
+      "hash": "d94ba5cf105948ddd2b2fc4160a2a4cdb472df4f",
+      "message": "docs: add bell border feature version availability",
+      "author": "Martin Müller",
+      "date": "2026-01-09T18:46:00+01:00"
+    },
+    {
+      "hash": "51aed4d8b3d85464657c7894f886453d4cae8645",
+      "message": "Binding internals improvements (#10243)",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T09:14:48-08:00"
+    },
+    {
+      "hash": "0e9ce7e450fbe4ef296a71d569c92fdd9c1756e1",
+      "message": "input: change our binding set to use array hash map",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T08:46:35-08:00"
+    },
+    {
+      "hash": "201198c74a8f6facc844c1564d1ebc48fa779bd6",
+      "message": "input: do value comparison for Set hash maps",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T08:27:27-08:00"
+    },
+    {
+      "hash": "c179de62a70ebd848a63bfbb34459d47b0ac918d",
+      "message": "extract deepEqual",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T08:27:27-08:00"
+    },
+    {
+      "hash": "a584e6259f9c51a3cfb8d78726240f2f1c7213be",
+      "message": "macOS: Only trigger main menu items if not performable or all targeted  (#10240)",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T07:21:54-08:00"
+    },
+    {
+      "hash": "115351db87cc1c1c89e2d217e82e48d484a4b25d",
+      "message": "docs: bell border feature is available on macOS",
+      "author": "Martin Müller",
+      "date": "2026-01-09T16:19:50+01:00"
+    },
+    {
+      "hash": "f34c69147a7c583a7cde667f7cd586a55c5b592b",
+      "message": "macos: use the new binding flags information value to trigger menu",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T06:58:48-08:00"
+    },
+    {
+      "hash": "856ef1fc1bed143a84c88c32812758828520de7e",
+      "message": "input: change the key_is_binding to return some information",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T06:32:37-08:00"
+    },
+    {
+      "hash": "18535f04d16ce054bc71e6f7be0b36be1d53a8d0",
+      "message": "osc: refactor parsing helper functions into separate files (#10233)",
+      "author": "Mitchell Hashimoto",
+      "date": "2026-01-09T06:13:35-08:00"
+    },
+    {
+      "hash": "5059a4e171e110849f76891fbe42102050782003",
+      "message": "rename binary: ghostty -> termsurf",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-09T06:27:05-06:00"
+    }
+  ]
+}
