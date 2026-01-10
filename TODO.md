@@ -21,7 +21,7 @@
 3. [x] Move the `web` command inside the `termsurf` command, i.e.
        `termsurf +web ...`.
 4. [x] Create a new shortcut `web` command that calls `termsurf +web ...`.
-5. [ ] Delete the old pure-zig `web` cli tool.
+5. [x] Delete the old pure-zig `web` cli tool.
 
 ### Future
 
