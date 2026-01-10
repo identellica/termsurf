@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.3
+
+### Improvements
+
+- **CLI binary renamed**: The CLI binary is now `termsurf` instead of `ghostty`,
+  matching the app name
+- **Integrated web command**: The `web` CLI tool is now integrated into the main
+  binary as `termsurf +web` (e.g., `termsurf +web open https://example.com`)
+- **Multi-call binary**: A `web` symlink is included for convenience—you can run
+  `web open <url>` directly instead of `termsurf +web open <url>`
+- **Surfer branding**: Changed ghost emoji (👻) to surfer emoji (🏄) throughout
+  the app
+
 ## v0.1.2
 
 ### Fixes
