@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "../components/Header";
 import { CommitLog } from "../components/CommitLog";
+import { Footer } from "../components/Footer";
 import commitsData from "../../data/commits.json";
 
 export const Route = createFileRoute("/")({
@@ -14,6 +15,7 @@ function HomePage() {
       <main>
         <CommitLog commits={commitsData.commits} />
       </main>
+      <Footer />
     </div>
   );
 }

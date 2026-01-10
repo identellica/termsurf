@@ -1,6 +1,11 @@
 export function Header() {
   return (
     <header className="text-center mb-12 pb-8 border-b border-border">
+      <img
+        src="/logo.png"
+        alt="TermSurf logo"
+        className="w-16 h-16 mx-auto mb-4"
+      />
       <h1 className="text-4xl font-bold text-primary mb-2">TermSurf</h1>
       <p className="text-foreground-dark mb-4">
         A terminal emulator with webview support

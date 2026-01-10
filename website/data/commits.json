@@ -1,6 +1,12 @@
 {
-  "generatedAt": "2026-01-10T20:16:48.053Z",
+  "generatedAt": "2026-01-10T20:17:21.801Z",
   "commits": [
+    {
+      "hash": "8ed333be97e6be4521954ba472274c2115bc9178",
+      "message": "update commits",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T14:17:05-06:00"
+    },
     {
       "hash": "b44d683a7b43dcc202a0d665f3e20cfcbdb46275",
       "message": "add website mvp",
@@ -294,12 +300,6 @@
       "message": "macos: use the new binding flags information value to trigger menu",
       "author": "Mitchell Hashimoto",
       "date": "2026-01-09T06:58:48-08:00"
-    },
-    {
-      "hash": "856ef1fc1bed143a84c88c32812758828520de7e",
-      "message": "input: change the key_is_binding to return some information",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T06:32:37-08:00"
     }
   ]
 }
