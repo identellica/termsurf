@@ -28,6 +28,13 @@
 1. [x] Fix `web` symlink not passing URL arguments correctly (e.g.,
        `web google.com` opened default homepage instead of google.com)
 
+### v0.1.5
+
+1. [x] Fix Google.com (and other sites) displaying incorrectly in WKWebView
+       (wrong layout, light mode instead of dark). Root cause: missing
+       `Upgrade-Insecure-Requests` HTTP header. See `docs/wkwebview.md`.
+2. [x] Set Safari User-Agent string to avoid mobile/simplified layouts.
+
 ### Future
 
 1. [ ] Be able to open an html file in the current directory with
@@ -50,7 +57,7 @@
 
 ### Additional Features
 
-- [ ] User agent customization
+- [x] User agent customization (basic: set to Safari UA in v0.1.5)
 - [ ] Download handling
 - [ ] Permission prompts (camera, microphone, location)
 

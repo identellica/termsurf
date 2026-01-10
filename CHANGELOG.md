@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.1.5
+
+### Fixes
+
+- **Google.com and other sites displaying incorrectly**: Fixed websites serving
+  mobile/simplified layouts to WKWebView. Root cause: WKWebView doesn't send the
+  `Upgrade-Insecure-Requests` HTTP header that Safari sends. We now inject this
+  header on all HTTP/HTTPS requests. See [docs/wkwebview.md](docs/wkwebview.md).
+- **User-Agent**: Set Safari User-Agent string to avoid being detected as an
+  embedded webview.
+
 ## v0.1.4
 
 ### Fixes
