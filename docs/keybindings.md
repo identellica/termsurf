@@ -34,7 +34,7 @@ the browser, not libghostty. We handle this with a **modal approach**:
    - Enter switches to browse mode
    - i switches to insert mode (edit URL)
    - ctrl+c closes the webview
-   - ControlBar displays: "i to edit, enter to browse, ctrl+c to close"
+   - ControlBar displays: "i to edit, Enter to browse, Ctrl+C to close"
 
 2. **Browse mode** (browser has focus, ghostty keybindings still work)
    - WKWebView is the first responder
@@ -145,7 +145,8 @@ we add TermSurf-specific configuration.
 
 AppKit has two completely separate code paths for keyboard events:
 
-1. **`keyDown`** - Regular key events (letters, arrows, shift+arrow, escape, etc.)
+1. **`keyDown`** - Regular key events (letters, arrows, shift+arrow, escape,
+   etc.)
 2. **`performKeyEquivalent`** - Command-key events (cmd+c, cmd+v, cmd+a, etc.)
 
 Understanding this distinction is critical for handling keyboard input when both
@@ -201,7 +202,8 @@ keys meant for the active tab.
 **Required checks before handling any key in a local event monitor:**
 
 1. **Active window/tab check (`isKeyWindow`)** - Is our window the key window?
-2. **Active pane check (`firstResponder`)** - Is the first responder in our hierarchy?
+2. **Active pane check (`firstResponder`)** - Is the first responder in our
+   hierarchy?
 
 ```swift
 // In the local event monitor closure:
@@ -219,10 +221,11 @@ guard isFocusedHierarchy else { return event }
 
 **Why `isKeyWindow` covers both tabs and windows:**
 
-In TermSurf/Ghostty, each tab is a separate `NSWindow` grouped via `NSWindowTabGroup`.
-The "visual window" you see is actually multiple NSWindows in a tab group. There is
-only one key window across the entire application at any time—the window receiving
-keyboard input. This means `isKeyWindow` will be `false` for:
+In TermSurf/Ghostty, each tab is a separate `NSWindow` grouped via
+`NSWindowTabGroup`. The "visual window" you see is actually multiple NSWindows
+in a tab group. There is only one key window across the entire application at
+any time—the window receiving keyboard input. This means `isKeyWindow` will be
+`false` for:
 
 - Inactive tabs in the same tab group (visual window)
 - Tabs/windows in a different window entirely
@@ -232,12 +235,12 @@ No separate "active window" check is needed beyond `isKeyWindow`.
 
 **Why both checks are necessary:**
 
-| Scenario | isKeyWindow | firstResponder in hierarchy | Should handle? |
-|----------|-------------|----------------------------|----------------|
-| Active tab, active pane | ✓ | ✓ | Yes |
-| Active tab, different pane | ✓ | ✗ | No |
-| Inactive tab (same window) | ✗ | (irrelevant) | No |
-| Different window entirely | ✗ | (irrelevant) | No |
+| Scenario                   | isKeyWindow | firstResponder in hierarchy | Should handle? |
+| -------------------------- | ----------- | --------------------------- | -------------- |
+| Active tab, active pane    | ✓           | ✓                           | Yes            |
+| Active tab, different pane | ✓           | ✗                           | No             |
+| Inactive tab (same window) | ✗           | (irrelevant)                | No             |
+| Different window entirely  | ✗           | (irrelevant)                | No             |
 
 **Bug history:** Originally only the pane check existed. This caused issues when
 webviews were open on multiple tabs—the inactive tab's monitor would intercept
@@ -248,14 +251,14 @@ view hierarchy.
 
 Keybinding priority differs by mode:
 
-| Mode | Priority | Behavior |
-|------|----------|----------|
-| **Browse** | Webview first | Webview keybindings work; ghostty gets unhandled keys |
+| Mode        | Priority      | Behavior                                                   |
+| ----------- | ------------- | ---------------------------------------------------------- |
+| **Browse**  | Webview first | Webview keybindings work; ghostty gets unhandled keys      |
 | **Control** | Ghostty first | All ghostty keybindings work; webview doesn't receive keys |
-| **Insert** | URL field | Normal text editing in URL field |
+| **Insert**  | URL field     | Normal text editing in URL field                           |
 
-**Special case**: Ctrl+C is ALWAYS intercepted in browse mode to exit to control mode.
-This ensures the user can always regain full control of keybindings.
+**Special case**: Ctrl+C is ALWAYS intercepted in browse mode to exit to control
+mode. This ensures the user can always regain full control of keybindings.
 
 ### Implementation
 
@@ -348,10 +351,10 @@ func processKeyBindingIfMatched(_ event: NSEvent) -> Bool {
 
 - **Browse mode**: Webview keybindings work correctly. Ghostty only handles keys
   the webview doesn't use.
-- **Control mode**: User has full control of ghostty keybindings regardless of what
-  the webview might want.
-- **Ctrl+C guarantee**: User can always exit browse mode via Ctrl+C, ensuring they're
-  never "trapped" in a webview that consumes all keys.
+- **Control mode**: User has full control of ghostty keybindings regardless of
+  what the webview might want.
+- **Ctrl+C guarantee**: User can always exit browse mode via Ctrl+C, ensuring
+  they're never "trapped" in a webview that consumes all keys.
 
 ## SurfaceView Key Handling Implementation
 
@@ -385,8 +388,8 @@ Command keys are trickier due to a **WKWebView quirk**:
 > doesn't actually execute the copy/cut operation. However, WKWebView's `copy:`
 > action method works correctly when triggered via the Edit menu.
 
-The workaround is to intercept cmd+c/x/v and convert them to menu actions.
-We also intercept ctrl+c here: in control mode it closes the webview, in browse
+The workaround is to intercept cmd+c/x/v and convert them to menu actions. We
+also intercept ctrl+c here: in control mode it closes the webview, in browse
 mode the local event monitor handles switching to control mode:
 
 ```swift
@@ -451,15 +454,16 @@ action continues down the responder chain to WKWebView.
 
 When adding new keybindings that need to work in webviews:
 
-1. **Regular keys** - Let first responder handle by returning early from `keyDown`
+1. **Regular keys** - Let first responder handle by returning early from
+   `keyDown`
 2. **Command keys that WKWebView handles correctly** - Return `false` from
    `performKeyEquivalent` to let them flow normally
 3. **Command keys that WKWebView breaks** - Intercept in `performKeyEquivalent`
    and convert to `NSApp.sendAction` to trigger the menu action directly
-4. **Keys that must be intercepted before any view** - Use a local event
-   monitor (`NSEvent.addLocalMonitorForEvents`). This intercepts events before
-   any view sees them. Use sparingly—only when the key absolutely must not
-   reach the first responder (e.g., Ctrl+C in browse mode to switch modes).
+4. **Keys that must be intercepted before any view** - Use a local event monitor
+   (`NSEvent.addLocalMonitorForEvents`). This intercepts events before any view
+   sees them. Use sparingly—only when the key absolutely must not reach the
+   first responder (e.g., Ctrl+C in browse mode to switch modes).
 
 **Critical:** When using local event monitors, always implement the two-level
 focus check (see "Critical: Two-Level Focus Check" above). Monitors are

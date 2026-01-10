@@ -107,7 +107,7 @@ class ControlBar: NSView, NSTextFieldDelegate {
   func updateModeText(mode: Mode) {
     switch mode {
     case .control:
-      modeLabel.stringValue = "i to edit, enter to browse, ctrl+c to close"
+      modeLabel.stringValue = "i to edit, Enter to browse, Ctrl+C to close"
     case .browse:
       modeLabel.stringValue = "Ctrl+C to control"
     case .insert:
