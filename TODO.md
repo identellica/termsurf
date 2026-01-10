@@ -23,6 +23,11 @@
 4. [x] Create a new shortcut `web` command that calls `termsurf +web ...`.
 5. [x] Delete the old pure-zig `web` cli tool.
 
+### v0.1.4
+
+1. [x] Fix `web` symlink not passing URL arguments correctly (e.g.,
+       `web google.com` opened default homepage instead of google.com)
+
 ### Future
 
 1. [ ] Be able to open an html file in the current directory with

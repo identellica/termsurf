@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.4
+
+### Fixes
+
+- **web symlink arguments**: Fixed `web <url>` not passing URL to the browser
+  (e.g., `web google.com` incorrectly opened the default homepage instead of
+  google.com). The `web` symlink now correctly forwards all arguments.
+
 ## v0.1.3
 
 ### Improvements
