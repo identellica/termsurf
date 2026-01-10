@@ -109,7 +109,7 @@ class ControlBar: NSView, NSTextFieldDelegate {
     case .control:
       modeLabel.stringValue = "i to edit, enter to browse, ctrl+c to close"
     case .browse:
-      modeLabel.stringValue = "Esc to control"
+      modeLabel.stringValue = "Ctrl+C to control"
     case .insert:
       modeLabel.stringValue = "Enter to go, Esc to cancel"
     }

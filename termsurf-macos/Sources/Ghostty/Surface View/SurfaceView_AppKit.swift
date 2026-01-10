@@ -1314,11 +1314,15 @@ extension Ghostty {
           }
         }
 
-        // Handle ctrl+c to close webview (works in all modes, including browse mode).
+        // Handle ctrl+c: in control mode closes webview, in browse mode switches to control mode.
         // This must be in performKeyEquivalent to intercept before WKWebView gets the event.
         let hasCtrl = event.modifierFlags.contains(.control)
         if hasCtrl && !hasCmd && !hasOpt && char == "c" {
-          container.onClose?(container.webviewId, 0)
+          if container.isControlMode {
+            // Control mode: close webview
+            container.onClose?(container.webviewId, 0)
+          }
+          // Browse mode: local monitor already handled mode switch, just consume event
           return true
         }
 

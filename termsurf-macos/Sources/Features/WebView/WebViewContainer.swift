@@ -251,9 +251,9 @@ class WebViewContainer: NSView {
 
       switch self.focusMode {
       case .browse:
-        // SPECIAL CASE: Always intercept Esc to exit browse mode.
+        // SPECIAL CASE: Always intercept Ctrl+C to exit browse mode.
         // This ensures the user can always escape the webview to regain keybindings.
-        if event.keyCode == 53 {
+        if event.modifierFlags.contains(.control) && event.charactersIgnoringModifiers == "c" {
           self.focusControlBar()
           return nil
         }

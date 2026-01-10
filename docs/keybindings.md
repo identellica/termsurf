@@ -40,8 +40,8 @@ the browser, not libghostty. We handle this with a **modal approach**:
    - WKWebView is the first responder
    - Most keys go to the browser
    - Ghostty keybindings are intercepted via local event monitor and processed
-   - Esc (intercepted via local event monitor) switches to control mode
-   - ControlBar displays: "Esc to control"
+   - Ctrl+C (intercepted via local event monitor) switches to control mode
+   - ControlBar displays: "Ctrl+C to control"
 
 3. **Insert mode** (edit URL)
    - URL text field is the first responder
@@ -66,7 +66,7 @@ the browser, not libghostty. We handle this with a **modal approach**:
 - When in browse mode, checks if the key matches a ghostty keybinding
 - If it's a keybinding, routes to SurfaceView and consumes the event
 - If not, lets the event pass through to WKWebView
-- Esc is always intercepted to exit browse mode
+- Ctrl+C is always intercepted to exit browse mode (switches to control mode)
 - This is invisible to websites and cannot be overridden by them
 
 **Insert mode** keybindings are handled in `ControlBar.swift`:
@@ -128,8 +128,8 @@ When a URL is submitted from insert mode, it is normalized before navigation:
 | --------- | --------- | --------------------------------- |
 | Control   | Enter     | Switch to browse                  |
 | Control   | i         | Switch to insert (edit URL)       |
-| All modes | ctrl+c    | Close webview                     |
-| Browse    | Esc       | Switch to control                 |
+| Control   | ctrl+c    | Close webview                     |
+| Browse    | ctrl+c    | Switch to control                 |
 | All modes | cmd+c     | Copy (via menu action)            |
 | All modes | cmd+x     | Cut (via menu action)             |
 | All modes | cmd+v     | Paste (via menu action)           |
@@ -174,14 +174,12 @@ If returns false → bubbles up, eventually becomes menu action
 
 ### Local Event Monitors
 
-For keys without modifiers (like Esc) that need to be intercepted before the
-first responder sees them, `performKeyEquivalent` doesn't work—it's primarily
-called for key equivalents (keys with modifiers like cmd or ctrl).
-
-The solution is `NSEvent.addLocalMonitorForEvents`:
+For keys that need to be intercepted before the first responder sees them,
+`performKeyEquivalent` may not be sufficient. The solution is
+`NSEvent.addLocalMonitorForEvents`:
 
 ```
-User presses key (e.g., Esc)
+User presses key (e.g., Ctrl+C)
     ↓
 Local event monitor intercepts BEFORE any view
     ↓
@@ -189,8 +187,8 @@ If returns nil → event consumed, no view sees it
 If returns event → normal processing continues
 ```
 
-This is how we handle Esc in browse mode: the monitor in `WebViewContainer`
-intercepts Esc before WKWebView can see it, making it invisible to websites
+This is how we handle Ctrl+C in browse mode: the monitor in `WebViewContainer`
+intercepts Ctrl+C before WKWebView can see it, making it invisible to websites
 and impossible for them to override.
 
 ### Critical: Two-Level Focus Check
@@ -256,7 +254,7 @@ Keybinding priority differs by mode:
 | **Control** | Ghostty first | All ghostty keybindings work; webview doesn't receive keys |
 | **Insert** | URL field | Normal text editing in URL field |
 
-**Special case**: Esc is ALWAYS intercepted in browse mode to exit to control mode.
+**Special case**: Ctrl+C is ALWAYS intercepted in browse mode to exit to control mode.
 This ensures the user can always regain full control of keybindings.
 
 ### Implementation
@@ -277,8 +275,8 @@ guard isFocusedHierarchy else { return event }
 // Then: mode-specific handling
 switch self.focusMode {
 case .browse:
-    // Only intercept Esc to exit browse mode
-    if event.keyCode == 53 {
+    // Intercept Ctrl+C to exit browse mode
+    if event.modifierFlags.contains(.control) && event.charactersIgnoringModifiers == "c" {
         self.focusControlBar()
         return nil
     }
@@ -348,12 +346,12 @@ func processKeyBindingIfMatched(_ event: NSEvent) -> Bool {
 
 ### Why This Architecture?
 
-- **Browse mode**: Webview keybindings (like ctrl+c for copy in some web apps) work
-  correctly. Ghostty only handles keys the webview doesn't use.
+- **Browse mode**: Webview keybindings work correctly. Ghostty only handles keys
+  the webview doesn't use.
 - **Control mode**: User has full control of ghostty keybindings regardless of what
   the webview might want.
-- **Esc guarantee**: User can always exit browse mode, ensuring they're never
-  "trapped" in a webview that consumes all keys.
+- **Ctrl+C guarantee**: User can always exit browse mode via Ctrl+C, ensuring they're
+  never "trapped" in a webview that consumes all keys.
 
 ## SurfaceView Key Handling Implementation
 
@@ -388,7 +386,8 @@ Command keys are trickier due to a **WKWebView quirk**:
 > action method works correctly when triggered via the Edit menu.
 
 The workaround is to intercept cmd+c/x/v and convert them to menu actions.
-We also intercept ctrl+c here to close the webview (since it's not a menu item):
+We also intercept ctrl+c here: in control mode it closes the webview, in browse
+mode the local event monitor handles switching to control mode:
 
 ```swift
 override func performKeyEquivalent(with event: NSEvent) -> Bool {
@@ -410,11 +409,13 @@ override func performKeyEquivalent(with event: NSEvent) -> Bool {
             }
         }
 
-        // Handle ctrl+c to close webview (works in all modes)
+        // Handle ctrl+c: close in control mode, mode switch handled by local monitor
         let hasCtrl = event.modifierFlags.contains(.control)
         if hasCtrl && !hasCmd && !hasOpt && char == "c" {
-            container.onClose?(container.webviewId, 0)
-            return true
+            if container.isControlMode {
+                container.onClose?(container.webviewId, 0)
+            }
+            return true  // Consume event in both modes
         }
 
         // Other keys: return false to let menu system handle (for Ghostty keybindings)
@@ -455,10 +456,10 @@ When adding new keybindings that need to work in webviews:
    `performKeyEquivalent` to let them flow normally
 3. **Command keys that WKWebView breaks** - Intercept in `performKeyEquivalent`
    and convert to `NSApp.sendAction` to trigger the menu action directly
-4. **Keys without modifiers that must be intercepted** - Use a local event
+4. **Keys that must be intercepted before any view** - Use a local event
    monitor (`NSEvent.addLocalMonitorForEvents`). This intercepts events before
    any view sees them. Use sparingly—only when the key absolutely must not
-   reach the first responder (e.g., Esc in browse mode).
+   reach the first responder (e.g., Ctrl+C in browse mode to switch modes).
 
 **Critical:** When using local event monitors, always implement the two-level
 focus check (see "Critical: Two-Level Focus Check" above). Monitors are
