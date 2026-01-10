@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.2.0
+
+### New Features
+
+- **termsurf.com website**: Launched project website with commit log, built with
+  TanStack Router and Bun SSR, deployed to Fly.io
+- **Default homepage**: Browser now opens termsurf.com by default when no URL is
+  specified
+- **Expandable commits**: Website commit log entries expand to show full commit
+  messages with GitHub links
+- **GitPoet skill**: New Claude skill for writing poetic commit messages
+
+### Improvements
+
+- **Web file command**: Added `web file` command for opening local files in the
+  browser pane
+
 ## v0.1.7
 
 ### Improvements

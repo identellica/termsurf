@@ -33,3 +33,7 @@ Read and follow the process documented in `docs/release.md`.
 7. **Tag and push**
    - `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
    - `git push origin main --tags`
+
+8. **Deploy website**
+   - `cd website && bun run build:commits`
+   - `bun run deploy`
