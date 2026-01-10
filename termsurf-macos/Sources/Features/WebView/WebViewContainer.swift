@@ -318,6 +318,11 @@ class WebViewContainer: NSView {
       self?.focusControlBar()
     }
 
+    // ControlBar: URL field clicked -> enter insert mode
+    controlBar.onURLFieldClicked = { [weak self] in
+      self?.focusURLField()
+    }
+
     // WebView: JS API exit() called -> close webview with exit code
     webViewOverlay.onExit = { [weak self] exitCode in
       guard let self = self else { return }

@@ -34,6 +34,9 @@ class ControlBar: NSView, NSTextFieldDelegate {
   /// Callback when insert mode is cancelled (Esc pressed in insert mode)
   var onInsertCancelled: (() -> Void)?
 
+  /// Callback when URL field is clicked (to enter insert mode from control mode)
+  var onURLFieldClicked: (() -> Void)?
+
   // MARK: - Initialization
 
   override init(frame: NSRect) {
@@ -269,5 +272,19 @@ class ControlBar: NSView, NSTextFieldDelegate {
       width: max(0, urlFieldWidth),
       height: urlFieldHeight
     )
+  }
+
+  // MARK: - Mouse Handling
+
+  override func mouseDown(with event: NSEvent) {
+    // If not in insert mode and click is on URL field, enter insert mode
+    if !isInsertMode {
+      let location = convert(event.locationInWindow, from: nil)
+      if urlField.frame.contains(location) {
+        onURLFieldClicked?()
+        return
+      }
+    }
+    super.mouseDown(with: event)
   }
 }
