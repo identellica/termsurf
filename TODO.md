@@ -2,41 +2,6 @@
 
 ## Issues
 
-### v0.1.2
-
-1. [x] cmd+r does not refresh the page. it does nothing. we probably need to
-       handle cmd+r in a similar way as ctrl+c. it is not a menu item.
-2. [x] Links that open in a new window don't work. For instance, all links
-       inside a post on x.com do not work. We will most likely need to detect
-       the "open this link in a new window" api call from the webview and then
-       do something with that command, like run "web open ..." in a new tab.
-3. [x] Be able to press cmd+c/v/x in insert mode in the control panel.
-4. [x] Be able to press cmd+z/Z (undo, redo) in insert mode.
-
-### v0.1.3
-
-1. [x] Make the control panel bar look more like native widgets (native input
-       box?)
-2. [x] Change the name of the cli tool from `ghostty` to `termsurf`.
-3. [x] Move the `web` command inside the `termsurf` command, i.e.
-       `termsurf +web ...`.
-4. [x] Create a new shortcut `web` command that calls `termsurf +web ...`.
-5. [x] Delete the old pure-zig `web` cli tool.
-
-### v0.1.4
-
-1. [x] Fix `web` symlink not passing URL arguments correctly (e.g.,
-       `web google.com` opened default homepage instead of google.com)
-
-### v0.1.5
-
-1. [x] Fix Google.com (and other sites) displaying incorrectly in WKWebView
-       (wrong layout, light mode instead of dark). Root cause: missing
-       `Upgrade-Insecure-Requests` HTTP header. See `docs/webview.md`.
-2. [x] Set Safari User-Agent string to avoid mobile/simplified layouts.
-
-### Future
-
 1. [ ] Be able to open an html file in the current directory with
        `web open [filename]` or maybe `web file [filename]`.
 2. [ ] You should be able to press cmd+c to copy the current url when in control
