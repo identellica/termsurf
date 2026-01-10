@@ -202,6 +202,10 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
     webView.uiDelegate = self
     webView.autoresizingMask = [.width, .height]
 
+    // Set Safari User-Agent to avoid mobile/simplified layouts
+    webView.customUserAgent =
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Safari/605.1.15"
+
     // Make background semi-transparent while loading
     webView.setValue(false, forKey: "drawsBackground")
 
@@ -291,6 +295,37 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
   }
 
   // MARK: - WKNavigationDelegate
+
+  /// Intercept navigation requests to add the Upgrade-Insecure-Requests header.
+  /// This header is sent by Safari but not by WKWebView by default. Some sites
+  /// (e.g., Google) use its absence to detect embedded webviews and serve
+  /// simplified/mobile layouts.
+  func webView(
+    _ webView: WKWebView,
+    decidePolicyFor navigationAction: WKNavigationAction,
+    decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+  ) {
+    // Only modify HTTP/HTTPS requests
+    guard let url = navigationAction.request.url,
+      (url.scheme == "http" || url.scheme == "https")
+    else {
+      decisionHandler(.allow)
+      return
+    }
+
+    // If header is already present, allow the request
+    if navigationAction.request.value(forHTTPHeaderField: "Upgrade-Insecure-Requests") != nil {
+      decisionHandler(.allow)
+      return
+    }
+
+    // Cancel this request and reload with the header added
+    decisionHandler(.cancel)
+
+    var modifiedRequest = navigationAction.request
+    modifiedRequest.setValue("1", forHTTPHeaderField: "Upgrade-Insecure-Requests")
+    webView.load(modifiedRequest)
+  }
 
   func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
     logger.debug(
