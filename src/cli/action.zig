@@ -14,6 +14,20 @@ pub const DetectError = error{
 pub fn detectArgs(comptime E: type, alloc: Allocator) !?E {
     var iter = try std.process.argsWithAllocator(alloc);
     defer iter.deinit();
+
+    // Check argv[0] for multi-call binary detection.
+    // If the binary is invoked under a different name (e.g., "web" symlink to termsurf),
+    // we can automatically select the corresponding action.
+    if (@hasDecl(E, "detectMultiCall")) {
+        if (iter.next()) |argv0| {
+            if (E.detectMultiCall(argv0)) |action| {
+                return action;
+            }
+        }
+        // argv[0] consumed but didn't match - continue with remaining args.
+        // This is fine because argv[0] (program name) wouldn't match +action anyway.
+    }
+
     return try detectIter(E, &iter);
 }
 

@@ -313,6 +313,7 @@
 				A5B3052D299BEAAA0047F10C /* Sources */,
 				A5B3052E299BEAAA0047F10C /* Frameworks */,
 				A5B3052F299BEAAA0047F10C /* Resources */,
+				81F82BD02E82815D001EDFA8 /* Create web symlink */,
 			);
 			buildRules = (
 			);
@@ -454,6 +455,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		81F82BD02E82815D001EDFA8 /* Create web symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Create web symlink";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Create symlink for multi-call binary support\ncd \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}\"\nln -sf termsurf web\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		A54F45F82E1F047A0046BD5C /* PBXTargetDependency */ = {

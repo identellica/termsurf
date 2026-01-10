@@ -87,7 +87,10 @@ The TermSurf app binary doubles as a CLI tool. You can run commands like
 
 ### Binary Locations
 
-After building, the executable is located at:
+After building, the app bundle contains two executables:
+
+- `termsurf` - Main binary
+- `web` - Symlink to termsurf (multi-call binary for web commands)
 
 | Build Type              | Location                                                                                                     |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -129,4 +132,10 @@ termsurf +version        # Show version info
 termsurf +list-fonts     # List available fonts
 termsurf +list-themes    # Browse themes interactively
 termsurf +show-config    # Show current configuration
+
+# Web commands (requires running inside TermSurf)
+termsurf +web open https://example.com   # Open URL in browser pane
+web open https://example.com             # Same, via multi-call binary
+web ping                                 # Test connectivity to app
+web bookmark list                        # List saved bookmarks
 ```

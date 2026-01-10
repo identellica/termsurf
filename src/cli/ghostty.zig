@@ -96,6 +96,19 @@ pub const Action = enum {
         return null;
     }
 
+    /// Detect action from argv[0] for multi-call binary support.
+    /// If the binary is invoked via a symlink (e.g., "web" -> "termsurf"),
+    /// this returns the corresponding action.
+    pub fn detectMultiCall(argv0: []const u8) ?Action {
+        const basename = std.fs.path.basename(argv0);
+
+        if (std.mem.eql(u8, basename, "web")) {
+            return .web;
+        }
+
+        return null;
+    }
+
     /// This should be returned by actions that want to print the help text.
     pub const help_error = error.ActionHelpRequested;
 

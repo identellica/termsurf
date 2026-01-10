@@ -112,11 +112,20 @@ updates, these files may have conflicts but they will be trivial to resolve
 
 **Files modified:**
 
-- `src/cli/ghostty.zig` - Registered `web` action in CLI
+- `src/cli/ghostty.zig` - Registered `web` action in CLI, added `detectMultiCall`
+- `src/cli/action.zig` - Added multi-call binary detection via `argv[0]`
+- `termsurf-macos/TermSurf.xcodeproj/project.pbxproj` - Added build phase for `web` symlink
+
+**Multi-call binary:**
+
+The `web` command supports multi-call binary invocation. A symlink `web` -> `termsurf`
+is created in the app bundle during build. When invoked as `web`, the CLI automatically
+acts as if `+web` was specified.
 
 **Usage:**
 
 ```bash
+# Via +web action
 termsurf +web                        # Open default homepage
 termsurf +web open [url]             # Open URL in browser pane
 termsurf +web open --profile work    # Open with isolated profile
@@ -129,6 +138,12 @@ termsurf +web bookmark get <name>    # Get bookmark URL
 termsurf +web bookmark list          # List all bookmarks
 termsurf +web bookmark update <name> # Update bookmark
 termsurf +web bookmark delete <name> # Delete bookmark
+
+# Via multi-call binary (equivalent, shorter)
+web                                  # Open default homepage
+web open [url]                       # Open URL in browser pane
+web ping                             # Test connectivity
+web bookmark list                    # List all bookmarks
 ```
 
 **Why this change:**
