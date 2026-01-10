@@ -313,7 +313,9 @@ pub const Action = union(Key) {
     /// A command has finished,
     command_finished: CommandFinished,
 
-    /// Start the search overlay with an optional initial needle.
+    /// Start the search overlay with an optional initial needle. If the
+    /// search is already active and the needle is non-empty, update the
+    /// current search needle and focus the search input.
     start_search: StartSearch,
 
     /// End the search overlay, clearing the search state and hiding it.

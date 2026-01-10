@@ -116,6 +116,10 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
         /// True if the window is focused
         focused: bool,
 
+        /// Flag to indicate that our focus state changed for custom
+        /// shaders to update their state.
+        custom_shader_focused_changed: bool = false,
+
         /// The most recent scrollbar state. We use this as a cache to
         /// determine if we need to notify the apprt that there was a
         /// scrollbar change.
@@ -746,6 +750,8 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
                     .current_cursor_color = @splat(0),
                     .previous_cursor_color = @splat(0),
                     .cursor_change_time = 0,
+                    .time_focus = 0,
+                    .focus = 1, // assume focused initially
                 },
                 .bg_image_buffer = undefined,
 
@@ -1008,7 +1014,12 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
         ///
         /// Must be called on the render thread.
         pub fn setFocus(self: *Self, focus: bool) !void {
+            assert(self.focused != focus);
+
             self.focused = focus;
+
+            // Flag that we need to update our custom shaders
+            self.custom_shader_focused_changed = true;
 
             // If we're not focused, then we want to stop the display link
             // because it is a waste of resources and we can move to pure
@@ -2255,6 +2266,8 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
             // We only need to do this if we have custom shaders.
             if (!self.has_custom_shaders) return;
 
+            const uniforms = &self.custom_shader_uniforms;
+
             const now = try std.time.Instant.now();
             defer self.last_frame_time = now;
             const first_frame_time = self.first_frame_time orelse t: {
@@ -2264,23 +2277,23 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
             const last_frame_time = self.last_frame_time orelse now;
 
             const since_ns: f32 = @floatFromInt(now.since(first_frame_time));
-            self.custom_shader_uniforms.time = since_ns / std.time.ns_per_s;
+            uniforms.time = since_ns / std.time.ns_per_s;
 
             const delta_ns: f32 = @floatFromInt(now.since(last_frame_time));
-            self.custom_shader_uniforms.time_delta = delta_ns / std.time.ns_per_s;
+            uniforms.time_delta = delta_ns / std.time.ns_per_s;
 
-            self.custom_shader_uniforms.frame += 1;
+            uniforms.frame += 1;
 
             const screen = self.size.screen;
             const padding = self.size.padding;
             const cell = self.size.cell;
 
-            self.custom_shader_uniforms.resolution = .{
+            uniforms.resolution = .{
                 @floatFromInt(screen.width),
                 @floatFromInt(screen.height),
                 1,
             };
-            self.custom_shader_uniforms.channel_resolution[0] = .{
+            uniforms.channel_resolution[0] = .{
                 @floatFromInt(screen.width),
                 @floatFromInt(screen.height),
                 1,
@@ -2345,8 +2358,6 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
                     @as(f32, @floatFromInt(cursor.color[3])) / 255.0,
                 };
 
-                const uniforms = &self.custom_shader_uniforms;
-
                 const cursor_changed: bool =
                     !std.meta.eql(new_cursor, uniforms.current_cursor) or
                     !std.meta.eql(cursor_color, uniforms.current_cursor_color);
@@ -2358,6 +2369,19 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
                     uniforms.current_cursor_color = cursor_color;
                     uniforms.cursor_change_time = uniforms.time;
                 }
+            }
+
+            // Update focus uniforms
+            uniforms.focus = @intFromBool(self.focused);
+
+            // If we need to update the time our focus state changed
+            // then update it to our current frame time. This may not be
+            // exactly correct since it is frame time, not exact focus
+            // time, but focus time on its own isn't exactly correct anyways
+            // since it comes async from a message.
+            if (self.custom_shader_focused_changed and self.focused) {
+                uniforms.time_focus = uniforms.time;
+                self.custom_shader_focused_changed = false;
             }
         }
 

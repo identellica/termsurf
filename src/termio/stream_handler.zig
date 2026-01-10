@@ -952,6 +952,9 @@ pub const StreamHandler = struct {
 
         // Reset resets our palette so we report it for mode 2031.
         self.surfaceMessageWriter(.{ .report_color_scheme = false });
+
+        // Clear the progress bar
+        self.progressReport(.{ .state = .remove });
     }
 
     pub fn queryKittyKeyboard(self: *StreamHandler) !void {

@@ -4,7 +4,7 @@ const stream = @import("stream.zig");
 const Action = stream.Action;
 const Screen = @import("Screen.zig");
 const modes = @import("modes.zig");
-const osc_color = @import("osc/color.zig");
+const osc_color = @import("osc/parsers/color.zig");
 const kitty_color = @import("kitty/color.zig");
 const Terminal = @import("Terminal.zig");
 

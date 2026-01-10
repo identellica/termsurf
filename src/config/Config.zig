@@ -17,6 +17,7 @@ const assert = @import("../quirks.zig").inlineAssert;
 const Allocator = std.mem.Allocator;
 const ArenaAllocator = std.heap.ArenaAllocator;
 const global_state = &@import("../global.zig").state;
+const deepEqual = @import("../datastruct/comparison.zig").deepEqual;
 const fontpkg = @import("../font/main.zig");
 const inputpkg = @import("../input.zig");
 const internal_os = @import("../os/main.zig");
@@ -37,6 +38,7 @@ const RepeatableStringMap = @import("RepeatableStringMap.zig");
 pub const Path = @import("path.zig").Path;
 pub const RepeatablePath = @import("path.zig").RepeatablePath;
 const ClipboardCodepointMap = @import("ClipboardCodepointMap.zig");
+const KeyRemapSet = @import("../input/key_mods.zig").RemapSet;
 
 // We do this instead of importing all of terminal/main.zig to
 // limit the dependency graph. This is important because some things
@@ -1757,6 +1759,52 @@ class: ?[:0]const u8 = null,
 /// Key tables are available since Ghostty 1.3.0.
 keybind: Keybinds = .{},
 
+/// Remap modifier keys within Ghostty. This allows you to swap or reassign
+/// modifier keys at the application level without affecting system-wide
+/// settings.
+///
+/// The format is `from=to` where both `from` and `to` are modifier key names.
+/// You can use generic names like `ctrl`, `alt`, `shift`, `super` (macOS:
+/// `cmd`/`command`) or sided names like `left_ctrl`, `right_alt`, etc.
+///
+/// This will NOT change keyboard layout or key encodings outside of Ghostty.
+/// For example, on macOS, `option+a` may still produce `å` even if `option` is
+/// remapped to `ctrl`. Desktop environments usually handle key layout long
+/// before Ghostty receives the key events.
+///
+/// Example:
+///
+///     key-remap = ctrl=super
+///     key-remap = left_control=right_alt
+///
+/// Important notes:
+///
+/// * This is a one-way remap. If you remap `ctrl=super`, then the physical
+///   Ctrl key acts as Super, but the Super key remains Super.
+///
+/// * Remaps are not transitive. If you remap `ctrl=super` and `alt=ctrl`,
+///   pressing Alt will produce Ctrl, NOT Super.
+///
+/// * This affects both keybind matching and terminal input encoding.
+///   This does NOT impact keyboard layout or how keys are interpreted
+///   prior to Ghostty receiving them. For example, `option+a` on macOS
+///   may still produce `å` even if `option` is remapped to `ctrl`.
+///
+/// * Generic modifiers (e.g. `ctrl`) match both left and right physical keys.
+///   Use sided names (e.g. `left_ctrl`) to remap only one side.
+///
+/// There are other edge case scenarios that may not behave as expected
+/// but are working as intended the way this feature is designed:
+///
+/// * On macOS, bindings in the main menu will trigger before any remapping
+///   is done. This is because macOS itself handles menu activation and
+///   this happens before Ghostty receives the key event. To workaround
+///   this, you should unbind the menu items and rebind them using your
+///   desired modifier.
+///
+/// This configuration can be repeated to specify multiple remaps.
+@"key-remap": KeyRemapSet = .empty,
+
 /// Horizontal window padding. This applies padding between the terminal cells
 /// and the left and right window borders. The value is in points, meaning that
 /// it will be scaled appropriately for screen DPI.
@@ -1845,10 +1893,20 @@ keybind: Keybinds = .{},
 /// This setting is only supported currently on macOS.
 @"window-vsync": bool = true,
 
-/// If true, new windows and tabs will inherit the working directory of the
+/// If true, new windows will inherit the working directory of the
 /// previously focused window. If no window was previously focused, the default
 /// working directory will be used (the `working-directory` option).
 @"window-inherit-working-directory": bool = true,
+
+/// If true, new tabs will inherit the working directory of the
+/// previously focused tab. If no tab was previously focused, the default
+/// working directory will be used (the `working-directory` option).
+@"tab-inherit-working-directory": bool = true,
+
+/// If true, new split panes will inherit the working directory of the
+/// previously focused split. If no split was previously focused, the default
+/// working directory will be used (the `working-directory` option).
+@"split-inherit-working-directory": bool = true,
 
 /// If true, new windows and tabs will inherit the font size of the previously
 /// focused window. If no window was previously focused, the default font size
@@ -2783,6 +2841,22 @@ keybind: Keybinds = .{},
 ///    the same time as the `iTime` uniform, allowing you to compute the
 ///    time since the change by subtracting this from `iTime`.
 ///
+///  * `float iTimeFocus` - Timestamp when the surface last gained iFocus.
+///
+///    When the surface gains focus, this is set to the current value of
+///    `iTime`, similar to how `iTimeCursorChange` works. This allows you
+///    to compute the time since focus was gained or lost by calculating
+///    `iTime - iTimeFocus`. Use this to create animations that restart
+///    when the terminal regains focus.
+///
+///  * `int iFocus` - Current focus state of the surface.
+///
+///    Set to 1.0 when the surface is focused, 0.0 when unfocused. This
+///    allows shaders to detect unfocused state and avoid animation artifacts
+///    from large time deltas caused by infrequent "deceptive frames"
+///    (e.g., modifier key presses, link hover events in unfocused split panes).
+///    Check `iFocus > 0` to determine if the surface is currently focused.
+///
 /// If the shader fails to compile, the shader will be ignored. Any errors
 /// related to shader compilation will not show up as configuration errors
 /// and only show up in the log, since shader compilation happens after
@@ -2861,7 +2935,7 @@ keybind: Keybinds = .{},
 ///    Display a border around the alerted surface until the terminal is
 ///    re-focused or interacted with (such as on keyboard input).
 ///
-///    GTK only.
+///    Available since: 1.2.0 on GTK, 1.2.1 on macOS
 ///
 /// Example: `audio`, `no-audio`, `system`, `no-system`
 ///
@@ -4118,7 +4192,7 @@ pub fn changeConditionalState(
 
             // Conditional set contains the keys that this config uses. So we
             // only continue if we use this key.
-            if (self._conditional_set.contains(key) and !equalField(
+            if (self._conditional_set.contains(key) and !deepEqual(
                 @TypeOf(@field(self._conditional_state, field.name)),
                 @field(self._conditional_state, field.name),
                 @field(new, field.name),
@@ -4481,6 +4555,9 @@ pub fn finalize(self: *Config) !void {
     }
 
     self.@"faint-opacity" = std.math.clamp(self.@"faint-opacity", 0.0, 1.0);
+
+    // Finalize key remapping set for efficient lookups
+    self.@"key-remap".finalize();
 }
 
 /// Callback for src/cli/args.zig to allow us to handle special cases
@@ -4821,7 +4898,7 @@ pub fn changed(self: *const Config, new: *const Config, comptime key: Key) bool 
 
     const old_value = @field(self, field.name);
     const new_value = @field(new, field.name);
-    return !equalField(field.type, old_value, new_value);
+    return !deepEqual(field.type, old_value, new_value);
 }
 
 /// This yields a key for every changed field between old and new.
@@ -4848,91 +4925,6 @@ pub const ChangeIterator = struct {
         return null;
     }
 };
-
-/// A config-specific helper to determine if two values of the same
-/// type are equal. This isn't the same as std.mem.eql or std.testing.equals
-/// because we expect structs to implement their own equality.
-///
-/// This also doesn't support ALL Zig types, because we only add to it
-/// as we need types for the config.
-fn equalField(comptime T: type, old: T, new: T) bool {
-    // Do known named types first
-    switch (T) {
-        inline []const u8,
-        [:0]const u8,
-        => return std.mem.eql(u8, old, new),
-
-        []const [:0]const u8,
-        => {
-            if (old.len != new.len) return false;
-            for (old, new) |a, b| {
-                if (!std.mem.eql(u8, a, b)) return false;
-            }
-
-            return true;
-        },
-
-        else => {},
-    }
-
-    // Back into types of types
-    switch (@typeInfo(T)) {
-        .void => return true,
-
-        inline .bool,
-        .int,
-        .float,
-        .@"enum",
-        => return old == new,
-
-        .optional => |info| {
-            if (old == null and new == null) return true;
-            if (old == null or new == null) return false;
-            return equalField(info.child, old.?, new.?);
-        },
-
-        .@"struct" => |info| {
-            if (@hasDecl(T, "equal")) return old.equal(new);
-
-            // If a struct doesn't declare an "equal" function, we fall back
-            // to a recursive field-by-field compare.
-            inline for (info.fields) |field_info| {
-                if (!equalField(
-                    field_info.type,
-                    @field(old, field_info.name),
-                    @field(new, field_info.name),
-                )) return false;
-            }
-            return true;
-        },
-
-        .@"union" => |info| {
-            if (@hasDecl(T, "equal")) return old.equal(new);
-
-            const tag_type = info.tag_type.?;
-            const old_tag = std.meta.activeTag(old);
-            const new_tag = std.meta.activeTag(new);
-            if (old_tag != new_tag) return false;
-
-            inline for (info.fields) |field_info| {
-                if (@field(tag_type, field_info.name) == old_tag) {
-                    return equalField(
-                        field_info.type,
-                        @field(old, field_info.name),
-                        @field(new, field_info.name),
-                    );
-                }
-            }
-
-            unreachable;
-        },
-
-        else => {
-            @compileLog(T);
-            @compileError("unsupported field type");
-        },
-    }
-}
 
 /// This runs a heuristic to determine if we are likely running
 /// Ghostty in a CLI environment. We need this to change some behaviors.
@@ -6501,6 +6493,12 @@ pub const Keybinds = struct {
                 .{ .key = .{ .physical = .page_down }, .mods = .{ .super = true } },
                 .{ .scroll_page_down = {} },
             );
+            try self.set.putFlags(
+                alloc,
+                .{ .key = .{ .unicode = 'j' }, .mods = .{ .super = true } },
+                .{ .scroll_to_selection = {} },
+                .{ .performable = true },
+            );
 
             // Semantic prompts
             try self.set.put(
@@ -6638,6 +6636,12 @@ pub const Keybinds = struct {
                 alloc,
                 .{ .key = .{ .unicode = 'f' }, .mods = .{ .super = true } },
                 .start_search,
+                .{ .performable = true },
+            );
+            try self.set.putFlags(
+                alloc,
+                .{ .key = .{ .unicode = 'e' }, .mods = .{ .super = true } },
+                .search_selection,
                 .{ .performable = true },
             );
             try self.set.putFlags(
@@ -6868,7 +6872,7 @@ pub const Keybinds = struct {
                     const self_leaf = self_entry.value_ptr.*.leaf;
                     const other_leaf = other_entry.value_ptr.*.leaf;
 
-                    if (!equalField(
+                    if (!deepEqual(
                         inputpkg.Binding.Set.Leaf,
                         self_leaf,
                         other_leaf,
@@ -6882,7 +6886,7 @@ pub const Keybinds = struct {
                     if (self_chain.flags != other_chain.flags) return false;
                     if (self_chain.actions.items.len != other_chain.actions.items.len) return false;
                     for (self_chain.actions.items, other_chain.actions.items) |a1, a2| {
-                        if (!equalField(
+                        if (!deepEqual(
                             inputpkg.Binding.Action,
                             a1,
                             a2,
@@ -6897,7 +6901,7 @@ pub const Keybinds = struct {
 
     /// Like formatEntry but has an option to include docs.
     pub fn formatEntryDocs(self: Keybinds, formatter: formatterpkg.EntryFormatter, docs: bool) !void {
-        if (self.set.bindings.size == 0 and self.tables.count() == 0) {
+        if (self.set.bindings.count() == 0 and self.tables.count() == 0) {
             try formatter.formatEntry(void, {});
             return;
         }
@@ -6999,8 +7003,8 @@ pub const Keybinds = struct {
         // Note they turn into translated keys because they match
         // their ASCII mapping.
         const want =
-            \\keybind = ctrl+z>2=goto_tab:2
             \\keybind = ctrl+z>1=goto_tab:1
+            \\keybind = ctrl+z>2=goto_tab:2
             \\
         ;
         try std.testing.expectEqualStrings(want, buf.written());
@@ -7024,9 +7028,9 @@ pub const Keybinds = struct {
 
         // NB: This does not currently retain the order of the keybinds.
         const want =
-            \\a = ctrl+a>ctrl+c>t=new_tab
-            \\a = ctrl+a>ctrl+b>w=close_window
             \\a = ctrl+a>ctrl+b>n=new_window
+            \\a = ctrl+a>ctrl+b>w=close_window
+            \\a = ctrl+a>ctrl+c>t=new_tab
             \\a = ctrl+b>ctrl+d>a=previous_tab
             \\
         ;

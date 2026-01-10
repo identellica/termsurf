@@ -456,6 +456,9 @@ pub const Surface = struct {
 
         /// Wait after the command exits
         wait_after_command: bool = false,
+
+        /// Context for the new surface
+        context: apprt.surface.NewSurfaceContext = .window,
     };
 
     pub fn init(self: *Surface, app: *App, opts: Options) !void {
@@ -477,7 +480,7 @@ pub const Surface = struct {
         errdefer app.core_app.deleteSurface(self);
 
         // Shallow copy the config so that we can modify it.
-        var config = try apprt.surface.newConfig(app.core_app, &app.config);
+        var config = try apprt.surface.newConfig(app.core_app, &app.config, opts.context);
         defer config.deinit();
 
         // If we have a working directory from the options then we set it.
@@ -539,13 +542,20 @@ pub const Surface = struct {
         // If we have an initial input then we set it.
         if (opts.initial_input) |c_input| {
             const alloc = config.arenaAlloc();
+
+            // We need to escape the string because the "raw" field
+            // expects a Zig string.
+            var buf: std.Io.Writer.Allocating = .init(alloc);
+            defer buf.deinit();
+            try std.zig.stringEscape(
+                std.mem.sliceTo(c_input, 0),
+                &buf.writer,
+            );
+
             config.input.list.clearRetainingCapacity();
             try config.input.list.append(
                 alloc,
-                .{ .raw = try alloc.dupeZ(u8, std.mem.sliceTo(
-                    c_input,
-                    0,
-                )) },
+                .{ .raw = try buf.toOwnedSliceSentinel(0) },
             );
         }
 
@@ -894,14 +904,23 @@ pub const Surface = struct {
         };
     }
 
-    pub fn newSurfaceOptions(self: *const Surface) apprt.Surface.Options {
+    pub fn newSurfaceOptions(self: *const Surface, context: apprt.surface.NewSurfaceContext) apprt.Surface.Options {
         const font_size: f32 = font_size: {
             if (!self.app.config.@"window-inherit-font-size") break :font_size 0;
             break :font_size self.core_surface.font_size.points;
         };
 
+        const working_directory: ?[*:0]const u8 = wd: {
+            if (!apprt.surface.shouldInheritWorkingDirectory(context, &self.app.config)) break :wd null;
+            const cwd = self.core_surface.pwd(self.app.core_app.alloc) catch null orelse break :wd null;
+            defer self.app.core_app.alloc.free(cwd);
+            break :wd self.app.core_app.alloc.dupeZ(u8, cwd) catch null;
+        };
+
         return .{
             .font_size = font_size,
+            .working_directory = working_directory,
+            .context = context,
         };
     }
 
@@ -1523,8 +1542,11 @@ pub const CAPI = struct {
     }
 
     /// Returns the config to use for surfaces that inherit from this one.
-    export fn ghostty_surface_inherited_config(surface: *Surface) Surface.Options {
-        return surface.newSurfaceOptions();
+    export fn ghostty_surface_inherited_config(
+        surface: *Surface,
+        source: apprt.surface.NewSurfaceContext,
+    ) Surface.Options {
+        return surface.newSurfaceOptions(source);
     }
 
     /// Update the configuration to the provided config for only this surface.
@@ -1729,13 +1751,18 @@ pub const CAPI = struct {
     export fn ghostty_surface_key_is_binding(
         surface: *Surface,
         event: KeyEvent,
+        c_flags: ?*input.Binding.Flags.C,
     ) bool {
         const core_event = event.keyEvent().core() orelse {
             log.warn("error processing key event", .{});
             return false;
         };
 
-        return surface.core_surface.keyEventIsBinding(core_event);
+        const flags = surface.core_surface.keyEventIsBinding(
+            core_event,
+        ) orelse return false;
+        if (c_flags) |ptr| ptr.* = flags.cval();
+        return true;
     }
 
     /// Send raw text to the terminal. This is treated like a paste

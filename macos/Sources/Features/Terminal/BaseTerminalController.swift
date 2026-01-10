@@ -240,7 +240,7 @@ class BaseTerminalController: NSWindowController,
         // Do the split
         let newTree: SplitTree<Ghostty.SurfaceView>
         do {
-            newTree = try surfaceTree.insert(
+            newTree = try surfaceTree.inserting(
                 view: newView,
                 at: oldView,
                 direction: direction)
@@ -450,14 +450,14 @@ class BaseTerminalController: NSWindowController,
         }
 
         replaceSurfaceTree(
-            surfaceTree.remove(node),
+            surfaceTree.removing(node),
             moveFocusTo: nextFocus,
             moveFocusFrom: focusedSurface,
             undoAction: "Close Terminal"
         )
     }
 
-    private func replaceSurfaceTree(
+    func replaceSurfaceTree(
         _ newTree: SplitTree<Ghostty.SurfaceView>,
         moveFocusTo newView: Ghostty.SurfaceView? = nil,
         moveFocusFrom oldView: Ghostty.SurfaceView? = nil,
@@ -614,7 +614,7 @@ class BaseTerminalController: NSWindowController,
         guard surfaceTree.contains(target) else { return }
         
         // Equalize the splits
-        surfaceTree = surfaceTree.equalize()
+        surfaceTree = surfaceTree.equalized()
     }
     
     @objc private func ghosttyDidFocusSplit(_ notification: Notification) {
@@ -704,7 +704,7 @@ class BaseTerminalController: NSWindowController,
         
         // Perform the resize using the new SplitTree resize method
         do {
-            surfaceTree = try surfaceTree.resize(node: targetNode, by: amount, in: spatialDirection, with: bounds)
+            surfaceTree = try surfaceTree.resizing(node: targetNode, by: amount, in: spatialDirection, with: bounds)
         } catch {
             Ghostty.logger.warning("failed to resize split: \(error)")
         }
@@ -742,7 +742,7 @@ class BaseTerminalController: NSWindowController,
         }
 
         // Remove the surface from our tree
-        let removedTree = surfaceTree.remove(targetNode)
+        let removedTree = surfaceTree.removing(targetNode)
 
         // Create a new tree with the dragged surface and open a new window
         let newTree = SplitTree<Ghostty.SurfaceView>(view: target)
@@ -834,7 +834,15 @@ class BaseTerminalController: NSWindowController,
 
     private func applyTitleToWindow() {
         guard let window else { return }
-        window.title = titleOverride ?? lastComputedTitle
+        
+        if let titleOverride {
+            window.title = computeTitle(
+                title: titleOverride,
+                bell: focusedSurface?.bell ?? false)
+            return
+        }
+        
+        window.title = lastComputedTitle
     }
     
     func pwdDidChange(to: URL?) {
@@ -868,9 +876,9 @@ class BaseTerminalController: NSWindowController,
     }
 
     private func splitDidResize(node: SplitTree<Ghostty.SurfaceView>.Node, to newRatio: Double) {
-        let resizedNode = node.resize(to: newRatio)
+        let resizedNode = node.resizing(to: newRatio)
         do {
-            surfaceTree = try surfaceTree.replace(node: node, with: resizedNode)
+            surfaceTree = try surfaceTree.replacing(node: node, with: resizedNode)
         } catch {
             Ghostty.logger.warning("failed to replace node during split resize: \(error)")
         }
@@ -892,10 +900,10 @@ class BaseTerminalController: NSWindowController,
         // Check if source is in our tree
         if let sourceNode = surfaceTree.root?.node(view: source) {
             // Source is in our tree - same window move
-            let treeWithoutSource = surfaceTree.remove(sourceNode)
+            let treeWithoutSource = surfaceTree.removing(sourceNode)
             let newTree: SplitTree<Ghostty.SurfaceView>
             do {
-                newTree = try treeWithoutSource.insert(view: source, at: destination, direction: direction)
+                newTree = try treeWithoutSource.inserting(view: source, at: destination, direction: direction)
             } catch {
                 Ghostty.logger.warning("failed to insert surface during drop: \(error)")
                 return
@@ -930,10 +938,9 @@ class BaseTerminalController: NSWindowController,
         // Remove from source controller's tree and add it to our tree.
         // We do this first because if there is an error then we can
         // abort.
-        let sourceTreeWithoutNode = sourceController.surfaceTree.remove(sourceNode)
         let newTree: SplitTree<Ghostty.SurfaceView>
         do {
-            newTree = try surfaceTree.insert(view: source, at: destination, direction: direction)
+            newTree = try surfaceTree.inserting(view: source, at: destination, direction: direction)
         } catch {
             Ghostty.logger.warning("failed to insert surface during cross-window drop: \(error)")
             return
@@ -946,26 +953,8 @@ class BaseTerminalController: NSWindowController,
             undoManager?.endUndoGrouping()
         }
         
-        if sourceTreeWithoutNode.isEmpty {
-            // If our source tree is becoming empty, then we're closing this terminal.
-            // We need to handle this carefully to get undo to work properly. If the
-            // controller is a TerminalController this is easy because it has a way
-            // to do this.
-            if let c = sourceController as? TerminalController {
-                c.closeTabImmediately()
-            } else {
-                // Not a TerminalController so we always undo into a new window.
-                _ = TerminalController.newWindow(
-                    sourceController.ghostty,
-                    tree: sourceController.surfaceTree,
-                    confirmUndo: false)
-            }
-        } else {
-            // The source isn't empty so we can do a simple replace which will handle
-            // the undo properly.
-            sourceController.replaceSurfaceTree(
-                sourceTreeWithoutNode)
-        }
+        // Remove the node from the source.
+        sourceController.removeSurfaceNode(sourceNode)
         
         // Add in the surface to our tree
         replaceSurfaceTree(
@@ -1383,7 +1372,15 @@ class BaseTerminalController: NSWindowController,
     @IBAction func find(_ sender: Any) {
         focusedSurface?.find(sender)
     }
-    
+
+    @IBAction func selectionForFind(_ sender: Any) {
+        focusedSurface?.selectionForFind(sender)
+    }
+
+    @IBAction func scrollToSelection(_ sender: Any) {
+        focusedSurface?.scrollToSelection(sender)
+    }
+
     @IBAction func findNext(_ sender: Any) {
         focusedSurface?.findNext(sender)
     }

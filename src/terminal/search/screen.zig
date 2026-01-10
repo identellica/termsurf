@@ -412,6 +412,12 @@ pub const ScreenSearch = struct {
             // pages then we need to re-search the pages and add it to
             // our history results.
 
+            // If our screen has no scrollback then we have no history.
+            if (self.screen.no_scrollback) {
+                assert(self.history == null);
+                break :history;
+            }
+
             const history_: ?*HistorySearch = if (self.history) |*h| state: {
                 // If our start pin became garbage, it means we pruned all
                 // the way up through it, so we have no history anymore.
@@ -575,8 +581,43 @@ pub const ScreenSearch = struct {
             },
         }
 
-        // Active area search was successful. Now we have to fixup our
-        // selection if we had one.
+        // If we have no scrollback, we need to prune any active results
+        // that aren't in the actual active area. We only do this for the
+        // no scrollback scenario because with scrollback we actually
+        // rely on our active search searching by page to find history
+        // items as well. This is all related to the fact that PageList
+        // scrollback limits are discrete by page size except we special
+        // case zero.
+        if (self.screen.no_scrollback and
+            self.active_results.items.len > 0)
+        active_prune: {
+            const items = self.active_results.items;
+            const tl = self.screen.pages.getTopLeft(.active);
+            for (0.., items) |i, *hl| {
+                if (!tl.before(hl.endPin())) {
+                    // Deinit because its going to be pruned no matter
+                    // what at some point for not being in the active area.
+                    hl.deinit(alloc);
+                    continue;
+                }
+
+                // In the active area! Since our results are sorted
+                // that means everything after this is also in the active
+                // area, so we prune up to this i.
+                if (i > 0) self.active_results.replaceRangeAssumeCapacity(
+                    0,
+                    i,
+                    &.{},
+                );
+
+                break :active_prune;
+            }
+
+            // None are in the active area...
+            self.active_results.clearRetainingCapacity();
+        }
+
+        // Now we have to fixup our selection if we had one.
         fixup: {
             const old_idx = old_selection_idx orelse break :fixup;
             const m = if (self.selected) |*m| m else break :fixup;
@@ -1332,4 +1373,38 @@ test "select prev with history" {
             .y = 1,
         } }, t.screens.active.pages.pointFromPin(.active, sel.end).?);
     }
+}
+
+test "screen search no scrollback has no history" {
+    const alloc = testing.allocator;
+    var t: Terminal = try .init(alloc, .{
+        .cols = 10,
+        .rows = 2,
+        .max_scrollback = 0,
+    });
+    defer t.deinit(alloc);
+
+    // Alt screen has no scrollback
+    _ = try t.switchScreen(.alternate);
+
+    var s = t.vtStream();
+    defer s.deinit();
+
+    // This will probably stop working at some point and we'll have
+    // no way to test it using public APIs, but at the time of writing
+    // this test, CSI 22 J (scroll complete) pushes into scrollback
+    // with alt screen.
+    try s.nextSlice("Fizz\r\n");
+    try s.nextSlice("\x1b[22J");
+    try s.nextSlice("hello.");
+
+    var search: ScreenSearch = try .init(alloc, t.screens.active, "Fizz");
+    defer search.deinit();
+    try search.searchAll();
+    try testing.expectEqual(0, search.active_results.items.len);
+
+    // Get all matches
+    const matches = try search.matches(alloc);
+    defer alloc.free(matches);
+    try testing.expectEqual(0, matches.len);
 }

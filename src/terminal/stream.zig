@@ -2108,7 +2108,7 @@ pub fn Stream(comptime Handler: type) type {
                 .conemu_wait_input,
                 .conemu_guimacro,
                 => {
-                    log.warn("unimplemented OSC callback: {}", .{cmd});
+                    log.debug("unimplemented OSC callback: {}", .{cmd});
                 },
 
                 .invalid => {

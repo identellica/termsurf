@@ -19,6 +19,7 @@ extend-exclude = [
   # Fonts
   "*.ttf",
   "*.otf",
+  "*.bdf",
   # Images
   "*.png",
   "*.ico",

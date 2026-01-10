@@ -8,16 +8,16 @@ import GhosttyKit
 class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Controller {
     override var windowNibName: NSNib.Name? {
         let defaultValue = "Terminal"
-
+        
         guard let appDelegate = NSApp.delegate as? AppDelegate else { return defaultValue }
         let config = appDelegate.ghostty.config
-
+        
         // If we have no window decorations, there's no reason to do anything but
         // the default titlebar (because there will be no titlebar).
         if !config.windowDecorations {
             return defaultValue
         }
-
+        
         let nib = switch config.macosTitlebarStyle {
         case "native": "Terminal"
         case "hidden": "TerminalHiddenTitlebar"
@@ -34,33 +34,33 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
 #endif
         default: defaultValue
         }
-
+        
         return nib
     }
-
+    
     /// This is set to true when we care about frame changes. This is a small optimization since
     /// this controller registers a listener for ALL frame change notifications and this lets us bail
     /// early if we don't care.
     private var tabListenForFrame: Bool = false
-
+    
     /// This is the hash value of the last tabGroup.windows array. We use this to detect order
     /// changes in the list.
     private var tabWindowsHash: Int = 0
-
+    
     /// This is set to false by init if the window managed by this controller should not be restorable.
     /// For example, terminals executing custom scripts are not restorable.
     private var restorable: Bool = true
-
+    
     /// The configuration derived from the Ghostty config so we don't need to rely on references.
     private(set) var derivedConfig: DerivedConfig
-
-
+    
+    
     /// The notification cancellable for focused surface property changes.
     private var surfaceAppearanceCancellables: Set<AnyCancellable> = []
-
+    
     /// This will be set to the initial frame of the window from the xib on load.
     private var initialFrame: NSRect? = nil
-
+    
     init(_ ghostty: Ghostty.App,
          withBaseConfig base: Ghostty.SurfaceConfiguration? = nil,
          withSurfaceTree tree: SplitTree<Ghostty.SurfaceView>? = nil,
@@ -72,12 +72,12 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         // as the script. We may want to revisit this behavior when we have scrollback
         // restoration.
         self.restorable = (base?.command ?? "") == ""
-
+        
         // Setup our initial derived config based on the current app config
         self.derivedConfig = DerivedConfig(ghostty.config)
-
+        
         super.init(ghostty, baseConfig: base, surfaceTree: tree)
-
+        
         // Setup our notifications for behaviors
         let center = NotificationCenter.default
         center.addObserver(
@@ -134,35 +134,55 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
             object: nil
         )
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported for this view")
     }
-
+    
     deinit {
         // Remove all of our notificationcenter subscriptions
         let center = NotificationCenter.default
         center.removeObserver(self)
     }
-
+    
     // MARK: Base Controller Overrides
-
+    
     override func surfaceTreeDidChange(from: SplitTree<Ghostty.SurfaceView>, to: SplitTree<Ghostty.SurfaceView>) {
         super.surfaceTreeDidChange(from: from, to: to)
-
+        
         // Whenever our surface tree changes in any way (new split, close split, etc.)
         // we want to invalidate our state.
         invalidateRestorableState()
-
+        
         // Update our zoom state
         if let window = window as? TerminalWindow {
             window.surfaceIsZoomed = to.zoomed != nil
         }
-
+        
         // If our surface tree is now nil then we close our window.
         if (to.isEmpty) {
             self.window?.close()
         }
+    }
+    
+    override func replaceSurfaceTree(
+        _ newTree: SplitTree<Ghostty.SurfaceView>,
+        moveFocusTo newView: Ghostty.SurfaceView? = nil,
+        moveFocusFrom oldView: Ghostty.SurfaceView? = nil,
+        undoAction: String? = nil
+    ) {
+        // We have a special case if our tree is empty to close our tab immediately.
+        // This makes it so that undo is handled properly.
+        if newTree.isEmpty {
+            closeTabImmediately()
+            return
+        }
+        
+        super.replaceSurfaceTree(
+            newTree,
+            moveFocusTo: newView,
+            moveFocusFrom: oldView,
+            undoAction: undoAction)
     }
 
     // MARK: Terminal Creation

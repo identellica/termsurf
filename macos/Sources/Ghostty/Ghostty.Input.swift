@@ -100,6 +100,32 @@ extension Ghostty {
     ]
 }
 
+// MARK: Ghostty.Input.BindingFlags
+
+extension Ghostty.Input {
+    /// `ghostty_binding_flags_e`
+    struct BindingFlags: OptionSet, Sendable {
+        let rawValue: UInt32
+
+        static let consumed = BindingFlags(rawValue: GHOSTTY_BINDING_FLAGS_CONSUMED.rawValue)
+        static let all = BindingFlags(rawValue: GHOSTTY_BINDING_FLAGS_ALL.rawValue)
+        static let global = BindingFlags(rawValue: GHOSTTY_BINDING_FLAGS_GLOBAL.rawValue)
+        static let performable = BindingFlags(rawValue: GHOSTTY_BINDING_FLAGS_PERFORMABLE.rawValue)
+
+        init(rawValue: UInt32) {
+            self.rawValue = rawValue
+        }
+
+        init(cFlags: ghostty_binding_flags_e) {
+            self.rawValue = cFlags.rawValue
+        }
+
+        var cFlags: ghostty_binding_flags_e {
+            ghostty_binding_flags_e(rawValue)
+        }
+    }
+}
+
 // MARK: Ghostty.Input.KeyEvent
 
 extension Ghostty.Input {

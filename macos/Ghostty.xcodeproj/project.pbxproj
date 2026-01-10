@@ -152,7 +152,6 @@
 				Helpers/AppInfo.swift,
 				Helpers/CodableBridge.swift,
 				Helpers/Cursor.swift,
-				Helpers/DraggableWindowView.swift,
 				Helpers/ExpiringUndoManager.swift,
 				"Helpers/Extensions/Double+Extension.swift",
 				"Helpers/Extensions/EventModifiers+Extension.swift",

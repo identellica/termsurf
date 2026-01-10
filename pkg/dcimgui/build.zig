@@ -64,7 +64,7 @@ pub fn build(b: *std.Build) !void {
             "-DIMGUI_IMPL_API=extern\t\"C\"",
         });
     }
-    if (target.result.os.tag == .freebsd) {
+    if (target.result.os.tag == .freebsd or target.result.abi == .musl) {
         try flags.append(b.allocator, "-fPIC");
     }
 

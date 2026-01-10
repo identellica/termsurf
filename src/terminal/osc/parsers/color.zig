@@ -1,10 +1,15 @@
 const std = @import("std");
 const Allocator = std.mem.Allocator;
-const DynamicColor = @import("../color.zig").Dynamic;
-const SpecialColor = @import("../color.zig").Special;
-const RGB = @import("../color.zig").RGB;
 
-pub const ParseError = Allocator.Error || error{
+const DynamicColor = @import("../../color.zig").Dynamic;
+const SpecialColor = @import("../../color.zig").Special;
+const RGB = @import("../../color.zig").RGB;
+const Parser = @import("../../osc.zig").Parser;
+const Command = @import("../../osc.zig").Command;
+
+const log = std.log.scoped(.osc_color);
+
+const ParseError = Allocator.Error || error{
     MissingOperation,
 };
 
@@ -36,6 +41,76 @@ pub const Operation = enum {
     osc_119,
 };
 
+/// Parse OSCs 4, 5, 10-19, 104, 110-119
+pub fn parse(parser: *Parser, terminator_ch: ?u8) ?*Command {
+    const alloc = parser.alloc orelse {
+        parser.state = .invalid;
+        return null;
+    };
+    // If we've collected any extra data parse that, otherwise use an empty
+    // string.
+    const data = data: {
+        const writer = parser.writer orelse break :data "";
+        break :data writer.buffered();
+    };
+    // Check and make sure that we're parsing the correct OSCs
+    const op: Operation = switch (parser.state) {
+        .@"4" => .osc_4,
+        .@"5" => .osc_5,
+        .@"10" => .osc_10,
+        .@"11" => .osc_11,
+        .@"12" => .osc_12,
+        .@"13" => .osc_13,
+        .@"14" => .osc_14,
+        .@"15" => .osc_15,
+        .@"16" => .osc_16,
+        .@"17" => .osc_17,
+        .@"18" => .osc_18,
+        .@"19" => .osc_19,
+        .@"104" => .osc_104,
+        .@"110" => .osc_110,
+        .@"111" => .osc_111,
+        .@"112" => .osc_112,
+        .@"113" => .osc_113,
+        .@"114" => .osc_114,
+        .@"115" => .osc_115,
+        .@"116" => .osc_116,
+        .@"117" => .osc_117,
+        .@"118" => .osc_118,
+        .@"119" => .osc_119,
+        else => {
+            parser.state = .invalid;
+            return null;
+        },
+    };
+    parser.command = .{
+        .color_operation = .{
+            .op = op,
+            .requests = parseColor(alloc, op, data) catch |err| list: {
+                log.info(
+                    "failed to parse OSC {t} color request err={} data={s}",
+                    .{ parser.state, err, data },
+                );
+                break :list .{};
+            },
+            .terminator = .init(terminator_ch),
+        },
+    };
+    return &parser.command;
+}
+
+test "OSC 4: empty param" {
+    const testing = std.testing;
+
+    var p: Parser = .init(null);
+
+    const input = "4;;";
+    for (input) |ch| p.next(ch);
+
+    const cmd = p.end('\x1b');
+    try testing.expect(cmd == null);
+}
+
 /// Parse any color operation string. This should NOT include the operation
 /// itself, but only the body of the operation. e.g. for "4;a;b;c" the body
 /// should be "a;b;c" and the operation should be set accordingly.
@@ -46,7 +121,7 @@ pub const Operation = enum {
 /// request) but grants us an easier to understand and testable implementation.
 ///
 /// If color changing ends up being a bottleneck we can optimize this later.
-pub fn parse(
+fn parseColor(
     alloc: Allocator,
     op: Operation,
     buf: []const u8,
@@ -295,7 +370,7 @@ test "OSC 4:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_4, body);
+            var list = try parseColor(alloc, .osc_4, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -317,7 +392,7 @@ test "OSC 4:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_4, body);
+            var list = try parseColor(alloc, .osc_4, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -336,7 +411,7 @@ test "OSC 4:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_4, body);
+            var list = try parseColor(alloc, .osc_4, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -360,7 +435,7 @@ test "OSC 4:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_4, body);
+            var list = try parseColor(alloc, .osc_4, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -387,7 +462,7 @@ test "OSC 4:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_4, body);
+            var list = try parseColor(alloc, .osc_4, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -419,7 +494,7 @@ test "OSC 5:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_5, body);
+            var list = try parseColor(alloc, .osc_5, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -439,7 +514,7 @@ test "OSC 4: multiple requests" {
 
     // printf '\e]4;0;red;1;blue\e\\'
     {
-        var list = try parse(
+        var list = try parseColor(
             alloc,
             .osc_4,
             "0;red;1;blue",
@@ -465,7 +540,7 @@ test "OSC 4: multiple requests" {
     // Multiple requests with same index overwrite each other
     // printf '\e]4;0;red;0;blue\e\\'
     {
-        var list = try parse(
+        var list = try parseColor(
             alloc,
             .osc_4,
             "0;red;0;blue",
@@ -505,7 +580,7 @@ test "OSC 104:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_104, body);
+            var list = try parseColor(alloc, .osc_104, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -529,7 +604,7 @@ test "OSC 104:" {
             );
             defer alloc.free(body);
 
-            var list = try parse(alloc, .osc_104, body);
+            var list = try parseColor(alloc, .osc_104, body);
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -544,7 +619,7 @@ test "OSC 104: empty index" {
     const testing = std.testing;
     const alloc = testing.allocator;
 
-    var list = try parse(alloc, .osc_104, "0;;1");
+    var list = try parseColor(alloc, .osc_104, "0;;1");
     defer list.deinit(alloc);
     try testing.expectEqual(2, list.count());
     try testing.expectEqual(
@@ -561,7 +636,7 @@ test "OSC 104: invalid index" {
     const testing = std.testing;
     const alloc = testing.allocator;
 
-    var list = try parse(alloc, .osc_104, "ffff;1");
+    var list = try parseColor(alloc, .osc_104, "ffff;1");
     defer list.deinit(alloc);
     try testing.expectEqual(1, list.count());
     try testing.expectEqual(
@@ -574,7 +649,7 @@ test "OSC 104: reset all" {
     const testing = std.testing;
     const alloc = testing.allocator;
 
-    var list = try parse(alloc, .osc_104, "");
+    var list = try parseColor(alloc, .osc_104, "");
     defer list.deinit(alloc);
     try testing.expectEqual(1, list.count());
     try testing.expectEqual(
@@ -587,7 +662,7 @@ test "OSC 105: reset all" {
     const testing = std.testing;
     const alloc = testing.allocator;
 
-    var list = try parse(alloc, .osc_105, "");
+    var list = try parseColor(alloc, .osc_105, "");
     defer list.deinit(alloc);
     try testing.expectEqual(1, list.count());
     try testing.expectEqual(
@@ -611,7 +686,7 @@ test "OSC 10: OSC 11: OSC 12: OSC: 13: OSC 14: OSC 15: OSC: 16: OSC 17: OSC 18: 
         // Example script:
         // printf '\e]10;red\e\\'
         {
-            var list = try parse(alloc, op, "red");
+            var list = try parseColor(alloc, op, "red");
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -632,7 +707,7 @@ test "OSC 10: OSC 11: OSC 12: OSC: 13: OSC 14: OSC 15: OSC: 16: OSC 17: OSC 18: 
     // Example script:
     // printf '\e]11;red;blue\e\\'
     {
-        var list = try parse(
+        var list = try parseColor(
             alloc,
             .osc_11,
             "red;blue",
@@ -671,7 +746,7 @@ test "OSC 110: OSC 111: OSC 112: OSC: 113: OSC 114: OSC 115: OSC: 116: OSC 117: 
         // Example script:
         // printf '\e]110\e\\'
         {
-            var list = try parse(alloc, op, "");
+            var list = try parseColor(alloc, op, "");
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -684,7 +759,7 @@ test "OSC 110: OSC 111: OSC 112: OSC: 113: OSC 114: OSC 115: OSC: 116: OSC 117: 
         //
         // printf '\e]110;\e\\'
         {
-            var list = try parse(alloc, op, ";");
+            var list = try parseColor(alloc, op, ";");
             defer list.deinit(alloc);
             try testing.expectEqual(1, list.count());
             try testing.expectEqual(
@@ -697,7 +772,7 @@ test "OSC 110: OSC 111: OSC 112: OSC: 113: OSC 114: OSC 115: OSC: 116: OSC 117: 
         //
         // printf '\e]110 \e\\'
         {
-            var list = try parse(alloc, op, " ");
+            var list = try parseColor(alloc, op, " ");
             defer list.deinit(alloc);
             try testing.expectEqual(0, list.count());
         }

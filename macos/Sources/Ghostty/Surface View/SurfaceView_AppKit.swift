@@ -1184,7 +1184,7 @@ extension Ghostty {
             // We only care about key down events. It might not even be possible
             // to receive any other event type here.
             guard event.type == .keyDown else { return false }
-
+            
             // Only process events if we're focused. Some key events like C-/ macOS
             // appears to send to the first view in the hierarchy rather than the
             // the first responder (I don't know why). This prevents us from handling it.
@@ -1194,18 +1194,35 @@ extension Ghostty {
             if (!focused) {
                 return false
             }
-
-            // If this event as-is would result in a key binding then we send it.
-            if let surface {
+            
+            // Get information about if this is a binding.
+            let bindingFlags = surfaceModel.flatMap { surface in
                 var ghosttyEvent = event.ghosttyKeyEvent(GHOSTTY_ACTION_PRESS)
-                let match = (event.characters ?? "").withCString { ptr in
+                return (event.characters ?? "").withCString { ptr in
                     ghosttyEvent.text = ptr
-                    return ghostty_surface_key_is_binding(surface, ghosttyEvent)
+                    return surface.keyIsBinding(ghosttyEvent)
                 }
-                if match {
-                    self.keyDown(with: event)
-                    return true
+            }
+            
+            // If this is a binding then we want to perform it.
+            if let bindingFlags {
+                // Attempt to trigger a menu item for this key binding. We only do this if:
+                //   - We're not in a key sequence or table (those are separate bindings)
+                //   - The binding is NOT `all` (menu uses FirstResponder chain)
+                //   - The binding is NOT `performable` (menu will always consume)
+                //   - The binding is `consumed` (unconsumed bindings should pass through
+                //     to the terminal, so we must not intercept them for the menu)
+                if keySequence.isEmpty,
+                   keyTables.isEmpty,
+                   bindingFlags.isDisjoint(with: [.all, .performable]),
+                   bindingFlags.contains(.consumed) {
+                    if let menu = NSApp.mainMenu, menu.performKeyEquivalent(with: event) {
+                        return true
+                    }
                 }
+                
+                self.keyDown(with: event)
+                return true
             }
 
             let equivalent: String
@@ -1506,6 +1523,22 @@ extension Ghostty {
         @IBAction func find(_ sender: Any?) {
             guard let surface = self.surface else { return }
             let action = "start_search"
+            if (!ghostty_surface_binding_action(surface, action, UInt(action.lengthOfBytes(using: .utf8)))) {
+                AppDelegate.logger.warning("action failed action=\(action)")
+            }
+        }
+
+        @IBAction func selectionForFind(_ sender: Any?) {
+            guard let surface = self.surface else { return }
+            let action = "search_selection"
+            if (!ghostty_surface_binding_action(surface, action, UInt(action.lengthOfBytes(using: .utf8)))) {
+                AppDelegate.logger.warning("action failed action=\(action)")
+            }
+        }
+
+        @IBAction func scrollToSelection(_ sender: Any?) {
+            guard let surface = self.surface else { return }
+            let action = "scroll_to_selection"
             if (!ghostty_surface_binding_action(surface, action, UInt(action.lengthOfBytes(using: .utf8)))) {
                 AppDelegate.logger.warning("action failed action=\(action)")
             }
@@ -2209,7 +2242,7 @@ extension Ghostty.SurfaceView {
 
         return NSAttributedString(string: plainString, attributes: attributes)
     }
-    
+
 }
 
 /// Caches a value for some period of time, evicting it automatically when that time expires.

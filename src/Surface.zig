@@ -327,12 +327,13 @@ const DerivedConfig = struct {
     window_width: u32,
     title: ?[:0]const u8,
     title_report: bool,
-    links: []Link,
+    links: []DerivedConfig.Link,
     link_previews: configpkg.LinkPreviews,
     scroll_to_bottom: configpkg.Config.ScrollToBottom,
     notify_on_command_finish: configpkg.Config.NotifyOnCommandFinish,
     notify_on_command_finish_action: configpkg.Config.NotifyOnCommandFinishAction,
     notify_on_command_finish_after: Duration,
+    key_remaps: input.KeyRemapSet,
 
     const Link = struct {
         regex: oni.Regex,
@@ -347,7 +348,7 @@ const DerivedConfig = struct {
 
         // Build all of our links
         const links = links: {
-            var links: std.ArrayList(Link) = .empty;
+            var links: std.ArrayList(DerivedConfig.Link) = .empty;
             defer links.deinit(alloc);
             for (config.link.links.items) |link| {
                 var regex = try link.oniRegex();
@@ -408,6 +409,7 @@ const DerivedConfig = struct {
             .notify_on_command_finish = config.@"notify-on-command-finish",
             .notify_on_command_finish_action = config.@"notify-on-command-finish-action",
             .notify_on_command_finish_after = config.@"notify-on-command-finish-after",
+            .key_remaps = try config.@"key-remap".clone(alloc),
 
             // Assignments happen sequentially so we have to do this last
             // so that the memory is captured from allocs above.
@@ -1599,10 +1601,10 @@ fn mouseRefreshLinks(
         }
 
         const link = (try self.linkAtPos(pos)) orelse break :link .{ null, false };
-        switch (link[0]) {
+        switch (link.action) {
             .open => {
                 const str = try self.io.terminal.screens.active.selectionString(alloc, .{
-                    .sel = link[1],
+                    .sel = link.selection,
                     .trim = false,
                 });
                 break :link .{
@@ -1613,7 +1615,7 @@ fn mouseRefreshLinks(
 
             ._open_osc8 => {
                 // Show the URL in the status bar
-                const pin = link[1].start();
+                const pin = link.selection.start();
                 const uri = self.osc8URI(pin) orelse {
                     log.warn("failed to get URI for OSC8 hyperlink", .{});
                     break :link .{ null, false };
@@ -2576,38 +2578,60 @@ pub fn preeditCallback(self: *Surface, preedit_: ?[]const u8) !void {
 /// then Ghosty will act as though the binding does not exist.
 pub fn keyEventIsBinding(
     self: *Surface,
-    event: input.KeyEvent,
-) bool {
+    event_orig: input.KeyEvent,
+) ?input.Binding.Flags {
+    // Apply key remappings for consistency with keyCallback
+    var event = event_orig;
+    if (self.config.key_remaps.isRemapped(event_orig.mods)) {
+        event.mods = self.config.key_remaps.apply(event_orig.mods);
+    }
+
     switch (event.action) {
-        .release => return false,
+        .release => return null,
         .press, .repeat => {},
     }
 
-    // If we're in a sequence, check the sequence set
-    if (self.keyboard.sequence_set) |set| {
-        return set.getEvent(event) != null;
-    }
-
-    // Check active key tables (inner-most to outer-most)
-    const table_items = self.keyboard.table_stack.items;
-    for (0..table_items.len) |i| {
-        const rev_i: usize = table_items.len - 1 - i;
-        if (table_items[rev_i].set.getEvent(event) != null) {
-            return true;
+    // Look up our entry
+    const entry: input.Binding.Set.Entry = entry: {
+        // If we're in a sequence, check the sequence set
+        if (self.keyboard.sequence_set) |set| {
+            break :entry set.getEvent(event) orelse return null;
         }
-    }
 
-    // Check the root set
-    return self.config.keybind.set.getEvent(event) != null;
+        // Check active key tables (inner-most to outer-most)
+        const table_items = self.keyboard.table_stack.items;
+        for (0..table_items.len) |i| {
+            const rev_i: usize = table_items.len - 1 - i;
+            if (table_items[rev_i].set.getEvent(event)) |entry| {
+                break :entry entry;
+            }
+        }
+
+        // Check the root set
+        break :entry self.config.keybind.set.getEvent(event) orelse return null;
+    };
+
+    // Return flags based on the
+    return switch (entry.value_ptr.*) {
+        .leader => .{},
+        inline .leaf, .leaf_chained => |v| v.flags,
+    };
 }
 
 /// Called for any key events. This handles keybindings, encoding and
 /// sending to the terminal, etc.
 pub fn keyCallback(
     self: *Surface,
-    event: input.KeyEvent,
+    event_orig: input.KeyEvent,
 ) !InputEffect {
-    // log.warn("text keyCallback event={}", .{event});
+    // log.warn("text keyCallback event={}", .{event_orig});
+
+    // Apply key remappings to transform modifiers before any processing.
+    // This allows users to remap modifier keys at the app level.
+    var event = event_orig;
+    if (self.config.key_remaps.isRemapped(event_orig.mods)) {
+        event.mods = self.config.key_remaps.apply(event_orig.mods);
+    }
 
     // Crash metadata in case we crash in here
     crash.sentry.thread_state = self.crashThreadState();
@@ -2645,7 +2669,6 @@ pub fn keyCallback(
         event,
         if (insp_ev) |*ev| ev else null,
     )) |v| return v;
-
     // If we allow KAM and KAM is enabled then we do nothing.
     if (self.config.vt_kam_allowed) {
         self.renderer_state.mutex.lock();
@@ -4141,9 +4164,24 @@ pub fn mouseButtonCallback(
                 }
             },
 
-            // Double click, select the word under our mouse
+            // Double click, select the word under our mouse.
+            // First try to detect if we're clicking on a URL to select the entire URL.
             2 => {
-                const sel_ = self.io.terminal.screens.active.selectWord(pin.*);
+                const sel_ = sel: {
+                    // Try link detection without requiring modifier keys
+                    if (self.linkAtPin(
+                        pin.*,
+                        null,
+                    )) |result_| {
+                        if (result_) |result| {
+                            break :sel result.selection;
+                        }
+                    } else |_| {
+                        // Ignore any errors, likely regex errors.
+                    }
+
+                    break :sel self.io.terminal.screens.active.selectWord(pin.*);
+                };
                 if (sel_) |sel| {
                     try self.io.terminal.screens.active.select(sel);
                     try self.queueRender();
@@ -4331,16 +4369,18 @@ fn clickMoveCursor(self: *Surface, to: terminal.Pin) !void {
     }
 }
 
+const Link = struct {
+    action: input.Link.Action,
+    selection: terminal.Selection,
+};
+
 /// Returns the link at the given cursor position, if any.
 ///
 /// Requires the renderer mutex is held.
 fn linkAtPos(
     self: *Surface,
     pos: apprt.CursorPos,
-) !?struct {
-    input.Link.Action,
-    terminal.Selection,
-} {
+) !?Link {
     // Convert our cursor position to a screen point.
     const screen: *terminal.Screen = self.renderer_state.terminal.screens.active;
     const mouse_pin: terminal.Pin = mouse_pin: {
@@ -4361,14 +4401,27 @@ fn linkAtPos(
         const cell = rac.cell;
         if (!cell.hyperlink) break :hyperlink;
         const sel = terminal.Selection.init(mouse_pin, mouse_pin, false);
-        return .{ ._open_osc8, sel };
+        return .{ .action = ._open_osc8, .selection = sel };
     }
 
-    // If we have no OSC8 links then we fallback to regex-based URL detection.
-    // If we have no configured links we can save a lot of work going forward.
+    // Fall back to configured links
+    return try self.linkAtPin(mouse_pin, mouse_mods);
+}
+
+/// Detects if a link is present at the given pin.
+///
+/// If mouse mods is null then mouse mod requirements are ignored (all
+/// configured links are checked).
+///
+/// Requires the renderer state mutex is held.
+fn linkAtPin(
+    self: *Surface,
+    mouse_pin: terminal.Pin,
+    mouse_mods: ?input.Mods,
+) !?Link {
     if (self.config.links.len == 0) return null;
 
-    // Get the line we're hovering over.
+    const screen: *terminal.Screen = self.renderer_state.terminal.screens.active;
     const line = screen.selectLine(.{
         .pin = mouse_pin,
         .whitespace = null,
@@ -4383,12 +4436,12 @@ fn linkAtPos(
     }));
     defer strmap.deinit(self.alloc);
 
-    // Go through each link and see if we clicked it
     for (self.config.links) |link| {
-        switch (link.highlight) {
+        // Skip highlight/mods check when mouse_mods is null (double-click mode)
+        if (mouse_mods) |mods| switch (link.highlight) {
             .always, .hover => {},
-            .always_mods, .hover_mods => |v| if (!v.equal(mouse_mods)) continue,
-        }
+            .always_mods, .hover_mods => |v| if (!v.equal(mods)) continue,
+        };
 
         var it = strmap.searchIterator(link.regex);
         while (true) {
@@ -4396,7 +4449,10 @@ fn linkAtPos(
             defer match.deinit();
             const sel = match.selection();
             if (!sel.contains(screen, mouse_pin)) continue;
-            return .{ link.action, sel };
+            return .{
+                .action = link.action,
+                .selection = sel,
+            };
         }
     }
 
@@ -4427,11 +4483,11 @@ fn mouseModsWithCapture(self: *Surface, mods: input.Mods) input.Mods {
 ///
 /// Requires the renderer state mutex is held.
 fn processLinks(self: *Surface, pos: apprt.CursorPos) !bool {
-    const action, const sel = try self.linkAtPos(pos) orelse return false;
-    switch (action) {
+    const link = try self.linkAtPos(pos) orelse return false;
+    switch (link.action) {
         .open => {
             const str = try self.io.terminal.screens.active.selectionString(self.alloc, .{
-                .sel = sel,
+                .sel = link.selection,
                 .trim = false,
             });
             defer self.alloc.free(str);
@@ -4444,7 +4500,7 @@ fn processLinks(self: *Surface, pos: apprt.CursorPos) !bool {
         },
 
         ._open_osc8 => {
-            const uri = self.osc8URI(sel.start()) orelse {
+            const uri = self.osc8URI(link.selection.start()) orelse {
                 log.warn("failed to get URI for OSC8 hyperlink", .{});
                 return false;
             };
@@ -5163,6 +5219,15 @@ pub fn performBindingAction(self: *Surface, action: input.Binding.Action) !bool 
             );
         },
 
+        .search_selection => {
+            const selection = try self.selectionString(self.alloc) orelse return false;
+            return try self.rt_app.performAction(
+                .{ .surface = self },
+                .start_search,
+                .{ .needle = selection },
+            );
+        },
+
         .end_search => {
             // We only return that this was performed if we actually
             // stopped a search, but we also send the apprt end_search so
@@ -5278,11 +5343,11 @@ pub fn performBindingAction(self: *Surface, action: input.Binding.Action) !bool 
             self.renderer_state.mutex.lock();
             defer self.renderer_state.mutex.unlock();
             if (try self.linkAtPos(pos)) |link_info| {
-                const url_text = switch (link_info[0]) {
+                const url_text = switch (link_info.action) {
                     .open => url_text: {
                         // For regex links, get the text from selection
                         break :url_text (self.io.terminal.screens.active.selectionString(self.alloc, .{
-                            .sel = link_info[1],
+                            .sel = link_info.selection,
                             .trim = self.config.clipboard_trim_trailing_spaces,
                         })) catch |err| {
                             log.err("error reading url string err={}", .{err});
@@ -5292,7 +5357,7 @@ pub fn performBindingAction(self: *Surface, action: input.Binding.Action) !bool 
 
                     ._open_osc8 => url_text: {
                         // For OSC8 links, get the URI directly from hyperlink data
-                        const uri = self.osc8URI(link_info[1].start()) orelse {
+                        const uri = self.osc8URI(link_info.selection.start()) orelse {
                             log.warn("failed to get URI for OSC8 hyperlink", .{});
                             return false;
                         };

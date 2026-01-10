@@ -189,6 +189,12 @@ fn actionCommands(action: Action.Key) []const Command {
             .description = "Start a search if one isn't already active.",
         }},
 
+        .search_selection => comptime &.{.{
+            .action = .search_selection,
+            .title = "Search Selection",
+            .description = "Start a search for the current text selection.",
+        }},
+
         .end_search => comptime &.{.{
             .action = .end_search,
             .title = "End Search",
