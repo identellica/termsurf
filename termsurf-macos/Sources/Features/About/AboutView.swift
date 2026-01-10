@@ -3,8 +3,8 @@ import SwiftUI
 struct AboutView: View {
   @Environment(\.openURL) var openURL
 
-  private let githubURL = URL(string: "https://github.com/identellica/termsurf")
-  private let docsURL = URL(string: "https://github.com/identellica/termsurf")
+  private let githubURL = URL(string: "https://github.com/termsurf/termsurf")
+  private let docsURL = URL(string: "https://github.com/termsurf/termsurf")
 
   /// Read the commit from the bundle.
   private var build: String? { Bundle.main.infoDictionary?["CFBundleVersion"] as? String }
