@@ -794,7 +794,7 @@ extension Ghostty {
             object: surfaceView,
             userInfo: [
               Notification.NewSurfaceConfigKey: SurfaceConfiguration(
-                from: ghostty_surface_inherited_config(surface))
+                from: ghostty_surface_inherited_config(surface, GHOSTTY_SURFACE_CONTEXT_WINDOW))
             ]
           )
 
@@ -831,7 +831,7 @@ extension Ghostty {
             object: surfaceView,
             userInfo: [
               Notification.NewSurfaceConfigKey: SurfaceConfiguration(
-                from: ghostty_surface_inherited_config(surface))
+                from: ghostty_surface_inherited_config(surface, GHOSTTY_SURFACE_CONTEXT_TAB))
             ]
           )
 
@@ -861,7 +861,7 @@ extension Ghostty {
             userInfo: [
               "direction": direction,
               Notification.NewSurfaceConfigKey: SurfaceConfiguration(
-                from: ghostty_surface_inherited_config(surface))
+                from: ghostty_surface_inherited_config(surface, GHOSTTY_SURFACE_CONTEXT_SPLIT))
             ]
           )
 

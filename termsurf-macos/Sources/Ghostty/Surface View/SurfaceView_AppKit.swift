@@ -1351,9 +1351,10 @@ extension Ghostty {
       // If this event as-is would result in a key binding then we send it.
       if let surface {
         var ghosttyEvent = event.ghosttyKeyEvent(GHOSTTY_ACTION_PRESS)
+        var flags = ghostty_binding_flags_e(0)
         let match = (event.characters ?? "").withCString { ptr in
           ghosttyEvent.text = ptr
-          return ghostty_surface_key_is_binding(surface, ghosttyEvent)
+          return ghostty_surface_key_is_binding(surface, ghosttyEvent, &flags)
         }
         if match {
           self.keyDown(with: event)
@@ -1519,9 +1520,10 @@ extension Ghostty {
       guard let surface = self.surface else { return false }
 
       var ghosttyEvent = event.ghosttyKeyEvent(GHOSTTY_ACTION_PRESS)
+      var flags = ghostty_binding_flags_e(0)
       let isBinding = (event.characters ?? "").withCString { ptr in
         ghosttyEvent.text = ptr
-        return ghostty_surface_key_is_binding(surface, ghosttyEvent)
+        return ghostty_surface_key_is_binding(surface, ghosttyEvent, &flags)
       }
 
       guard isBinding else { return false }
