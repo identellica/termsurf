@@ -13,9 +13,14 @@ const COMMIT_COUNT = 50;
 interface Commit {
   hash: string;
   message: string;
+  body: string;
   author: string;
   date: string;
 }
+
+// Use unlikely delimiters
+const FIELD_SEP = "<<<FIELD>>>";
+const RECORD_SEP = "<<<RECORD>>>";
 
 async function getCommits(): Promise<Commit[]> {
   const proc = Bun.spawn(
@@ -23,7 +28,7 @@ async function getCommits(): Promise<Commit[]> {
       "git",
       "log",
       `--max-count=${COMMIT_COUNT}`,
-      "--format=%H|%s|%an|%aI",
+      `--format=%H${FIELD_SEP}%s${FIELD_SEP}%b${FIELD_SEP}%an${FIELD_SEP}%aI${RECORD_SEP}`,
     ],
     {
       cwd: REPO_PATH,
@@ -32,12 +37,22 @@ async function getCommits(): Promise<Commit[]> {
   );
 
   const output = await new Response(proc.stdout).text();
-  const lines = output.trim().split("\n").filter(Boolean);
+  const records = output.split(RECORD_SEP).filter((r) => r.trim());
 
-  return lines.map((line) => {
-    const [hash, message, author, date] = line.split("|");
-    return { hash, message, author, date };
-  });
+  return records
+    .map((record) => {
+      const parts = record.split(FIELD_SEP);
+      if (parts.length < 5) return null;
+      const [hash, message, body, author, date] = parts;
+      return {
+        hash: (hash || "").trim(),
+        message: (message || "").trim(),
+        body: (body || "").trim(),
+        author: (author || "").trim(),
+        date: (date || "").trim(),
+      };
+    })
+    .filter((c): c is Commit => c !== null && c.hash.length > 0);
 }
 
 async function main() {
