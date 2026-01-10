@@ -1,6 +1,18 @@
 {
-  "generatedAt": "2026-01-10T20:05:00.126Z",
+  "generatedAt": "2026-01-10T20:16:48.053Z",
   "commits": [
+    {
+      "hash": "b44d683a7b43dcc202a0d665f3e20cfcbdb46275",
+      "message": "add website mvp",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T14:16:39-06:00"
+    },
+    {
+      "hash": "5b74f7b5b2e73090ad8147f127d8b548882d0f82",
+      "message": "update website plan",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T14:15:59-06:00"
+    },
     {
       "hash": "eab3e204bc675d9960d16d45b00ebde270e72782",
       "message": "website plan",
@@ -288,18 +300,6 @@
       "message": "input: change the key_is_binding to return some information",
       "author": "Mitchell Hashimoto",
       "date": "2026-01-09T06:32:37-08:00"
-    },
-    {
-      "hash": "18535f04d16ce054bc71e6f7be0b36be1d53a8d0",
-      "message": "osc: refactor parsing helper functions into separate files (#10233)",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T06:13:35-08:00"
-    },
-    {
-      "hash": "5059a4e171e110849f76891fbe42102050782003",
-      "message": "rename binary: ghostty -> termsurf",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-09T06:27:05-06:00"
     }
   ]
 }
