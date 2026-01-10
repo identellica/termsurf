@@ -33,6 +33,8 @@
                 <outlet property="menuFindPrevious" destination="1hd-2Z-wVm" id="sSo-wO-2MW"/>
                 <outlet property="menuFloatOnTop" destination="uRj-7z-1Nh" id="94n-o9-Jol"/>
                 <outlet property="menuHideFindBar" destination="xzC-AG-HAc" id="HCo-o6-VWv"/>
+                <outlet property="menuScrollToSelection" destination="TSf-Scr-Sel" id="TSf-Scr-Out"/>
+                <outlet property="menuSelectionForFind" destination="TSf-Sel-Fnd" id="TSf-Sel-Out"/>
                 <outlet property="menuIncreaseFontSize" destination="CIH-ey-Z6x" id="hkc-9C-80E"/>
                 <outlet property="menuMoveSplitDividerDown" destination="Zj7-2W-fdF" id="997-LL-nlN"/>
                 <outlet property="menuMoveSplitDividerLeft" destination="wSR-ny-j1a" id="HCZ-CI-2ob"/>
@@ -279,6 +281,19 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="findHide:" target="-1" id="hGP-K9-yN9"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="TSf-Sel-Sep"/>
+                                        <menuItem title="Use Selection for Find" id="TSf-Sel-Fnd">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="selectionForFind:" target="-1" id="TSf-Sel-Act"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Jump to Selection" id="TSf-Scr-Sel">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="scrollToSelection:" target="-1" id="TSf-Scr-Act"/>
                                             </connections>
                                         </menuItem>
                                     </items>
