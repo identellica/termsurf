@@ -9,18 +9,23 @@ Read and follow the process documented in `docs/release.md`.
 
 ## Steps
 
-1. **Read the documentation** - Read `docs/release.md` to understand the full release process.
+1. **Read the documentation** - Read `docs/release.md` to understand the full
+   release process.
 
 2. **Review changes since last release**
    - Get current version: `git describe --tags --abbrev=0`
-   - List commits since last release: `git log --oneline $(git describe --tags --abbrev=0)..HEAD`
+   - List commits since last release:
+     `git log --oneline $(git describe --tags --abbrev=0)..HEAD`
    - Determine new version number (MAJOR.MINOR.PATCH)
+   - Always increment the patch version number, not major or minor, unless
+     explicitly requested otherwise.
 
 3. **Update version numbers** - Update version in two places:
    - `build.zig.zon` - the `.version` field
    - `termsurf-macos/TermSurf.xcodeproj/project.pbxproj` - `MARKETING_VERSION`
 
-4. **Update CHANGELOG.md** - Add a new section for the release version summarizing the changes.
+4. **Update CHANGELOG.md** - Add a new section for the release version
+   summarizing the changes.
 
 5. **Commit version bump**
    - `git add build.zig.zon CHANGELOG.md termsurf-macos/TermSurf.xcodeproj/project.pbxproj`
