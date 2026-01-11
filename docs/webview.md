@@ -35,7 +35,7 @@ Track progress on WKWebView API coverage. Check off items as they're implemented
 - [x] `runJavaScriptAlertPanelWithMessage:` - alert() dialogs
 - [x] `runJavaScriptConfirmPanelWithMessage:` - confirm() dialogs
 - [x] `runJavaScriptTextInputPanelWithPrompt:` - prompt() dialogs
-- [ ] `runOpenPanelWithParameters:` - File uploads ⚠️ **High**
+- [x] `runOpenPanelWithParameters:` - File uploads
 - [ ] `requestMediaCapturePermissionForOrigin:` - Camera/mic access ⚠️ **High**
 - [ ] `requestDeviceOrientationAndMotionPermission:` - Gyroscope access
 - [ ] `contextMenuConfigurationForElement:` - Context menus (macOS uses native)

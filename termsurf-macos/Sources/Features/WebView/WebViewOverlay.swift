@@ -538,6 +538,22 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
     completionHandler(response == .alertFirstButtonReturn ? textField.stringValue : nil)
   }
 
+  // MARK: - File Upload
+
+  func webView(
+    _ webView: WKWebView,
+    runOpenPanelWith parameters: WKOpenPanelParameters,
+    initiatedByFrame frame: WKFrameInfo,
+    completionHandler: @escaping ([URL]?) -> Void
+  ) {
+    let panel = NSOpenPanel()
+    panel.allowsMultipleSelection = parameters.allowsMultipleSelection
+    panel.canChooseDirectories = parameters.allowsDirectories
+    panel.begin { response in
+      completionHandler(response == .OK ? panel.urls : nil)
+    }
+  }
+
   // MARK: - Focus Handling
 
   override var acceptsFirstResponder: Bool { true }
