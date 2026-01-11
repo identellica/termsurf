@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.0
+
+### New Features
+
+- **Dynamic tab titles for webviews**: When browsing with `web`, the tab title
+  now shows the web page's title (e.g., "Google" instead of "web google.com").
+  Title automatically reverts to terminal title when webview is closed.
+
+### Website
+
+- **Favicon**: Added favicon to termsurf.com
+
 ## v0.2.0
 
 ### New Features
