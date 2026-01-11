@@ -8,9 +8,9 @@ export function Header() {
         alt="TermSurf logo"
         className="w-16 h-16 mx-auto mb-4"
       />
-      <h1 className="text-4xl font-bold text-primary mb-2">
-        TermSurf{" "}
-        <span className="text-sm font-normal text-foreground-dark bg-background-highlight px-2 py-0.5 rounded">
+      <h1 className="text-4xl font-bold text-primary mb-2 relative inline-block">
+        TermSurf
+        <span className="absolute -right-16 top-1/2 -translate-y-1/2 text-sm font-normal text-foreground-dark bg-background-highlight px-2 py-0.5 rounded">
           v{versionData.version}
         </span>
       </h1>
