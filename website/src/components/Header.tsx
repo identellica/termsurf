@@ -8,7 +8,7 @@ export function Header() {
       />
       <h1 className="text-4xl font-bold text-primary mb-2">TermSurf</h1>
       <p className="text-foreground-dark mb-4">
-        A terminal emulator with webview support
+        A terminal and browser for web developers
       </p>
       <nav>
         <a

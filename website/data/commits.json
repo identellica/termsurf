@@ -1,6 +1,62 @@
 {
-  "generatedAt": "2026-01-10T21:46:08.478Z",
+  "generatedAt": "2026-01-11T12:44:33.192Z",
   "commits": [
+    {
+      "hash": "59f4e674df6322fc9e96e9f40e5d7433e083114c",
+      "message": "Bump version to 0.3.0",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T06:39:41-06:00"
+    },
+    {
+      "hash": "7aec6fc436d9ef3172d55f35a5f69dbf1b5d0944",
+      "message": "Show web page title in tab when browsing",
+      "body": "The tab once showed \"web google.com\"—\nA name quite bland, devoid of chrome.\nNow when you surf, the title gleams,\nWith \"Google Search\" or Netflix streams.\nClose the view? It snaps right back,\nThe terminal reclaims its track.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T05:41:50-06:00"
+    },
+    {
+      "hash": "c846680740c72f7c21989e02398dad9f5a418bf9",
+      "message": "Add favicon for the website",
+      "body": "A browser tab once sat forlorn,\nIts icon blank since it was born.\nNow pixels form a tiny face—\nTermSurf has claimed its proper place.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T17:38:38-06:00"
+    },
+    {
+      "hash": "4e1ed1cf4f78ebd4c564d3a25b2b185fa292184b",
+      "message": "Bump version to 0.2.0",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T16:34:01-06:00"
+    },
+    {
+      "hash": "d5cb306e22b264c4edca6ae960048283be140666",
+      "message": "Set default homepage to termsurf.com",
+      "body": "From hallucipedia the browser roamed,\nNow termsurf.com is where it's homed.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T16:30:16-06:00"
+    },
+    {
+      "hash": "85c62872e9af964f331a643b569b68fe32e57a36",
+      "message": "Ignore dist folder in git",
+      "body": "The build artifacts cried,\n\"Track us not!\" So we complied.",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T16:16:37-06:00"
+    },
+    {
+      "hash": "d8ebf611a5f3b8679684ec99fa0730c80a542fb9",
+      "message": "Deploy to Fly.io with Bun SSR",
+      "body": "The server once spoke JavaScript,\nA compiled tongue, quite restrictive.\nNow TypeScript runs free,\nAs Bun meant it to be—\nNo build step! How linguistically festive!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T16:15:31-06:00"
+    },
+    {
+      "hash": "b04f88a6b3e24eceaab8766db96ff4ea9fa9322c",
+      "message": "Add expandable commit details with GitHub links",
+      "body": "Click a commit and watch it grow,\nIts hidden message starts to show.\nA chevron turns, the body's there,\nWith GitHub links for those who care.\nNo message? We'll say so with grace—\nAn italic note takes its place.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-10T15:47:33-06:00"
+    },
     {
       "hash": "51270c5b594cf1275a120e9d66be93c47acb55c2",
       "message": "Add GitPoet skill for poetic commits",
@@ -294,62 +350,6 @@
       "body": "",
       "author": "Ryan X. Charles",
       "date": "2026-01-10T04:25:13-06:00"
-    },
-    {
-      "hash": "b426a682973202bdc09328c7bc5751ac9d6fa66c",
-      "message": "os: mach taggedPageAllocator",
-      "body": "",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T20:17:33-08:00"
-    },
-    {
-      "hash": "6f1544b4a3c68c80dd70dfb9acd6edc4d55cac60",
-      "message": "os: add mach VM tags",
-      "body": "",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T20:17:33-08:00"
-    },
-    {
-      "hash": "ec2912dbafe50cc32b786d2327dcd0213c83ecc6",
-      "message": "docs: bell border feature is available on macOS (#10242)",
-      "body": "As of commit fe55d90 and PR #8768 this feature is also available on\nmacOS.",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T11:40:12-08:00"
-    },
-    {
-      "hash": "d94ba5cf105948ddd2b2fc4160a2a4cdb472df4f",
-      "message": "docs: add bell border feature version availability",
-      "body": "Commit 22fc90f (PR #8222) on GTK and commit fe55d90 (PR #8768) on macOS.",
-      "author": "Martin Müller",
-      "date": "2026-01-09T18:46:00+01:00"
-    },
-    {
-      "hash": "51aed4d8b3d85464657c7894f886453d4cae8645",
-      "message": "Binding internals improvements (#10243)",
-      "body": "A handful of improvements. See individual commits.\n\n1. **Actually compare values for the binding set.** This sounds crazy,\nbut up until now (for _years_) we've only compared _the hash value_ of a\ntrigger or action for our binding set. It's actually astounding this\nhasn't bit us or at least not that we know of. This could result in\ndifferent triggers overwriting each other. Anyways, we actually compare\nthem now.\n\n2. **Use an `ArrayHashMap` for sets.** This has been on the back burner\nfor awhile. Using an array hash map is a good idea in general (see:\nhttps://github.com/ziglang/zig/issues/17851) but it also is a nicer API\nfor our use case and cleaned things up.\n\nAll unit tests pass, many new unit tests added particularly for equality\ncomparison. Hopeful this doesn't regress any bindings but this is the\nright path forward so we should fix those if they come up.\n\n**AI disclosure:** AI helped write the deepEqual unit tests, otherwise\neverything else is certified meat.",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T09:14:48-08:00"
-    },
-    {
-      "hash": "0e9ce7e450fbe4ef296a71d569c92fdd9c1756e1",
-      "message": "input: change our binding set to use array hash map",
-      "body": "This is recommended for ongoing performance: \nhttps://github.com/ziglang/zig/issues/17851\n\nLikely not an issue for this particular use case which is why it never\nbit us; we don't actively modify this map much once it is created. But,\nits still good hygiene and ArrayHashMap made some of the API usage\nnicer.",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T08:46:35-08:00"
-    },
-    {
-      "hash": "201198c74a8f6facc844c1564d1ebc48fa779bd6",
-      "message": "input: do value comparison for Set hash maps",
-      "body": "We previously only compared the hashes for triggers and actions for hash\nmap equality. I'm genuinely surprised this never bit us before because\nit can result in false positives when two different values have the same\nhash. Fix that up!",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T08:27:27-08:00"
-    },
-    {
-      "hash": "c179de62a70ebd848a63bfbb34459d47b0ac918d",
-      "message": "extract deepEqual",
-      "body": "",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T08:27:27-08:00"
     }
   ]
 }
