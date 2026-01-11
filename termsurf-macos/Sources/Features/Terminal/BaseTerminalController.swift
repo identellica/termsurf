@@ -219,6 +219,18 @@ class BaseTerminalController: NSWindowController,
       name: .ghosttySurfaceDragEndedNoTarget,
       object: nil)
 
+    // WebView title updates
+    center.addObserver(
+      self,
+      selector: #selector(webViewContainerDidAppear(_:)),
+      name: .webViewContainerDidAppear,
+      object: nil)
+    center.addObserver(
+      self,
+      selector: #selector(webViewContainerDidDisappear(_:)),
+      name: .webViewContainerDidDisappear,
+      object: nil)
+
     // Listen for local events that we need to know of outside of
     // single surface handlers.
     self.eventMonitor = NSEvent.addLocalMonitorForEvents(
@@ -799,6 +811,30 @@ class BaseTerminalController: NSWindowController,
       confirmUndo: false)
   }
 
+  @objc private func webViewContainerDidAppear(_ notification: Notification) {
+    guard let container = notification.object as? WebViewContainer else { return }
+
+    // Check if this webview was added to our focused surface
+    guard let focusedSurface = focusedSurface,
+          container.superview === focusedSurface else { return }
+
+    // Re-trigger title subscription setup to include the new webview
+    focusedSurfaceDidChange(to: focusedSurface)
+  }
+
+  @objc private func webViewContainerDidDisappear(_ notification: Notification) {
+    // Get the previous superview from userInfo (since container.superview is now nil)
+    guard let userInfo = notification.userInfo,
+          let previousSuperview = userInfo["previousSuperview"] as? Ghostty.SurfaceView else { return }
+
+    // Check if this webview was removed from our focused surface
+    guard let focusedSurface = focusedSurface,
+          previousSuperview === focusedSurface else { return }
+
+    // Re-trigger title subscription setup to revert to terminal-only title
+    focusedSurfaceDidChange(to: focusedSurface)
+  }
+
   // MARK: Local Events
 
   private func localEventHandler(_ event: NSEvent) -> NSEvent? {
@@ -845,11 +881,26 @@ class BaseTerminalController: NSWindowController,
       surfaceTree.contains(titleSurface)
     {
       // If we have a surface, we want to listen for title changes.
-      titleSurface.$title
-        .combineLatest(titleSurface.$bell)
-        .map { [weak self] in self?.computeTitle(title: $0, bell: $1) ?? "" }
-        .sink { [weak self] in self?.titleDidChange(to: $0) }
-        .store(in: &focusedSurfaceCancellables)
+      // Also check for a visible webview and prefer its title when present.
+      if let webviewContainer = titleSurface.visibleWebViewContainer {
+        // Surface has a webview - combine terminal title, bell, and webview title
+        titleSurface.$title
+          .combineLatest(titleSurface.$bell, webviewContainer.$webviewTitle)
+          .map { [weak self] terminalTitle, bell, webviewTitle -> String in
+            // Prefer webview title when it's non-nil and non-empty
+            let effectiveTitle = (webviewTitle?.isEmpty == false) ? webviewTitle! : terminalTitle
+            return self?.computeTitle(title: effectiveTitle, bell: bell) ?? ""
+          }
+          .sink { [weak self] in self?.titleDidChange(to: $0) }
+          .store(in: &focusedSurfaceCancellables)
+      } else {
+        // No webview - use terminal title only
+        titleSurface.$title
+          .combineLatest(titleSurface.$bell)
+          .map { [weak self] in self?.computeTitle(title: $0, bell: $1) ?? "" }
+          .sink { [weak self] in self?.titleDidChange(to: $0) }
+          .store(in: &focusedSurfaceCancellables)
+      }
     } else {
       // There is no surface to listen to titles for.
       titleDidChange(to: "🏄")

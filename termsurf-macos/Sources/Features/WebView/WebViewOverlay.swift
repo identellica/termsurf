@@ -25,12 +25,18 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
   /// Callback when URL changes (navigation started or finished)
   var onURLChanged: ((URL?) -> Void)?
 
+  /// Callback when title changes
+  var onTitleChanged: ((String?) -> Void)?
+
   enum ConsoleLevel: String {
     case log, info, warn, error
   }
 
   /// KVO observation for URL changes
   private var urlObservation: NSKeyValueObservation?
+
+  /// KVO observation for title changes
+  private var titleObservation: NSKeyValueObservation?
 
   /// Whether the JS API is enabled
   private let jsApiEnabled: Bool
@@ -59,6 +65,7 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
 
   deinit {
     urlObservation?.invalidate()
+    titleObservation?.invalidate()
     logger.info("WebViewOverlay \(self.webviewId) deallocated")
   }
 
@@ -212,6 +219,11 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
     // Observe URL changes (catches all navigation including SPA pushState)
     urlObservation = webView.observe(\.url, options: [.new]) { [weak self] webView, _ in
       self?.onURLChanged?(webView.url)
+    }
+
+    // Observe title changes
+    titleObservation = webView.observe(\.title, options: [.new]) { [weak self] webView, _ in
+      self?.onTitleChanged?(webView.title)
     }
 
     addSubview(webView)

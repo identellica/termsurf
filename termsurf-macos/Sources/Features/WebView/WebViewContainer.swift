@@ -1,7 +1,18 @@
 import Cocoa
+import Combine
 import os
 
 private let logger = Logger(subsystem: "com.termsurf", category: "WebViewContainer")
+
+extension Notification.Name {
+  /// Posted when a WebViewContainer is added to a SurfaceView.
+  /// Used to trigger title subscription setup in BaseTerminalController.
+  static let webViewContainerDidAppear = Notification.Name("webViewContainerDidAppear")
+
+  /// Posted when a WebViewContainer is removed from a SurfaceView.
+  /// Used to revert title subscription to terminal-only in BaseTerminalController.
+  static let webViewContainerDidDisappear = Notification.Name("webViewContainerDidDisappear")
+}
 
 /// A dim overlay that calls a closure when clicked.
 /// Used to switch modes when clicking on the inactive area of a webview pane.
@@ -19,9 +30,12 @@ private class ClickableDimOverlay: NSView {
 /// - Control mode: SurfaceView is focused, all terminal keybindings work (ctrl+c, ctrl+h/j/k/l, etc.)
 /// - Browse mode: Webview is focused, browser has full control, only Esc escapes
 /// - Insert mode: URL field is focused, can edit URL, Enter navigates, Esc cancels
-class WebViewContainer: NSView {
+class WebViewContainer: NSView, ObservableObject {
   /// The webview ID
   let webviewId: String
+
+  /// The current web page title (published for tab title updates)
+  @Published var webviewTitle: String?
 
   /// The webview overlay (WKWebView wrapper)
   let webViewOverlay: WebViewOverlay
@@ -143,9 +157,22 @@ class WebViewContainer: NSView {
     if let newSuperview = superview {
       // Added to a superview - invalidate its cursor rects
       newSuperview.window?.invalidateCursorRects(for: newSuperview)
+
+      // Notify that webview container was added (for title subscription setup)
+      NotificationCenter.default.post(
+        name: .webViewContainerDidAppear,
+        object: self
+      )
     } else if let oldSuperview = previousSuperview {
       // Removed from superview - invalidate old superview's cursor rects
       oldSuperview.window?.invalidateCursorRects(for: oldSuperview)
+
+      // Notify that webview container was removed (to revert title to terminal)
+      NotificationCenter.default.post(
+        name: .webViewContainerDidDisappear,
+        object: self,
+        userInfo: ["previousSuperview": oldSuperview]
+      )
     }
     previousSuperview = nil
   }
@@ -283,6 +310,11 @@ class WebViewContainer: NSView {
     // WebView: URL changed -> update control bar
     webViewOverlay.onURLChanged = { [weak self] url in
       self?.controlBar.updateURL(url)
+    }
+
+    // WebView: Title changed -> update published title for tab display
+    webViewOverlay.onTitleChanged = { [weak self] title in
+      self?.webviewTitle = title
     }
 
     // WebView: Navigation finished -> re-establish proper focus state

@@ -173,6 +173,12 @@ extension Ghostty {
       return ghostty_surface_process_exited(surface)
     }
 
+    // Returns the visible WebViewContainer if one exists as a subview.
+    // Used to access webview title for tab display.
+    var visibleWebViewContainer: WebViewContainer? {
+      subviews.last(where: { $0 is WebViewContainer }) as? WebViewContainer
+    }
+
     // Returns the inspector instance for this surface, or nil if the
     // surface has been closed.
     var inspector: ghostty_inspector_t? {
