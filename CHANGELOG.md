@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.6.0
+
+### New Features
+
+- **Download support**: Added file download support for webviews. Same-origin
+  downloads with the `download` attribute, blob URL downloads (JavaScript-
+  generated files), and non-displayable MIME types all trigger the native macOS
+  save panel.
+
+### Internal
+
+- **Download test page**: Added `/test-download` route to the website for
+  testing download functionality.
+
 ## v0.5.0
 
 ### New Features
