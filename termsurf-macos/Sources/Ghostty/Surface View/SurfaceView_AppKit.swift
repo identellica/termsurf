@@ -1344,6 +1344,23 @@ extension Ghostty {
           return true
         }
 
+        // Handle zoom shortcuts (works in all modes).
+        if hasCmd && !hasOpt {
+          switch char {
+          case "=", "+":  // cmd+= to zoom in
+            container.webViewOverlay.webView.pageZoom *= 1.1
+            return true
+          case "-":  // cmd+- to zoom out
+            container.webViewOverlay.webView.pageZoom /= 1.1
+            return true
+          case "0":  // cmd+0 to reset zoom
+            container.webViewOverlay.webView.pageZoom = 1.0
+            return true
+          default:
+            break
+          }
+        }
+
         // Don't let terminal handle other key equivalents when webview is visible.
         return false
       }

@@ -70,7 +70,7 @@ Track progress on WKWebView API coverage. Check off items as they're implemented
 - [ ] `allowsBackForwardNavigationGestures` - Swipe navigation
 - [ ] `allowsLinkPreview` - Force Touch preview (using default)
 - [ ] `isInspectable` - Web Inspector (macOS 13.3+)
-- [ ] `pageZoom` - User zoom control
+- [x] `pageZoom` - User zoom control (cmd+=, cmd+-, cmd+0)
 - [ ] `underPageBackgroundColor` - Bounce background
 
 ---
