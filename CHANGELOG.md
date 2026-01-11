@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.4.0
+
+### New Features
+
+- **JavaScript dialogs**: Added support for `alert()`, `confirm()`, and
+  `prompt()` dialogs in webviews. Dialogs show the origin hostname for security,
+  and include a checkbox to suppress further dialogs from the same page.
+
 ## v0.3.0
 
 ### New Features
