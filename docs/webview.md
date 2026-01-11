@@ -15,7 +15,7 @@ Track progress on WKWebView API coverage. Check off items as they're implemented
 ### WKNavigationDelegate
 
 - [x] `decidePolicyFor:navigationAction:` - Header injection (Upgrade-Insecure-Requests)
-- [ ] `decidePolicyFor:navigationResponse:` - Inspect response headers
+- [x] `decidePolicyFor:navigationResponse:` - Download trigger for non-displayable content
 - [x] `didStartProvisionalNavigation:` - URL change notification
 - [ ] `didReceiveServerRedirectForProvisionalNavigation:` - Redirect tracking
 - [ ] `didCommit:` - Content arriving
@@ -25,8 +25,8 @@ Track progress on WKWebView API coverage. Check off items as they're implemented
 - [ ] `didReceiveAuthenticationChallenge:` - HTTP Basic Auth, client certs ⚠️ **High**
 - [ ] `webContentProcessDidTerminate:` - Crash recovery ⚠️ **High**
 - [ ] `shouldAllowDeprecatedTLS:` - TLS 1.0/1.1 warning
-- [ ] `navigationAction:didBecomeDownload:` - Download handling ⚠️ **High**
-- [ ] `navigationResponse:didBecomeDownload:` - Download handling ⚠️ **High**
+- [x] `navigationAction:didBecome:` - Download handling
+- [x] `navigationResponse:didBecome:` - Download handling
 
 ### WKUIDelegate
 
@@ -43,11 +43,11 @@ Track progress on WKWebView API coverage. Check off items as they're implemented
 
 ### WKDownloadDelegate
 
-- [ ] `download:decideDestinationUsing:` - Download destination ⚠️ **High**
+- [x] `download:decideDestinationUsing:` - Download destination with NSSavePanel
 - [ ] `download:willPerformHTTPRedirection:` - Redirect during download
 - [ ] `download:didReceiveAuthenticationChallenge:` - Auth during download
-- [ ] `downloadDidFinish:` - Download complete notification ⚠️ **High**
-- [ ] `download:didFailWithError:resumeData:` - Download failure handling ⚠️ **High**
+- [x] `downloadDidFinish:` - Download complete notification
+- [x] `download:didFailWithError:resumeData:` - Download failure handling
 
 ### WKWebViewConfiguration
 

@@ -6,7 +6,7 @@ private let logger = Logger(subsystem: "com.termsurf", category: "WebViewOverlay
 
 /// A view that displays a WKWebView overlay on top of a terminal pane.
 /// Includes console capture that routes console.log/error to the underlying terminal.
-class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUIDelegate {
+class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
   /// The webview ID
   let webviewId: String
 
@@ -143,6 +143,63 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
       })();
       """
 
+    // Blob URL download interceptor (workaround for WebKit bug 216918)
+    // WKWebView doesn't support blob: URLs with download attribute, so we intercept
+    // clicks on such links and send the blob data to Swift for saving.
+    let blobDownloadScript = """
+      (function() {
+          console.log('[TermSurf] Blob download interceptor loaded');
+
+          function getFilename(anchor) {
+              if (anchor.download) return anchor.download;
+              return 'download';
+          }
+
+          function handleBlobDownload(href, filename) {
+              console.log('[TermSurf] Fetching blob:', href, 'as', filename);
+              fetch(href)
+                  .then(function(res) { return res.blob(); })
+                  .then(function(blob) {
+                      const reader = new FileReader();
+                      reader.onload = function() {
+                          console.log('[TermSurf] Sending to Swift, size:', reader.result.length);
+                          window.webkit.messageHandlers.termsurf.postMessage({
+                              action: 'downloadBlob',
+                              data: reader.result,
+                              filename: filename,
+                              mimeType: blob.type || 'application/octet-stream'
+                          });
+                      };
+                      reader.readAsDataURL(blob);
+                  })
+                  .catch(function(err) {
+                      console.error('[TermSurf] Blob download failed:', err);
+                  });
+          }
+
+          // Override anchor click for programmatic clicks (e.g., a.click())
+          const originalClick = HTMLAnchorElement.prototype.click;
+          HTMLAnchorElement.prototype.click = function() {
+              if (this.hasAttribute('download') && this.href && this.href.startsWith('blob:')) {
+                  handleBlobDownload(this.href, getFilename(this));
+                  return;
+              }
+              return originalClick.call(this);
+          };
+
+          // Listen for real user clicks on blob download links
+          document.addEventListener('click', function(e) {
+              const anchor = e.target.closest('a[download]');
+              if (anchor && anchor.href && anchor.href.startsWith('blob:')) {
+                  console.log('[TermSurf] Click intercepted on blob link:', anchor.href);
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleBlobDownload(anchor.href, getFilename(anchor));
+              }
+          }, true);
+      })();
+      """
+
     // Optional JS API (window.termsurf) - only injected when --js-api flag is used
     let jsApiScript = """
       window.termsurf = {
@@ -164,7 +221,14 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
       forMainFrameOnly: false
     )
 
+    let blobDownloadUserScript = WKUserScript(
+      source: blobDownloadScript,
+      injectionTime: .atDocumentEnd,
+      forMainFrameOnly: false
+    )
+
     contentController.addUserScript(consoleUserScript)
+    contentController.addUserScript(blobDownloadUserScript)
 
     // Only inject JS API if enabled via --js-api flag
     if jsApiEnabled {
@@ -304,37 +368,88 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
       logger.info("Webview \(self.webviewId) requested exit with code \(exitCode)")
       onExit?(exitCode)
 
+    case "downloadBlob":
+      handleBlobDownload(body)
+
     default:
       logger.warning("Unknown termsurf action: \(action)")
     }
   }
 
+  /// Handle blob URL download from JavaScript
+  private func handleBlobDownload(_ body: [String: Any]) {
+    guard let dataURL = body["data"] as? String,
+          let filename = body["filename"] as? String else {
+      logger.error("Invalid downloadBlob message: missing data or filename")
+      return
+    }
+
+    // Parse data URL: "data:mime/type;base64,..."
+    guard let commaIndex = dataURL.firstIndex(of: ",") else {
+      logger.error("Invalid data URL format")
+      return
+    }
+
+    let base64String = String(dataURL[dataURL.index(after: commaIndex)...])
+    guard let data = Data(base64Encoded: base64String) else {
+      logger.error("Failed to decode base64 data")
+      return
+    }
+
+    // Show save panel
+    let panel = NSSavePanel()
+    panel.nameFieldStringValue = filename
+    panel.begin { result in
+      guard result == .OK, let url = panel.url else {
+        return
+      }
+
+      do {
+        try data.write(to: url)
+        logger.info("Blob download saved to: \(url.path)")
+      } catch {
+        logger.error("Failed to save blob download: \(error.localizedDescription)")
+      }
+    }
+  }
+
   // MARK: - WKNavigationDelegate
 
-  /// Intercept navigation requests to add the Upgrade-Insecure-Requests header.
-  /// This header is sent by Safari but not by WKWebView by default. Some sites
-  /// (e.g., Google) use its absence to detect embedded webviews and serve
-  /// simplified/mobile layouts.
+  /// Intercept navigation requests for downloads and header injection.
   func webView(
     _ webView: WKWebView,
     decidePolicyFor navigationAction: WKNavigationAction,
     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
   ) {
-    // Only modify HTTP/HTTPS requests
-    guard let url = navigationAction.request.url,
-      (url.scheme == "http" || url.scheme == "https")
+    let url = navigationAction.request.url?.absoluteString ?? "unknown"
+    logger.info("decidePolicyFor navigationAction: \(url)")
+    logger.info("  shouldPerformDownload: \(navigationAction.shouldPerformDownload)")
+
+    // Check if this is a download request (link has download attribute)
+    if navigationAction.shouldPerformDownload {
+      logger.info("  -> returning .download policy")
+      decisionHandler(.download)
+      return
+    }
+
+    // Only modify HTTP/HTTPS requests for header injection
+    guard let requestUrl = navigationAction.request.url,
+      (requestUrl.scheme == "http" || requestUrl.scheme == "https")
     else {
+      logger.info("  -> allowing non-HTTP request")
       decisionHandler(.allow)
       return
     }
 
     // If header is already present, allow the request
     if navigationAction.request.value(forHTTPHeaderField: "Upgrade-Insecure-Requests") != nil {
+      logger.info("  -> allowing (header already present)")
       decisionHandler(.allow)
       return
     }
 
     // Cancel this request and reload with the header added
+    logger.info("  -> canceling to add header, will reload")
     decisionHandler(.cancel)
 
     var modifiedRequest = navigationAction.request
@@ -398,6 +513,84 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
   ) {
     logger.error(
       "Provisional navigation failed for \(self.webviewId): \(error.localizedDescription)")
+  }
+
+  /// Handle navigation response - triggers download for attachments or non-displayable content
+  func webView(
+    _ webView: WKWebView,
+    decidePolicyFor navigationResponse: WKNavigationResponse,
+    decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void
+  ) {
+    let url = navigationResponse.response.url?.absoluteString ?? "unknown"
+    let mimeType = navigationResponse.response.mimeType ?? "unknown"
+    logger.info("decidePolicyFor navigationResponse: \(url)")
+    logger.info("  MIME type: \(mimeType), canShowMIMEType: \(navigationResponse.canShowMIMEType)")
+
+    // Check for Content-Disposition: attachment header (server wants us to download)
+    if let httpResponse = navigationResponse.response as? HTTPURLResponse,
+       let contentDisposition = httpResponse.value(forHTTPHeaderField: "Content-Disposition"),
+       contentDisposition.lowercased().contains("attachment") {
+      logger.info("  -> Download triggered by Content-Disposition: attachment")
+      decisionHandler(.download)
+      return
+    }
+
+    // For content that can't be displayed, trigger download
+    if navigationResponse.canShowMIMEType {
+      logger.info("  -> allowing (can show MIME type)")
+      decisionHandler(.allow)
+    } else {
+      logger.info("  -> Download triggered: cannot display MIME type")
+      decisionHandler(.download)
+    }
+  }
+
+  /// Handle navigation response becoming a download
+  func webView(
+    _ webView: WKWebView,
+    navigationResponse: WKNavigationResponse,
+    didBecome download: WKDownload
+  ) {
+    logger.info("navigationResponse didBecome download: \(download.originalRequest?.url?.absoluteString ?? "unknown")")
+    download.delegate = self
+  }
+
+  /// Handle navigation action becoming a download (e.g., download attribute links)
+  func webView(
+    _ webView: WKWebView,
+    navigationAction: WKNavigationAction,
+    didBecome download: WKDownload
+  ) {
+    logger.info("navigationAction didBecome download: \(download.originalRequest?.url?.absoluteString ?? "unknown")")
+    download.delegate = self
+  }
+
+  // MARK: - WKDownloadDelegate
+
+  func download(
+    _ download: WKDownload,
+    decideDestinationUsing response: URLResponse,
+    suggestedFilename: String,
+    completionHandler: @escaping (URL?) -> Void
+  ) {
+    logger.info("download decideDestinationUsing: \(response.url?.absoluteString ?? "unknown"), filename: \(suggestedFilename)")
+    let panel = NSSavePanel()
+    panel.nameFieldStringValue = suggestedFilename
+    panel.begin { result in
+      completionHandler(result == .OK ? panel.url : nil)
+    }
+  }
+
+  func downloadDidFinish(_ download: WKDownload) {
+    logger.info("Download finished: \(download.originalRequest?.url?.absoluteString ?? "unknown")")
+  }
+
+  func download(
+    _ download: WKDownload,
+    didFailWithError error: Error,
+    resumeData: Data?
+  ) {
+    logger.error("Download failed: \(error.localizedDescription)")
   }
 
   // MARK: - WKUIDelegate
