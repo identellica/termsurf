@@ -18,9 +18,11 @@ TermSurf is a terminal emulator with webview support, built as a fork of Ghostty
 
 ### TermSurf macOS App
 
-- **Build:** `cd termsurf-macos && xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Debug build`
-- **Run:** Build in Xcode and run, or use `zig build run` for the original Ghostty app
-- **Clean:** `cd termsurf-macos && xcodebuild clean`
+- **Build (Debug):** `./scripts/build-debug.sh` → `./build/debug/TermSurf.app`
+- **Build (Release):** `./scripts/build-release.sh` → `./build/release/TermSurf.app`
+- **Build & Open:** Add `--open` flag to either script
+- **Clean Build:** Add `--clean` flag to either script
+- **Run:** Build with scripts above, or use Xcode, or `zig build run` for original Ghostty
 
 ## Directory Structure
 

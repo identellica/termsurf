@@ -1,8 +1,8 @@
 #!/bin/bash
-# Build TermSurf in Release mode (both zig and Swift)
+# Build TermSurf in Debug mode (both zig and Swift)
 #
 # Usage:
-#   ./scripts/build-release.sh [--clean] [--open]
+#   ./scripts/build-debug.sh [--clean] [--open]
 #
 # Flags:
 #   --clean  Clear all caches and do a fresh build
@@ -35,27 +35,27 @@ if [ "$CLEAN" = true ]; then
     echo "Cleared Xcode DerivedData"
 fi
 
-echo "=== Building libghostty (Release) ==="
+echo "=== Building libghostty (Debug) ==="
 cd "$ROOT_DIR"
-zig build -Doptimize=ReleaseFast
+zig build
 
 echo ""
-echo "=== Building TermSurf.app (Release) ==="
+echo "=== Building TermSurf.app (Debug) ==="
 cd "$MACOS_DIR"
 if [ "$CLEAN" = true ]; then
-    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Release \
+    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Debug \
         -derivedDataPath "$ROOT_DIR/build" \
-        CONFIGURATION_BUILD_DIR="$ROOT_DIR/build/release" \
+        CONFIGURATION_BUILD_DIR="$ROOT_DIR/build/debug" \
         clean build | tail -5
 else
-    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Release \
+    xcodebuild -project TermSurf.xcodeproj -scheme TermSurf -configuration Debug \
         -derivedDataPath "$ROOT_DIR/build" \
-        CONFIGURATION_BUILD_DIR="$ROOT_DIR/build/release" \
+        CONFIGURATION_BUILD_DIR="$ROOT_DIR/build/debug" \
         build | tail -5
 fi
 
 # Predictable build output location
-APP_PATH="$ROOT_DIR/build/release/TermSurf.app"
+APP_PATH="$ROOT_DIR/build/debug/TermSurf.app"
 
 echo ""
 echo "=== Build Complete ==="
