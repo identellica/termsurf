@@ -23,6 +23,7 @@
 ### Additional Features
 
 - [x] User agent customization (basic: set to Safari UA in v0.1.5)
+- [x] JavaScript dialogs (alert, confirm, prompt)
 - [ ] Download handling
 - [ ] Permission prompts (camera, microphone, location)
 

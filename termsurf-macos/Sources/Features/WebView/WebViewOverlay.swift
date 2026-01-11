@@ -44,6 +44,9 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
   /// The profile name (for bookmarking)
   let profileName: String?
 
+  /// Whether to suppress JavaScript dialogs (user opted to prevent additional dialogs)
+  private var suppressDialogs = false
+
   // MARK: - Initialization
 
   init(
@@ -343,6 +346,8 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
     logger.debug(
       "Navigation started for \(self.webviewId): \(webView.url?.absoluteString ?? "unknown")")
     onURLChanged?(webView.url)
+    // Reset dialog suppression on new navigation
+    suppressDialogs = false
   }
 
   /// Callback when navigation finishes (for re-establishing focus)
@@ -410,6 +415,127 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
       webView.load(navigationAction.request)
     }
     return nil
+  }
+
+  // MARK: - JavaScript Dialogs
+
+  /// Helper to get origin string for dialog titles
+  private func originString(from frame: WKFrameInfo) -> String {
+    let host = frame.securityOrigin.host
+    return host.isEmpty ? "This page" : host
+  }
+
+  /// Helper to create and configure suppression checkbox
+  private func createSuppressionCheckbox() -> NSButton {
+    let checkbox = NSButton(checkboxWithTitle: "Prevent this page from creating additional dialogs", target: nil, action: nil)
+    checkbox.frame = NSRect(x: 0, y: 0, width: 400, height: 18)
+    checkbox.state = .off
+    return checkbox
+  }
+
+  func webView(
+    _ webView: WKWebView,
+    runJavaScriptAlertPanelWithMessage message: String,
+    initiatedByFrame frame: WKFrameInfo,
+    completionHandler: @escaping () -> Void
+  ) {
+    // If dialogs are suppressed, auto-dismiss
+    if suppressDialogs {
+      completionHandler()
+      return
+    }
+
+    let alert = NSAlert()
+    alert.messageText = "\(originString(from: frame)) says:"
+    alert.informativeText = message
+    alert.addButton(withTitle: "OK")
+
+    let checkbox = createSuppressionCheckbox()
+    alert.accessoryView = checkbox
+
+    alert.runModal()
+
+    if checkbox.state == .on {
+      suppressDialogs = true
+    }
+
+    completionHandler()
+  }
+
+  func webView(
+    _ webView: WKWebView,
+    runJavaScriptConfirmPanelWithMessage message: String,
+    initiatedByFrame frame: WKFrameInfo,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    // If dialogs are suppressed, auto-dismiss with false
+    if suppressDialogs {
+      completionHandler(false)
+      return
+    }
+
+    let alert = NSAlert()
+    alert.messageText = "\(originString(from: frame)) says:"
+    alert.informativeText = message
+    alert.addButton(withTitle: "OK")
+    alert.addButton(withTitle: "Cancel")
+
+    let checkbox = createSuppressionCheckbox()
+    alert.accessoryView = checkbox
+
+    let response = alert.runModal()
+
+    if checkbox.state == .on {
+      suppressDialogs = true
+    }
+
+    completionHandler(response == .alertFirstButtonReturn)
+  }
+
+  func webView(
+    _ webView: WKWebView,
+    runJavaScriptTextInputPanelWithPrompt prompt: String,
+    defaultText: String?,
+    initiatedByFrame frame: WKFrameInfo,
+    completionHandler: @escaping (String?) -> Void
+  ) {
+    // If dialogs are suppressed, auto-dismiss with nil
+    if suppressDialogs {
+      completionHandler(nil)
+      return
+    }
+
+    let alert = NSAlert()
+    alert.messageText = "\(originString(from: frame)) says:"
+    alert.informativeText = prompt
+    alert.addButton(withTitle: "OK")
+    alert.addButton(withTitle: "Cancel")
+
+    // Create container view with explicit frame-based layout
+    let containerView = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 50))
+
+    let textField = NSTextField(frame: NSRect(x: 0, y: 26, width: 400, height: 24))
+    textField.stringValue = defaultText ?? ""
+
+    let checkbox = NSButton(checkboxWithTitle: "Prevent this page from creating additional dialogs", target: nil, action: nil)
+    checkbox.frame = NSRect(x: 0, y: 0, width: 400, height: 18)
+    checkbox.state = .off
+
+    containerView.addSubview(textField)
+    containerView.addSubview(checkbox)
+
+    alert.accessoryView = containerView
+
+    // Make the text field first responder
+    alert.window.initialFirstResponder = textField
+
+    let response = alert.runModal()
+
+    if checkbox.state == .on {
+      suppressDialogs = true
+    }
+
+    completionHandler(response == .alertFirstButtonReturn ? textField.stringValue : nil)
   }
 
   // MARK: - Focus Handling

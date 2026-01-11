@@ -32,9 +32,9 @@ Track progress on WKWebView API coverage. Check off items as they're implemented
 
 - [x] `createWebViewWith:for:windowFeatures:` - target="_blank" handling
 - [ ] `webViewDidClose:` - window.close() handling
-- [ ] `runJavaScriptAlertPanelWithMessage:` - alert() dialogs ⚠️ **High**
-- [ ] `runJavaScriptConfirmPanelWithMessage:` - confirm() dialogs ⚠️ **High**
-- [ ] `runJavaScriptTextInputPanelWithPrompt:` - prompt() dialogs ⚠️ **High**
+- [x] `runJavaScriptAlertPanelWithMessage:` - alert() dialogs
+- [x] `runJavaScriptConfirmPanelWithMessage:` - confirm() dialogs
+- [x] `runJavaScriptTextInputPanelWithPrompt:` - prompt() dialogs
 - [ ] `runOpenPanelWithParameters:` - File uploads ⚠️ **High**
 - [ ] `requestMediaCapturePermissionForOrigin:` - Camera/mic access ⚠️ **High**
 - [ ] `requestDeviceOrientationAndMotionPermission:` - Gyroscope access
