@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.7.0
+
+### New Features
+
+- **Camera/microphone permissions**: Websites can now request camera and
+  microphone access. A native permission dialog appears with Allow/Don't Allow
+  options.
+- **HTTP Basic Auth**: Password-protected websites now show a login dialog
+  instead of failing silently.
+- **Crash recovery**: When WebKit crashes, a dialog offers to reload or close
+  the webview instead of showing a blank screen.
+
+### Internal
+
+- **Media test page**: Added `/test-media` route to the website for testing
+  camera/microphone permissions.
+
 ## v0.6.0
 
 ### New Features
