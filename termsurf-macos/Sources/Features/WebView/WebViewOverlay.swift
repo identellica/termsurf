@@ -565,6 +565,54 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
     download.delegate = self
   }
 
+  /// Handle HTTP Basic/Digest authentication challenges
+  func webView(
+    _ webView: WKWebView,
+    didReceive challenge: URLAuthenticationChallenge,
+    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+  ) {
+    // Only handle HTTP Basic/Digest auth
+    guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodHTTPBasic ||
+          challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodHTTPDigest else {
+      completionHandler(.performDefaultHandling, nil)
+      return
+    }
+
+    logger.info("Authentication challenge for \(challenge.protectionSpace.host)")
+
+    let alert = NSAlert()
+    alert.messageText = "Authentication Required"
+    alert.informativeText = "Log in to \(challenge.protectionSpace.host)"
+    alert.addButton(withTitle: "Log In")
+    alert.addButton(withTitle: "Cancel")
+
+    // Create container for username/password fields
+    let containerView = NSView(frame: NSRect(x: 0, y: 0, width: 250, height: 54))
+
+    let userField = NSTextField(frame: NSRect(x: 0, y: 30, width: 250, height: 24))
+    userField.placeholderString = "Username"
+
+    let passField = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 250, height: 24))
+    passField.placeholderString = "Password"
+
+    containerView.addSubview(userField)
+    containerView.addSubview(passField)
+    alert.accessoryView = containerView
+    alert.window.initialFirstResponder = userField
+
+    let response = alert.runModal()
+    if response == .alertFirstButtonReturn {
+      let credential = URLCredential(
+        user: userField.stringValue,
+        password: passField.stringValue,
+        persistence: .forSession
+      )
+      completionHandler(.useCredential, credential)
+    } else {
+      completionHandler(.cancelAuthenticationChallenge, nil)
+    }
+  }
+
   // MARK: - WKDownloadDelegate
 
   func download(
