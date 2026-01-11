@@ -17,7 +17,7 @@ Read and follow the process documented in `docs/release.md`.
    - List commits since last release:
      `git log --oneline $(git describe --tags --abbrev=0)..HEAD`
    - Determine new version number (MAJOR.MINOR.PATCH)
-   - Always increment the patch version number, not major or minor, unless
+   - Always increment the minor version number, not major or patch, unless
      explicitly requested otherwise.
 
 3. **Update version numbers** - Update version in two places:
