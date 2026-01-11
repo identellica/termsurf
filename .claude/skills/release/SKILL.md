@@ -89,5 +89,5 @@ We've reached this peak of surfing heights.
    - `git push origin main --tags`
 
 8. **Deploy website**
-   - `cd website && bun run build:commits`
+   - `cd website && bun run build:data`
    - `bun run deploy`

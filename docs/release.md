@@ -83,15 +83,15 @@ git push origin main --tags
 
 ### 7. Deploy Website
 
-Update the commit log on termsurf.com with the new release:
+Update the commit log and version on termsurf.com:
 
 ```bash
 cd website
-bun run build:commits
+bun run build:data
 bun run deploy
 ```
 
-This rebuilds the commit data from git history and deploys the updated website to Fly.io.
+This rebuilds the commit and version data from git history and deploys the updated website to Fly.io.
 
 ## Version Numbering
 
