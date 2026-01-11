@@ -23,7 +23,7 @@ Track progress on WKWebView API coverage. Check off items as they're implemented
 - [x] `didFail:withError:` - Error logging
 - [x] `didFailProvisionalNavigation:withError:` - Error logging
 - [x] `didReceiveAuthenticationChallenge:` - HTTP Basic Auth
-- [ ] `webContentProcessDidTerminate:` - Crash recovery ⚠️ **High**
+- [x] `webContentProcessDidTerminate:` - Crash recovery
 - [ ] `shouldAllowDeprecatedTLS:` - TLS 1.0/1.1 warning
 - [x] `navigationAction:didBecome:` - Download handling
 - [x] `navigationResponse:didBecome:` - Download handling

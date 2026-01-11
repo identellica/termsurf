@@ -613,6 +613,23 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
     }
   }
 
+  /// Handle WebKit content process crashes
+  func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+    logger.error("WebKit content process terminated")
+
+    let alert = NSAlert()
+    alert.messageText = "Web Content Crashed"
+    alert.informativeText = "The webpage has crashed. Would you like to reload?"
+    alert.addButton(withTitle: "Reload")
+    alert.addButton(withTitle: "Close")
+
+    if alert.runModal() == .alertFirstButtonReturn {
+      webView.reload()
+    } else {
+      onClose?(webviewId)
+    }
+  }
+
   // MARK: - WKDownloadDelegate
 
   func download(
