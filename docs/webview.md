@@ -165,9 +165,9 @@ in the same webview. See [target-blank.md](target-blank.md).
 
 ---
 
-## Implementation Notes
+## Implementation Reference
 
-Code snippets for implementing remaining features.
+Code snippets documenting key feature implementations.
 
 ### JavaScript Dialogs
 
@@ -227,6 +227,11 @@ func webView(_ webView: WKWebView,
 ```
 
 ### Downloads
+
+**Limitation:** Cross-origin downloads (e.g., clicking a download link on site A that
+points to site B) are not supported due to browser security restrictions. The
+`download` attribute only works for same-origin URLs. Blob URL downloads work via
+JavaScript interception.
 
 ```swift
 // Add WKDownloadDelegate conformance to WebViewOverlay

@@ -16,8 +16,9 @@
 - [x] User agent customization (basic: set to Safari UA in v0.1.5)
 - [x] JavaScript dialogs (alert, confirm, prompt)
 - [x] File uploads
-- [x] Download handling
-- [ ] Permission prompts (camera, microphone, location)
+- [x] Download handling (same-origin only; cross-origin downloads not supported)
+- [x] Permission prompts (camera, microphone)
+- [ ] Location permission prompts
 
 ### Documentation
 
