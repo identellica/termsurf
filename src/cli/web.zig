@@ -70,7 +70,24 @@ pub fn run(alloc: Allocator) !u8 {
     } else if (std.mem.eql(u8, command, "help") or std.mem.eql(u8, command, "--help") or std.mem.eql(u8, command, "-h")) {
         return Action.help_error;
     } else {
-        // Unknown command: treat as URL (implicit open)
+        // Smart detection: if file exists locally, open as file; otherwise as URL
+        // Skip file check for explicit URLs (http://, https://, file://)
+        if (!hasUrlScheme(command) and fileExistsInCwd(alloc, command)) {
+            return cmdFile(alloc, args[0..]);
+        }
+        // If it looks like host:port (e.g., localhost:3000), prepend http://
+        if (!hasUrlScheme(command) and looksLikeHostPort(command)) {
+            const http_url = try std.fmt.allocPrint(alloc, "http://{s}", .{command});
+            defer alloc.free(http_url);
+            var modified_args = try alloc.alloc([]const u8, args.len);
+            defer alloc.free(modified_args);
+            modified_args[0] = http_url;
+            for (args[1..], 1..) |arg, i| {
+                modified_args[i] = arg;
+            }
+            return cmdOpen(alloc, modified_args);
+        }
+        // Fall back to URL
         return cmdOpen(alloc, args[0..]);
     }
 }
@@ -377,6 +394,37 @@ fn resolveToAbsolutePath(allocator: Allocator, path: []const u8) ![]u8 {
     const clean_path = if (std.mem.startsWith(u8, path, "./")) path[2..] else path;
 
     return try std.fs.path.join(allocator, &.{ cwd, clean_path });
+}
+
+/// Check if argument has an explicit URL scheme
+fn hasUrlScheme(arg: []const u8) bool {
+    return std.mem.startsWith(u8, arg, "http://") or
+        std.mem.startsWith(u8, arg, "https://") or
+        std.mem.startsWith(u8, arg, "file://");
+}
+
+/// Check if argument looks like host:port (e.g., localhost:3000)
+fn looksLikeHostPort(arg: []const u8) bool {
+    const colon_idx = std.mem.indexOfScalar(u8, arg, ':') orelse return false;
+    // Must have something after the colon
+    if (colon_idx + 1 >= arg.len) return false;
+    // Everything after colon should be digits (port number)
+    for (arg[colon_idx + 1 ..]) |c| {
+        if (c < '0' or c > '9') return false;
+    }
+    return true;
+}
+
+/// Check if path exists as a file (resolves relative to cwd)
+fn fileExistsInCwd(alloc: Allocator, path: []const u8) bool {
+    const abs_path = resolveToAbsolutePath(alloc, path) catch return false;
+    defer alloc.free(abs_path);
+
+    const abs_path_z = alloc.dupeZ(u8, abs_path) catch return false;
+    defer alloc.free(abs_path_z);
+
+    std.fs.accessAbsolute(abs_path_z, .{}) catch return false;
+    return true;
 }
 
 /// Event loop: read events from socket and handle them
