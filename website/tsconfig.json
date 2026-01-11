@@ -14,7 +14,11 @@
       "~/*": ["src/*"]
     },
     "resolveJsonModule": true,
-    "types": ["vite/client", "bun"]
+    "types": ["vite/client", "bun"],
+
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo"
   },
-  "include": ["src/**/*", "scripts/**/*", "vite.config.ts", "data/**/*"]
+  "include": ["src/**/*", "scripts/**/*", "vite.config.ts", "data/**/*"],
+  "exclude": ["node_modules", "dist", ".tanstack"]
 }
