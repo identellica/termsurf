@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.0
+
+### New Features
+
+- **File uploads**: Added support for file uploads in webviews. Single file,
+  multiple files, and directory uploads all work via the native macOS file
+  picker.
+
+### Website
+
+- **Version badge**: The website header now shows the current release version.
+
 ## v0.4.0
 
 ### New Features
