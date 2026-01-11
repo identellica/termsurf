@@ -19,6 +19,7 @@
 - [x] Download handling (same-origin only; cross-origin downloads not supported)
 - [x] Permission prompts (camera, microphone)
 - [ ] Location permission prompts
+- [ ] Open target="_blank" links in new tab (currently opens in same webview; see `docs/target-blank.md`)
 
 ### Documentation
 
