@@ -27,9 +27,58 @@ Read and follow the process documented in `docs/release.md`.
 4. **Update CHANGELOG.md** - Add a new section for the release version
    summarizing the changes.
 
-5. **Commit version bump**
+5. **Commit version bump** with a poetic message
    - `git add build.zig.zon CHANGELOG.md termsurf-macos/TermSurf.xcodeproj/project.pbxproj`
-   - `git commit -m "Bump version to X.Y.Z"`
+   - Write a short poem celebrating the release (see examples below)
+   - Commit with the poetic message
+
+## Poetic Release Messages
+
+Releases are milestones worth celebrating! Write a poem (4-8 lines) that captures the spirit of the release.
+
+### Format
+```
+Release X.Y.Z
+
+[Poem, 4-8 lines]
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+```
+
+### Examples
+
+**Limerick style:**
+```
+Release 0.4.0
+
+A terminal wanted to browse,
+So we gave it a web-viewing house.
+With tabs and a bar,
+It's come quite far—
+Now surf and type, take your vows!
+```
+
+**Ballad style:**
+```
+Release 0.5.0
+
+The changelog grows with features anew,
+Bugs were squashed, the codebase true.
+From terminal depths to browser heights,
+We ship this version with delight.
+Another step upon the way,
+TermSurf improves again today!
+```
+
+**Celebratory style:**
+```
+Release 1.0.0
+
+From zero to one, the journey's begun,
+A terminal browser, second to none!
+Through countless commits and late-night fights,
+We've reached this peak of surfing heights.
+```
 
 6. **Verify builds**
    - `zig build`
