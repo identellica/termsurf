@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.8.0
+
+### New Features
+
+- **Page zoom**: Added keyboard shortcuts for page zoom. cmd+= zooms in, cmd+-
+  zooms out, and cmd+0 resets to 100%. Works in all webview modes.
+
+### Documentation
+
+- Updated TODO.md and webview.md to reflect completed features and document
+  cross-origin download limitations.
+
 ## v0.7.0
 
 ### New Features
