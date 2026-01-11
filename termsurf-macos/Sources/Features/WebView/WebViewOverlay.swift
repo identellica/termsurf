@@ -812,6 +812,44 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
     }
   }
 
+  // MARK: - Media Capture Permissions
+
+  /// Handle camera/microphone permission requests
+  func webView(
+    _ webView: WKWebView,
+    requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+    initiatedByFrame frame: WKFrameInfo,
+    type: WKMediaCaptureType,
+    decisionHandler: @escaping (WKPermissionDecision) -> Void
+  ) {
+    let originString = origin.host.isEmpty ? "This page" : origin.host
+    let permissionTypes = formatMediaTypes(type)
+
+    logger.info("Media capture permission requested by \(originString): \(permissionTypes)")
+
+    let alert = NSAlert()
+    alert.messageText = "\"\(originString)\" wants to use your \(permissionTypes)"
+    alert.informativeText = "This will allow the website to access your \(permissionTypes)."
+    alert.addButton(withTitle: "Allow")
+    alert.addButton(withTitle: "Don't Allow")
+
+    let response = alert.runModal()
+    decisionHandler(response == .alertFirstButtonReturn ? .grant : .deny)
+  }
+
+  private func formatMediaTypes(_ type: WKMediaCaptureType) -> String {
+    switch type {
+    case .camera:
+      return "camera"
+    case .microphone:
+      return "microphone"
+    case .cameraAndMicrophone:
+      return "camera and microphone"
+    @unknown default:
+      return "camera and microphone"
+    }
+  }
+
   // MARK: - Focus Handling
 
   override var acceptsFirstResponder: Bool { true }
