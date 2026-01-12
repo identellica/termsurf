@@ -1,3 +1,4 @@
+# Editor/IDE
 *~
 .*.swp
 .swp
@@ -6,26 +7,34 @@
 .vscode/
 .direnv/
 .envrc.local
-.flatpak-builder/
-zig-cache/
-.zig-cache/
-zig-out/
+
+# Build outputs (root level for future WezTerm)
+/target/
 build/
+zig-out/
+
+# Profiling
 default.profraw
-/result*
-/.nixos-test-history
-example/*.wasm
-test/ghostty
-test/cases/**/*.actual.png
-flatpak/builddir/
-flatpak/repo/
+*.profraw
 
-glad.zip
-/Box_test.ppm
-/Box_test_diff.ppm
-/ghostty.qcow2
-
-vgcore.*
+# TermSurf 1.x / Ghostty (ts1/)
+ts1/zig-cache/
+ts1/.zig-cache/
+ts1/zig-out/
+ts1/build/
+ts1/.flatpak-builder/
+ts1/flatpak/builddir/
+ts1/flatpak/repo/
+ts1/result*
+ts1/.nixos-test-history
+ts1/example/*.wasm
+ts1/test/ghostty
+ts1/test/cases/**/*.actual.png
+ts1/glad.zip
+ts1/Box_test.ppm
+ts1/Box_test_diff.ppm
+ts1/ghostty.qcow2
+ts1/vgcore.*
 
 # Analysis repos (not part of TermSurf)
 /wezterm/

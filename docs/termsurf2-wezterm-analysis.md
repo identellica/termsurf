@@ -390,7 +390,7 @@ the only realistic path to feature parity with standalone browsers.
 
 ## References
 
-- WezTerm: https://github.com/wez/wezterm
+- WezTerm: https://github.com/wezterm/wezterm
 - cef-rs: https://github.com/tauri-apps/cef-rs
 - CEF Documentation: https://bitbucket.org/chromiumembedded/cef/wiki/Home
 - wgpu: https://wgpu.rs/
