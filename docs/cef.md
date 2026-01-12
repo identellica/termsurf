@@ -4,17 +4,26 @@ This document covers the Chromium Embedded Framework (CEF) integration for TermS
 
 ## Current Status
 
-**Status:** ⚠️ Deferred - Using WKWebView for MVP
+**Status:** 🔄 Planned for TermSurf 2.0 via Zig integration
 
-CEF integration was attempted but encountered fundamental issues with Swift-to-C struct marshalling. The CEF C API's validation layer rejects structs created from Swift due to memory layout incompatibilities. See [Implementation Challenges](#implementation-challenges) below for details.
+### TermSurf 1.0 (Current)
+Uses Apple's WKWebView for browser panes. This works as an MVP but has limitations:
+- Visited links require private API workarounds
+- Limited to macOS/iOS
+- Some OAuth/iframe navigation quirks
+- No Chrome DevTools
 
-**Decision:** For the MVP, TermSurf uses Apple's WKWebView instead, which provides:
-- Native Swift integration (no marshalling issues)
-- Console capture via `WKScriptMessageHandler`
-- Zero external dependencies
-- Simpler implementation (~200 lines vs ~1000+ for CEF)
+### TermSurf 2.0 (Planned)
+Integrate CEF at the **Zig level** instead of Swift. This avoids the Swift struct marshalling issues entirely because:
+- Zig has direct C interop with zero overhead
+- Zig structs have predictable, C-compatible memory layouts
+- Ghostty already does GPU rendering from Zig (Metal, OpenGL)
+- The same IOSurface → CALayer pattern can be used for CEF
 
-CEF remains a future option if Chrome DevTools or Blink-specific features become necessary.
+See `docs/termsurf2.md` for the full architecture and roadmap.
+
+### Swift Integration (Historical)
+CEF integration via Swift was attempted but failed due to struct marshalling issues. The CEF C API's validation layer rejects structs created from Swift due to memory layout incompatibilities. See [Swift Integration Challenges](#swift-integration-challenges-historical) below for detailed documentation.
 
 ---
 
@@ -282,12 +291,121 @@ CEF needs to process its message loop. Two options:
 - [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Official binary distributions
 - [CEF C API Docs](https://cef-builds.spotifycdn.com/docs/stable.html) - API documentation
 - [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - General usage guide
+- [cefcapi](https://github.com/cztomczak/cefcapi) - C API usage example (reference for Zig integration)
 
 ---
 
-## Implementation Challenges
+## Zig Integration Approach (TermSurf 2.0)
 
-This section documents the technical challenges encountered while attempting to integrate CEF with Swift, preserved for future reference.
+This section outlines the planned approach for integrating CEF via Zig instead of Swift.
+
+### Why Zig Works
+
+The key insight is that **Ghostty already does GPU rendering from Zig**. The terminal renderer:
+1. Creates a `CALayer` (specifically `IOSurfaceLayer`) from Zig
+2. Renders via Metal to an `IOSurface`
+3. Displays the `IOSurface` via the `CALayer`
+4. Swift just provides the window/NSView container
+
+CEF can use the exact same pattern via its Off-Screen Rendering (OSR) mode:
+1. CEF renders to a pixel buffer
+2. Zig copies pixels to an `IOSurface`
+3. `CALayer` displays the `IOSurface`
+
+### Zig C Interop
+
+Zig can import CEF headers directly:
+
+```zig
+const cef = @cImport({
+    @cInclude("cef_app_capi.h");
+    @cInclude("cef_browser_capi.h");
+    @cInclude("cef_client_capi.h");
+});
+
+// Create CEF structs with correct memory layout
+var app: cef.cef_app_t = .{
+    .base = .{
+        .size = @sizeOf(cef.cef_app_t),
+        .add_ref = cefAddRef,
+        .release = cefRelease,
+        .has_one_ref = cefHasOneRef,
+        .has_at_least_one_ref = cefHasAtLeastOneRef,
+    },
+    .on_before_command_line_processing = null,
+    .on_register_custom_schemes = null,
+    .get_resource_bundle_handler = null,
+    .get_browser_process_handler = getBrowserProcessHandler,
+    .get_render_process_handler = null,
+};
+```
+
+Unlike Swift, Zig structs have **predictable C-compatible memory layouts**, so CEF's validation will accept them.
+
+### Off-Screen Rendering
+
+CEF's OSR mode provides pixel buffers via the `OnPaint` callback:
+
+```zig
+fn onPaint(
+    self: *cef.cef_render_handler_t,
+    browser: *cef.cef_browser_t,
+    paint_type: cef.cef_paint_element_type_t,
+    dirty_rects_count: usize,
+    dirty_rects: [*]const cef.cef_rect_t,
+    buffer: [*]const u8,  // BGRA pixel data
+    width: c_int,
+    height: c_int,
+) callconv(.C) void {
+    // Get our handler from the CEF struct
+    const handler = @fieldParentPtr(BrowserHandler, "render_handler", self);
+
+    // Copy to IOSurface (same pattern as terminal renderer)
+    handler.iosurface.lock();
+    @memcpy(handler.iosurface.getBaseAddress(), buffer[0..@intCast(width * height * 4)]);
+    handler.iosurface.unlock();
+
+    // Trigger redraw
+    handler.layer.setNeedsDisplay();
+}
+```
+
+### Integration with libghostty
+
+The browser would be exposed via the same C API pattern as terminal surfaces:
+
+```c
+// New functions in ghostty.h
+ghostty_browser_t ghostty_browser_new(ghostty_app_t app, ghostty_browser_config_t* config);
+void ghostty_browser_free(ghostty_browser_t browser);
+void ghostty_browser_load_url(ghostty_browser_t browser, const char* url);
+void ghostty_browser_go_back(ghostty_browser_t browser);
+void ghostty_browser_go_forward(ghostty_browser_t browser);
+// ... etc
+```
+
+Swift would call these functions just like it calls `ghostty_surface_*` functions today.
+
+### Cross-Platform Benefits
+
+Since the browser logic lives in Zig:
+- **macOS**: Swift provides windows, Zig handles CEF
+- **Linux**: GTK provides windows, Zig handles CEF (same code)
+- **Windows**: Win32/WinRT provides windows, Zig handles CEF (same code)
+
+The terminal already works this way. The browser would follow the same pattern.
+
+### See Also
+
+- `docs/termsurf2.md` - Full architecture and implementation roadmap
+- `src/renderer/Metal.zig` - How Ghostty does Metal rendering from Zig
+- `src/renderer/metal/IOSurfaceLayer.zig` - The IOSurface → CALayer pattern
+
+---
+
+## Swift Integration Challenges (Historical)
+
+This section documents the technical challenges encountered while attempting to integrate CEF with Swift, preserved for future reference. **This approach has been abandoned in favor of Zig integration.**
 
 ### The Core Problem
 
@@ -483,34 +601,30 @@ CEFTest.app/Contents/Frameworks/
 
 The helper app bundle IDs must follow the pattern `{main_bundle_id}.helper.{type}`.
 
-### Recommendations for Future Work
+### Recommendations
 
-If CEF integration is revisited:
+**The recommended path forward is Zig integration, not fixing Swift integration.**
 
-1. **Try the C++ API instead of C API**
-   - Use a bridging header to expose C++ classes to Swift
-   - This avoids the struct marshalling problem entirely
-   - The C++ wrapper handles reference counting internally
+The Swift challenges documented above are fundamental to Swift's memory model and unlikely to be easily resolved. Instead, integrating CEF at the Zig level:
+- Avoids all struct marshalling issues
+- Follows the same pattern Ghostty uses for terminal rendering
+- Enables cross-platform support (Linux, Windows)
+- Keeps the browser logic in the portable Zig codebase
 
-2. **Test with different CEF versions**
-   - CEF 133.x may have specific bugs
-   - Try an older version that's known to work with CEF.swift
+See `docs/termsurf2.md` for the full implementation plan.
 
-3. **Investigate the cefcapi project**
-   - [cefcapi](https://github.com/aspect-apps/aspect/tree/main/aspect-platform/aspect-platform-cef/aspect-platform-cef-capi) shows C API usage patterns
-   - May have insights on struct initialization
+### Historical Swift Approaches (Not Recommended)
 
-4. **Check Swift class layout**
-   - Use memory debugging to verify actual offset of first property
-   - The 16-byte assumption may no longer hold
+These approaches were considered but abandoned:
 
-5. **Consider Objective-C bridge**
-   - Write CEF integration in Objective-C
-   - Expose a clean Swift API on top
-   - Objective-C has more predictable memory layout
+1. **C++ API instead of C API** - Would still require bridging to Swift
+2. **Objective-C bridge** - Adds complexity, still platform-specific
+3. **Different CEF versions** - Unlikely to help with fundamental Swift memory layout issues
+4. **Fix Swift class layout** - Fragile, depends on Swift compiler internals
 
 ### References
 
-- [CEF Forum: CefApp_0_CToCpp invalid version](https://magpcss.org/ceforum/viewtopic.php?f=6&t=19114) - Discussion of this exact error
-- [CEF.swift](https://github.com/aspect-apps/aspect/tree/main/aspect-platform/aspect-platform-cef/aspect-platform-cef-swift) - Working (older) Swift bindings
-- [cefcapi](https://github.com/aspect-apps/aspect/tree/main/aspect-platform/aspect-platform-cef/aspect-platform-cef-capi) - C API usage example
+- [CEF Forum: CefApp_0_CToCpp invalid version](https://magpcss.org/ceforum/viewtopic.php?f=6&t=19114) - Discussion of the Swift error
+- [CEF.swift](https://github.com/aspect-apps/aspect/tree/main/aspect-platform/aspect-platform-cef/aspect-platform-cef-swift) - Historical Swift bindings (no longer maintained)
+- [cefcapi](https://github.com/cztomczak/cefcapi) - C API example (useful reference for Zig integration)
+- `docs/termsurf2.md` - TermSurf 2.0 architecture and roadmap
