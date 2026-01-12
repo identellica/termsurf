@@ -1,6 +1,160 @@
 {
-  "generatedAt": "2026-01-11T12:44:33.192Z",
+  "generatedAt": "2026-01-11T21:54:52.423Z",
   "commits": [
+    {
+      "hash": "c9bc3976be0b168cf42d27688da2619b747a38d6",
+      "message": "Bump version to 0.8.0",
+      "body": "The page now bends to your command,\nZoom in, zoom out, with keyboard hand.\nPlus and minus, zero too—\nScale the web to perfect view.\nA minor bump, a polished release,\nWhere documentation finds its peace.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T15:53:29-06:00"
+    },
+    {
+      "hash": "9eda823b1fb45095cbd96ce972d89fdcbf34eba8",
+      "message": "Update docs to reflect completed features",
+      "body": "The checklist grew, the boxes filled,\nWith features built and bugs now stilled.\nCamera, mic, and downloads too—\n(Though cross-origin? That won't go through.)\nFrom \"notes to do\" to \"reference made,\"\nOur documentation's been upgraded.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T15:51:47-06:00"
+    },
+    {
+      "hash": "b53c6459a6c0c8380e7fbc19a343347664b878c8",
+      "message": "Add page zoom shortcuts",
+      "body": "cmd+plus and cmd+minus, a familiar pair,\nAdjust the page with typographic flair.\nToo small to read? Just zoom right in!\nToo large for comfort? Make it thin.\nAnd should you lose your sense of scale,\ncmd+zero resets without fail.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T15:41:18-06:00"
+    },
+    {
+      "hash": "bbb28f030d8dbc8a09bb17c54da1957044c4df36",
+      "message": "Bump version to 0.7.0",
+      "body": "Three guardians join the watch tonight:\nAuth checks your name, Crash sets things right,\nAnd Media asks before it peers\nThrough camera lens or listening ears.\nThe browser grows more wise and kind—\nSecurity and grace combined!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T15:21:27-06:00"
+    },
+    {
+      "hash": "5e9345012226bd2a5564263222cc544ad4791847",
+      "message": "Add camera and microphone permission prompts",
+      "body": "\"May I see? May I hear?\"\nThe website asks, drawing near.\nA dialog appears, polite and clear:\n\"Allow\" or \"Don't\"—the choice is here.\nNo silent spying, have no fear,\nYour camera and mic need your cheer!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T15:19:36-06:00"
+    },
+    {
+      "hash": "a723b35e8b9eae361d57eb5d44a4fcc78beae807",
+      "message": "Add WebKit crash recovery dialog",
+      "body": "When WebKit falls and all goes white,\nNo longer shall you lose the fight.\nA dialog rises from the void:\n\"Reload, or close what was destroyed?\"\nThe phoenix option now appears—\nRefresh the page, and dry your tears.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T15:00:24-06:00"
+    },
+    {
+      "hash": "4700a6099bf044b768084e09a90c0bf897395d79",
+      "message": "Add HTTP Basic Auth support",
+      "body": "A site said \"You cannot pass through!\"\nIt demanded a name and word too.\nNow a dialog appears,\nType credentials, no fears—\nThe bouncer steps aside, letting you view.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T14:55:42-06:00"
+    },
+    {
+      "hash": "8b224a94919865ac358e08adb313544a62fed623",
+      "message": "Bump version to 0.6.0",
+      "body": "Downloads now descend from cloud to ground,\nThrough WebKit's gates, a path was found.\nBlob URLs and same-origin flows,\nNSSavePanel catches all that goes!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T14:44:40-06:00"
+    },
+    {
+      "hash": "0b545fef3efec158cfe178cd40c5f971a3910fa8",
+      "message": "Add download support for WebView",
+      "body": "The browser pane longed to save,\nFiles it fetched from the wave.\nWith delegates in place,\nAnd blobs we embrace,\nNow downloads behave—no more knave!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T14:42:21-06:00"
+    },
+    {
+      "hash": "dbf55ab24291653fc5d69740bc4916bce4e4dd2a",
+      "message": "Smart file vs URL detection for web command",
+      "body": "Type a filename, it opens the file,\nType a URL, it surfs in style.\nlocalhost:3000 gets http:// prepended,\nNo more typing schemes—how splendid!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:54:51-06:00"
+    },
+    {
+      "hash": "08fedcb5678a6194b451192a045d6200bc4cef58",
+      "message": "Release 0.5.0",
+      "body": "Upload your files with a click,\nThe picker appears, smooth and slick.\nFrom photos to docs, big or small,\nTermSurf now handles them all.\nThe version badge gleams on the site,\nAnother release done right!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:36:54-06:00"
+    },
+    {
+      "hash": "842d75298dcd71a0cf9a40972406033bdc9a7e84",
+      "message": "Add file upload support",
+      "body": "A file picker springs to life,\nWhen upload buttons end their strife.\nSingle, multiple, directory too—\nNow TermSurf can upload for you.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:35:56-06:00"
+    },
+    {
+      "hash": "d776b7a84cd158fcb0f70c6326615cf949ce4f51",
+      "message": "Move HTML tests to dedicated html folder",
+      "body": "The test folder had a prior claim,\nSo HTML files needed a new name.\nA folder called html, neat and clean,\nFor browser tests to call their scene.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:23:21-06:00"
+    },
+    {
+      "hash": "4676e36a1e8854bdafe3a7bcb1864488db534e28",
+      "message": "Fix version badge to not shift title",
+      "body": "The badge once pushed the title aside,\nNow absolute, it floats with pride.\nCentered stays the name we know,\nWhile version tags just tag along for show.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:22:03-06:00"
+    },
+    {
+      "hash": "e18c5e84fc1b4987023334a04e5410fe69be774f",
+      "message": "Add version badge to website header",
+      "body": "A tiny tag beside the name,\nProclaims the version's claim to fame.\nSo visitors can see at a glance,\nIf updates deserve a second chance.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:16:28-06:00"
+    },
+    {
+      "hash": "d3835a8d750cfa369f8d561e64860d0f5f71d545",
+      "message": "Release 0.4.0",
+      "body": "The dialogs now speak from the page,\nAlert, confirm, prompt take the stage.\nWith origin shown for your trust,\nAnd spam suppression—a must!\nTermSurf grows wiser with age.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:09:17-06:00"
+    },
+    {
+      "hash": "26102ea6edcd8ee0e2bb65c1f96e8e651fdb2edf",
+      "message": "Add JavaScript dialog support",
+      "body": "A website once wanted to say,\n\"Hello!\" in a modal display.\nWith alert, confirm, prompt—\nNow TermSurf is prompt!\nAnd spam? Just one click, go away.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T13:08:29-06:00"
+    },
+    {
+      "hash": "422a1766e6d2c4a176403d635c46f5809829de24",
+      "message": "Add poetic commit messages to release skill",
+      "body": "Releases deserve a verse or two,\nA celebration long overdue.\nFour to eight lines of wit and cheer,\nTo mark each milestone through the year.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T11:59:13-06:00"
+    },
+    {
+      "hash": "b9ab5d5716ed05541eee7642cee20bf89154d443",
+      "message": "Shorten tagline, speed up TS builds",
+      "body": "Less is more, the tagline's now tight,\nAnd TypeScript compiles at the speed of light.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T11:54:23-06:00"
+    },
+    {
+      "hash": "5d19b99c1e0716406feff7b73b2f3b0392624f25",
+      "message": "minor, not patch",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T09:21:13-06:00"
+    },
+    {
+      "hash": "c23b614e395b614c4b9c09af02e5821555c21764",
+      "message": "update release skill to use patch version numbers",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T09:19:30-06:00"
+    },
+    {
+      "hash": "940e493dc9cd36b0843a78866b9fbb8510065e68",
+      "message": "Update tagline and refresh commit history",
+      "body": "\"Emulator with webview support\"—\nA mouthful, rather dull to report.\nNow \"terminal and browser\" we say,\nFor web devs who code every day.\nThe commits refresh, the data's new,\nThe website shows what we've been through.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T09:16:41-06:00"
+    },
     {
       "hash": "59f4e674df6322fc9e96e9f40e5d7433e083114c",
       "message": "Bump version to 0.3.0",
@@ -196,160 +350,6 @@
       "body": "",
       "author": "Ryan X. Charles",
       "date": "2026-01-10T10:03:03-06:00"
-    },
-    {
-      "hash": "6fcdd36a0057c5a613cd13198dcaff3e3a39d028",
-      "message": "Add docs/merge-upstream.md",
-      "body": "Documents the process for merging changes from upstream Ghostty:\n- Modified files inventory with conflict risk assessment\n- Pre-merge checklist\n- Fetch and review process\n- Conflict resolution guide for each modified file\n- Post-merge testing checklist\n- Rollback procedures\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:02:30-06:00"
-    },
-    {
-      "hash": "a94afd9321428c60aed9b9ea6c69e12af54b8d05",
-      "message": "Update repo URL and fix bundle identifiers",
-      "body": "- Changed git remote from identellica/termsurf to termsurf/termsurf\n- Updated GitHub URLs in AboutView.swift\n- Fixed bundle identifiers from com.identellica.* to com.termsurf.*\n  (was inconsistent with com.termsurf used in Swift logger/config code)\n\nBundle ID changes:\n- com.identellica.termsurf -> com.termsurf\n- com.identellica.termsurf.debug -> com.termsurf.debug\n- com.identellica.TermSurfTests -> com.termsurf.tests\n- com.identellica.termsurf-ios -> com.termsurf.ios\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T09:58:29-06:00"
-    },
-    {
-      "hash": "17da13840dc71ba36b0deb2c0e85097840630ad5",
-      "message": "Fix memory leak when pruning scrollback with non-standard pages (#10251)",
-      "body": "This _finally_ resolves #9962 (and the myriad of dupes). \n\nThe core issue was that when a non-standard size page is reused as part\nof our scrollback pruning, it was resized to be standard size, which\ncaused our future frees to believe it was pooled and not call `munmap`\nproperly.\n\nThe solution I chose was to never reuse non-standard sized pages. If\nduring scrollback pruning we detect a non-standard page, we destroy it\nand re-alloc. This frees the old memory and reuses pool memory for the\nnew page.\n\nAs part of this, I also introduced a custom page allocator that uses\nmacOS's mach kernel virtual memory tagging feature to specifically tag\nour PageList memory. I was able to use this in conjunction with\nInstruments and `footprint` to verify that our PageList memory was\npreviously not freed and is now successfully freed.\n\n**No AI was used in my work here.** AI was used by others in their\nanalysis of this issue that I used the results of to help guide me and\ngive me other things to consider, but the ultimate understanding and fix\nwas all done via my own meat sticks.\n\n## Detailed Explainer\n\nGhostty uses a memory pool of fixed-size `mmap`-ed pages to serve as the\nbacking memory for our terminal. If the terminal requires a non-standard\n(larger) amount of memory due to an abundance of emoji, styles,\nhyperlinks, etc. then we allocate non-pooled pages directly with `mmap`.\nWhen freeing our pages, if it is `<= standard size` we just put it back\ninto the memory pool. If it is larger, we `munmap` it.\n\nThis explains and defines both a _standard_ and therefore _non-standard_\npage.\n\nGhostty also has the concept of a \"scrollback limit\" (exposed to the\nuser via the `scrollback-limit` config). This caps the size of our\nscrollback or history. When we reach this limit, we have a trick that we\ndo: to avoid allocation, we reuse the oldest page in the history.\n\nUnfortunately, as part of this process, we were resizing the underlying\nmemory to be standard size again. This was causing our future frees to\nbelieve this was pooled memory, and never unmap it. This was the main\nsource of the leak.\n\n## Thanks\n\nBig shout out to @grishy for being the person that finally got me a\nreproduction so I could analyze the issue for myself. His own analysis\ngot to the same conclusion as me but thanks to the reproduction I was\nable to verify both our understandings independently.",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-10T07:54:32-08:00"
-    },
-    {
-      "hash": "2c0cefd1902ac84a1939a26824f463e66ea1d0ff",
-      "message": "Merge webview docs into unified docs/webview.md",
-      "body": "- Merged docs/wkwebview.md and docs/wkwebview-api-audit.md into docs/webview.md\n- Converted API tables to checklist format for tracking implementation progress\n- Updated references in AGENTS.md, TODO.md, CHANGELOG.md\n- Renamed to webview.md (not wkwebview.md) to allow for future multi-engine support\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T09:42:41-06:00"
-    },
-    {
-      "hash": "509f0733667d7631266f787ea800ba05d3672cec",
-      "message": "terminal: fix up our total row and pin accounting during reuse",
-      "body": "",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-10T06:58:19-08:00"
-    },
-    {
-      "hash": "235eebfa9295ef2877321656b35f160d8a3d0b5c",
-      "message": "terminal: during test, use the testing allocator for pages",
-      "body": "",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-10T06:55:21-08:00"
-    },
-    {
-      "hash": "9ee78d82c02f3b3c3e79c20c02406f2de09196b1",
-      "message": "terminal: fix memory leak when grow attempts to reuse non-standard page",
-      "body": "",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T20:17:33-08:00"
-    },
-    {
-      "hash": "1d63045c2ffe006847716bb39720259e670ea96d",
-      "message": "terminal: use tagged memory for PageList ops",
-      "body": "",
-      "author": "Mitchell Hashimoto",
-      "date": "2026-01-09T20:17:33-08:00"
-    },
-    {
-      "hash": "7406f2763eec102b8c0163bba669d58c563046fe",
-      "message": "webview api audit doc",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T08:04:26-06:00"
-    },
-    {
-      "hash": "0321df93eabb21f3c8aa6467177fd3cd7e28d6f9",
-      "message": "Remove Ghostty CI/CD workflows",
-      "body": "These workflows were inherited from the Ghostty fork and don't work for\nTermSurf because they:\n- Require Ghostty-specific runners (namespace-profile-ghostty-*)\n- Reference secrets we don't have (Cachix, R2, Sentry, Apple signing)\n- Have repository conditions that skip for non-ghostty-org repos\n\nThis was causing failure notification emails on every push/tag.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T07:44:48-06:00"
-    },
-    {
-      "hash": "e0696367edbd3bb44af2b1d96e38ade51532c3b3",
-      "message": "Bump MARKETING_VERSION to 0.1.5",
-      "body": "Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T07:41:20-06:00"
-    },
-    {
-      "hash": "8cab169b6886fc8463175f4cb3b2cbba9227123f",
-      "message": "document changes and new release",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T07:36:52-06:00"
-    },
-    {
-      "hash": "2ccaffb38859cfccab6e1ac413b45a02055e1888",
-      "message": "fix google.com by sending prefer secure header",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T07:27:25-06:00"
-    },
-    {
-      "hash": "72e766948657edf35deb099c6a6a63604f57791d",
-      "message": "update agents.md",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T06:22:33-06:00"
-    },
-    {
-      "hash": "e3df38bec626d8c8dece5a37ef4f96d7e2cae407",
-      "message": "Bump version to 0.1.4",
-      "body": "Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T06:17:53-06:00"
-    },
-    {
-      "hash": "2972725405ca1554e238591534d3051d588399ba",
-      "message": "fix web cli tool",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T06:15:43-06:00"
-    },
-    {
-      "hash": "98faf15c7f40518c341cc98645ffea33dcac34b6",
-      "message": "Bump version to 0.1.3",
-      "body": "Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T05:59:40-06:00"
-    },
-    {
-      "hash": "f155c54aa7ccc7ef5d89a657e364dd2164fed915",
-      "message": "old tool gone",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T05:57:35-06:00"
-    },
-    {
-      "hash": "93873ae8d74888eb138ddb92649662b93e04d77e",
-      "message": "remove obsolete 'web' cli tool",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T05:52:25-06:00"
-    },
-    {
-      "hash": "473de2925c8990141e456b788ca7d0c041bef2d6",
-      "message": "link the new 'web' command to 'termsurf +web ...'",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T05:38:13-06:00"
-    },
-    {
-      "hash": "9b0ab88464cb31c82359b337e7ea9708ce7a527a",
-      "message": "put web command inside termsurf, i.e.",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T05:19:37-06:00"
-    },
-    {
-      "hash": "f4e1e0689e7de0a069a63107992253d8104446a7",
-      "message": "predictable release build location for PATH",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T04:25:13-06:00"
     }
   ]
 }

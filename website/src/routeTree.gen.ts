@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestMediaRouteImport } from './routes/test-media'
 import { Route as TestDownloadRouteImport } from './routes/test-download'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TestMediaRoute = TestMediaRouteImport.update({
+  id: '/test-media',
+  path: '/test-media',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestDownloadRoute = TestDownloadRouteImport.update({
   id: '/test-download',
   path: '/test-download',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/test-download': typeof TestDownloadRoute
+  '/test-media': typeof TestMediaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/test-download': typeof TestDownloadRoute
+  '/test-media': typeof TestMediaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/test-download': typeof TestDownloadRoute
+  '/test-media': typeof TestMediaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test-download'
+  fullPaths: '/' | '/test-download' | '/test-media'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/test-download'
-  id: '__root__' | '/' | '/test-download'
+  to: '/' | '/test-download' | '/test-media'
+  id: '__root__' | '/' | '/test-download' | '/test-media'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TestDownloadRoute: typeof TestDownloadRoute
+  TestMediaRoute: typeof TestMediaRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-media': {
+      id: '/test-media'
+      path: '/test-media'
+      fullPath: '/test-media'
+      preLoaderRoute: typeof TestMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/test-download': {
       id: '/test-download'
       path: '/test-download'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TestDownloadRoute: TestDownloadRoute,
+  TestMediaRoute: TestMediaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
