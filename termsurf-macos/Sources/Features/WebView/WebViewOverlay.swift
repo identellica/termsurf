@@ -432,11 +432,15 @@ class WebViewOverlay: NSView, WKScriptMessageHandler, WKNavigationDelegate, WKUI
       return
     }
 
-    // Only modify HTTP/HTTPS requests for header injection
-    guard let requestUrl = navigationAction.request.url,
+    // Only modify main frame HTTP/HTTPS requests for header injection
+    // Iframe navigations must be allowed to proceed normally, otherwise
+    // the iframe URL gets loaded in the main frame (breaking OAuth, ads, etc.)
+    guard let targetFrame = navigationAction.targetFrame,
+      targetFrame.isMainFrame,
+      let requestUrl = navigationAction.request.url,
       (requestUrl.scheme == "http" || requestUrl.scheme == "https")
     else {
-      logger.info("  -> allowing non-HTTP request")
+      logger.info("  -> allowing (non-main-frame or non-HTTP)")
       decisionHandler(.allow)
       return
     }
