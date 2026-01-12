@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.0.0
+
+TermSurf 1.0 marks the first stable release of the terminal emulator with
+integrated browser panes.
+
+### Fixes
+
+- **OAuth and iframe navigation**: Fixed issue where Google Sign-In buttons and
+  other OAuth iframes would hijack the main frame, causing blank pages and
+  broken back navigation. Header injection now only applies to main frame
+  navigations.
+
+### Internal
+
+- **Debug build script**: Added `scripts/build-debug.sh` for faster debug builds
+- **TermSurf 2.0 planning**: Documented architecture for future CEF integration
+  via Zig (see `docs/termsurf2.md`)
+
 ## v0.8.0
 
 ### New Features
