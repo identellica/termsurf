@@ -1,6 +1,48 @@
 {
-  "generatedAt": "2026-01-11T21:54:52.423Z",
+  "generatedAt": "2026-01-12T12:01:54.741Z",
   "commits": [
+    {
+      "hash": "5a4253328a98ffabe6ab27597c56322f5d1720a8",
+      "message": "Release 1.0.0",
+      "body": "From zero to one, the journey's complete,\nA terminal browser, a surfing feat!\nThrough WebKit waves and iframe fights,\nWe've reached the shore of stable heights.\nWhat started as a ghostly dream,\nNow rides the web on Zig's own stream.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T05:59:08-06:00"
+    },
+    {
+      "hash": "b607cfeb3b83dc05cef9583ad369e2a22423d610",
+      "message": "update website",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T05:57:25-06:00"
+    },
+    {
+      "hash": "4a098b4100b419e8a284eeb13fddf99d9de4f054",
+      "message": "document termsurf 2.0 plan",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T05:57:19-06:00"
+    },
+    {
+      "hash": "e66b88721659ea1565ffc0910f8b03fee81fceed",
+      "message": "Fix iframe navigation hijacking",
+      "body": "An iframe with dreams to be free,\nEscaped to the main frame with glee.\nWe checked isMainFrame,\nPut an end to its game—\nNow OAuth stays where it should be.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T04:43:54-06:00"
+    },
+    {
+      "hash": "1fcc469bbb563eb7f4b98cf28fb8c20431cb45d9",
+      "message": "Add debug build script, tidy output paths",
+      "body": "Two scripts now, a matching pair,\nDebug and Release, each with care.\n\"Where did my .app go?\" you'd once cry—\nNow build/debug/ and build/release/ reply.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T17:58:34-06:00"
+    },
+    {
+      "hash": "bce388a4c6f910011abf0d6a4f4fd18e22aec599",
+      "message": "Track target=\"_blank\" as TODO",
+      "body": "A link that says \"open new window please!\"\nWe load it in place with relative ease.\nTrue tabs need shell escapes done right,\nA security matter—worth the wait, not the fight.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-11T16:03:32-06:00"
+    },
     {
       "hash": "c9bc3976be0b168cf42d27688da2619b747a38d6",
       "message": "Bump version to 0.8.0",
@@ -308,48 +350,6 @@
       "body": "- Remove old Ghostty nushell commands (.agents/commands/)\n- Add merge-upstream skill that references docs/merge-upstream.md\n- Add release skill that references docs/release.md\n\nSkills provide Claude with step-by-step guidance while keeping\nthe documentation as the source of truth.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
       "author": "Ryan X. Charles",
       "date": "2026-01-10T10:53:25-06:00"
-    },
-    {
-      "hash": "8b0aec6bd2a9888d037c875348200db7a79d84bf",
-      "message": "Bump version to 0.1.6",
-      "body": "Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:30:43-06:00"
-    },
-    {
-      "hash": "0915aed1cd1560369d4ba3ba93f9dad455eaecd7",
-      "message": "Add \"Use Selection for Find\" and \"Jump to Selection\" menu items",
-      "body": "- Added menuSelectionForFind and menuScrollToSelection IBOutlets to AppDelegate\n- Added shortcut syncing for search_selection and scroll_to_selection actions\n- Added menu items to MainMenu.xib in Edit > Find submenu\n- Connected outlets to the new menu items\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:26:43-06:00"
-    },
-    {
-      "hash": "c99ff32af3a5f39f51278c623c8ed7c4843e5ed1",
-      "message": "Port upstream Ghostty macOS app changes to termsurf-macos",
-      "body": "Changes ported from macos/ to termsurf-macos/:\n\n- SplitTree.swift: Rename methods to verb-ed form (insert→inserting,\n  remove→removing, replace→replacing, equalize→equalized, resize→resizing)\n- BaseTerminalController.swift: Update SplitTree calls, make\n  replaceSurfaceTree internal, add selectionForFind/scrollToSelection\n  actions, fix applyTitleToWindow for bell indicator\n- TerminalController.swift: Add replaceSurfaceTree override for empty\n  tree handling\n- Ghostty.App.swift: Fix search state to update needle and always post\n  focus notification\n- Ghostty.Input.swift: Add BindingFlags struct\n- Ghostty.Surface.swift: Add keyIsBinding methods returning flags\n- SurfaceDragSource.swift: Add acceptsFirstMouse/mouseDown overrides to\n  fix window drag bug (#10110)\n- SurfaceView.swift: Fix search focus race condition with\n  DispatchQueue.main.async, add context property to SurfaceConfiguration\n- SurfaceView_AppKit.swift: Refactor performKeyEquivalent to use new\n  binding flags API and integrate with system menu, add find actions\n- DraggableWindowView.swift: Deleted (removed upstream)\n\nNote: Menu items for \"Use Selection for Find\" and \"Jump to Selection\"\nneed to be added manually in Xcode (MainMenu.xib + AppDelegate outlets).\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:23:10-06:00"
-    },
-    {
-      "hash": "9f74ae953e099224b9baf688c50743f763683eea",
-      "message": "Fix build after upstream merge: update API calls",
-      "body": "- ghostty_surface_inherited_config now requires a context enum parameter\n- ghostty_surface_key_is_binding now requires flags output parameter\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:11:06-06:00"
-    },
-    {
-      "hash": "b47c8e9993da6e818f89df067461dcfdcd69d55c",
-      "message": "Merge upstream Ghostty (113 commits)",
-      "body": "Notable upstream changes:\n- Memory leak fixes in scrollback pruning\n- Binding internals improvements\n- New OSC parser refactoring\n- macOS menu trigger improvements\n- Terminal search improvements\n\nConflict resolved:\n- .github/workflows/test.yml: Kept deleted (we removed CI workflows)\n\nOur changes preserved:\n- src/cli/web.zig (web command)\n- Custom config API (ghostty_config_load_files)\n- TermSurf branding\n- Dual XCFramework output\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:05:18-06:00"
-    },
-    {
-      "hash": "e1220cce89d35a6c88b4bcc71d7b2a360730d9e1",
-      "message": "format merge upstream doc",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:03:03-06:00"
     }
   ]
 }
