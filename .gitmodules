@@ -1,0 +1,39 @@
+# ts1 (Ghostty) submodules
+[submodule "ts1/vendor/mach_defs"]
+	path = ts1/vendor/mach_defs
+	url = https://github.com/nicowilliams/mach_defs.git
+[submodule "ts1/vendor/glslang"]
+	path = ts1/vendor/glslang
+	url = https://github.com/KhronosGroup/glslang.git
+[submodule "ts1/vendor/SPIRV-Cross"]
+	path = ts1/vendor/SPIRV-Cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git
+[submodule "ts1/vendor/fontconfig"]
+	path = ts1/vendor/fontconfig
+	url = https://gitlab.freedesktop.org/fontconfig/fontconfig.git
+[submodule "ts1/vendor/utfcpp"]
+	path = ts1/vendor/utfcpp
+	url = https://github.com/nemtrif/utfcpp.git
+[submodule "ts1/vendor/zig-libcxx"]
+	path = ts1/vendor/zig-libcxx
+	url = https://github.com/nicowilliams/zig-libcxx.git
+[submodule "ts1/vendor/zf"]
+	path = ts1/vendor/zf
+	url = https://github.com/natecraddock/zf.git
+[submodule "ts1/vendor/zig-libxml2"]
+	path = ts1/vendor/zig-libxml2
+	url = https://github.com/nicowilliams/zig-libxml2.git
+
+# ts2 (WezTerm) submodules
+[submodule "ts2/deps/harfbuzz/harfbuzz"]
+	path = ts2/deps/harfbuzz/harfbuzz
+	url = https://github.com/harfbuzz/harfbuzz.git
+[submodule "ts2/deps/freetype/libpng"]
+	path = ts2/deps/freetype/libpng
+	url = https://github.com/glennrp/libpng.git
+[submodule "ts2/deps/freetype/zlib"]
+	path = ts2/deps/freetype/zlib
+	url = https://github.com/madler/zlib.git
+[submodule "ts2/deps/freetype/freetype2"]
+	path = ts2/deps/freetype/freetype2
+	url = https://github.com/freetype/freetype2.git
