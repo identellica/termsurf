@@ -14,6 +14,15 @@ use std::os::raw::c_void;
 #[cfg(target_os = "macos")]
 use objc::{sel, sel_impl};
 
+// IOSurface C functions for validation
+#[cfg(target_os = "macos")]
+extern "C" {
+    fn IOSurfaceGetWidth(buffer: *const c_void) -> usize;
+    fn IOSurfaceGetHeight(buffer: *const c_void) -> usize;
+    fn IOSurfaceGetPixelFormat(buffer: *const c_void) -> u32;
+    fn IOSurfaceGetID(buffer: *const c_void) -> u32;
+}
+
 pub struct IOSurfaceImporter {
     pub handle: *mut c_void,
     pub format: cef_color_type_t,
@@ -113,7 +122,8 @@ impl IOSurfaceImporter {
             _ => unimplemented!(),
         });
         metal_desc.set_usage(MTLTextureUsage::ShaderRead);
-        metal_desc.set_storage_mode(MTLStorageMode::Managed);
+        // Note: Do NOT set storage mode for IOSurface-backed textures
+        // Metal determines storage mode from the IOSurface itself
 
         Ok(metal_desc)
     }
@@ -121,10 +131,44 @@ impl IOSurfaceImporter {
     fn import_via_metal(&self, device: &wgpu::Device) -> TextureImportResult {
         use metal::MTLTextureType;
 
-        // Convert handle to IOSurface
-        let io_surface = std::ptr::NonNull::new(self.handle.cast::<IOSurfaceRef>()).ok_or(
-            TextureImportError::InvalidHandle("Invalid IOSurface handle".to_string()),
-        )?;
+        // Verify handle is valid
+        if self.handle.is_null() {
+            return Err(TextureImportError::InvalidHandle(
+                "Invalid IOSurface handle".to_string(),
+            ));
+        }
+
+        // Validate IOSurface by querying its properties
+        let (io_width, io_height, io_format, io_id) = unsafe {
+            let width = IOSurfaceGetWidth(self.handle);
+            let height = IOSurfaceGetHeight(self.handle);
+            let format = IOSurfaceGetPixelFormat(self.handle);
+            let id = IOSurfaceGetID(self.handle);
+            (width, height, format, id)
+        };
+
+        eprintln!(
+            "DEBUG: IOSurface validation - id={}, size={}x{}, format=0x{:08X}",
+            io_id, io_width, io_height, io_format
+        );
+
+        // Check if the IOSurface returned valid values
+        if io_width == 0 || io_height == 0 {
+            return Err(TextureImportError::InvalidHandle(
+                format!(
+                    "IOSurface returned invalid dimensions: {}x{} (handle may be invalid)",
+                    io_width, io_height
+                ),
+            ));
+        }
+
+        // Verify dimensions match what CEF told us
+        if io_width != self.width as usize || io_height != self.height as usize {
+            eprintln!(
+                "WARNING: IOSurface dimensions ({}x{}) differ from CEF reported ({}x{})",
+                io_width, io_height, self.width, self.height
+            );
+        }
 
         let texture_desc = self.get_texture_desc();
         let metal_desc = self.get_metal_desc(&texture_desc)?;
@@ -138,12 +182,24 @@ impl IOSurfaceImporter {
                 ));
             };
 
-            let texture = objc::msg_send![
-                std::mem::transmute::<_,&metal::NSObject>(hal_device.raw_device()),
-                newTextureWithDescriptor:std::mem::transmute::<_,&metal::NSObject>(metal_desc.as_ref())
-                iosurface:io_surface
-                plane:0
+            let raw_device = hal_device.raw_device();
+            eprintln!("DEBUG: raw_device={:?}", raw_device as *const _);
+            eprintln!("DEBUG: metal_desc={:?}", metal_desc.as_ref() as *const _);
+            eprintln!("DEBUG: io_surface handle={:?}", self.handle);
+            eprintln!("DEBUG: About to call newTextureWithDescriptor:iosurface:plane:");
+
+            // Create texture from IOSurface using Metal API
+            // The selector is: newTextureWithDescriptor:iosurface:plane:
+            // Convert to Ref types which implement Message
+            let device_ref: &metal::DeviceRef = raw_device;
+            let desc_ref: &metal::TextureDescriptorRef = metal_desc.as_ref();
+            let texture: metal::Texture = objc::msg_send![
+                device_ref,
+                newTextureWithDescriptor:desc_ref
+                iosurface:self.handle
+                plane:0usize
             ];
+            eprintln!("DEBUG: texture created successfully");
 
             let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
                 texture,
