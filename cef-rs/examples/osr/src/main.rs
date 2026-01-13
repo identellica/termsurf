@@ -195,32 +195,33 @@ impl State {
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("Render Encoder"),
             });
-        TEXTURE.with_borrow_mut(|textures| {
-            let Some(bind_group) = textures.as_ref() else {
-                return;
-            };
-            {
-                let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                    label: Some("Cef Render Pass"),
-                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                        view: &frame,
-                        resolve_target: None,
-                        ops: wgpu::Operations {
-                            load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
-                            store: wgpu::StoreOp::Store,
-                        },
-                        depth_slice: None,
-                    })],
-                    ..Default::default()
-                });
+
+        // Always clear the screen, only draw quad if we have a CEF texture
+        TEXTURE.with_borrow(|textures| {
+            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("Cef Render Pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &frame,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        store: wgpu::StoreOp::Store,
+                    },
+                    depth_slice: None,
+                })],
+                ..Default::default()
+            });
+
+            // Only draw the textured quad if CEF has provided a frame
+            if let Some(bind_group) = textures.as_ref() {
                 render_pass.set_pipeline(&self.pipeline);
                 render_pass.set_bind_group(0, bind_group, &[]);
                 render_pass.set_vertex_buffer(0, self.quad.vertex_buffer.slice(..));
                 render_pass.draw(0..self.quad.vertex_count, 0..1);
             }
-            self.queue.submit(std::iter::once(encoder.finish()));
         });
 
+        self.queue.submit(std::iter::once(encoder.finish()));
         self.window.pre_present_notify();
         surface_texture.present();
     }

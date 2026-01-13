@@ -6,7 +6,6 @@ use super::common::texture;
 use super::{TextureImportError, TextureImportResult, TextureImporter};
 use crate::osr_texture_import::common::format;
 use crate::{sys::cef_color_type_t, AcceleratedPaintInfo};
-use objc2_io_surface::IOSurfaceRef;
 use wgpu::TextureDescriptor;
 
 use std::os::raw::c_void;
@@ -16,11 +15,10 @@ use objc::{sel, sel_impl};
 
 // IOSurface C functions for validation
 #[cfg(target_os = "macos")]
+#[link(name = "IOSurface", kind = "framework")]
 extern "C" {
     fn IOSurfaceGetWidth(buffer: *const c_void) -> usize;
     fn IOSurfaceGetHeight(buffer: *const c_void) -> usize;
-    fn IOSurfaceGetPixelFormat(buffer: *const c_void) -> u32;
-    fn IOSurfaceGetID(buffer: *const c_void) -> u32;
 }
 
 pub struct IOSurfaceImporter {
@@ -101,7 +99,7 @@ impl IOSurfaceImporter {
         &self,
         texture_desc: &TextureDescriptor,
     ) -> Result<metal::TextureDescriptor, TextureImportError> {
-        use metal::{MTLPixelFormat, MTLStorageMode, MTLTextureType, MTLTextureUsage};
+        use metal::{MTLPixelFormat, MTLTextureType, MTLTextureUsage};
 
         if self.width == 0 || self.height == 0 {
             return Err(TextureImportError::InvalidHandle(
@@ -139,18 +137,11 @@ impl IOSurfaceImporter {
         }
 
         // Validate IOSurface by querying its properties
-        let (io_width, io_height, io_format, io_id) = unsafe {
+        let (io_width, io_height) = unsafe {
             let width = IOSurfaceGetWidth(self.handle);
             let height = IOSurfaceGetHeight(self.handle);
-            let format = IOSurfaceGetPixelFormat(self.handle);
-            let id = IOSurfaceGetID(self.handle);
-            (width, height, format, id)
+            (width, height)
         };
-
-        eprintln!(
-            "DEBUG: IOSurface validation - id={}, size={}x{}, format=0x{:08X}",
-            io_id, io_width, io_height, io_format
-        );
 
         // Check if the IOSurface returned valid values
         if io_width == 0 || io_height == 0 {
@@ -183,10 +174,6 @@ impl IOSurfaceImporter {
             };
 
             let raw_device = hal_device.raw_device();
-            eprintln!("DEBUG: raw_device={:?}", raw_device as *const _);
-            eprintln!("DEBUG: metal_desc={:?}", metal_desc.as_ref() as *const _);
-            eprintln!("DEBUG: io_surface handle={:?}", self.handle);
-            eprintln!("DEBUG: About to call newTextureWithDescriptor:iosurface:plane:");
 
             // Create texture from IOSurface using Metal API
             // The selector is: newTextureWithDescriptor:iosurface:plane:
@@ -199,7 +186,6 @@ impl IOSurfaceImporter {
                 iosurface:self.handle
                 plane:0usize
             ];
-            eprintln!("DEBUG: texture created successfully");
 
             let hal_tex = <wgpu::wgc::api::Metal as wgpu::hal::Api>::Device::texture_from_raw(
                 texture,

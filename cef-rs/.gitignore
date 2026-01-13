@@ -1,4 +1,5 @@
 /target
+*.app
 **/DawnCache
 **/GPUCache
 build
