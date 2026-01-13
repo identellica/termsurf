@@ -140,23 +140,51 @@ See `docs/termsurf2-wezterm-analysis.md` for the detailed architecture analysis 
 
 CEF (Chromium Embedded Framework) Rust bindings for browser integration in TermSurf 2.0.
 
+### Validation Status
+
+CEF integration has been validated and is ready for WezTerm integration:
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| IOSurface texture import | Working | Fixed Metal API types in `iosurface.rs` |
+| Input handling | Working | Keyboard, mouse, scroll all functional |
+| Multiple browser instances | Working | Per-instance TextureHolder, HashMap routing |
+| Resize handling | Working | Browser resizes with window |
+| Context menu | Suppressed | Prevents winit NSApplication crash |
+| Fullscreen | Broken | winit issue, defer to WezTerm |
+
 ### Commands
 
 - **Build:** `cd cef-rs && cargo build`
-- **Build OSR example:** `cd cef-rs && cargo build --example osr`
-- **Run OSR example:** `cd cef-rs && ./target/debug/examples/osr`
-- **Bundle CEF app (macOS):** `cd cef-rs && cargo run -p bundle-cef-app -- ./target/debug/examples/osr`
+- **Build OSR example:** `cd cef-rs && cargo build -p cef-osr`
+- **Bundle and run (macOS):**
+  ```bash
+  cd cef-rs
+  cargo build -p cef-osr
+  cargo run -p bundle-cef-app -- cef-osr -o cef-osr.app
+  ./cef-osr.app/Contents/MacOS/cef-osr
+  ```
 
 ### Key Files
 
 - `cef-rs/cef/` - Main CEF wrapper crate
 - `cef-rs/cef/src/osr_texture_import/` - Off-screen rendering texture import (IOSurface on macOS)
-- `cef-rs/examples/osr/` - Off-screen rendering example with wgpu
+- `cef-rs/examples/osr/` - Off-screen rendering example with wgpu (our validation testbed)
+  - `main.rs` - Multi-browser window management, input handling
+  - `webrender.rs` - CEF handlers (App, Client, RenderHandler, ContextMenuHandler)
 - `cef-rs/sys/` - Low-level CEF C API bindings
 - `cef-rs/update-bindings/` - Tool to regenerate bindings from CEF headers
+
+### Key Fixes (TermSurf-specific)
+
+1. **IOSurface texture import** (`d8b58edea`) - Fixed Metal API type casting crash
+2. **Purple flash on startup** (`e6f8a2e4c`) - Clear to black before first CEF paint
+3. **Input handling** (`88ab04355`) - Mouse, keyboard, scroll events to CEF
+4. **Multi-browser support** (`40f2a55cc`) - Per-instance texture storage, event routing
+5. **Right-click crash** (`25def7592`) - ContextMenuHandler suppresses native menu
 
 ### Notes
 
 - CEF binaries are downloaded automatically by the build system
 - macOS apps must be bundled with `bundle-cef-app` to include CEF framework
-- We have a fix for IOSurface texture import in `cef/src/osr_texture_import/iosurface.rs`
+- The OSR example uses winit for windowing; WezTerm will use its own window management

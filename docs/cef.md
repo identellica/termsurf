@@ -4,26 +4,44 @@ This document covers the Chromium Embedded Framework (CEF) integration for TermS
 
 ## Current Status
 
-**Status:** 🔄 Planned for TermSurf 2.0 via Zig integration
+**Status:** ✅ Validated via cef-rs, WezTerm integration in progress
 
-### TermSurf 1.0 (Current)
+### TermSurf 1.x (Current Stable)
 Uses Apple's WKWebView for browser panes. This works as an MVP but has limitations:
 - Visited links require private API workarounds
 - Limited to macOS/iOS
 - Some OAuth/iframe navigation quirks
 - No Chrome DevTools
 
-### TermSurf 2.0 (Planned)
-Integrate CEF at the **Zig level** instead of Swift. This avoids the Swift struct marshalling issues entirely because:
-- Zig has direct C interop with zero overhead
-- Zig structs have predictable, C-compatible memory layouts
-- Ghostty already does GPU rendering from Zig (Metal, OpenGL)
-- The same IOSurface → CALayer pattern can be used for CEF
+### TermSurf 2.0 (In Progress)
+Integrate CEF via **cef-rs** (Rust bindings) into a WezTerm fork. This approach was chosen because:
+- Rust has predictable C-compatible memory layouts (unlike Swift)
+- WezTerm is already Rust-based, enabling seamless integration
+- Cross-platform support (Linux, macOS, Windows)
+- cef-rs handles all CEF struct marshalling correctly
 
-See `docs/termsurf2.md` for the full architecture and roadmap.
+See `docs/termsurf2-wezterm-analysis.md` for the architecture analysis.
 
-### Swift Integration (Historical)
-CEF integration via Swift was attempted but failed due to struct marshalling issues. The CEF C API's validation layer rejects structs created from Swift due to memory layout incompatibilities. See [Swift Integration Challenges](#swift-integration-challenges-historical) below for detailed documentation.
+### cef-rs Validation Results
+
+The cef-rs integration has been validated in `cef-rs/examples/osr/`:
+
+| Feature | Status | Commit |
+|---------|--------|--------|
+| IOSurface texture import (macOS) | ✅ Working | `d8b58edea` |
+| Purple flash fix | ✅ Working | `e6f8a2e4c` |
+| Input handling (keyboard, mouse, scroll) | ✅ Working | `88ab04355` |
+| Multiple browser instances | ✅ Working | `40f2a55cc` |
+| Resize handling | ✅ Working | — |
+| Context menu (right-click) | ✅ Suppressed | `25def7592` |
+| Fullscreen | ⚠️ Broken | winit issue, defer to WezTerm |
+
+**Key validation:** Multiple CEF browser instances run successfully in a single process with independent texture storage and event routing. This is critical for WezTerm integration where browser panes coexist with terminal panes.
+
+### Historical Approaches
+
+- **Swift integration** - Failed due to struct marshalling issues. See [Swift Integration Challenges](#swift-integration-challenges-historical) below.
+- **Zig integration** - Superseded by cef-rs approach. See `docs/termsurf2.md` for historical planning.
 
 ---
 
@@ -295,9 +313,11 @@ CEF needs to process its message loop. Two options:
 
 ---
 
-## Zig Integration Approach (TermSurf 2.0)
+## Zig Integration Approach (Historical)
 
-This section outlines the planned approach for integrating CEF via Zig instead of Swift.
+**Note:** This approach has been superseded by cef-rs (Rust bindings). The section is preserved for historical reference.
+
+This section outlines the originally planned approach for integrating CEF via Zig instead of Swift.
 
 ### Why Zig Works
 
@@ -395,11 +415,13 @@ Since the browser logic lives in Zig:
 
 The terminal already works this way. The browser would follow the same pattern.
 
-### See Also
+### See Also (Historical)
 
-- `docs/termsurf2.md` - Full architecture and implementation roadmap
-- `src/renderer/Metal.zig` - How Ghostty does Metal rendering from Zig
-- `src/renderer/metal/IOSurfaceLayer.zig` - The IOSurface → CALayer pattern
+- `docs/termsurf2.md` - Original Zig-based architecture (superseded)
+- `ts1/src/renderer/Metal.zig` - How Ghostty does Metal rendering from Zig
+- `ts1/src/renderer/metal/IOSurfaceLayer.zig` - The IOSurface → CALayer pattern
+
+**Current approach:** See `docs/termsurf2-wezterm-analysis.md` and `AGENTS.md` for cef-rs integration.
 
 ---
 
