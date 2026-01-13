@@ -8,7 +8,8 @@ TermSurf is a terminal emulator with webview support. The project is transitioni
 
 **Current structure:**
 - `ts1/` - TermSurf 1.x (Ghostty fork + WKWebView)
-- Root level - Will contain TermSurf 2.0 (WezTerm fork + CEF) after merge
+- `ts2/` + root - TermSurf 2.0 (WezTerm fork)
+- `cef-rs/` - CEF Rust bindings (Chromium Embedded Framework)
 
 ## TermSurf 1.x (ts1/)
 
@@ -51,7 +52,7 @@ TermSurf is a terminal emulator with webview support. The project is transitioni
   - `docs/console.md` - Console bridging and JavaScript API (`--js-api`)
   - `docs/keybindings.md` - Webview keyboard shortcuts and modes
   - `docs/libghostty.md` - Changes to libghostty (tracking for upstream PRs)
-  - `docs/merge-upstream.md` - How to merge changes from upstream Ghostty
+  - `docs/merge-upstream.md` - How to merge changes from upstream repos (Ghostty, WezTerm, cef-rs)
   - `docs/release.md` - Release procedure and versioning
   - `docs/target-blank.md` - target="_blank" link handling
   - `docs/webview.md` - WebView implementation, API checklist, and workarounds
@@ -134,3 +135,28 @@ See `docs/termsurf2-wezterm-analysis.md` for the detailed architecture analysis 
 - **Platforms:** Linux, Windows, macOS vs macOS-only
 - **Browser:** CEF (Chromium) vs WKWebView (limited API)
 - **Terminal:** WezTerm vs Ghostty
+
+## cef-rs
+
+CEF (Chromium Embedded Framework) Rust bindings for browser integration in TermSurf 2.0.
+
+### Commands
+
+- **Build:** `cd cef-rs && cargo build`
+- **Build OSR example:** `cd cef-rs && cargo build --example osr`
+- **Run OSR example:** `cd cef-rs && ./target/debug/examples/osr`
+- **Bundle CEF app (macOS):** `cd cef-rs && cargo run -p bundle-cef-app -- ./target/debug/examples/osr`
+
+### Key Files
+
+- `cef-rs/cef/` - Main CEF wrapper crate
+- `cef-rs/cef/src/osr_texture_import/` - Off-screen rendering texture import (IOSurface on macOS)
+- `cef-rs/examples/osr/` - Off-screen rendering example with wgpu
+- `cef-rs/sys/` - Low-level CEF C API bindings
+- `cef-rs/update-bindings/` - Tool to regenerate bindings from CEF headers
+
+### Notes
+
+- CEF binaries are downloaded automatically by the build system
+- macOS apps must be bundled with `bundle-cef-app` to include CEF framework
+- We have a fix for IOSurface texture import in `cef/src/osr_texture_import/iosurface.rs`

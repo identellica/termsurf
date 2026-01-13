@@ -1,13 +1,94 @@
-# Merging Upstream (Ghostty)
+# Merging Upstream Repositories
 
-This document describes how to merge changes from the upstream Ghostty
-repository into TermSurf while preserving our modifications.
+This document describes how to merge changes from upstream repositories into
+TermSurf while preserving our modifications.
 
 ## Overview
 
-TermSurf is a fork of [Ghostty](https://github.com/ghostty-org/ghostty). We
-track upstream in a remote called `upstream` and periodically merge to get bug
+TermSurf integrates three upstream projects:
+
+| Project | Directory | Upstream | Branch | Purpose |
+|---------|-----------|----------|--------|---------|
+| Ghostty | `ts1/` | [ghostty-org/ghostty](https://github.com/ghostty-org/ghostty) | main | Terminal emulator (TermSurf 1.x) |
+| WezTerm | `ts2/` + root | [wez/wezterm](https://github.com/wez/wezterm) | main | Terminal emulator (TermSurf 2.0) |
+| cef-rs | `cef-rs/` | [tauri-apps/cef-rs](https://github.com/tauri-apps/cef-rs) | dev | CEF Rust bindings |
+
+Each upstream is tracked via a git remote and merged periodically to get bug
 fixes, performance improvements, and new features.
+
+## Git Remotes
+
+Set up remotes if not already configured:
+
+```bash
+# Ghostty (if not already set up)
+git remote add upstream https://github.com/ghostty-org/ghostty.git
+
+# WezTerm
+git remote add wezterm-upstream https://github.com/wez/wezterm.git
+
+# cef-rs
+git remote add cef-rs-upstream https://github.com/tauri-apps/cef-rs.git
+```
+
+## Common Merge Process
+
+The process is similar for all three upstreams:
+
+### 1. Pre-Merge Checklist
+
+- [ ] Working tree is clean (`git status` shows no changes)
+- [ ] All local changes are committed
+- [ ] Note current HEAD: `git rev-parse HEAD`
+
+### 2. Fetch Upstream
+
+```bash
+git fetch <remote-name>
+```
+
+### 3. Review Changes
+
+```bash
+# Count new commits
+git rev-list --count HEAD..<remote>/<branch>
+
+# See commit summaries
+git log --oneline HEAD..<remote>/<branch> | head -50
+
+# Check for conflicts in files we've modified
+git diff HEAD..<remote>/<branch> -- <path-to-check>
+```
+
+### 4. Merge
+
+```bash
+git merge -X subtree=<directory> <remote>/<branch> -m "Merge upstream <name>"
+```
+
+### 5. Resolve Conflicts
+
+See repo-specific sections below for conflict resolution strategies.
+
+### 6. Verify Build
+
+Test that everything compiles and works correctly.
+
+### 7. Rollback (If Needed)
+
+```bash
+# Before committing:
+git merge --abort
+
+# After committing:
+git reset --hard ORIG_HEAD
+```
+
+---
+
+## Ghostty (ts1/)
+
+### Our Modifications
 
 Our modifications fall into two categories:
 
@@ -19,139 +100,63 @@ Our modifications fall into two categories:
 
 See [libghostty.md](libghostty.md) for detailed documentation of our changes.
 
-## Modified Files Inventory
+### Modified Files Inventory
 
-### Upstream-Friendly (Low Conflict Risk)
+#### Upstream-Friendly (Low Conflict Risk)
 
 These are additive changes that don't modify existing Ghostty code paths:
 
-| File                    | Change                                        | Notes             |
-| ----------------------- | --------------------------------------------- | ----------------- |
-| `include/ghostty.h`     | Added `ghostty_config_load_files` declaration | End of file       |
-| `src/config/Config.zig` | Added `loadFiles` method                      | New public method |
-| `src/config/CApi.zig`   | Added C API wrapper                           | New function      |
-| `src/os/macos.zig`      | Added `appSupportDirWithBundleId` helper      | New function      |
+| File | Change | Notes |
+|------|--------|-------|
+| `ts1/include/ghostty.h` | Added `ghostty_config_load_files` declaration | End of file |
+| `ts1/src/config/Config.zig` | Added `loadFiles` method | New public method |
+| `ts1/src/config/CApi.zig` | Added C API wrapper | New function |
+| `ts1/src/os/macos.zig` | Added `appSupportDirWithBundleId` helper | New function |
 
-### TermSurf-Specific (Branding)
+#### TermSurf-Specific (Branding)
 
 Simple string replacements, easy to re-apply if conflicts occur:
 
-| File                      | Change                                      |
-| ------------------------- | ------------------------------------------- |
-| `src/cli/help.zig`        | "ghostty" → "termsurf", app name references |
-| `src/cli/version.zig`     | "Ghostty" → "TermSurf" in version banner    |
-| `src/cli/list_themes.zig` | Ghost emoji → surfer emoji in preview title |
+| File | Change |
+|------|--------|
+| `ts1/src/cli/help.zig` | "ghostty" -> "termsurf", app name references |
+| `ts1/src/cli/version.zig` | "Ghostty" -> "TermSurf" in version banner |
+| `ts1/src/cli/list_themes.zig` | Ghost emoji -> surfer emoji in preview title |
 
-### TermSurf-Specific (Functional)
+#### TermSurf-Specific (Functional)
 
 These modify existing Ghostty code and have higher conflict risk:
 
-| File                  | Change                                    | Conflict Risk |
-| --------------------- | ----------------------------------------- | ------------- |
-| `src/cli/ghostty.zig` | Added `web` action, `detectMultiCall`     | **High**      |
-| `src/cli/action.zig`  | Multi-call binary detection via `argv[0]` | **High**      |
-| `src/cli/web.zig`     | **New file** (no conflict)                | None          |
+| File | Change | Conflict Risk |
+|------|--------|---------------|
+| `ts1/src/cli/ghostty.zig` | Added `web` action, `detectMultiCall` | **High** |
+| `ts1/src/cli/action.zig` | Multi-call binary detection via `argv[0]` | **High** |
+| `ts1/src/cli/web.zig` | **New file** (no conflict) | None |
 
-### Build System
+#### Build System
 
-| File                               | Change                                                    |
-| ---------------------------------- | --------------------------------------------------------- |
-| `build.zig`                        | XCFramework output to both `macos/` and `termsurf-macos/` |
-| `src/build/GhosttyXCFramework.zig` | Dual output paths                                         |
+| File | Change |
+|------|--------|
+| `ts1/build.zig` | XCFramework output to both `macos/` and `termsurf-macos/` |
+| `ts1/src/build/GhosttyXCFramework.zig` | Dual output paths |
 
-## Pre-Merge Checklist
-
-Before starting a merge:
-
-- [ ] Working tree is clean (`git status` shows no changes)
-- [ ] All local changes are committed
-- [ ] Note current HEAD: `git rev-parse HEAD`
-- [ ] Ensure tests pass: `zig build test`
-- [ ] Ensure app builds: `cd termsurf-macos && xcodebuild`
-
-## Fetch and Review
-
-### 1. Fetch Upstream
+### Merge Commands
 
 ```bash
+# Fetch
 git fetch upstream
+
+# Review
+git log --oneline HEAD..upstream/main -- ts1/ | head -20
+git diff HEAD..upstream/main -- ts1/src/cli/
+
+# Merge
+git merge -X subtree=ts1 upstream/main -m "Merge upstream Ghostty"
 ```
 
-### 2. See What Changed
+### Conflict Resolution Guide
 
-```bash
-# Summary of new commits
-git log --oneline HEAD..upstream/main | head -50
-
-# Count of commits
-git rev-list --count HEAD..upstream/main
-
-# Files changed in areas we care about
-git diff --stat HEAD..upstream/main -- src/cli/
-git diff --stat HEAD..upstream/main -- src/config/
-git diff --stat HEAD..upstream/main -- include/
-```
-
-### 3. Check for Conflicts
-
-Preview which of our modified files have upstream changes:
-
-```bash
-# CLI files (highest risk)
-git diff HEAD..upstream/main -- src/cli/ghostty.zig
-git diff HEAD..upstream/main -- src/cli/action.zig
-
-# Config API files
-git diff HEAD..upstream/main -- src/config/Config.zig
-git diff HEAD..upstream/main -- src/config/CApi.zig
-
-# Branding files
-git diff HEAD..upstream/main -- src/cli/help.zig
-git diff HEAD..upstream/main -- src/cli/version.zig
-```
-
-If a file shows no diff, it hasn't changed upstream and will merge cleanly.
-
-## Merge Strategy
-
-### Recommended: Merge Commit
-
-```bash
-git merge upstream/main -m "Merge upstream Ghostty"
-```
-
-**Pros:**
-
-- Preserves full history
-- Easy to see what came from upstream vs our changes
-- Can be reverted cleanly
-
-**Cons:**
-
-- Creates merge commits in history
-
-### Alternative: Rebase
-
-```bash
-git rebase upstream/main
-```
-
-**Pros:**
-
-- Linear history
-- Our commits stay on top
-
-**Cons:**
-
-- Rewrites history (problematic if already pushed)
-- Each of our commits may need conflict resolution
-
-**Recommendation:** Use merge commits for routine updates. Use rebase only for
-major restructuring when you want a clean history.
-
-## Conflict Resolution Guide
-
-### src/cli/ghostty.zig
+#### ts1/src/cli/ghostty.zig
 
 This file defines the CLI entry point. We added:
 
@@ -176,7 +181,7 @@ fn detectMultiCall(argv0: []const u8) ?Action.Tag { ... }
 .web => web.run(alloc),
 ```
 
-### src/cli/action.zig
+#### ts1/src/cli/action.zig
 
 We added multi-call binary detection. Look for our changes to the `init`
 function that checks `argv[0]` for "web".
@@ -186,19 +191,19 @@ function that checks `argv[0]` for "web".
 1. Accept upstream changes
 2. Re-add our multi-call detection logic in `init`
 
-### src/cli/help.zig, version.zig, list_themes.zig
+#### ts1/src/cli/help.zig, version.zig, list_themes.zig
 
-Simple branding changes. If conflicts occur:
+Simple branding changes.
 
 **Resolution strategy:**
 
 1. Accept upstream changes (they may have added new text)
 2. Re-apply our branding substitutions:
-   - "ghostty" → "termsurf"
-   - "Ghostty" → "TermSurf"
-   - Ghost emoji → surfer emoji
+   - "ghostty" -> "termsurf"
+   - "Ghostty" -> "TermSurf"
+   - Ghost emoji -> surfer emoji
 
-### src/config/Config.zig, CApi.zig
+#### ts1/src/config/Config.zig, CApi.zig
 
 We added new methods/functions. These are additive and unlikely to conflict.
 
@@ -208,7 +213,7 @@ We added new methods/functions. These are additive and unlikely to conflict.
 2. Verify our added functions are still present
 3. If removed by conflict, re-add them
 
-### include/ghostty.h
+#### ts1/include/ghostty.h
 
 We added a single function declaration at the end.
 
@@ -220,128 +225,124 @@ We added a single function declaration at the end.
    void ghostty_config_load_files(ghostty_config_t, const char*, const char*);
    ```
 
-### build.zig, GhosttyXCFramework.zig
+### Post-Merge: Review macOS App Changes
 
-We modified build output paths.
-
-**Resolution strategy:**
-
-1. Accept upstream changes
-2. Re-add our dual output path logic
-
-## Performing the Merge
-
-### Step-by-Step
+After merging upstream, review changes to `ts1/macos/` (Ghostty's macOS app)
+and port relevant updates to `ts1/termsurf-macos/`.
 
 ```bash
-# 1. Ensure clean state
-git status  # Should be clean
+# List files changed in macos/ during the merge
+git diff --name-only <pre-merge-commit>..HEAD -- ts1/macos/Sources/
 
-# 2. Fetch latest
-git fetch upstream
+# For each changed file, check if termsurf-macos has a corresponding file
+ls ts1/termsurf-macos/Sources/Ghostty/
+```
 
-# 3. Start merge
-git merge upstream/main
+### Ghostty Test Commands
 
-# 4. If conflicts, resolve each file
-git status  # Shows conflicted files
-# Edit each file, then:
-git add <resolved-file>
-
-# 5. Complete merge
-git commit  # If needed (merge may auto-commit if no conflicts)
-
-# 6. Verify build
+```bash
+cd ts1
 zig build
 zig build test
-
-# 7. Build macOS app
-cd termsurf-macos && xcodebuild -scheme TermSurf -configuration Debug build
-
-# 8. Smoke test
-# - Open terminal, verify basic functionality
-# - Run `web open https://example.com`, verify browser pane works
-# - Check About window shows correct version
+./scripts/build-debug.sh --open
 ```
 
-## Review macOS App Changes
+---
 
-After merging upstream, review changes to `macos/` (Ghostty's macOS app) and port
-relevant updates to `termsurf-macos/`.
+## WezTerm (ts2/)
 
-### Why This Is Needed
+### Our Modifications
 
-The `termsurf-macos/` app is a separate copy of `macos/` with TermSurf-specific
-modifications. When upstream updates `macos/`, those changes are NOT automatically
-applied to `termsurf-macos/`. We must manually review and port relevant changes.
+WezTerm is used for TermSurf 2.0. Our modifications are still being developed.
 
-### Review Process
+### Modified Files Inventory
+
+*To be documented as modifications are made.*
+
+### Merge Commands
 
 ```bash
-# 1. List files changed in macos/ during the merge
-git diff --name-only <pre-merge-commit>..HEAD -- macos/Sources/
+# Fetch
+git fetch wezterm-upstream
 
-# 2. See detailed changes
-git diff <pre-merge-commit>..HEAD -- macos/Sources/
+# Review
+git log --oneline HEAD..wezterm-upstream/main | head -20
 
-# 3. For each changed file, check if termsurf-macos has a corresponding file
-ls termsurf-macos/Sources/Ghostty/  # Compare with macos/Sources/Ghostty/
+# Merge
+git merge -X subtree=ts2 wezterm-upstream/main -m "Merge upstream WezTerm"
 ```
 
-### Categorize Changes
+### Conflict Resolution Guide
 
-For each changed file in `macos/Sources/`:
+*To be documented as modifications are made.*
 
-1. **Bug fixes** - Port these to termsurf-macos
-2. **New features** - Port unless they conflict with TermSurf features
-3. **API adaptations** - Usually already fixed during build (e.g., new function signatures)
-4. **Refactoring** - Evaluate based on whether we've diverged in that area
-
-### Files to Watch
-
-| macos/ file | termsurf-macos/ equivalent | Notes |
-|-------------|---------------------------|-------|
-| `Ghostty.App.swift` | `Ghostty.App.swift` | Core app logic, high divergence |
-| `SurfaceView_AppKit.swift` | `SurfaceView_AppKit.swift` | Keyboard handling, medium divergence |
-| `Ghostty.Surface.swift` | `Ghostty.Surface.swift` | Surface wrapper, low divergence |
-| `Terminal*.swift` | `Terminal*.swift` | Terminal views, low divergence |
-
-### Porting Changes
-
-For clean changes (no TermSurf modifications in that area):
-- Copy the updated code directly
-
-For areas where we've diverged:
-- Manually review and adapt the upstream change to work with our modifications
-- Document any changes we intentionally skip
-
-## Post-Merge Testing
-
-- [ ] `zig build` succeeds
-- [ ] `zig build test` passes
-- [ ] `xcodebuild` succeeds
-- [ ] App launches
-- [ ] Terminal pane works (typing, colors, scrolling)
-- [ ] `termsurf +web open https://example.com` works
-- [ ] `web google.com` works (multi-call binary)
-- [ ] Profiles work (`--profile test`)
-- [ ] About window shows correct info
-- [ ] Keyboard shortcuts work (cmd+t, cmd+w, etc.)
-
-## Rollback
-
-If the merge goes wrong:
+### WezTerm Test Commands
 
 ```bash
-# Before committing the merge:
-git merge --abort
-
-# After committing the merge:
-git reset --hard ORIG_HEAD
-
-# If already pushed (careful!):
-git revert -m 1 <merge-commit-hash>
+cargo build
+cargo test
 ```
+
+---
+
+## cef-rs
+
+### Our Modifications
+
+cef-rs provides CEF (Chromium Embedded Framework) Rust bindings. Our
+modifications are minimal and mostly additive.
+
+#### Modified Files
+
+| File | Change | Notes |
+|------|--------|-------|
+| `cef-rs/cef/src/osr_texture_import/iosurface.rs` | Fixed macOS IOSurface texture import | Metal API type fix |
+
+### Merge Commands
+
+```bash
+# Fetch
+git fetch cef-rs-upstream
+
+# Review
+git log --oneline HEAD..cef-rs-upstream/dev -- cef-rs/ | head -20
+
+# Merge
+git merge -X subtree=cef-rs cef-rs-upstream/dev -m "Merge upstream cef-rs"
+```
+
+### Conflict Resolution Guide
+
+#### cef-rs/cef/src/osr_texture_import/iosurface.rs
+
+We fixed a Metal API type issue for macOS IOSurface texture import.
+
+**Our fix:**
+```rust
+// Use proper Ref types that implement Message trait
+let device_ref: &metal::DeviceRef = raw_device;
+let desc_ref: &metal::TextureDescriptorRef = metal_desc.as_ref();
+let texture: metal::Texture = objc::msg_send![
+    device_ref,
+    newTextureWithDescriptor:desc_ref
+    iosurface:self.handle
+    plane:0usize
+];
+```
+
+**Resolution strategy:**
+1. Check if upstream has fixed this differently
+2. If not, re-apply our fix after accepting their changes
+
+### cef-rs Test Commands
+
+```bash
+cd cef-rs
+cargo build --example osr
+./target/debug/examples/osr
+```
+
+---
 
 ## Merge Frequency
 
@@ -357,8 +358,13 @@ git revert -m 1 <merge-commit-hash>
 
 After TermSurf MVP, consider submitting our upstream-friendly changes:
 
+### Ghostty
+
 1. **Custom config directory API** - Useful for any app embedding libghostty
 2. **Any bug fixes** we make to libghostty
 
-See the "Submitting Upstream" section in [libghostty.md](libghostty.md) for the
-process.
+See the "Submitting Upstream" section in [libghostty.md](libghostty.md).
+
+### cef-rs
+
+1. **IOSurface Metal fix** - The type annotation fix benefits all macOS users
