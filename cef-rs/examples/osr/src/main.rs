@@ -13,6 +13,7 @@ use winit::{
     window::{Window, WindowAttributes, WindowId},
 };
 
+
 use crate::webrender::{
     ClientBuilder, OsrApp, OsrRenderHandler, OsrRequestContextHandler,
     RequestContextHandlerBuilder, TEXTURE,
@@ -298,9 +299,13 @@ impl App {
 
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        let window_attrs = WindowAttributes::default()
+            .with_title("CEF OSR Example")
+            .with_inner_size(winit::dpi::LogicalSize::new(1280.0, 800.0));
+
         let window = Arc::new(
             event_loop
-                .create_window(WindowAttributes::default())
+                .create_window(window_attrs)
                 .unwrap(),
         );
 
@@ -355,6 +360,9 @@ impl ApplicationHandler for App {
             size: browser_size,
         });
 
+        println!("CEF OSR Example running");
+        println!("  Note: Fullscreen is disabled (CEF OSR has rendering issues with fullscreen)");
+
         window.request_redraw();
     }
 
@@ -387,8 +395,8 @@ impl ApplicationHandler for App {
                 state.resize(size);
                 if let Some(browser) = self.browser.as_mut() {
                     *browser.size.borrow_mut() =
-                        size.to_logical(self.state.as_ref().unwrap().get_window().scale_factor());
-                    if let Some(host) = self.browser.as_mut().and_then(|b| b.browser.host()) {
+                        size.to_logical(state.window.scale_factor());
+                    if let Some(host) = browser.browser.host() {
                         host.was_resized();
                     }
                 }
