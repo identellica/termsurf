@@ -101,8 +101,16 @@ impl BrowserProcessHandlerBuilder {
 pub struct OsrRenderHandler {
     device_scale_factor: f32,
     size: std::rc::Rc<RefCell<winit::dpi::LogicalSize<f32>>>,
+    texture_holder: std::rc::Rc<RefCell<Option<wgpu::BindGroup>>>,
     _device: wgpu::Device,
     _queue: wgpu::Queue,
+}
+
+/// Return type for OsrRenderHandler::new
+pub struct RenderHandlerParts {
+    pub handler: OsrRenderHandler,
+    pub size: std::rc::Rc<RefCell<winit::dpi::LogicalSize<f32>>>,
+    pub texture_holder: std::rc::Rc<RefCell<Option<wgpu::BindGroup>>>,
 }
 
 impl OsrRenderHandler {
@@ -111,17 +119,20 @@ impl OsrRenderHandler {
         _queue: wgpu::Queue,
         device_scale_factor: f32,
         size: winit::dpi::LogicalSize<f32>,
-    ) -> (Self, std::rc::Rc<RefCell<winit::dpi::LogicalSize<f32>>>) {
+    ) -> RenderHandlerParts {
         let size = std::rc::Rc::new(RefCell::new(size));
-        (
-            Self {
+        let texture_holder = std::rc::Rc::new(RefCell::new(None));
+        RenderHandlerParts {
+            handler: Self {
                 size: size.clone(),
+                texture_holder: texture_holder.clone(),
                 device_scale_factor,
                 _device,
                 _queue,
             },
             size,
-        )
+            texture_holder,
+        }
     }
 }
 
@@ -263,9 +274,8 @@ wrap_render_handler! {
                     ],
                 });
 
-            TEXTURE.with_borrow_mut(|texture| {
-                texture.replace(bind_group);
-            });
+            // Store in per-browser texture holder
+            *self.handler.texture_holder.borrow_mut() = Some(bind_group);
         }
 
         #[cfg(all(
@@ -391,10 +401,8 @@ wrap_render_handler! {
                     ],
                 });
 
-            // Update the global texture
-            TEXTURE.with_borrow_mut(|texture| {
-                texture.replace(bind_group);
-            });
+            // Store in per-browser texture holder
+            *self.handler.texture_holder.borrow_mut() = Some(bind_group);
         }
     }
 }
@@ -405,9 +413,13 @@ impl RenderHandlerBuilder {
     }
 }
 
+// Legacy global texture for single-browser mode
 thread_local! {
     pub static TEXTURE: RefCell<Option<wgpu::BindGroup>> = const { RefCell::new(None) };
 }
+
+/// Texture holder for per-browser texture storage
+pub type TextureHolder = std::rc::Rc<RefCell<Option<wgpu::BindGroup>>>;
 
 wrap_client! {
     pub(crate) struct ClientBuilder {
