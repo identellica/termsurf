@@ -1,0 +1,271 @@
+name: Update bindings
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: "Target branch"
+        default: "dev"
+        required: true
+        type: string
+    outputs:
+      published:
+        description: "Whether a PR was created for the target branch"
+        value: ${{ (jobs.publish-pr.outputs.published == 'true')
+          && 'true' || 'false' }}
+
+jobs:
+  update-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - aarch64-unknown-linux-gnu
+          - arm-unknown-linux-gnueabi
+    outputs:
+      changed:
+        ${{ (steps.pack-changes.outputs.changed-x86_64-unknown-linux-gnu == 'true'
+        || steps.pack-changes.outputs.changed-aarch64-unknown-linux-gnu == 'true'
+        || steps.pack-changes.outputs.changed-arm-unknown-linux-gnueabi == 'true')
+        && 'true' || 'false' }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq gcc-14-aarch64-linux-gnu gcc-14-arm-linux-gnueabi
+
+      - name: Update Bindings
+        run: |
+          cargo run -p update-bindings -- -b -d -t ${{ matrix.target }}
+
+      - name: Pack Changes
+        id: pack-changes
+        run: |
+          git add .
+
+          CHANGED=($(git diff --name-only --staged | xargs))
+          if [ ${#CHANGED[@]} -gt 0 ]; then
+            tar -czf update-${{ matrix.target }}.tar.gz ${CHANGED[@]}
+            echo "changed-${{ matrix.target }}=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed-${{ matrix.target }}=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: update-${{ matrix.target }}
+          path: update-${{ matrix.target }}.tar.gz
+          if-no-files-found: ignore
+
+  update-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - aarch64-apple-darwin
+          - x86_64-apple-darwin
+    outputs:
+      changed:
+        ${{ (steps.pack-changes.outputs.changed-aarch64-apple-darwin == 'true'
+        || steps.pack-changes.outputs.changed-x86_64-apple-darwin == 'true')
+        && 'true' || 'false' }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Update Bindings
+        run: |
+          cargo run -p update-bindings -- -b -d -t ${{ matrix.target }}
+
+      - name: Pack Changes
+        id: pack-changes
+        run: |
+          git add .
+
+          CHANGED=($(git diff --name-only --staged | xargs))
+          if [ ${#CHANGED[@]} -gt 0 ]; then
+            tar -czf update-${{ matrix.target }}.tar.gz ${CHANGED[@]}
+            echo "changed-${{ matrix.target }}=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed-${{ matrix.target }}=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: update-${{ matrix.target }}
+          path: update-${{ matrix.target }}.tar.gz
+          if-no-files-found: ignore
+
+  update-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - x86_64-pc-windows-msvc
+          - aarch64-pc-windows-msvc
+          - i686-pc-windows-msvc
+    outputs:
+      changed:
+        ${{ (steps.pack-changes.outputs.changed-x86_64-pc-windows-msvc == 'true'
+        || steps.pack-changes.outputs.changed-aarch64-pc-windows-msvc == 'true'
+        || steps.pack-changes.outputs.changed-i686-pc-windows-msvc == 'true')
+        && 'true' || 'false' }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Update Bindings
+        run: |
+          cargo run -p update-bindings -- -b -d -t ${{ matrix.target }}
+
+      - name: Pack Changes
+        id: pack-changes
+        run: |
+          git add .
+
+          $changed = @(git diff --name-only --staged)
+          if ($changed.Length -gt 0) {
+            tar -czf update-${{ matrix.target }}.tar.gz $changed
+            echo "changed-${{ matrix.target }}=true" >> "$env:GITHUB_OUTPUT"
+          } else {
+            echo "changed-${{ matrix.target }}=false" >> "$env:GITHUB_OUTPUT"
+          }
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: update-${{ matrix.target }}
+          path: update-${{ matrix.target }}.tar.gz
+          if-no-files-found: ignore
+
+  merge-changes:
+    runs-on: ubuntu-latest
+    needs:
+      - update-linux
+      - update-macos
+      - update-windows
+    if: needs.update-linux.outputs.changed == 'true'
+      || needs.update-macos.outputs.changed == 'true'
+      || needs.update-windows.outputs.changed == 'true'
+    outputs:
+      merged: ${{ steps.merge-artifacts.outputs.merged == 'true'
+        && 'true' || 'false' }}
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7.0.0
+        with:
+          pattern: update-*
+          merge-multiple: true
+
+      - name: Merge Artifacts
+        id: merge-artifacts
+        run: |
+          FILES=(update-*.tar.gz)
+          if [ ${#FILES[@]} -gt 0 ]; then
+            mkdir merged
+            cd merged
+
+            for FILE in ${FILES[@]}; do
+              echo "Extracting $FILE"
+              tar -xzf ../$FILE
+              rm ../$FILE
+            done
+
+            echo "Archiving merged changes"
+            tar -czvf ../merge-changes.tar.gz .
+            echo "merged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes to merge"
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload Merged Artifacts
+        if: steps.merge-artifacts.outputs.merged == 'true'
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: merge-changes
+          path: merge-changes.tar.gz
+
+  publish-pr:
+    runs-on: ubuntu-latest
+    needs: merge-changes
+    if: needs.merge-changes.outputs.merged == 'true'
+    outputs:
+      published: ${{ steps.publish-pr.outputs.published == 'true'
+        && 'true' || 'false' }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7.0.0
+        with:
+          name: merge-changes
+
+      - name: Update branch name
+        run: |
+          echo "Target branch name: ${{ inputs.branch }}"
+          SOURCE_BRANCH=${{ inputs.branch == 'dev' && 'update-bindings' || inputs.branch }}
+          echo "Source branch name: ${SOURCE_BRANCH}"
+          echo "SOURCE_BRANCH=${SOURCE_BRANCH}" >> $GITHUB_ENV
+
+      - name: Publish PR
+        id: publish-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ${{ inputs.branch == 'dev' && 'git switch -c ${SOURCE_BRANCH}' || 'echo "Re-using ${SOURCE_BRANCH}"' }}
+          RESET_REV=$(git rev-parse HEAD)
+
+          echo "Extracting merge-changes.tar.gz"
+          tar -xzf merge-changes.tar.gz
+          rm merge-changes.tar.gz
+
+          git reset ${RESET_REV}
+          git add .
+
+          CHANGED=($(git diff --name-only --staged | xargs))
+          if [ ${#CHANGED[@]} -gt 0 ]; then
+            git push --force -u origin ${SOURCE_BRANCH}
+
+            FILES=()
+            for VALUE in ${CHANGED[@]}; do
+              base64 -w0 "${VALUE}" > "${VALUE}.base64"
+              FILES+=("-F" "files[][path]=${VALUE}" "-F" "files[][contents]=@${VALUE}.base64")
+            done
+
+            gh api graphql \
+              -F githubRepository=${GITHUB_REPOSITORY} \
+              -F branchName=${SOURCE_BRANCH} \
+              -F expectedHeadOid=${RESET_REV} \
+              -F 'commitMessage=chore: update bindings' \
+              -F query=@.github/api/createCommitOnBranch.graphql \
+              ${FILES[@]}
+
+            git pull
+
+            echo "Publishing PR for ${SOURCE_BRANCH} branch"
+            gh pr create -f
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes detected"
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi

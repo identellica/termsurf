@@ -1,0 +1,57 @@
+[package]
+name = "cefsimple"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[[bin]]
+name = "cefsimple"
+
+[[bin]]
+name = "cefsimple_helper"
+
+[features]
+default = [
+    "sandbox",
+]
+sandbox = [
+    "cef/sandbox",
+]
+linux-x11 = [
+    "x11-dl",
+]
+
+[package.metadata.cef.bundle]
+helper_name = "cefsimple_helper"
+resources_path = "resources"
+
+[dependencies]
+cef = { workspace = true, features = [
+    "build-util",
+] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2.workspace = true
+objc2-foundation.workspace = true
+objc2-app-kit = { workspace = true, features = [
+    "NSApplication",
+    "NSEvent",
+    "NSResponder",
+    "NSUserInterfaceValidation",
+    "NSView",
+    "NSWindow",
+] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+] }
+
+[target.'cfg(target_os = "windows")'.build-dependencies]
+winres.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+x11-dl = { workspace = true, optional = true }

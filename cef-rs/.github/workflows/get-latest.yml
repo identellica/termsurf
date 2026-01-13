@@ -1,0 +1,91 @@
+name: Get latest CEF version
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+  push:
+    branches:
+      - dev
+    paths:
+      - get-latest/**
+      - .github/workflows/get-latest.yml
+
+jobs:
+  get-latest:
+    if: ${{ github.repository_owner == 'tauri-apps' }}
+    runs-on: ubuntu-latest
+    outputs:
+      updated: ${{ steps.push-changes.outputs.updated }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check for updates
+        id: check-updates
+        run: |
+          git config --global user.email "tauri-bot@users.noreply.github.com"
+          git config --global user.name "tauri"
+
+          RESET_REV=$(git rev-parse HEAD)
+          echo "reset-rev=${RESET_REV}" >> "$GITHUB_OUTPUT"
+          cargo run -p get-latest -- -u
+          git reset ${RESET_REV}
+
+      - name: Push changes
+        id: push-changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_MESSAGE: ${{ steps.check-updates.outputs.commit-message }}
+          RESET_REV: ${{ steps.check-updates.outputs.reset-rev }}
+        run: |
+          git switch -c get-latest
+          git add .
+
+          CHANGED=($(git diff --name-only --staged | xargs))
+          if [ ${#CHANGED[@]} -gt 0 ]; then
+            git push --force -u origin get-latest
+
+            FILES=()
+            for VALUE in ${CHANGED[@]}; do
+              base64 -w0 "${VALUE}" > "${VALUE}.base64"
+              FILES+=("-F" "files[][path]=${VALUE}" "-F" "files[][contents]=@${VALUE}.base64")
+            done
+
+            gh api graphql \
+              -F githubRepository=${GITHUB_REPOSITORY} \
+              -F branchName=get-latest \
+              -F expectedHeadOid=${RESET_REV} \
+              -F "commitMessage=${COMMIT_MESSAGE}" \
+              -F query=@.github/api/createCommitOnBranch.graphql \
+              ${FILES[@]}
+
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  update-bindings:
+    needs: get-latest
+    if: needs.get-latest.outputs.updated == 'true'
+    uses: ./.github/workflows/update-bindings.yml
+    with:
+      branch: "get-latest"
+
+  publish-pr:
+    runs-on: ubuntu-latest
+    needs: update-bindings
+    if: needs.update-bindings.outputs.published == 'false'
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: get-latest
+          fetch-depth: 0
+
+      - name: Publish PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr create -f
