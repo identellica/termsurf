@@ -6,8 +6,9 @@ use wgpu::Backends;
 use wgpu::util::DeviceExt;
 use winit::{
     application::ApplicationHandler,
-    event::WindowEvent,
+    event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
+    keyboard::{KeyCode, PhysicalKey},
     platform::pump_events::{EventLoopExtPumpEvents, PumpStatus},
     window::{Window, WindowAttributes, WindowId},
 };
@@ -230,6 +231,14 @@ impl State {
 struct App {
     state: Option<State>,
     browser: Option<Browser>,
+    /// Current cursor position in logical coordinates (for CEF)
+    cursor_pos: (f64, f64),
+    /// Current keyboard modifier state (shift, ctrl, alt, cmd)
+    key_modifiers: u32,
+    /// Current mouse button state
+    mouse_buttons: u32,
+    /// Flag to track if we're in the process of closing
+    closing: bool,
 }
 
 struct Browser {
@@ -242,7 +251,48 @@ impl App {
         App {
             state: None,
             browser: None,
+            cursor_pos: (0.0, 0.0),
+            key_modifiers: 0,
+            mouse_buttons: 0,
+            closing: false,
         }
+    }
+
+    /// Get the browser host if available
+    fn host(&self) -> Option<BrowserHost> {
+        self.browser.as_ref().and_then(|b| b.browser.host())
+    }
+
+    /// Get the window's scale factor
+    fn scale_factor(&self) -> f64 {
+        self.state
+            .as_ref()
+            .map(|s| s.window.scale_factor())
+            .unwrap_or(1.0)
+    }
+
+    /// Convert winit MouseButton to CEF MouseButtonType
+    fn to_cef_button(button: MouseButton) -> MouseButtonType {
+        match button {
+            MouseButton::Left => MouseButtonType::LEFT,
+            MouseButton::Right => MouseButtonType::RIGHT,
+            MouseButton::Middle => MouseButtonType::MIDDLE,
+            _ => MouseButtonType::LEFT,
+        }
+    }
+
+    /// Create a CEF MouseEvent from current cursor position
+    fn mouse_event(&self) -> MouseEvent {
+        MouseEvent {
+            x: self.cursor_pos.0 as i32,
+            y: self.cursor_pos.1 as i32,
+            modifiers: self.key_modifiers | self.mouse_buttons,
+        }
+    }
+
+    /// Get combined modifiers for key events
+    fn all_modifiers(&self) -> u32 {
+        self.key_modifiers | self.mouse_buttons
     }
 }
 
@@ -312,6 +362,17 @@ impl ApplicationHandler for App {
         let state = self.state.as_mut().unwrap();
         match event {
             WindowEvent::CloseRequested => {
+                // Properly close the browser before exiting
+                if !self.closing {
+                    self.closing = true;
+                    if let Some(host) = self.host() {
+                        // force_close=1 to skip beforeunload dialog
+                        host.close_browser(1);
+                    }
+                }
+                // Give CEF time to clean up, then exit
+                // The browser will be dropped, then we can safely exit
+                self.browser = None;
                 event_loop.exit();
             }
             WindowEvent::RedrawRequested => {
@@ -332,8 +393,370 @@ impl ApplicationHandler for App {
                     }
                 }
             }
+
+            // Mouse movement
+            WindowEvent::CursorMoved { position, .. } => {
+                // Convert physical to logical coordinates
+                let scale = self.scale_factor();
+                self.cursor_pos = (position.x / scale, position.y / scale);
+
+                if let Some(host) = self.host() {
+                    host.send_mouse_move_event(Some(&self.mouse_event()), 0);
+                }
+            }
+
+            // Mouse clicks
+            WindowEvent::MouseInput { state: elem_state, button, .. } => {
+                // Update mouse button state for drag selection to work
+                let button_flag = match button {
+                    MouseButton::Left => EVENTFLAG_LEFT_MOUSE_BUTTON,
+                    MouseButton::Middle => EVENTFLAG_MIDDLE_MOUSE_BUTTON,
+                    MouseButton::Right => EVENTFLAG_RIGHT_MOUSE_BUTTON,
+                    _ => 0,
+                };
+
+                match elem_state {
+                    ElementState::Pressed => self.mouse_buttons |= button_flag,
+                    ElementState::Released => self.mouse_buttons &= !button_flag,
+                }
+
+                if let Some(host) = self.host() {
+                    let mouse_up = match elem_state {
+                        ElementState::Pressed => 0,
+                        ElementState::Released => 1,
+                    };
+                    let cef_button = Self::to_cef_button(button);
+                    // click_count: 1 for single click
+                    host.send_mouse_click_event(Some(&self.mouse_event()), cef_button, mouse_up, 1);
+                }
+            }
+
+            // Mouse wheel scrolling
+            WindowEvent::MouseWheel { delta, .. } => {
+                if let Some(host) = self.host() {
+                    let (delta_x, delta_y) = match delta {
+                        MouseScrollDelta::LineDelta(x, y) => {
+                            // Line delta - multiply by pixels-per-line (120 is Windows standard)
+                            ((x * 120.0) as i32, (y * 120.0) as i32)
+                        }
+                        MouseScrollDelta::PixelDelta(pos) => {
+                            // Pixel delta from trackpad - scale up for responsiveness
+                            ((pos.x * 2.0) as i32, (pos.y * 2.0) as i32)
+                        }
+                    };
+                    host.send_mouse_wheel_event(Some(&self.mouse_event()), delta_x, delta_y);
+                }
+            }
+
+            // Cursor left window
+            WindowEvent::CursorLeft { .. } => {
+                if let Some(host) = self.host() {
+                    host.send_mouse_move_event(Some(&self.mouse_event()), 1); // mouse_leave = 1
+                }
+            }
+
+            // Window focus
+            WindowEvent::Focused(focused) => {
+                if let Some(host) = self.host() {
+                    host.set_focus(focused as i32);
+                }
+            }
+
+            // Modifier keys changed
+            WindowEvent::ModifiersChanged(mods) => {
+                self.key_modifiers = 0;
+                let mods_state = mods.state();
+                if mods_state.shift_key() {
+                    self.key_modifiers |= EVENTFLAG_SHIFT_DOWN;
+                }
+                if mods_state.control_key() {
+                    self.key_modifiers |= EVENTFLAG_CONTROL_DOWN;
+                }
+                if mods_state.alt_key() {
+                    self.key_modifiers |= EVENTFLAG_ALT_DOWN;
+                }
+                if mods_state.super_key() {
+                    // Command key on macOS
+                    self.key_modifiers |= EVENTFLAG_COMMAND_DOWN;
+                }
+            }
+
+            // Keyboard input
+            WindowEvent::KeyboardInput { event, .. } => {
+                if let Some(host) = self.host() {
+                    // Get the key code
+                    let physical_key = if let PhysicalKey::Code(code) = event.physical_key {
+                        Some(code)
+                    } else {
+                        None
+                    };
+
+                    // Check if this is a navigation key (arrows, home, end, etc.)
+                    let is_navigation_key = physical_key.map_or(false, |code| matches!(code,
+                        KeyCode::ArrowUp | KeyCode::ArrowDown | KeyCode::ArrowLeft | KeyCode::ArrowRight |
+                        KeyCode::Home | KeyCode::End | KeyCode::PageUp | KeyCode::PageDown |
+                        KeyCode::Backspace | KeyCode::Delete
+                    ));
+
+                    // For navigation keys, only send KEYDOWN (skip KEYUP to avoid double-action)
+                    if is_navigation_key && event.state == ElementState::Released {
+                        return;
+                    }
+
+                    // Determine key event type
+                    let event_type = match event.state {
+                        ElementState::Pressed => KeyEventType::KEYDOWN,
+                        ElementState::Released => KeyEventType::KEYUP,
+                    };
+
+                    // Get the Windows virtual key code and native key code
+                    let (windows_key_code, native_key_code) = if let Some(code) = physical_key {
+                        (keycode_to_windows_vk(code), keycode_to_native(code))
+                    } else {
+                        (0, 0)
+                    };
+
+                    let modifiers = self.all_modifiers();
+
+                    // Create and send the key event
+                    let key_event = KeyEvent {
+                        size: std::mem::size_of::<KeyEvent>(),
+                        type_: event_type,
+                        modifiers,
+                        windows_key_code,
+                        native_key_code,
+                        is_system_key: 0,
+                        character: 0,
+                        unmodified_character: 0,
+                        focus_on_editable_field: 0,
+                    };
+                    host.send_key_event(Some(&key_event));
+
+                    // For printable characters, also send a CHAR event on key press
+                    if event.state == ElementState::Pressed {
+                        if let Some(text) = &event.text {
+                            for ch in text.chars() {
+                                let char_event = KeyEvent {
+                                    size: std::mem::size_of::<KeyEvent>(),
+                                    type_: KeyEventType::CHAR,
+                                    modifiers,
+                                    windows_key_code: ch as i32,
+                                    native_key_code: 0,
+                                    is_system_key: 0,
+                                    character: ch as u16,
+                                    unmodified_character: ch as u16,
+                                    focus_on_editable_field: 0,
+                                };
+                                host.send_key_event(Some(&char_event));
+                            }
+                        }
+                    }
+                }
+            }
+
             _ => (),
         }
+    }
+}
+
+// CEF event flag constants
+const EVENTFLAG_SHIFT_DOWN: u32 = 1 << 1;
+const EVENTFLAG_CONTROL_DOWN: u32 = 1 << 2;
+const EVENTFLAG_ALT_DOWN: u32 = 1 << 3;
+const EVENTFLAG_LEFT_MOUSE_BUTTON: u32 = 1 << 4;
+const EVENTFLAG_MIDDLE_MOUSE_BUTTON: u32 = 1 << 5;
+const EVENTFLAG_RIGHT_MOUSE_BUTTON: u32 = 1 << 6;
+const EVENTFLAG_COMMAND_DOWN: u32 = 1 << 7; // Meta/Command key
+
+/// Convert winit KeyCode to macOS native key code (Carbon virtual key codes)
+#[cfg(target_os = "macos")]
+fn keycode_to_native(code: KeyCode) -> i32 {
+    match code {
+        // Letters (QWERTY layout)
+        KeyCode::KeyA => 0x00,
+        KeyCode::KeyS => 0x01,
+        KeyCode::KeyD => 0x02,
+        KeyCode::KeyF => 0x03,
+        KeyCode::KeyH => 0x04,
+        KeyCode::KeyG => 0x05,
+        KeyCode::KeyZ => 0x06,
+        KeyCode::KeyX => 0x07,
+        KeyCode::KeyC => 0x08,
+        KeyCode::KeyV => 0x09,
+        KeyCode::KeyB => 0x0B,
+        KeyCode::KeyQ => 0x0C,
+        KeyCode::KeyW => 0x0D,
+        KeyCode::KeyE => 0x0E,
+        KeyCode::KeyR => 0x0F,
+        KeyCode::KeyY => 0x10,
+        KeyCode::KeyT => 0x11,
+        KeyCode::Digit1 => 0x12,
+        KeyCode::Digit2 => 0x13,
+        KeyCode::Digit3 => 0x14,
+        KeyCode::Digit4 => 0x15,
+        KeyCode::Digit6 => 0x16,
+        KeyCode::Digit5 => 0x17,
+        KeyCode::Equal => 0x18,
+        KeyCode::Digit9 => 0x19,
+        KeyCode::Digit7 => 0x1A,
+        KeyCode::Minus => 0x1B,
+        KeyCode::Digit8 => 0x1C,
+        KeyCode::Digit0 => 0x1D,
+        KeyCode::BracketRight => 0x1E,
+        KeyCode::KeyO => 0x1F,
+        KeyCode::KeyU => 0x20,
+        KeyCode::BracketLeft => 0x21,
+        KeyCode::KeyI => 0x22,
+        KeyCode::KeyP => 0x23,
+        KeyCode::Enter => 0x24,
+        KeyCode::KeyL => 0x25,
+        KeyCode::KeyJ => 0x26,
+        KeyCode::Quote => 0x27,
+        KeyCode::KeyK => 0x28,
+        KeyCode::Semicolon => 0x29,
+        KeyCode::Backslash => 0x2A,
+        KeyCode::Comma => 0x2B,
+        KeyCode::Slash => 0x2C,
+        KeyCode::KeyN => 0x2D,
+        KeyCode::KeyM => 0x2E,
+        KeyCode::Period => 0x2F,
+        KeyCode::Tab => 0x30,
+        KeyCode::Space => 0x31,
+        KeyCode::Backquote => 0x32,
+        KeyCode::Backspace => 0x33,  // kVK_Delete (backspace)
+        KeyCode::Escape => 0x35,
+
+        // Function keys
+        KeyCode::F1 => 0x7A,
+        KeyCode::F2 => 0x78,
+        KeyCode::F3 => 0x63,
+        KeyCode::F4 => 0x76,
+        KeyCode::F5 => 0x60,
+        KeyCode::F6 => 0x61,
+        KeyCode::F7 => 0x62,
+        KeyCode::F8 => 0x64,
+        KeyCode::F9 => 0x65,
+        KeyCode::F10 => 0x6D,
+        KeyCode::F11 => 0x67,
+        KeyCode::F12 => 0x6F,
+
+        // Navigation
+        KeyCode::Home => 0x73,
+        KeyCode::PageUp => 0x74,
+        KeyCode::Delete => 0x75,      // kVK_ForwardDelete
+        KeyCode::End => 0x77,
+        KeyCode::PageDown => 0x79,
+        KeyCode::ArrowLeft => 0x7B,   // kVK_LeftArrow
+        KeyCode::ArrowRight => 0x7C,  // kVK_RightArrow
+        KeyCode::ArrowDown => 0x7D,   // kVK_DownArrow
+        KeyCode::ArrowUp => 0x7E,     // kVK_UpArrow
+
+        _ => 0,
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+fn keycode_to_native(_code: KeyCode) -> i32 {
+    0 // Native key codes not needed on other platforms
+}
+
+/// Convert winit KeyCode to Windows virtual key code
+/// CEF uses Windows VK codes on all platforms
+fn keycode_to_windows_vk(code: KeyCode) -> i32 {
+    match code {
+        // Letters
+        KeyCode::KeyA => 0x41,
+        KeyCode::KeyB => 0x42,
+        KeyCode::KeyC => 0x43,
+        KeyCode::KeyD => 0x44,
+        KeyCode::KeyE => 0x45,
+        KeyCode::KeyF => 0x46,
+        KeyCode::KeyG => 0x47,
+        KeyCode::KeyH => 0x48,
+        KeyCode::KeyI => 0x49,
+        KeyCode::KeyJ => 0x4A,
+        KeyCode::KeyK => 0x4B,
+        KeyCode::KeyL => 0x4C,
+        KeyCode::KeyM => 0x4D,
+        KeyCode::KeyN => 0x4E,
+        KeyCode::KeyO => 0x4F,
+        KeyCode::KeyP => 0x50,
+        KeyCode::KeyQ => 0x51,
+        KeyCode::KeyR => 0x52,
+        KeyCode::KeyS => 0x53,
+        KeyCode::KeyT => 0x54,
+        KeyCode::KeyU => 0x55,
+        KeyCode::KeyV => 0x56,
+        KeyCode::KeyW => 0x57,
+        KeyCode::KeyX => 0x58,
+        KeyCode::KeyY => 0x59,
+        KeyCode::KeyZ => 0x5A,
+
+        // Numbers
+        KeyCode::Digit0 => 0x30,
+        KeyCode::Digit1 => 0x31,
+        KeyCode::Digit2 => 0x32,
+        KeyCode::Digit3 => 0x33,
+        KeyCode::Digit4 => 0x34,
+        KeyCode::Digit5 => 0x35,
+        KeyCode::Digit6 => 0x36,
+        KeyCode::Digit7 => 0x37,
+        KeyCode::Digit8 => 0x38,
+        KeyCode::Digit9 => 0x39,
+
+        // Function keys
+        KeyCode::F1 => 0x70,
+        KeyCode::F2 => 0x71,
+        KeyCode::F3 => 0x72,
+        KeyCode::F4 => 0x73,
+        KeyCode::F5 => 0x74,
+        KeyCode::F6 => 0x75,
+        KeyCode::F7 => 0x76,
+        KeyCode::F8 => 0x77,
+        KeyCode::F9 => 0x78,
+        KeyCode::F10 => 0x79,
+        KeyCode::F11 => 0x7A,
+        KeyCode::F12 => 0x7B,
+
+        // Navigation
+        KeyCode::ArrowUp => 0x26,
+        KeyCode::ArrowDown => 0x28,
+        KeyCode::ArrowLeft => 0x25,
+        KeyCode::ArrowRight => 0x27,
+        KeyCode::Home => 0x24,
+        KeyCode::End => 0x23,
+        KeyCode::PageUp => 0x21,
+        KeyCode::PageDown => 0x22,
+
+        // Editing
+        KeyCode::Backspace => 0x08,
+        KeyCode::Delete => 0x2E,
+        KeyCode::Insert => 0x2D,
+        KeyCode::Enter => 0x0D,
+        KeyCode::Tab => 0x09,
+        KeyCode::Escape => 0x1B,
+        KeyCode::Space => 0x20,
+
+        // Modifiers
+        KeyCode::ShiftLeft | KeyCode::ShiftRight => 0x10,
+        KeyCode::ControlLeft | KeyCode::ControlRight => 0x11,
+        KeyCode::AltLeft | KeyCode::AltRight => 0x12,
+        KeyCode::SuperLeft | KeyCode::SuperRight => 0x5B, // Windows/Command key
+
+        // Punctuation
+        KeyCode::Semicolon => 0xBA,
+        KeyCode::Equal => 0xBB,
+        KeyCode::Comma => 0xBC,
+        KeyCode::Minus => 0xBD,
+        KeyCode::Period => 0xBE,
+        KeyCode::Slash => 0xBF,
+        KeyCode::Backquote => 0xC0,
+        KeyCode::BracketLeft => 0xDB,
+        KeyCode::Backslash => 0xDC,
+        KeyCode::BracketRight => 0xDD,
+        KeyCode::Quote => 0xDE,
+
+        _ => 0,
     }
 }
 
@@ -402,8 +825,16 @@ fn main() -> std::process::ExitCode {
             break ExitCode::from(exit_code as u8);
         }
 
-        sleep(Duration::from_millis(1000 / 17));
+        // Target ~60fps (16ms per frame)
+        sleep(Duration::from_millis(16));
     };
+
+    // Give CEF time to finish cleanup before shutdown
+    for _ in 0..10 {
+        do_message_loop_work();
+        sleep(Duration::from_millis(10));
+    }
+
     cef::shutdown();
     ret
 }
