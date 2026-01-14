@@ -987,6 +987,26 @@ impl SessionHandler {
                 .detach();
             }
 
+            Pdu::WebOpen(WebOpen { pane_id, url }) => {
+                spawn_into_main_thread(async move {
+                    catch(
+                        move || {
+                            let mux = Mux::get();
+                            let _pane = mux
+                                .get_pane(pane_id)
+                                .ok_or_else(|| anyhow!("pane_id {} invalid", pane_id))?;
+
+                            // TODO: Implement actual web browser pane creation with CEF
+                            // For now, just return a success message
+                            let message = format!("Opening {}", url);
+                            Ok(Pdu::WebOpenResponse(WebOpenResponse { message }))
+                        },
+                        send_response,
+                    )
+                })
+                .detach();
+            }
+
             Pdu::Invalid { .. } => send_response(Err(anyhow!("invalid PDU {:?}", decoded.pdu))),
             Pdu::Pong { .. }
             | Pdu::ListPanesResponse { .. }
@@ -1010,7 +1030,8 @@ impl SessionHandler {
             | Pdu::MovePaneToNewTabResponse { .. }
             | Pdu::TabAddedToWindow { .. }
             | Pdu::GetPaneRenderableDimensionsResponse { .. }
-            | Pdu::ErrorResponse { .. } => {
+            | Pdu::ErrorResponse { .. }
+            | Pdu::WebOpenResponse { .. } => {
                 send_response(Err(anyhow!("expected a request, got {:?}", decoded.pdu)))
             }
         }

@@ -502,6 +502,8 @@ pdu! {
     GetPaneDirection: 60,
     GetPaneDirectionResponse: 61,
     AdjustPaneSize: 62,
+    WebOpen: 63,
+    WebOpenResponse: 64,
 }
 
 impl Pdu {
@@ -874,6 +876,17 @@ pub struct AdjustPaneSize {
     pub pane_id: PaneId,
     pub direction: PaneDirection,
     pub amount: usize,
+}
+
+#[derive(Deserialize, Serialize, PartialEq, Debug)]
+pub struct WebOpen {
+    pub pane_id: PaneId,
+    pub url: String,
+}
+
+#[derive(Deserialize, Serialize, PartialEq, Debug)]
+pub struct WebOpenResponse {
+    pub message: String,
 }
 
 #[derive(Deserialize, Serialize, PartialEq, Debug)]
