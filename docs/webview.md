@@ -1,4 +1,8 @@
-# WebView Implementation
+# WebView Implementation (TermSurf 1.x)
+
+> **Scope:** This document applies to TermSurf 1.x (Ghostty + WKWebView).
+> TermSurf 2.0 uses CEF via cef-rs instead of WKWebView.
+> See [cef-rs.md](cef-rs.md) and [termsurf2-wezterm-analysis.md](termsurf2-wezterm-analysis.md).
 
 This document covers TermSurf's browser pane implementation, including the API
 checklist, implemented features, and implementation notes.

@@ -1,4 +1,7 @@
-# Bookmarks Implementation Plan
+# Bookmarks Implementation Plan (TermSurf 1.x)
+
+> **Scope:** This document applies to TermSurf 1.x (Ghostty + WKWebView).
+> Bookmarks for TermSurf 2.0 will need to be reimplemented for the WezTerm + cef-rs architecture.
 
 This document describes the implementation plan for bookmarks in TermSurf.
 

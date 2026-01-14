@@ -1,4 +1,8 @@
-# Console Bridging and JavaScript API
+# Console Bridging and JavaScript API (TermSurf 1.x)
+
+> **Scope:** This document applies to TermSurf 1.x (Ghostty + WKWebView).
+> TermSurf 2.0 will use CEF's native console message API instead of JavaScript injection.
+> See [cef-rs.md](cef-rs.md) for 2.0 progress.
 
 This document describes how TermSurf bridges browser console output to the
 terminal, and the optional JavaScript API for automation and testing.

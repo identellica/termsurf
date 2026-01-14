@@ -1,4 +1,7 @@
-# Keybindings Architecture
+# Keybindings Architecture (TermSurf 1.x)
+
+> **Scope:** This document applies to TermSurf 1.x (Ghostty + WKWebView).
+> TermSurf 2.0 will have different keybinding architecture based on WezTerm.
 
 ## libghostty Keybindings
 

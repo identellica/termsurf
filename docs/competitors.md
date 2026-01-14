@@ -2,6 +2,10 @@
 
 A comparison of terminals with embedded browser capabilities.
 
+> **Note:** TermSurf 1.x uses WKWebView (WebKit). TermSurf 2.0 (in development)
+> will use CEF (Chromium) via cef-rs, bringing it closer to Wave Terminal's
+> approach while maintaining CLI-first philosophy.
+
 ## Competitors
 
 ### iTerm2 Browser Plugin
@@ -53,15 +57,16 @@ A comparison of terminals with embedded browser capabilities.
 
 ## Comparison
 
-| Aspect             | TermSurf            | iTerm2           | Wave            | Brow6el          |
-| ------------------ | ------------------- | ---------------- | --------------- | ---------------- |
-| **Invocation**     | CLI (`web open`)    | UI profile       | GUI blocks      | CLI              |
-| **Philosophy**     | Terminal-first      | UI-first         | Workspace-first | Terminal-graphics |
-| **Browser engine** | WKWebView           | WKWebView        | Chromium        | CEF + Sixel      |
-| **Integration**    | Overlay on pane     | Separate session | Separate block  | Replaces output  |
-| **Console bridge** | stdout/stderr       | N/A              | N/A             | JS console only  |
-| **Blocking CLI**   | Yes (like `vim`)    | No               | No              | Yes              |
-| **Pane navigation**| ctrl+h/j/k/l        | iTerm2 shortcuts | Drag/drop       | N/A              |
+| Aspect             | TermSurf 1.x        | TermSurf 2.0 (planned) | iTerm2           | Wave            | Brow6el          |
+| ------------------ | ------------------- | ---------------------- | ---------------- | --------------- | ---------------- |
+| **Invocation**     | CLI (`web open`)    | CLI (`web open`)       | UI profile       | GUI blocks      | CLI              |
+| **Philosophy**     | Terminal-first      | Terminal-first         | UI-first         | Workspace-first | Terminal-graphics |
+| **Browser engine** | WKWebView           | CEF (Chromium)         | WKWebView        | Chromium        | CEF + Sixel      |
+| **Platforms**      | macOS only          | macOS, Linux, Windows  | macOS            | Cross-platform  | Linux            |
+| **Integration**    | Overlay on pane     | Overlay on pane        | Separate session | Separate block  | Replaces output  |
+| **Console bridge** | stdout/stderr       | stdout/stderr          | N/A              | N/A             | JS console only  |
+| **Blocking CLI**   | Yes (like `vim`)    | Yes (like `vim`)       | No               | No              | Yes              |
+| **Pane navigation**| ctrl+h/j/k/l        | TBD                    | iTerm2 shortcuts | Drag/drop       | N/A              |
 
 ## TermSurf's Unique Position
 

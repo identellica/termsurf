@@ -1,9 +1,12 @@
 ---
 name: release
-description: "Create a new TermSurf release"
+description: "Create a new TermSurf 1.x release"
 ---
 
-# Release
+# Release (TermSurf 1.x)
+
+> **Scope:** This skill applies to TermSurf 1.x releases.
+> TermSurf 2.0 will have a different release process based on Rust/Cargo tooling.
 
 Read and follow the process documented in `docs/release.md`.
 

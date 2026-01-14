@@ -1,4 +1,7 @@
-# Release Procedure
+# Release Procedure (TermSurf 1.x)
+
+> **Scope:** This document applies to TermSurf 1.x releases.
+> TermSurf 2.0 will have a different release process based on Rust/Cargo tooling.
 
 This document describes how to make a new release of TermSurf.
 

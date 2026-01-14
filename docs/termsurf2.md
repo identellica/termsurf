@@ -1,4 +1,19 @@
-# TermSurf 2.0: CEF + Zig Architecture
+# TermSurf 2.0: CEF + Zig Architecture (SUPERSEDED)
+
+> **This approach has been superseded.** We explored integrating CEF directly
+> into Ghostty's Zig codebase, but ultimately chose a different path: **WezTerm
+> + cef-rs** (pure Rust). The WezTerm approach is simpler (single language),
+> already cross-platform, and cef-rs provides working Rust bindings with
+> validated OSR support.
+>
+> **See [termsurf2-wezterm-analysis.md](termsurf2-wezterm-analysis.md) for the
+> current architecture.**
+
+---
+
+*The content below is preserved for historical reference.*
+
+---
 
 This document outlines the vision and architecture for TermSurf 2.0, which integrates Chromium Embedded Framework (CEF) directly into the Zig codebase rather than using Swift/WKWebView.
 

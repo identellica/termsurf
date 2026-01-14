@@ -1,7 +1,10 @@
-# libghostty Changes
+# libghostty Changes (TermSurf 1.x)
 
-This document tracks modifications made to libghostty (the Zig core in `src/`)
-for TermSurf. These changes are designed to be upstream-friendly and will be
+> **Scope:** This document applies to TermSurf 1.x (Ghostty-based).
+> TermSurf 2.0 is based on WezTerm and does not use libghostty.
+
+This document tracks modifications made to libghostty (the Zig core in `ts1/src/`)
+for TermSurf 1.x. These changes are designed to be upstream-friendly and will be
 submitted as PRs to
 [ghostty-org/ghostty](https://github.com/ghostty-org/ghostty) after MVP.
 

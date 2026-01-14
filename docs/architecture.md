@@ -1,65 +1,113 @@
 # TermSurf Architecture
 
 This document explains the architectural decisions behind TermSurf, including
-why we chose Ghostty as our foundation and how we integrate browser panes.
+the evolution from 1.x to 2.0.
+
+## Project Evolution
+
+### TermSurf 1.x (Stable, macOS-only)
+
+TermSurf 1.x is built on **Ghostty + WKWebView**:
+- **Terminal:** Ghostty (Zig core + Swift macOS app)
+- **Browser:** Apple's WKWebView (WebKit)
+- **Platform:** macOS only
+
+This architecture works and is stable, but has fundamental limitations that led
+to the 2.0 redesign.
+
+### TermSurf 2.0 (In Development, Cross-platform)
+
+TermSurf 2.0 is built on **WezTerm + cef-rs**:
+- **Terminal:** WezTerm (Rust)
+- **Browser:** CEF via cef-rs (Chromium)
+- **Platforms:** macOS, Linux, Windows
+
+See [termsurf2-wezterm-analysis.md](termsurf2-wezterm-analysis.md) for the full
+architecture analysis.
+
+## Why We're Moving to 2.0
+
+### WKWebView Limitations (1.x)
+
+WKWebView is lightweight and native, but has critical limitations for a
+"terminal that's also a real browser":
+
+1. **Incomplete API** - WKWebView lacks:
+   - Proper visited link styling (requires private API workarounds)
+   - Full cookie/storage control
+   - Extension support
+   - Chrome DevTools (only Safari Web Inspector)
+   - Robust download handling
+   - Many other browser features standard in Chromium
+
+2. **macOS-only** - No path to Linux/Windows without a complete rewrite.
+   WebKitGTK exists for Linux but has different APIs and quirks.
+
+3. **Apple controls the roadmap** - We can't add features Apple doesn't expose.
+
+### CEF Advantages (2.0)
+
+CEF (Chromium Embedded Framework) via cef-rs provides:
+
+1. **Complete browser** - Full Chromium with all standard browser features
+2. **Cross-platform** - Same code works on macOS, Linux, and Windows
+3. **Chrome DevTools** - Full debugging capabilities
+4. **Consistent behavior** - Same rendering engine everywhere
+
+### WezTerm Advantages (2.0)
+
+WezTerm provides:
+
+1. **Single language** - Pure Rust vs Zig + Swift + Objective-C
+2. **Cross-platform** - Already works on macOS, Linux, Windows
+3. **wgpu rendering** - Same GPU abstraction as cef-rs, enabling clean compositor
+4. **Active community** - Well-maintained, feature-rich terminal
+
+## Architecture Comparison
+
+| Aspect | 1.x (Ghostty + WKWebView) | 2.0 (WezTerm + cef-rs) |
+|--------|---------------------------|------------------------|
+| Languages | Zig + Swift + Objective-C | Rust |
+| Platforms | macOS only | macOS, Linux, Windows |
+| Browser API | Limited (WKWebView) | Complete (Chromium) |
+| DevTools | Safari Web Inspector | Chrome DevTools |
+| GPU | Metal only | wgpu (Metal/Vulkan/DX12) |
+| Binary size | ~20MB | ~150MB (includes CEF) |
+
+---
+
+# TermSurf 1.x Architecture
+
+The remainder of this document describes the 1.x architecture in detail.
 
 ## Requirements
 
 TermSurf has two primary requirements:
 
 1. **Browser as a pane**: Display web content in terminal panes, not as separate windows
-2. **Multi-engine support**: Test web apps in Chromium, Safari/WebKit, and Firefox/Gecko
+2. **CLI-first**: Invoke browser via command line (`web open`), not GUI
 
-## Terminal Emulator Comparison
+## Stack
 
-We evaluated three terminal emulators:
+```
+┌─────────────────────────────────────────┐
+│           Swift UI Layer                │  termsurf-macos/
+│   (WebViewOverlay, ControlBar, etc.)    │
+├─────────────────────────────────────────┤
+│           WKWebView (WebKit)            │  Apple's WebKit framework
+├─────────────────────────────────────────┤
+│         libghostty (Zig)                │  ts1/src/
+│   Terminal emulation, GPU rendering     │
+├─────────────────────────────────────────┤
+│      Metal (macOS GPU)                  │
+└─────────────────────────────────────────┘
+```
 
-### Ghostty
+## Browser Integration (WKWebView)
 
-- **Language**: Zig (libghostty) + Swift (macOS app) + GTK (Linux)
-- **Rendering**: Platform-native views (NSView on macOS)
-- **Pane Management**: Host application manages layout via callbacks
-- **Architecture**: libghostty is a library; apps embed it
+For 1.x, we use Apple's native WKWebView:
 
-**Key Insight**: The macOS app uses native NSViews for each terminal surface. Adding a browser view is natural - it's just another native view managed by the same SplitTree.
-
-### WezTerm
-
-- **Language**: Pure Rust
-- **Rendering**: Custom GPU renderer (wgpu)
-- **Pane Management**: Internal binary tree with `Pane` trait
-- **Architecture**: Monolithic application
-
-**Key Insight**: WezTerm renders everything to a single GPU surface. Adding browser views requires either:
-- Overlay approach (native window positioned over pane region - focus issues)
-- Texture compositing (CEF offscreen rendering - complex)
-
-### Alacritty
-
-- **Language**: Rust
-- **Rendering**: OpenGL/wgpu
-- **Pane Management**: None (single terminal per window)
-
-Not suitable - would require building pane management from scratch.
-
-## Why Ghostty?
-
-| Criteria | Ghostty | WezTerm |
-|----------|---------|---------|
-| Browser integration | Trivial (native view sibling) | Hard (overlay or texture) |
-| Time to MVP | Weeks | Months |
-| Focus management | Native (AppKit handles it) | Custom (must route to browser) |
-| Cross-platform | Separate apps per platform | Single codebase |
-
-**Ghostty wins on browser integration** - the fundamental requirement. WezTerm's custom GPU rendering makes browser integration significantly harder.
-
-## Browser Integration Approach
-
-### WKWebView (MVP)
-
-For the MVP, we use Apple's native WKWebView:
-
-**Why WKWebView for MVP?**
+**Why WKWebView for 1.x?**
 - **Zero dependencies**: Built into macOS, no additional frameworks
 - **Native Swift integration**: Seamless API, no C marshalling
 - **Profile isolation**: `WKWebsiteDataStore(forIdentifier:)` on macOS 14+
@@ -70,23 +118,13 @@ For the MVP, we use Apple's native WKWebView:
 - WebKit only (not Chromium)
 - No Chrome DevTools (Safari Web Inspector instead)
 - Console capture requires JS injection (not native callback)
-
-### Future: Multi-Engine Support
-
-TermSurf is designed to support multiple browser engines via a common protocol:
-
-- **Safari/WebKit (WKWebView)** - Current MVP implementation
-- **Chromium (CEF)** - Deferred (see [docs/cef.md](cef.md) for prior work)
-- **Firefox/Gecko** - Longer-term goal
-
-This will allow `termsurf open --browser chromium` or `--browser gecko` for
-cross-browser testing.
+- Limited browser API (see "Why We're Moving to 2.0" above)
 
 ## CLI-App Communication
 
 ### The Problem
 
-TermSurf needs a way for CLI tools (`termsurf open`, etc.) to communicate with
+TermSurf needs a way for CLI tools (`web open`, etc.) to communicate with
 the running TermSurf app to control browser panes.
 
 ### Solution: Unix Domain Sockets
@@ -200,7 +238,7 @@ This allows:
 ## Console Bridging
 
 When a browser pane is active, JavaScript console output appears in the terminal
-where `termsurf open` was run. See [docs/console.md](console.md) for full details.
+where `web open` was run. See [console.md](console.md) for full details.
 
 ### Implementation
 
@@ -229,55 +267,36 @@ window.termsurf.exit(1)    // Close with exit code 1
 
 The exit code is passed through the socket to the CLI, which exits with that code.
 
-## Cross-Platform Strategy
-
-### Phase 1: macOS MVP
-
-Focus on macOS first:
-- Fork the Swift app (`termsurf-macos/`)
-- Add WKWebView browser pane support
-- Implement profile isolation via `WKWebsiteDataStore`
-
-### Phase 2: Linux
-
-Apply same patterns to Ghostty's GTK app:
-- Create `termsurf-linux/` as fork of GTK app
-- Use WebKitGTK for browser panes (similar API to WKWebView)
-- Share architectural patterns, adapt for GTK
-
-## File Structure
+## File Structure (1.x)
 
 ```
 termsurf/
-├── src/                          # libghostty (Zig) - shared core
-│   └── cli/web.zig               # CLI web command (termsurf +web / web)
-├── macos/                        # Original Ghostty macOS app
-├── termsurf-macos/               # TermSurf macOS app
-│   ├── Sources/
-│   │   ├── App/                  # App delegate, main entry
-│   │   ├── Features/
-│   │   │   ├── Splits/           # SplitTree (extend for browser panes)
-│   │   │   ├── Terminal/         # Terminal views
-│   │   │   ├── Socket/           # Unix domain socket server
-│   │   │   │   ├── SocketServer.swift
-│   │   │   │   ├── SocketConnection.swift
-│   │   │   │   ├── TermsurfProtocol.swift
-│   │   │   │   └── CommandHandler.swift
-│   │   │   └── WebView/          # WebView implementation
-│   │   │       ├── WebViewOverlay.swift   # WKWebView + JS injection
-│   │   │       ├── WebViewContainer.swift # Container + mode management
-│   │   │       ├── WebViewManager.swift   # Tracking + console routing
-│   │   │       └── ControlBar.swift       # URL bar + mode indicator
-│   │   └── Ghostty/              # Ghostty integration
-├── docs/                         # Documentation
-│   ├── architecture.md           # This file
-│   ├── console.md                # Console bridging and JS API
-│   ├── keybindings.md            # Keyboard shortcuts
-│   ├── libghostty.md             # Changes to libghostty (for upstream PR)
-│   └── cef.md                    # CEF reference (deferred approach)
-└── TODO.md                       # Active task checklist
+├── ts1/                          # TermSurf 1.x (Ghostty-based)
+│   ├── src/                      # libghostty (Zig) - shared core
+│   │   └── cli/web.zig           # CLI web command
+│   ├── macos/                    # Original Ghostty macOS app
+│   └── termsurf-macos/           # TermSurf macOS app
+│       └── Sources/
+│           ├── App/              # App delegate, main entry
+│           ├── Features/
+│           │   ├── Splits/       # SplitTree (extended for browser panes)
+│           │   ├── Terminal/     # Terminal views
+│           │   ├── Socket/       # Unix domain socket server
+│           │   └── WebView/      # WKWebView implementation
+│           └── Ghostty/          # Ghostty integration
+├── ts2/                          # TermSurf 2.0 (WezTerm-based)
+├── cef-rs/                       # CEF Rust bindings
+└── docs/                         # Documentation
 ```
 
-**Key point:** TermSurf makes minimal, additive changes to libghostty (`src/`)
-to support embedding. These changes are tracked in [docs/libghostty.md](libghostty.md)
-and will be submitted upstream after MVP.
+## Related Documentation
+
+### TermSurf 1.x
+- [console.md](console.md) - Console bridging and JS API
+- [keybindings.md](keybindings.md) - Keyboard shortcuts
+- [webview.md](webview.md) - WKWebView implementation details
+- [libghostty.md](libghostty.md) - Changes to libghostty
+
+### TermSurf 2.0
+- [termsurf2-wezterm-analysis.md](termsurf2-wezterm-analysis.md) - Architecture analysis
+- [cef-rs.md](cef-rs.md) - Our cef-rs modifications

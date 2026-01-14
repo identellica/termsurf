@@ -1,4 +1,7 @@
-# Handling target="_blank" Links
+# Handling target="_blank" Links (TermSurf 1.x)
+
+> **Scope:** This document applies to TermSurf 1.x (Ghostty + WKWebView).
+> TermSurf 2.0 will handle this via CEF's native popup handling.
 
 This document describes how TermSurf handles links that request to open in a new
 window/tab (i.e., `target="_blank"` or `window.open()`).
