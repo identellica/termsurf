@@ -7,7 +7,7 @@ use wgpu::util::DeviceExt;
 use winit::{
     application::ApplicationHandler,
     event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
-    event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
+    event_loop::{ActiveEventLoop, ControlFlow, EventLoop, EventLoopProxy},
     keyboard::{KeyCode, PhysicalKey},
     platform::pump_events::{EventLoopExtPumpEvents, PumpStatus},
     window::{Window, WindowAttributes, WindowId},
@@ -15,7 +15,7 @@ use winit::{
 
 use crate::webrender::{
     ClientBuilder, OsrApp, OsrRenderHandler, OsrRequestContextHandler,
-    RequestContextHandlerBuilder, TextureHolder,
+    RequestContextHandlerBuilder, TextureHolder, UserEvent,
 };
 
 struct State {
@@ -251,15 +251,17 @@ struct App {
     key_modifiers: u32,
     mouse_buttons: u32,
     urls_to_open: Vec<&'static str>,
+    proxy: Arc<EventLoopProxy<UserEvent>>,
 }
 
 impl App {
-    fn new(urls: Vec<&'static str>) -> Self {
+    fn new(urls: Vec<&'static str>, proxy: EventLoopProxy<UserEvent>) -> Self {
         App {
             instances: HashMap::new(),
             key_modifiers: 0,
             mouse_buttons: 0,
             urls_to_open: urls,
+            proxy: Arc::new(proxy),
         }
     }
 
@@ -302,7 +304,8 @@ impl App {
         let window_info = WindowInfo {
             windowless_rendering_enabled: true as _,
             shared_texture_enabled: accelerated_osr as _,
-            external_begin_frame_enabled: accelerated_osr as _,
+            // Disabled: CEF signals frames via on_accelerated_paint callback instead
+            external_begin_frame_enabled: false as _,
             ..Default::default()
         };
 
@@ -312,6 +315,8 @@ impl App {
             state.queue.clone(),
             device_scale_factor as _,
             window.inner_size().to_logical(device_scale_factor),
+            self.proxy.clone(),
+            window_id,
         );
 
         let browser_settings = BrowserSettings {
@@ -350,7 +355,7 @@ impl App {
     }
 }
 
-impl ApplicationHandler for App {
+impl ApplicationHandler<UserEvent> for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         let urls = std::mem::take(&mut self.urls_to_open);
         for (i, url) in urls.iter().enumerate() {
@@ -387,12 +392,8 @@ impl ApplicationHandler for App {
             }
 
             WindowEvent::RedrawRequested => {
-                #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
-                if let Some(host) = instance.host() {
-                    host.send_external_begin_frame();
-                }
+                // Render only when requested (triggered by CEF frame events)
                 instance.state.render(&instance.texture_holder);
-                instance.state.get_window().request_redraw();
             }
 
             WindowEvent::Resized(size) => {
@@ -557,6 +558,17 @@ impl ApplicationHandler for App {
             _ => (),
         }
     }
+
+    fn user_event(&mut self, _event_loop: &ActiveEventLoop, event: UserEvent) {
+        match event {
+            UserEvent::FrameReady(window_id) => {
+                // CEF has a new frame ready - request redraw for the specific window
+                if let Some(instance) = self.instances.get(&window_id) {
+                    instance.state.get_window().request_redraw();
+                }
+            }
+        }
+    }
 }
 
 // CEF event flag constants
@@ -651,6 +663,7 @@ fn main() -> std::process::ExitCode {
     let settings = Settings {
         windowless_rendering_enabled: true as _,
         external_message_pump: true as _,
+        no_sandbox: true as _,
         ..Default::default()
     };
     assert_eq!(
@@ -663,14 +676,18 @@ fn main() -> std::process::ExitCode {
         1
     );
 
-    let mut event_loop = EventLoop::new().unwrap();
+    let mut event_loop = EventLoop::<UserEvent>::with_user_event().build().unwrap();
     event_loop.set_control_flow(ControlFlow::Poll);
+    let proxy = event_loop.create_proxy();
 
     // Create app with two URLs to test multi-browser
-    let mut app = App::new(vec![
-        "https://github.com",
-        "https://google.com",
-    ]);
+    let mut app = App::new(
+        vec![
+            "https://github.com",
+            "https://google.com",
+        ],
+        proxy,
+    );
 
     let ret = loop {
         do_message_loop_work();

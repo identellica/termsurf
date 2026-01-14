@@ -4,6 +4,15 @@ use cef::{
 use cef::{ImplRequestContextHandler, RequestContextHandler, WrapRequestContextHandler};
 use cef::{ContextMenuHandler, ImplContextMenuHandler, WrapContextMenuHandler};
 use std::cell::RefCell;
+use std::sync::Arc;
+use winit::event_loop::EventLoopProxy;
+use winit::window::WindowId;
+
+/// Custom event for signaling new frames from CEF
+#[derive(Debug, Clone)]
+pub enum UserEvent {
+    FrameReady(WindowId),
+}
 
 #[derive(Clone)]
 pub struct OsrApp {}
@@ -105,6 +114,8 @@ pub struct OsrRenderHandler {
     texture_holder: std::rc::Rc<RefCell<Option<wgpu::BindGroup>>>,
     _device: wgpu::Device,
     _queue: wgpu::Queue,
+    proxy: Arc<EventLoopProxy<UserEvent>>,
+    window_id: WindowId,
 }
 
 /// Return type for OsrRenderHandler::new
@@ -120,6 +131,8 @@ impl OsrRenderHandler {
         _queue: wgpu::Queue,
         device_scale_factor: f32,
         size: winit::dpi::LogicalSize<f32>,
+        proxy: Arc<EventLoopProxy<UserEvent>>,
+        window_id: WindowId,
     ) -> RenderHandlerParts {
         let size = std::rc::Rc::new(RefCell::new(size));
         let texture_holder = std::rc::Rc::new(RefCell::new(None));
@@ -130,6 +143,8 @@ impl OsrRenderHandler {
                 device_scale_factor,
                 _device,
                 _queue,
+                proxy,
+                window_id,
             },
             size,
             texture_holder,
@@ -277,6 +292,9 @@ wrap_render_handler! {
 
             // Store in per-browser texture holder
             *self.handler.texture_holder.borrow_mut() = Some(bind_group);
+
+            // Signal that a new frame is ready - trigger window redraw
+            let _ = self.handler.proxy.send_event(UserEvent::FrameReady(self.handler.window_id));
         }
 
         #[cfg(all(
@@ -404,6 +422,9 @@ wrap_render_handler! {
 
             // Store in per-browser texture holder
             *self.handler.texture_holder.borrow_mut() = Some(bind_group);
+
+            // Signal that a new frame is ready - trigger window redraw
+            let _ = self.handler.proxy.send_event(UserEvent::FrameReady(self.handler.window_id));
         }
     }
 }
