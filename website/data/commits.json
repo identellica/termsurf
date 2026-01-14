@@ -1,6 +1,167 @@
 {
-  "generatedAt": "2026-01-12T12:01:54.741Z",
+  "generatedAt": "2026-01-14T14:08:32.933Z",
   "commits": [
+    {
+      "hash": "76d4cec7833be3912a3934c7768d46b36c882c0e",
+      "message": "Add web-open CLI command",
+      "body": "A terminal sought to browse the web,\nBut first it needed a thread to thread.\nNow PDUs fly through socket wire,\n\"Opening...\" echoes higher and higher—\nThe plumbing's done, CEF lies ahead.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-14T08:07:36-06:00"
+    },
+    {
+      "hash": "716c776228faf4ce0d20ee4eac85d50c637f79d1",
+      "message": "Document event-driven rendering architecture",
+      "body": "The docs now tell of frames that wait,\nNo longer spinning, sealed to fate.\nWith diagrams and code displayed,\nThe rendering story fully conveyed.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-14T06:59:45-06:00"
+    },
+    {
+      "hash": "150cb77755b13271c9f6d8189a003f62c8f4142f",
+      "message": "Add event-driven rendering to OSR example",
+      "body": "The render loop once spun in vain,\nPainting frames again and again.\nNow CEF cries \"Ready!\"\nWe render steady—\nNo lag, no stutter, no pain.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-14T06:56:59-06:00"
+    },
+    {
+      "hash": "790a38aa1cf4fcfacd37e2d34a52dc355ab39388",
+      "message": "Remove fixed 16ms sleep from OSR event loop",
+      "body": "The loop once slept a steady beat,\nSixteen milliseconds, bittersweet.\nBut input lagged and frames grew stale,\nWhile users cursed this sluggish tale.\nNow pump_app_events waits instead—\nWake on events, no sleepy dread!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-14T06:37:08-06:00"
+    },
+    {
+      "hash": "3f62d7f9c29b32f92f8ad3a2d314cc369666e733",
+      "message": "Align docs with TermSurf 2.0 direction",
+      "body": "The docs were lost in versions past,\nWith WKWebView holding fast.\nBut now they know the path we tread:\nWezTerm and cef-rs lie ahead.\nEach file now tells which version speaks,\nSo future readers won't spend weeks\nConfused by code that's come and gone—\nThe documentation marches on!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-14T06:06:32-06:00"
+    },
+    {
+      "hash": "1612ca302ecd80c2d6b40955e4c8caf75ef2f902",
+      "message": "Document cef-rs modifications",
+      "body": "Seven commits we made along the way,\nFrom crashes dark to textures bright as day.\nIOSurface learned to speak in proper types,\nWhile context menus ceased their crashing bites.\nNow written down so future selves may know\nThe battles fought to make the browser glow.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-14T05:52:57-06:00"
+    },
+    {
+      "hash": "8c3821444832e2f4f7020eb9b2f2c8a0f4a9b122",
+      "message": "Document cef-rs validation results",
+      "body": "The docs were out of date, you see,\nStill speaking of plans that used to be.\nNow README, AGENTS, and cef.md align,\nWith validation results that truly shine.\n\n- Create top-level README.md with project overview\n- Update AGENTS.md with cef-rs validation status table\n- Update docs/cef.md: status from \"planned\" to \"validated\"\n- Mark Zig integration approach as historical\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T07:15:47-06:00"
+    },
+    {
+      "hash": "25def7592d0157307b338d15b4c75f5020ae1680",
+      "message": "Suppress context menu to prevent crash",
+      "body": "A right-click once did bring,\nThe app unto its end.\nNSApplication sought a thing\nThat winit could not lend.\n\nNow we clear the menu model fast,\nBefore the menu shows—\nThe crash is fixed, the bug has passed,\nAnd harmony now flows.",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T06:51:45-06:00"
+    },
+    {
+      "hash": "40f2a55cc008dffa1bdcd7f6f20daa1d066ff0a9",
+      "message": "Add multi-browser instance support",
+      "body": "Two browsers walked in parallel,\nEach with textures to behold.\nGitHub and Google side by side,\nThough winit's loop was somewhat cold.\n\nPer-instance TextureHolder stores each paint,\nHashMap routes events by WindowId so quaint.",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T06:47:17-06:00"
+    },
+    {
+      "hash": "c4bbf909dddf2ab6931cd14e351d5a5d7b4de3cd",
+      "message": "Tidy window config, note fullscreen woes",
+      "body": "A window needs a name,\nAnd size to call its own.\nFullscreen? Don't ask—\nThat path leads to despair,\nSo we left a note, and moved along.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T06:37:24-06:00"
+    },
+    {
+      "hash": "88ab043551f1445e3fb0f5afcc79d715c4dee7d1",
+      "message": "Add input handling to CEF OSR example",
+      "body": "A browser window sits, still as stone,\nNo clicks, no keys, no life of its own.\nNow mouse and keyboard speak to the frame,\nAnd Chromium dances, no longer tame.\n\n- Mouse: move, click, drag, scroll\n- Keyboard: typing, arrows, delete\n- macOS native key codes for proper input\n- Clean shutdown without crash\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T05:38:48-06:00"
+    },
+    {
+      "hash": "e6f8a2e4cff24c457a067f0db701c2f95854f243",
+      "message": "Fix purple flash on OSR startup",
+      "body": "Before CEF paints its first frame,\nUninitialized memory took the blame.\nNow we clear to black with care,\nNo more purple anywhere.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T05:01:52-06:00"
+    },
+    {
+      "hash": "b1fed971cd84cc05dc6c824c0ecdfcc40fbbab51",
+      "message": "Unify merge-upstream docs for all three repos",
+      "body": "Three rivers flow into one stream,\nGhostty, WezTerm, cef-rs—a team.\nOne skill to merge them all,\nOne doc to heed the call.\nNow upstream syncing's not so extreme.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T04:47:42-06:00"
+    },
+    {
+      "hash": "d8b58edea66247c7a9fd2b7d8013d3cebed5d27b",
+      "message": "Fix macOS IOSurface texture import crash",
+      "body": "The Metal API did reject transmutes' plea,\nCrashing at address 0x1f00000080.\nDeviceRef and TextureDescriptorRef—\nProper types, the objc Message decree.\n\nNow textures flow from CEF to screen,\nThe purple fades, GitHub's page appears.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T04:37:25-06:00"
+    },
+    {
+      "hash": "b0fde79d116ff13653fba957495d13ef3bebaa09",
+      "message": "Merge cef-rs (tauri-apps/cef-rs) into termsurf repo",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T04:32:53-06:00"
+    },
+    {
+      "hash": "5075cc44c2c13b5a7e061df250d83597e4063867",
+      "message": "Move cef-rs files to cef-rs/ folder for termsurf integration",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-13T04:32:39-06:00"
+    },
+    {
+      "hash": "666b59c14e5689a4ed2838b65be68e608a42c928",
+      "message": "Add unified .gitmodules for ts1/ and ts2/",
+      "body": "Git submodules relocated with care,\nTo ts1/ and ts2/, both now there.\nFreetype, harfbuzz, and more,\nNow build from their new shore.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T08:26:12-06:00"
+    },
+    {
+      "hash": "c1f56d48b71cb8f3b2490b631ff3e8fa80db7fb6",
+      "message": "Merge WezTerm as ts2/ for TermSurf 2.0",
+      "body": "Two terminals, now side by side,\nIn ts1/ the Ghost does hide.\nIn ts2/ the Wez takes flight,\nCross-platform dreams within our sight.\n\nRust and Zig, a curious pair,\nEach with features rich and rare.\nVersion two will blend them true—\nA terminal-browser, fresh and new.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T08:20:35-06:00"
+    },
+    {
+      "hash": "4a80d28ea2c7a9772dc8404a2b9b795e3d7d8d60",
+      "message": "Move all WezTerm files to ts2/",
+      "body": "",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T08:20:06-06:00"
+    },
+    {
+      "hash": "7586cb310f5a2500cbfa2708c856a1372ff77ed3",
+      "message": "Update docs for ts1/ structure",
+      "body": "The AGENTS.md now shows the way,\nTo ts1/ where Ghostty stays.\nAnd .gitignore learned paths anew,\nTo track what builds, both old and true.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T07:55:22-06:00"
+    },
+    {
+      "hash": "8b12e27d7d293fde1659ebdd3a43b923023d549f",
+      "message": "Move Ghostty to ts1/ for TermSurf 2.0",
+      "body": "The Ghostty files have packed their bags,\nTo ts1/ they now retreat.\nMaking room at root for WezTerm's flags,\nWhere Rust and CEF shall meet.\n\nA fork of forks, both old and new,\nVersion one archived with care.\nVersion two will soon break through—\nCross-platform browser, fair and square.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T07:54:57-06:00"
+    },
+    {
+      "hash": "2a531a0a8b94f0535d99db859a01d7af093d7347",
+      "message": "Update website data for v1.0.0",
+      "body": "The JSON files got fresh news to share,\nOf version one-point-oh in the air.\nNew commits joined the log parade,\nWhile older ones began to fade.\nThe website now knows what we've done—\nTermSurf 1.0, the milestone's won!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T07:20:24-06:00"
+    },
+    {
+      "hash": "279cea92b4c9092677e1d54e84cdc8fcb3603ef7",
+      "message": "Add TermSurf 2.0 architecture analysis",
+      "body": "We gazed across the Rust-y plains,\nWhere WezTerm meets Chromium's veins.\nWith wgpu both sides render bright,\nCEF and terminal—a unified sight!\nCross-platform dreams no longer far,\nWhen Rust becomes the guiding star.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
+      "author": "Ryan X. Charles",
+      "date": "2026-01-12T07:19:26-06:00"
+    },
     {
       "hash": "5a4253328a98ffabe6ab27597c56322f5d1720a8",
       "message": "Release 1.0.0",
@@ -189,167 +350,6 @@
       "body": "",
       "author": "Ryan X. Charles",
       "date": "2026-01-11T09:19:30-06:00"
-    },
-    {
-      "hash": "940e493dc9cd36b0843a78866b9fbb8510065e68",
-      "message": "Update tagline and refresh commit history",
-      "body": "\"Emulator with webview support\"—\nA mouthful, rather dull to report.\nNow \"terminal and browser\" we say,\nFor web devs who code every day.\nThe commits refresh, the data's new,\nThe website shows what we've been through.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-11T09:16:41-06:00"
-    },
-    {
-      "hash": "59f4e674df6322fc9e96e9f40e5d7433e083114c",
-      "message": "Bump version to 0.3.0",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-11T06:39:41-06:00"
-    },
-    {
-      "hash": "7aec6fc436d9ef3172d55f35a5f69dbf1b5d0944",
-      "message": "Show web page title in tab when browsing",
-      "body": "The tab once showed \"web google.com\"—\nA name quite bland, devoid of chrome.\nNow when you surf, the title gleams,\nWith \"Google Search\" or Netflix streams.\nClose the view? It snaps right back,\nThe terminal reclaims its track.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-11T05:41:50-06:00"
-    },
-    {
-      "hash": "c846680740c72f7c21989e02398dad9f5a418bf9",
-      "message": "Add favicon for the website",
-      "body": "A browser tab once sat forlorn,\nIts icon blank since it was born.\nNow pixels form a tiny face—\nTermSurf has claimed its proper place.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T17:38:38-06:00"
-    },
-    {
-      "hash": "4e1ed1cf4f78ebd4c564d3a25b2b185fa292184b",
-      "message": "Bump version to 0.2.0",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T16:34:01-06:00"
-    },
-    {
-      "hash": "d5cb306e22b264c4edca6ae960048283be140666",
-      "message": "Set default homepage to termsurf.com",
-      "body": "From hallucipedia the browser roamed,\nNow termsurf.com is where it's homed.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T16:30:16-06:00"
-    },
-    {
-      "hash": "85c62872e9af964f331a643b569b68fe32e57a36",
-      "message": "Ignore dist folder in git",
-      "body": "The build artifacts cried,\n\"Track us not!\" So we complied.",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T16:16:37-06:00"
-    },
-    {
-      "hash": "d8ebf611a5f3b8679684ec99fa0730c80a542fb9",
-      "message": "Deploy to Fly.io with Bun SSR",
-      "body": "The server once spoke JavaScript,\nA compiled tongue, quite restrictive.\nNow TypeScript runs free,\nAs Bun meant it to be—\nNo build step! How linguistically festive!\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T16:15:31-06:00"
-    },
-    {
-      "hash": "b04f88a6b3e24eceaab8766db96ff4ea9fa9322c",
-      "message": "Add expandable commit details with GitHub links",
-      "body": "Click a commit and watch it grow,\nIts hidden message starts to show.\nA chevron turns, the body's there,\nWith GitHub links for those who care.\nNo message? We'll say so with grace—\nAn italic note takes its place.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T15:47:33-06:00"
-    },
-    {
-      "hash": "51270c5b594cf1275a120e9d66be93c47acb55c2",
-      "message": "Add GitPoet skill for poetic commits",
-      "body": "A commit message, plain and dry?\nThat simply will not do, says I!\nNow verses flow with every push,\nThrough limericks, haiku, and such—\nYour git log makes the readers cry (with joy).\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T15:41:57-06:00"
-    },
-    {
-      "hash": "83801c3813f8f7d4afbb321317799246ed363be9",
-      "message": "link to identellica.com",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T14:30:39-06:00"
-    },
-    {
-      "hash": "5fb16ad7665d6f59a103484bfa2009eb6be17b24",
-      "message": "add logo and copyright notice",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T14:24:56-06:00"
-    },
-    {
-      "hash": "8ed333be97e6be4521954ba472274c2115bc9178",
-      "message": "update commits",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T14:17:05-06:00"
-    },
-    {
-      "hash": "b44d683a7b43dcc202a0d665f3e20cfcbdb46275",
-      "message": "add website mvp",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T14:16:39-06:00"
-    },
-    {
-      "hash": "5b74f7b5b2e73090ad8147f127d8b548882d0f82",
-      "message": "update website plan",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T14:15:59-06:00"
-    },
-    {
-      "hash": "eab3e204bc675d9960d16d45b00ebde270e72782",
-      "message": "website plan",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T13:57:36-06:00"
-    },
-    {
-      "hash": "f62dc432c9382a262d2143d2fa5ca279588bc770",
-      "message": "web file command",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T13:19:09-06:00"
-    },
-    {
-      "hash": "ddd47609b970bfcb46eed7008569f0de9821581e",
-      "message": "remove done issues - they're in the changelog",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T12:21:28-06:00"
-    },
-    {
-      "hash": "99eb1a7ddce60be95ee9153c15a66b099d489c0b",
-      "message": "Bump version to 0.1.7",
-      "body": "Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T12:01:01-06:00"
-    },
-    {
-      "hash": "93b59a41ae7cc7790371ed2205aaebdb8238f694",
-      "message": "be able to click on url input box to highlight it",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T11:55:22-06:00"
-    },
-    {
-      "hash": "7e8661d332b4875118c7911b2d59ae928c3f8a02",
-      "message": "fix text",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T11:52:20-06:00"
-    },
-    {
-      "hash": "27e850262e358a4f3f45f7d0c37e3f08477d1a86",
-      "message": "ctrl+c to exit browse mode",
-      "body": "",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T11:51:14-06:00"
-    },
-    {
-      "hash": "a86e1e5d8751855b6ee85e74a5d8f42822002f17",
-      "message": "Replace .agents with .claude/skills",
-      "body": "- Remove old Ghostty nushell commands (.agents/commands/)\n- Add merge-upstream skill that references docs/merge-upstream.md\n- Add release skill that references docs/release.md\n\nSkills provide Claude with step-by-step guidance while keeping\nthe documentation as the source of truth.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>",
-      "author": "Ryan X. Charles",
-      "date": "2026-01-10T10:53:25-06:00"
     }
   ]
 }
