@@ -674,14 +674,12 @@ fn main() -> std::process::ExitCode {
 
     let ret = loop {
         do_message_loop_work();
-        let timeout = Some(Duration::ZERO);
+        let timeout = Some(Duration::from_millis(1));
         let status = event_loop.pump_app_events(timeout, &mut app);
 
         if let PumpStatus::Exit(exit_code) = status {
             break ExitCode::from(exit_code as u8);
         }
-
-        sleep(Duration::from_millis(16));
     };
 
     for _ in 0..10 {
