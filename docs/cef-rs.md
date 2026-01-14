@@ -16,6 +16,7 @@ cef-rs was imported into the TermSurf monorepo at `cef-rs/` and modified to fix 
 | Multi-browser instances | Working | `40f2a55cc` |
 | Context menu suppression | Working | `25def7592` |
 | Resize handling | Working | — |
+| Performance (no lag) | Working | `790a38aa1`, `150cb7775` |
 | Fullscreen | Broken | winit issue, defer to WezTerm |
 
 ## Commits
@@ -225,13 +226,140 @@ wrap_client! {
 
 ---
 
+### 8. Remove Fixed 16ms Sleep (`790a38aa1`)
+
+**File:** `cef-rs/examples/osr/src/main.rs`
+
+**Problem:** The event loop had a hardcoded 16ms sleep after each iteration, adding unnecessary latency to every frame.
+
+**Root cause:** The sleep was likely added as a simple frame rate limiter, but it caused input lag because:
+1. User types/scrolls → event processed
+2. Sleep 16ms (unnecessary delay)
+3. Next frame renders
+
+**Fix:** Remove the sleep entirely and use a minimal 1ms timeout for `pump_app_events`:
+
+```rust
+// Before:
+let timeout = Some(Duration::ZERO);
+let status = event_loop.pump_app_events(timeout, &mut app);
+sleep(Duration::from_millis(16));
+
+// After:
+let timeout = Some(Duration::from_millis(1));
+let status = event_loop.pump_app_events(timeout, &mut app);
+// No sleep - let the event loop handle timing
+```
+
+---
+
+### 9. Add Event-Driven Rendering (`150cb7775`)
+
+**Files:** `cef-rs/examples/osr/src/main.rs`, `cef-rs/examples/osr/src/webrender.rs`
+
+**Problem:** Even after removing the sleep, there was still perceptible lag. The render loop was continuously calling `request_redraw()` and `send_external_begin_frame()`, rendering frames whether or not CEF had new content.
+
+**Root cause:** The continuous rendering approach meant:
+1. We'd often render the same frame multiple times
+2. We'd sometimes render one frame behind (CEF paints, we render old, then render new)
+3. CPU/GPU constantly busy even when nothing changed
+
+**Solution:** Event-driven rendering - only render when CEF signals a new frame is ready.
+
+**Architecture:**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Event Loop                              │
+│                                                              │
+│  ┌──────────────┐    UserEvent::FrameReady    ┌──────────┐  │
+│  │ CEF paints   │ ─────────────────────────▶  │ user_    │  │
+│  │ new frame    │      (via proxy)            │ event()  │  │
+│  └──────────────┘                             └────┬─────┘  │
+│         │                                          │        │
+│         ▼                                          ▼        │
+│  ┌──────────────┐                          ┌──────────────┐ │
+│  │ Store texture│                          │request_redraw│ │
+│  │ in holder    │                          │ for window   │ │
+│  └──────────────┘                          └──────┬───────┘ │
+│                                                   │         │
+│                                                   ▼         │
+│                                            ┌──────────────┐ │
+│                                            │ Redraw       │ │
+│                                            │ Requested    │ │
+│                                            │ → render()   │ │
+│                                            └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Key changes:**
+
+1. **UserEvent enum** for cross-context signaling:
+   ```rust
+   #[derive(Debug, Clone)]
+   pub enum UserEvent {
+       FrameReady(WindowId),
+   }
+   ```
+
+2. **EventLoopProxy** stored in RenderHandler:
+   ```rust
+   pub struct OsrRenderHandler {
+       // ... existing fields ...
+       proxy: Arc<EventLoopProxy<UserEvent>>,
+       window_id: WindowId,
+   }
+   ```
+
+3. **Signal on paint** - when CEF finishes painting, notify the event loop:
+   ```rust
+   // In on_accelerated_paint, after storing texture:
+   let _ = self.handler.proxy.send_event(
+       UserEvent::FrameReady(self.handler.window_id)
+   );
+   ```
+
+4. **Handle user events** - request redraw only when signaled:
+   ```rust
+   fn user_event(&mut self, _event_loop: &ActiveEventLoop, event: UserEvent) {
+       match event {
+           UserEvent::FrameReady(window_id) => {
+               if let Some(instance) = self.instances.get(&window_id) {
+                   instance.state.get_window().request_redraw();
+               }
+           }
+       }
+   }
+   ```
+
+5. **Disable external_begin_frame** - CEF now drives its own frame timing:
+   ```rust
+   let window_info = WindowInfo {
+       external_begin_frame_enabled: false as _,  // Was: accelerated_osr as _
+       // ...
+   };
+   ```
+
+6. **Simplify RedrawRequested** - just render, no continuous loop:
+   ```rust
+   WindowEvent::RedrawRequested => {
+       // Render only when requested (triggered by CEF frame events)
+       instance.state.render(&instance.texture_holder);
+       // No more: request_redraw() or send_external_begin_frame()
+   }
+   ```
+
+**Additional fix:** Added `no_sandbox: true` to Settings to resolve helper process sandbox issues on macOS.
+
+---
+
 ## Files Modified
 
 | File | Lines Changed | Purpose |
 |------|---------------|---------|
 | `cef/src/osr_texture_import/iosurface.rs` | ~66 | Metal API type fix, IOSurface validation |
-| `examples/osr/src/main.rs` | ~600 | Input handling, multi-browser, window config |
-| `examples/osr/src/webrender.rs` | ~80 | Per-browser texture storage, context menu handler |
+| `examples/osr/src/main.rs` | ~650 | Input handling, multi-browser, event-driven rendering |
+| `examples/osr/src/webrender.rs` | ~100 | Per-browser texture storage, context menu, frame signaling |
 
 ## Files NOT Modified
 
