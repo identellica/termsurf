@@ -100,6 +100,7 @@ impl crate::TermWindow {
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                             view: &view,
                             resolve_target: None,
+                            depth_slice: None,
                             ops: wgpu::Operations {
                                 load: if cleared {
                                     wgpu::LoadOp::Load
