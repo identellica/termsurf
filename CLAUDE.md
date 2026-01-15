@@ -57,7 +57,7 @@ TermSurf is a terminal emulator with webview support. The project is transitioni
   - `docs/target-blank.md` - target="_blank" link handling
   - `docs/webview.md` - WebView implementation, API checklist, and workarounds
   - `docs/ctrl-z.md` - ctrl+z/fg analysis (deferred, documented for future reference)
-  - `docs/cef.md` - CEF integration attempt (deferred, documented for future reference)
+  - `docs/cef.md` - CEF integration via cef-rs (validation status, modifications, usage)
   - `docs/termsurf2.md` - TermSurf 2.0 architecture (WezTerm + cef-rs)
 
 ### libghostty-vt
