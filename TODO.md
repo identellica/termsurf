@@ -1,4 +1,4 @@
-# TermSurf 2.0 TODO
+# TODO
 
 ## Basic Proofs-of-Concept
 
