@@ -1,288 +1,411 @@
-# TermSurf 2.0: CEF + Zig Architecture (SUPERSEDED)
+# TermSurf 2.0 Architecture
 
-> **This approach has been superseded.** We explored integrating CEF directly
-> into Ghostty's Zig codebase, but ultimately chose a different path: **WezTerm
-> + cef-rs** (pure Rust). The WezTerm approach is simpler (single language),
-> already cross-platform, and cef-rs provides working Rust bindings with
-> validated OSR support.
->
-> **See [termsurf2-wezterm-analysis.md](termsurf2-wezterm-analysis.md) for the
-> current architecture.**
+TermSurf 2.0 is built on **WezTerm + cef-rs** for cross-platform terminal-browser
+integration.
 
----
+## Executive Summary
 
-*The content below is preserved for historical reference.*
+The WezTerm + cef-rs approach offers significant advantages over TermSurf 1.x:
 
----
+- Single language (Rust) vs three (Zig + Swift + Objective-C)
+- True cross-platform (Linux, Windows, macOS) vs macOS-only
+- Full browser API (CEF) vs limited (WKWebView)
+- Both projects use wgpu for GPU rendering, enabling clean integration
+- cef-rs already has working OSR (Off-Screen Rendering) with hardware
+  acceleration
 
-This document outlines the vision and architecture for TermSurf 2.0, which integrates Chromium Embedded Framework (CEF) directly into the Zig codebase rather than using Swift/WKWebView.
+## TermSurf 1.x Architecture (Context)
 
-## Overview
-
-**TermSurf 1.0** (current) uses Apple's WKWebView for browser panes. This works but has limitations:
-- Visited links require private API workarounds
-- Limited to macOS/iOS
-- Some OAuth/iframe navigation issues
-- No Chrome DevTools (Safari Web Inspector only)
-- Behavior varies by macOS version
-
-**TermSurf 2.0** will integrate CEF at the Zig level, providing:
-- Full Chromium browser capabilities
-- Chrome DevTools support
-- Consistent behavior across platforms
-- Cross-platform potential (Linux, Windows)
-- Same rendering architecture as the terminal
-
-## Key Insight: How Ghostty Rendering Works
-
-The critical discovery enabling this architecture: **Ghostty's terminal rendering is done entirely in Zig, not Swift.**
+### Stack
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Swift (thin shell)                       │
-│  - Creates NSWindow/NSView                                   │
-│  - Handles macOS UI (menus, dialogs, tabs)                  │
-│  - Forwards input events to Zig                             │
-│  - Passes NSView pointer to libghostty                      │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼ (NSView pointer)
-┌─────────────────────────────────────────────────────────────┐
-│                     Zig (libghostty)                        │
-│  - Creates CALayer (IOSurfaceLayer) on the NSView           │
-│  - Owns the Metal rendering pipeline                        │
-│  - Renders terminal content to IOSurface                    │
-│  - CALayer displays the IOSurface                           │
-│  - Calls Objective-C APIs directly via `objc` package       │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│           Swift UI Layer                │  termsurf-macos/ (~33k lines)
+│   (WebViewOverlay, ControlBar, etc.)    │
+├─────────────────────────────────────────┤
+│           WKWebView (WebKit)            │  Apple's WebKit framework
+├─────────────────────────────────────────┤
+│         libghostty (Zig)                │  src/ (~213k lines)
+│   Terminal emulation, GPU rendering     │
+├─────────────────────────────────────────┤
+│      Metal (macOS GPU)                  │
+└─────────────────────────────────────────┘
 ```
 
-Swift is essentially a **container** - it provides windows and native widgets, but Zig handles all GPU rendering. This means CEF can be integrated at the Zig level using the same pattern.
+### Strengths
 
-## Why Zig + CEF Works (When Swift + CEF Failed)
+- Working product (TermSurf 1.0 released)
+- Ghostty is high-quality terminal emulator
+- WKWebView is lightweight and native
 
-### The Swift Problem
+### Weaknesses
 
-CEF has a C API, but integrating it with Swift failed due to struct marshalling issues:
-- Swift class memory layout doesn't match what CEF expects
-- The CEF C-to-C++ wrapper validates struct sizes and rejects Swift-created structs
-- See `docs/cef.md` for detailed documentation of the Swift integration challenges
+- **macOS only** - No path to Linux/Windows without rewrite
+- **Limited browser API** - WKWebView lacks:
+  - Proper visited link handling
+  - Full cookie/storage control
+  - Extension support
+  - DevTools API (only Safari Web Inspector)
+  - Robust download handling
+- **Three languages** - Zig + Swift + Objective-C increases complexity
+- **No upstream path** - TermSurf changes unlikely to merge into Ghostty
 
-### The Zig Solution
+## TermSurf 2.0 Architecture
 
-Zig doesn't have these problems:
-- **Direct C interop**: Zig can import C headers and call C functions with zero overhead
-- **Exact memory layout control**: Zig structs have predictable, C-compatible layouts
-- **No marshalling**: When Zig creates a `cef_app_t` struct, it's exactly what CEF expects
-- **Proven pattern**: Zig already successfully calls Objective-C APIs (Metal, CoreGraphics, CALayer)
-
-## Proposed Architecture
-
-### TermSurf 2.0 Architecture
+### Stack
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Swift (thin shell)                       │
-│  - Creates NSWindow/NSView for terminal                     │
-│  - Creates NSWindow/NSView for browser                      │
-│  - Handles macOS UI (menus, dialogs, tabs)                  │
-│  - Forwards events to Zig                                   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼ (NSView pointers)
-┌─────────────────────────────────────────────────────────────┐
-│                     Zig (libghostty + CEF)                  │
-│                                                             │
-│  Terminal Surface:          Browser Surface:                │
-│  ┌─────────────────┐       ┌─────────────────┐             │
-│  │ Metal renderer  │       │ CEF C API       │             │
-│  │ Font rasterizer │       │ Off-screen mode │             │
-│  │ Terminal state  │       │ Browser state   │             │
-│  └────────┬────────┘       └────────┬────────┘             │
-│           │                         │                       │
-│           ▼                         ▼                       │
-│  ┌─────────────────────────────────────────────┐           │
-│  │         IOSurface → CALayer                 │           │
-│  │    (same rendering pattern for both!)       │           │
-│  └─────────────────────────────────────────────┘           │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│           Rust Application              │
+│   (TermSurf-specific UI, integration)   │
+├─────────────────────────────────────────┤
+│     WezTerm Core        │   CEF (cef-rs)│  Both render to wgpu textures
+│  Terminal emulation     │   Browser     │
+│     wgpu rendering      │   OSR mode    │
+├─────────────────────────────────────────┤
+│              wgpu (unified)             │  WebGPU abstraction
+├─────────────────────────────────────────┤
+│   Metal │ Vulkan │ DX12 │ OpenGL       │  Platform GPU APIs
+└─────────────────────────────────────────┘
 ```
+
+### Key Insight: Shared GPU Path
+
+Both WezTerm and cef-rs use **wgpu** for GPU rendering:
+
+- WezTerm: `wgpu = "25.0.2"` for terminal rendering
+- cef-rs: `wgpu = "28"` for CEF texture import
+
+CEF's accelerated OSR mode renders to shared textures:
+
+- **macOS**: IOSurface → Metal → wgpu
+- **Linux**: DMA-BUF → Vulkan → wgpu
+- **Windows**: D3D11 → Vulkan/DX12 → wgpu
+
+This means we can composite terminal and browser content in a unified GPU
+pipeline.
+
+## WezTerm Analysis
+
+### Codebase Stats
+
+- 452 Rust files, ~410k lines
+- Mature, feature-rich terminal emulator
+- Active development, good community
 
 ### Key Components
 
-1. **CEF Zig Bindings** (`src/browser/`)
-   - Import CEF C headers
-   - Implement CEF handlers (`cef_app_t`, `cef_client_t`, `cef_render_handler_t`)
-   - Manage browser lifecycle
+| Component       | Purpose                           | Files                            |
+| --------------- | --------------------------------- | -------------------------------- |
+| `wezterm-gui/`  | Main GUI application              | termwindow, rendering            |
+| `mux/`          | Multiplexer (tabs, panes, splits) | pane.rs (~29k), tab.rs (~85k)    |
+| `window/`       | Cross-platform windowing          | macos/, windows/, x11/, wayland/ |
+| `termwiz/`      | Terminal emulation library        | VT parsing, cell representation  |
+| `wezterm-font/` | Font rendering                    | HarfBuzz, FreeType integration   |
 
-2. **Off-Screen Rendering (OSR)**
-   - CEF renders to pixel buffers via `OnPaint()` callback
-   - Zig copies pixels to IOSurface
-   - Same CALayer display as terminal
+### Rendering Pipeline
 
-3. **libghostty API Extension**
-   - Add `ghostty_browser_new()` alongside `ghostty_surface_new()`
-   - Expose browser control functions (navigate, back, forward, etc.)
-   - Console message callbacks
+1. Terminal content → glyph atlas → wgpu textures
+2. WebGPU shader (`shader.wgsl`) composites glyphs
+3. Platform backend (Metal/Vulkan/DX12/OpenGL) presents
 
-4. **Swift Integration**
-   - Minimal changes to existing Swift code
-   - Create browser views same way as terminal views
-   - Pass NSView pointer to Zig, Zig handles the rest
+### Pane System
 
-## CEF Integration Details
+The `Pane` trait (`mux/src/pane.rs:167`) is terminal-oriented but extensible:
 
-### Off-Screen Rendering Mode
-
-CEF's OSR mode is ideal for this architecture:
-
-```zig
-// Simplified concept
-const RenderHandler = struct {
-    // CEF calls this when it has new pixels to display
-    fn onPaint(
-        self: *RenderHandler,
-        browser: *cef_browser_t,
-        type: PaintElementType,
-        dirty_rects: []const cef_rect_t,
-        buffer: [*]const u8,  // BGRA pixel data
-        width: c_int,
-        height: c_int,
-    ) void {
-        // Copy pixels to IOSurface
-        self.iosurface.lock();
-        @memcpy(self.iosurface.getBaseAddress(), buffer, width * height * 4);
-        self.iosurface.unlock();
-
-        // Trigger CALayer redraw
-        self.layer.setNeedsDisplay();
-    }
-};
-```
-
-### CEF C API Handlers
-
-Zig implements these CEF handler structs:
-
-| Handler | Purpose |
-|---------|---------|
-| `cef_app_t` | Application lifecycle |
-| `cef_client_t` | Browser event routing |
-| `cef_life_span_handler_t` | Browser creation/destruction |
-| `cef_render_handler_t` | Off-screen rendering callbacks |
-| `cef_display_handler_t` | Console messages, title changes |
-| `cef_request_handler_t` | Navigation, downloads |
-
-### Reference Counting
-
-CEF uses reference counting. Zig implementation:
-
-```zig
-fn cef_add_ref(base: *cef_base_ref_counted_t) callconv(.C) void {
-    const self = @fieldParentPtr(MyCefHandler, "base", base);
-    _ = @atomicRmw(usize, &self.ref_count, .Add, 1, .seq_cst);
-}
-
-fn cef_release(base: *cef_base_ref_counted_t) callconv(.C) c_int {
-    const self = @fieldParentPtr(MyCefHandler, "base", base);
-    const prev = @atomicRmw(usize, &self.ref_count, .Sub, 1, .seq_cst);
-    if (prev == 1) {
-        self.destroy();
-        return 1;
-    }
-    return 0;
+```rust
+pub trait Pane: Downcast + Send + Sync {
+    fn pane_id(&self) -> PaneId;
+    fn get_cursor_position(&self) -> StableCursorPosition;
+    fn get_lines(&self, lines: Range<StableRowIndex>) -> (StableRowIndex, Vec<Line>);
+    fn resize(&self, size: TerminalSize) -> anyhow::Result<()>;
+    fn key_down(&self, key: KeyCode, mods: KeyModifiers) -> anyhow::Result<()>;
+    fn mouse_event(&self, event: MouseEvent) -> anyhow::Result<()>;
+    // ... many more terminal-specific methods
 }
 ```
 
-## Cross-Platform Potential
+A browser pane would need a different rendering path, not terminal lines.
 
-### TermSurf 2.0 (macOS)
-- CEF integrated at Zig level
-- Swift provides macOS windowing
-- Replaces WKWebView entirely
+### Platform Support
 
-### TermSurf 3.0 (Linux, Windows)
-- Same Zig + CEF core
-- GTK frontend on Linux (like Ghostty)
-- Win32/WinRT frontend on Windows
-- Shared browser code across all platforms
+| Platform | Windowing    | GPU            |
+| -------- | ------------ | -------------- |
+| macOS    | Cocoa        | Metal          |
+| Linux    | X11, Wayland | OpenGL, Vulkan |
+| Windows  | Win32        | DX12, OpenGL   |
 
-The terminal (libghostty) already works cross-platform. Adding CEF at the Zig level means the browser would too.
+## cef-rs Analysis
 
-## Implementation Roadmap
+### Codebase Stats
 
-### Phase 1: Proof of Concept
-- [ ] Download CEF binary distribution
-- [ ] Create minimal Zig CEF bindings
-- [ ] Initialize CEF from Zig
-- [ ] Create a browser with OSR enabled
-- [ ] Render to an IOSurface
-- [ ] Display via CALayer in a test window
+- CEF version: 143.7.0 (recent Chromium)
+- Full CEF API bindings (~2.3MB per platform)
+- Active Tauri project maintenance
 
-### Phase 2: libghostty Integration
-- [ ] Add browser surface type to libghostty
-- [ ] Implement `ghostty_browser_*` C API
-- [ ] Handle input events (keyboard, mouse)
-- [ ] Console message routing
-- [ ] Profile/cookie isolation
+### Key Components
 
-### Phase 3: Swift Integration
-- [ ] Create BrowserView in Swift (mirrors SurfaceView)
-- [ ] Integrate with existing tab/split infrastructure
-- [ ] Port `web` CLI command to use CEF browser
+| Component             | Purpose                                  |
+| --------------------- | ---------------------------------------- |
+| `cef/`                | High-level Rust API                      |
+| `sys/`                | Low-level FFI bindings                   |
+| `osr_texture_import/` | GPU texture sharing                      |
+| `examples/osr/`       | Working hardware-accelerated OSR example |
 
-### Phase 4: Feature Parity
-- [ ] DevTools support
-- [ ] Downloads
-- [ ] Find in page
-- [ ] Zoom controls
-- [ ] Bookmarks (port from WKWebView)
+### OSR (Off-Screen Rendering) Pipeline
 
-### Phase 5: Cross-Platform (TermSurf 3.0)
-- [ ] GTK frontend for Linux
-- [ ] Test on Linux
-- [ ] Windows frontend (if desired)
+```rust
+// From examples/osr/src/webrender.rs
+fn on_accelerated_paint(
+    &self,
+    _browser: Option<&mut Browser>,
+    type_: PaintElementType,
+    _dirty_rects: Option<&[Rect]>,
+    info: Option<&AcceleratedPaintInfo>,
+) {
+    let shared_handle = SharedTextureHandle::new(info);
+    let texture = shared_handle.import_texture(&device)?;
+    // texture is now a wgpu::Texture ready for rendering
+}
+```
 
-## Open Questions
+### Platform-Specific Texture Import
 
-1. **CEF message loop integration**: How to integrate CEF's message loop with Ghostty's event loop?
-   - Option A: `cef_do_message_loop_work()` called from main loop
-   - Option B: Separate CEF thread (complexity)
+| Platform | Mechanism            | File           |
+| -------- | -------------------- | -------------- |
+| macOS    | IOSurface → Metal    | `iosurface.rs` |
+| Linux    | DMA-BUF → Vulkan     | `dmabuf.rs`    |
+| Windows  | D3D11 shared texture | `d3d11.rs`     |
 
-2. **Multi-process architecture**: CEF uses helper processes for GPU, renderer, etc.
-   - Need to bundle and configure helper apps
-   - May need build system changes
+### CEF Multi-Process Model
 
-3. **Binary size**: CEF adds ~150MB to the app bundle
-   - Acceptable for a browser-focused app
-   - Consider optional download for users who don't need browser?
+CEF uses multiple processes (browser, renderer, GPU, etc.):
 
-4. **macOS code signing**: CEF framework and helpers need proper signing
-   - Already solved for TermSurf 1.0 helper app pattern
+```rust
+// Main process check
+let is_browser_process = cmd.has_switch(Some(&"type".into())) != 1;
+let ret = execute_process(Some(args), Some(&mut app), sandbox_info);
+if is_browser_process {
+    // Initialize CEF, create browser windows
+} else {
+    // Subprocess exits after execute_process
+}
+```
 
-5. **GTK + CEF on macOS**: The GTK build failed due to Zig linker bugs
-   - For macOS, continue using Swift frontend
-   - GTK + CEF for Linux only
+### Browser API Coverage
 
-## Comparison: WKWebView vs CEF
+CEF provides full Chromium API including:
 
-| Feature | WKWebView (1.0) | CEF (2.0) |
-|---------|-----------------|-----------|
-| Visited links | Private API workaround | Works natively |
-| DevTools | Safari Web Inspector | Full Chrome DevTools |
-| Cross-platform | macOS/iOS only | Linux, Windows, macOS |
-| Binary size | 0 (system framework) | ~150MB |
-| Consistency | Varies by OS version | Same everywhere |
-| OAuth/iframes | Some issues | Full support |
-| Control | Limited APIs | Full browser control |
-| Integration | Swift-only | Zig (portable) |
+- Navigation, history, cookies, storage
+- JavaScript execution and message passing
+- DevTools protocol
+- Extensions (limited)
+- Downloads, uploads, permissions
+- Certificate handling
+- Print preview
+- All HTML5 features
+
+## Integration Strategy
+
+### Phase 1: Fork WezTerm ✓
+
+- Fork WezTerm as TermSurf base
+- Remove/disable features not needed (SSH multiplexing, etc.)
+- Understand rendering pipeline
+
+### Phase 2: Add CEF Integration (In Progress)
+
+- Add cef-rs dependency
+- Create `BrowserPane` type (not implementing terminal `Pane` trait)
+- Implement CEF OSR handlers
+- Import CEF textures into wgpu pipeline
+
+### Phase 3: Unified Compositor
+
+- Modify WezTerm's render pass to support mixed pane types
+- Terminal panes: existing glyph rendering
+- Browser panes: CEF texture blit
+- Handle pane splitting between types
+
+### Phase 4: CLI Integration
+
+- Implement `web` command similar to TermSurf 1.0
+- Console bridging (stdout/stderr routing)
+- JavaScript API (`window.termsurf.exit()`)
+
+### Phase 5: Polish
+
+- Profile isolation
+- Bookmarks
+- DevTools integration
+- Platform-specific packaging
+
+## Code Changes Required
+
+### WezTerm Modifications
+
+**New pane type** (`src/browser_pane.rs`):
+
+```rust
+pub struct BrowserPane {
+    id: PaneId,
+    browser: cef::Browser,
+    texture: RefCell<Option<wgpu::Texture>>,
+    size: RefCell<Size>,
+}
+
+impl BrowserPane {
+    pub fn render(&self, encoder: &mut wgpu::CommandEncoder, target: &wgpu::TextureView) {
+        // Blit CEF texture to render target
+    }
+}
+```
+
+**Render pipeline modification** (`wezterm-gui/src/termwindow/render/`):
+
+```rust
+// In render loop
+match pane {
+    PaneType::Terminal(term_pane) => {
+        // Existing terminal rendering
+        self.render_terminal_pane(term_pane, ...);
+    }
+    PaneType::Browser(browser_pane) => {
+        // New browser rendering
+        browser_pane.render(encoder, target);
+    }
+}
+```
+
+**Event routing**:
+
+```rust
+// In input handling
+if let Some(browser_pane) = self.get_active_browser_pane() {
+    // Route keyboard/mouse to CEF
+    browser_pane.browser.host().send_key_event(...);
+    browser_pane.browser.host().send_mouse_event(...);
+}
+```
+
+### CEF Setup
+
+**Initialization** (in main or startup):
+
+```rust
+fn init_cef() {
+    let args = cef::args::Args::new();
+    let settings = cef::Settings {
+        windowless_rendering_enabled: true,
+        external_message_pump: true, // Integrate with WezTerm event loop
+        ..Default::default()
+    };
+    cef::initialize(Some(args.as_main_args()), Some(&settings), ...);
+}
+```
+
+**Message pump integration**:
+
+```rust
+// In WezTerm's main event loop
+loop {
+    // Process WezTerm events
+    process_wezterm_events();
+
+    // Pump CEF messages
+    cef::do_message_loop_work();
+
+    // Render frame
+    render();
+}
+```
+
+## Risk Assessment
+
+### Technical Risks
+
+| Risk                       | Likelihood | Impact | Mitigation                                |
+| -------------------------- | ---------- | ------ | ----------------------------------------- |
+| wgpu version mismatch      | Medium     | Medium | Align versions, test early                |
+| CEF message pump conflicts | Medium     | High   | Study WezTerm event loop, prototype early |
+| Performance overhead       | Low        | Medium | CEF OSR is hardware-accelerated           |
+| CEF binary size (~100MB)   | Certain    | Low    | Accept as tradeoff for full browser       |
+| Cross-platform CEF quirks  | Medium     | Medium | Test on all platforms early               |
+
+### Project Risks
+
+| Risk                         | Likelihood | Impact | Mitigation                        |
+| ---------------------------- | ---------- | ------ | --------------------------------- |
+| Large codebase to understand | Certain    | Medium | Start with minimal changes        |
+| Upstream WezTerm changes     | Medium     | Low    | Periodic merge, maintain fork     |
+| cef-rs API changes           | Low        | Medium | Pin versions, contribute upstream |
+
+## Comparison: 1.x vs 2.0
+
+| Aspect                 | TermSurf 1.x (Ghostty) | TermSurf 2.0 (WezTerm) |
+| ---------------------- | ---------------------- | ---------------------- |
+| **Languages**          | Zig + Swift + ObjC     | Rust                   |
+| **Platforms**          | macOS only             | Linux, Windows, macOS  |
+| **Browser API**        | Limited (WKWebView)    | Full Chromium (CEF)    |
+| **Terminal quality**   | Excellent              | Excellent              |
+| **GPU rendering**      | Metal only             | wgpu (all backends)    |
+| **Codebase size**      | ~246k lines            | ~410k lines            |
+| **Binary size**        | ~20MB                  | ~150MB+ (with CEF)     |
+| **Community**          | Ghostty growing        | WezTerm established    |
 
 ## References
 
-- [CEF Project](https://bitbucket.org/chromiumembedded/cef) - Official repository
-- [CEF Builds](https://cef-builds.spotifycdn.com/index.html) - Binary distributions
-- [cefcapi](https://github.com/cztomczak/cefcapi) - C API usage example
-- [CEF Wiki](https://bitbucket.org/chromiumembedded/cef/wiki/Home) - Documentation
-- `docs/cef.md` - CEF C API reference and Swift integration history
-- `src/renderer/Metal.zig` - How Ghostty does Metal rendering from Zig
-- `src/renderer/metal/IOSurfaceLayer.zig` - IOSurface → CALayer pattern
+- WezTerm: https://github.com/wezterm/wezterm
+- cef-rs: https://github.com/tauri-apps/cef-rs
+- CEF Documentation: https://bitbucket.org/chromiumembedded/cef/wiki/Home
+- wgpu: https://wgpu.rs/
+
+---
+
+## Appendix: Superseded Approaches
+
+### CEF + Zig (Abandoned)
+
+Before choosing WezTerm + cef-rs, we explored integrating CEF directly into
+Ghostty's Zig codebase. This approach was abandoned due to complexity.
+
+**Why Swift + CEF Failed**
+
+CEF has a C API, but integrating it with Swift failed due to struct marshalling:
+
+- Swift class memory layout doesn't match what CEF expects
+- The CEF C-to-C++ wrapper validates struct sizes and rejects Swift-created
+  structs
+- See `docs/cef.md` for detailed documentation of the Swift integration
+  challenges
+
+**Why Zig + CEF Was Considered**
+
+Zig doesn't have Swift's marshalling problems:
+
+- Direct C interop with zero overhead
+- Exact memory layout control
+- Proven pattern (Ghostty already calls Objective-C APIs from Zig)
+
+**Why We Chose WezTerm Instead**
+
+- Single language (Rust) vs two (Zig + Swift)
+- cef-rs already has working OSR with hardware acceleration
+- WezTerm is already cross-platform
+- Less integration work than adding CEF to Ghostty
+
+### CEF Handler Reference
+
+For reference, CEF requires implementing these handler structs:
+
+| Handler                    | Purpose                       |
+| -------------------------- | ----------------------------- |
+| `cef_app_t`                | Application lifecycle         |
+| `cef_client_t`             | Browser event routing         |
+| `cef_life_span_handler_t`  | Browser creation/destruction  |
+| `cef_render_handler_t`     | Off-screen rendering          |
+| `cef_display_handler_t`    | Console messages, title       |
+| `cef_request_handler_t`    | Navigation, downloads         |
+| `cef_context_menu_handler` | Context menu (suppress/custom)|
+
+These are implemented in Rust via cef-rs rather than manually in Zig.

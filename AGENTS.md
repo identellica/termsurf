@@ -58,8 +58,7 @@ TermSurf is a terminal emulator with webview support. The project is transitioni
   - `docs/webview.md` - WebView implementation, API checklist, and workarounds
   - `docs/ctrl-z.md` - ctrl+z/fg analysis (deferred, documented for future reference)
   - `docs/cef.md` - CEF integration attempt (deferred, documented for future reference)
-  - `docs/termsurf2.md` - TermSurf 2.0 planning (CEF + Zig approach, superseded)
-  - `docs/termsurf2-wezterm-analysis.md` - TermSurf 2.0 analysis (WezTerm + cef-rs)
+  - `docs/termsurf2.md` - TermSurf 2.0 architecture (WezTerm + cef-rs)
 
 ### libghostty-vt
 
@@ -128,7 +127,7 @@ Note: Source icons should be at least 1024x1024 pixels for best quality.
 
 TermSurf 2.0 will be based on WezTerm + cef-rs for cross-platform support with full browser capabilities.
 
-See `docs/termsurf2-wezterm-analysis.md` for the detailed architecture analysis and implementation plan.
+See `docs/termsurf2.md` for the detailed architecture analysis and implementation plan.
 
 ### Key differences from 1.x:
 - **Language:** Rust (single language) vs Zig + Swift + Objective-C
