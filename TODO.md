@@ -1,6 +1,6 @@
 # TermSurf 2.0 TODO
 
-## Completed
+## Basic Proofs-of-Concept
 
 ### cef-rs Validation
 
@@ -17,12 +17,15 @@
 - [x] Fork WezTerm as ts2/
 - [x] Add `web-open` CLI command (PDU plumbing)
 
-## In Progress
-
-### CEF Integration
+## CEF Integration
 
 - [ ] Add cef-rs dependency to WezTerm
 - [ ] Initialize CEF at startup (message pump integration)
 - [ ] Create `BrowserPane` struct
 - [ ] Render CEF texture in wgpu pipeline
 - [ ] Wire `web-open` to create actual browser pane
+
+## UX Refinements
+
+- [ ] Restore control mode vs. browse mode
+- [ ] Restore all keybindings, such as Ctrl+C
