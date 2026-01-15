@@ -13,7 +13,7 @@ std = ["thiserror/std", "dep:strsim", "ordered-float/std"]
 log.workspace = true
 ordered-float = {workspace = true, features=["libm"]}
 strsim = {workspace = true, optional=true}
-thiserror = {version="2.0", default-features=false}
+thiserror = {version="2", default-features=false}
 wezterm-dynamic-derive.workspace = true
 
 [dev-dependencies]

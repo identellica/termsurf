@@ -23,7 +23,7 @@ pest = {workspace = true, optional=true}
 pest_derive = {workspace = true, optional=true}
 serde = {workspace=true, optional=true}
 sha2 = {workspace=true, optional=true}
-thiserror = {version = "2.0", default-features=false }
+thiserror = {version="2", default-features=false}
 vtparse = {workspace = true, features=["alloc"]}
 wezterm-blob-leases = {workspace=true, optional=true}
 wezterm-color-types.workspace = true
