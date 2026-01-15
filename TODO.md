@@ -1,38 +1,28 @@
-# TermSurf TODO
+# TermSurf 2.0 TODO
 
-## TODO
+## Completed
 
-### Profile Management
+### cef-rs Validation
 
-- [ ] List existing profiles
-- [ ] Delete profile data (`WKWebsiteDataStore.remove(forIdentifier:)`)
+- [x] Import cef-rs into monorepo
+- [x] Fix IOSurface texture import (macOS)
+- [x] Fix purple flash on startup
+- [x] Add input handling (keyboard, mouse, scroll)
+- [x] Add multi-browser instance support
+- [x] Suppress context menu (winit crash workaround)
+- [x] Event-driven rendering (performance)
 
-### Developer Tools
+### WezTerm Foundation
 
-- [ ] `termsurf devtools` command to open Safari Web Inspector
+- [x] Fork WezTerm as ts2/
+- [x] Add `web-open` CLI command (PDU plumbing)
 
-### Additional Features
+## In Progress
 
-- [x] User agent customization (basic: set to Safari UA in v0.1.5)
-- [x] JavaScript dialogs (alert, confirm, prompt)
-- [x] File uploads
-- [x] Download handling (same-origin only; cross-origin downloads not supported)
-- [x] Permission prompts (camera, microphone)
-- [ ] Location permission prompts
-- [ ] Open target="_blank" links in new tab (currently opens in same webview; see `docs/target-blank.md`)
+### CEF Integration
 
-### Documentation
-
-- [ ] Update ARCHITECTURE.md with browser pane details
-- [ ] Document profile system
-- [ ] Add usage examples to README
-
-## Future Ideas
-
-- **CEF Integration** - Chrome DevTools and Blink rendering engine. Deferred due
-  to Swift-to-C marshalling issues. See `docs/cef.md` for details.
-- **Firefox Integration**.
-- **Ladybird Integration**.
-- **RSS Feeds** - Built-in feed reader functionality
-- Support Linux
-- Support Windows
+- [ ] Add cef-rs dependency to WezTerm
+- [ ] Initialize CEF at startup (message pump integration)
+- [ ] Create `BrowserPane` struct
+- [ ] Render CEF texture in wgpu pipeline
+- [ ] Wire `web-open` to create actual browser pane
