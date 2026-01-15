@@ -73,8 +73,10 @@ The WezTerm + cef-rs approach offers significant advantages over TermSurf 1.x:
 
 Both WezTerm and cef-rs use **wgpu** for GPU rendering:
 
-- WezTerm: `wgpu = "25.0.2"` for terminal rendering
+- WezTerm: `wgpu = "28"` for terminal rendering
 - cef-rs: `wgpu = "28"` for CEF texture import
+
+These versions are now aligned (see [WezTerm Fork Modifications](#wezterm-fork-modifications)).
 
 CEF's accelerated OSR mode renders to shared textures:
 
@@ -240,6 +242,71 @@ CEF provides full Chromium API including:
 - DevTools integration
 - Platform-specific packaging
 
+## WezTerm Fork Modifications
+
+This section tracks all modifications made to our WezTerm fork (ts2/) to facilitate
+merging upstream changes in the future.
+
+### Dependency Alignment
+
+These dependencies were upgraded to align with cef-rs versions:
+
+| Dependency | Original | Updated | Reason |
+| ---------- | -------- | ------- | ------ |
+| wgpu | 25.0.2 | 28 | Match cef-rs for GPU texture sharing |
+| thiserror | 1.0 | 2 | Match cef-rs |
+| libloading | 0.8 | 0.9 | Match cef-rs |
+| objc2 | 0.6 | 0.6.3 | Match cef-rs |
+| objc2-foundation | 0.3 | 0.3.2 | Match cef-rs |
+
+#### wgpu Upgrade Details
+
+The wgpu upgrade required code changes across multiple files:
+
+**25 → 26:**
+- Added `depth_slice: None` to `RenderPassColorAttachment` in `draw.rs`
+
+**26 → 27:**
+- Removed lifetime from `BufferViewMut` in `renderstate.rs`
+- Added `experimental_features` field to `DeviceDescriptor` in `webgpu.rs`
+
+**27 → 28:**
+- Made `enumerate_adapters` calls async (now returns a future)
+- Made `compute_compatibility_list` function async in `webgpu.rs`
+- Wrapped `enumerate_adapters` in `smol::block_on` for Lua `enumerate_gpus` function
+- Added `Surface<'_>` lifetime parameter
+- Renamed `push_constant_ranges` to `immediate_size` in `PipelineLayoutDescriptor`
+- Renamed `multiview` to `multiview_mask` in `RenderPipelineDescriptor`
+- Changed `mipmap_filter` type from `FilterMode` to `MipmapFilterMode`
+- Used `..Default::default()` for `RenderPassDescriptor` optional fields
+
+### Deferred Dependency Updates
+
+These dependencies have version mismatches but are deferred:
+
+| Dependency | WezTerm | cef-rs | Reason for Deferral |
+| ---------- | ------- | ------ | ------------------- |
+| syn | 1.0 | 2 | Major API changes in proc-macros; doesn't affect runtime |
+| windows | 0.33.0 | 0.62 | Windows-only; cannot test on macOS |
+
+### Feature Additions
+
+**`web-open` CLI command:**
+- Added PDU (Protocol Data Unit) plumbing for browser pane creation
+- Preparatory work for CEF integration
+
+### Files Modified
+
+Key files changed from upstream WezTerm:
+
+| File | Changes |
+| ---- | ------- |
+| `Cargo.toml` | Dependency version updates |
+| `wezterm-gui/src/termwindow/webgpu.rs` | wgpu 28 API changes |
+| `wezterm-gui/src/termwindow/render/draw.rs` | wgpu 26+ API changes |
+| `wezterm-gui/src/renderstate.rs` | wgpu 27 buffer lifetime changes |
+| `wezterm-gui/src/scripting/mod.rs` | Async enumerate_adapters wrapper |
+
 ## Code Changes Required
 
 ### WezTerm Modifications
@@ -326,7 +393,7 @@ loop {
 
 | Risk                       | Likelihood | Impact | Mitigation                                |
 | -------------------------- | ---------- | ------ | ----------------------------------------- |
-| wgpu version mismatch      | Medium     | Medium | Align versions, test early                |
+| ~~wgpu version mismatch~~  | ~~Medium~~ | ~~Medium~~ | ✓ Resolved - both now use wgpu 28     |
 | CEF message pump conflicts | Medium     | High   | Study WezTerm event loop, prototype early |
 | Performance overhead       | Low        | Medium | CEF OSR is hardware-accelerated           |
 | CEF binary size (~100MB)   | Certain    | Low    | Accept as tradeoff for full browser       |
