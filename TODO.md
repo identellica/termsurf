@@ -17,6 +17,13 @@
 - [x] Fork WezTerm as ts2/
 - [x] Add `web-open` CLI command (PDU plumbing)
 
+### Dependency Alignment
+
+- [x] Upgrade thiserror to version 2 (matching cef-rs)
+- [x] Upgrade wgpu 25→26 (added `depth_slice` field)
+- [x] Upgrade wgpu 26→27 (BufferViewMut lifetime, `experimental_features`)
+- [x] Upgrade wgpu 27→28 (async `enumerate_adapters`, field renames)
+
 ## CEF Integration
 
 - [ ] Add cef-rs dependency to WezTerm
