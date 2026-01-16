@@ -169,6 +169,7 @@ pub struct BrowserState {
     /// Current logical size of the browser
     pub size: std::rc::Rc<RefCell<(f32, f32)>>,
     /// Device scale factor for HiDPI
+    #[allow(dead_code)]
     pub device_scale_factor: f32,
 }
 
@@ -179,6 +180,7 @@ impl BrowserState {
     }
 
     /// Check if the texture is ready for rendering
+    #[allow(dead_code)]
     pub fn has_texture(&self) -> bool {
         self.texture_holder.borrow().is_some()
     }
@@ -243,6 +245,7 @@ impl BrowserState {
     }
 
     /// Send a composed string to the browser (for IME input).
+    #[allow(dead_code)]
     pub fn send_composed_string(&self, s: &str, modifiers: ::window::Modifiers) -> bool {
         let Some(host) = self.host() else {
             return false;
@@ -279,6 +282,7 @@ struct BrowserRenderHandler {
     size: std::rc::Rc<RefCell<(f32, f32)>>,
     texture_holder: TextureHolder,
     device: wgpu::Device,
+    #[allow(dead_code)]
     queue: wgpu::Queue,
     /// Callback to notify the window that a new frame is ready
     invalidate_callback: Arc<dyn Fn() + Send + Sync>,
@@ -700,5 +704,196 @@ pub fn create_browser(
             log::error!("Failed to create CEF browser for: {}", url);
             Ok(None)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ::window::KeyCode;
+    use ::window::Modifiers;
+
+    // ==================== keycode_to_windows_vk tests ====================
+
+    #[test]
+    fn test_keycode_to_windows_vk_lowercase_letters() {
+        // Lowercase letters should map to uppercase VK codes (0x41-0x5A)
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('a')), 0x41);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('b')), 0x42);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('z')), 0x5A);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_uppercase_letters() {
+        // Uppercase letters should also map to VK codes (0x41-0x5A)
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('A')), 0x41);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('Z')), 0x5A);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_numbers() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('0')), 0x30);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('5')), 0x35);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('9')), 0x39);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_control_characters() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\r')), 0x0D); // Enter (CR)
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\n')), 0x0D); // Enter (LF)
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\t')), 0x09); // Tab
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\u{08}')), 0x08); // Backspace
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\u{7f}')), 0x2E); // Delete
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\u{1b}')), 0x1B); // Escape
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char(' ')), 0x20); // Space
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_arrows() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::LeftArrow), 0x25);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::UpArrow), 0x26);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::RightArrow), 0x27);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::DownArrow), 0x28);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_navigation() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Home), 0x24);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::End), 0x23);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::PageUp), 0x21);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::PageDown), 0x22);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Insert), 0x2D);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_function_keys() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Function(1)), 0x70);  // F1
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Function(2)), 0x71);  // F2
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Function(10)), 0x79); // F10
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Function(11)), 0x7A); // F11
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Function(12)), 0x7B); // F12
+        // Unknown function keys return 0
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Function(13)), 0);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_numpad() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Numpad(0)), 0x60);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Numpad(5)), 0x65);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Numpad(9)), 0x69);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_modifiers() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Shift), 0x10);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::LeftShift), 0x10);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::RightShift), 0x10);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Control), 0x11);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Alt), 0x12);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::CapsLock), 0x14);
+    }
+
+    #[test]
+    fn test_keycode_to_windows_vk_punctuation() {
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char(',')), 0xBC);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('.')), 0xBE);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char(';')), 0xBA);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('/')), 0xBF);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('`')), 0xC0);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('[')), 0xDB);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\\')), 0xDC);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char(']')), 0xDD);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('\'')), 0xDE);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('-')), 0xBD);
+        assert_eq!(keycode_to_windows_vk(&KeyCode::Char('=')), 0xBB);
+    }
+
+    // ==================== keycode_to_native tests (macOS only) ====================
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn test_keycode_to_native_letters() {
+        // macOS uses a different keycode layout (from Carbon Events.h)
+        assert_eq!(keycode_to_native(&KeyCode::Char('a')), 0x00);
+        assert_eq!(keycode_to_native(&KeyCode::Char('A')), 0x00);
+        assert_eq!(keycode_to_native(&KeyCode::Char('s')), 0x01);
+        assert_eq!(keycode_to_native(&KeyCode::Char('z')), 0x06);
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn test_keycode_to_native_special() {
+        assert_eq!(keycode_to_native(&KeyCode::Char('\r')), 0x24); // kVK_Return
+        assert_eq!(keycode_to_native(&KeyCode::Char('\n')), 0x24); // kVK_Return
+        assert_eq!(keycode_to_native(&KeyCode::Char('\t')), 0x30); // kVK_Tab
+        assert_eq!(keycode_to_native(&KeyCode::Char(' ')), 0x31);  // kVK_Space
+        assert_eq!(keycode_to_native(&KeyCode::Char('\u{08}')), 0x33); // kVK_Delete (Backspace)
+        assert_eq!(keycode_to_native(&KeyCode::Char('\u{1b}')), 0x35); // kVK_Escape
+        assert_eq!(keycode_to_native(&KeyCode::Char('\u{7f}')), 0x75); // kVK_ForwardDelete
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn test_keycode_to_native_arrows() {
+        assert_eq!(keycode_to_native(&KeyCode::LeftArrow), 0x7B);
+        assert_eq!(keycode_to_native(&KeyCode::RightArrow), 0x7C);
+        assert_eq!(keycode_to_native(&KeyCode::DownArrow), 0x7D);
+        assert_eq!(keycode_to_native(&KeyCode::UpArrow), 0x7E);
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn test_keycode_to_native_navigation() {
+        assert_eq!(keycode_to_native(&KeyCode::Home), 0x73);
+        assert_eq!(keycode_to_native(&KeyCode::PageUp), 0x74);
+        assert_eq!(keycode_to_native(&KeyCode::End), 0x77);
+        assert_eq!(keycode_to_native(&KeyCode::PageDown), 0x79);
+    }
+
+    // ==================== modifiers_to_cef_flags tests ====================
+
+    #[test]
+    fn test_modifiers_to_cef_flags_none() {
+        assert_eq!(modifiers_to_cef_flags(Modifiers::NONE), 0);
+    }
+
+    #[test]
+    fn test_modifiers_to_cef_flags_single() {
+        assert_eq!(modifiers_to_cef_flags(Modifiers::SHIFT), EVENTFLAG_SHIFT_DOWN);
+        assert_eq!(modifiers_to_cef_flags(Modifiers::CTRL), EVENTFLAG_CONTROL_DOWN);
+        assert_eq!(modifiers_to_cef_flags(Modifiers::ALT), EVENTFLAG_ALT_DOWN);
+        assert_eq!(modifiers_to_cef_flags(Modifiers::SUPER), EVENTFLAG_COMMAND_DOWN);
+    }
+
+    #[test]
+    fn test_modifiers_to_cef_flags_combined() {
+        let ctrl_shift = Modifiers::CTRL | Modifiers::SHIFT;
+        assert_eq!(
+            modifiers_to_cef_flags(ctrl_shift),
+            EVENTFLAG_CONTROL_DOWN | EVENTFLAG_SHIFT_DOWN
+        );
+
+        let ctrl_alt = Modifiers::CTRL | Modifiers::ALT;
+        assert_eq!(
+            modifiers_to_cef_flags(ctrl_alt),
+            EVENTFLAG_CONTROL_DOWN | EVENTFLAG_ALT_DOWN
+        );
+
+        let all_mods = Modifiers::CTRL | Modifiers::SHIFT | Modifiers::ALT | Modifiers::SUPER;
+        assert_eq!(
+            modifiers_to_cef_flags(all_mods),
+            EVENTFLAG_CONTROL_DOWN | EVENTFLAG_SHIFT_DOWN | EVENTFLAG_ALT_DOWN | EVENTFLAG_COMMAND_DOWN
+        );
+    }
+
+    // ==================== Event flag constant tests ====================
+
+    #[test]
+    fn test_event_flag_constants() {
+        // Verify the flag values match CEF's expected values
+        assert_eq!(EVENTFLAG_SHIFT_DOWN, 2);   // 1 << 1
+        assert_eq!(EVENTFLAG_CONTROL_DOWN, 4); // 1 << 2
+        assert_eq!(EVENTFLAG_ALT_DOWN, 8);     // 1 << 3
+        assert_eq!(EVENTFLAG_COMMAND_DOWN, 128); // 1 << 7
     }
 }

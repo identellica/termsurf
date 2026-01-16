@@ -606,7 +606,7 @@ impl crate::TermWindow {
         use crate::termwindow::BrowserRenderTarget;
 
         let pane_id = pos.pane.pane_id();
-        let config = self.config.clone();
+        let _config = self.config.clone();
 
         let (padding_left, padding_top) = self.padding_left_top();
 
