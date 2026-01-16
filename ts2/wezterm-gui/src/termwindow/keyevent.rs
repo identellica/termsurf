@@ -463,6 +463,29 @@ impl super::TermWindow {
             None => return,
         };
 
+        // Check if this pane has a browser - if so, route keyboard input to CEF
+        #[cfg(feature = "cef")]
+        {
+            let pane_id = pane.pane_id();
+            let has_browser = self.browser_states.borrow().contains_key(&pane_id);
+            if has_browser {
+                // Route key events to the browser
+                let browser_states = self.browser_states.borrow();
+                if let Some(browser_state) = browser_states.get(&pane_id) {
+                    let handled = browser_state.send_key_event(
+                        &key.key,
+                        key.modifiers,
+                        key.key_is_down,
+                    );
+                    if handled {
+                        key.set_handled();
+                        context.invalidate();
+                        return;
+                    }
+                }
+            }
+        }
+
         // First, try to match raw physical key
         let phys_key = match &key.key {
             phys @ KeyCode::Physical(_) => Some(phys.clone()),
@@ -601,6 +624,28 @@ impl super::TermWindow {
             Some(pane) => pane,
             None => return,
         };
+
+        // Check if this pane has a browser - if so, route keyboard input to CEF
+        #[cfg(feature = "cef")]
+        {
+            let pane_id = pane.pane_id();
+            let has_browser = self.browser_states.borrow().contains_key(&pane_id);
+            if has_browser {
+                // Route key events to the browser
+                let browser_states = self.browser_states.borrow();
+                if let Some(browser_state) = browser_states.get(&pane_id) {
+                    let handled = browser_state.send_key_event(
+                        &window_key.key,
+                        window_key.modifiers,
+                        window_key.key_is_down,
+                    );
+                    if handled {
+                        context.invalidate();
+                        return;
+                    }
+                }
+            }
+        }
 
         // The leader key is a kind of modal modifier key.
         // It is allowed to be active for up to the leader timeout duration,

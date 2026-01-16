@@ -182,6 +182,94 @@ impl BrowserState {
     pub fn has_texture(&self) -> bool {
         self.texture_holder.borrow().is_some()
     }
+
+    /// Send a key event to the browser.
+    /// Returns true if the event was sent successfully.
+    pub fn send_key_event(
+        &self,
+        key: &::window::KeyCode,
+        modifiers: ::window::Modifiers,
+        is_down: bool,
+    ) -> bool {
+        let Some(host) = self.host() else {
+            return false;
+        };
+
+        use cef_crate::ImplBrowserHost;
+
+        let cef_modifiers = modifiers_to_cef_flags(modifiers);
+        let windows_key_code = keycode_to_windows_vk(key);
+        let native_key_code = keycode_to_native(key);
+
+        let event_type = if is_down {
+            cef_crate::KeyEventType::KEYDOWN
+        } else {
+            cef_crate::KeyEventType::KEYUP
+        };
+
+        let key_event = cef_crate::KeyEvent {
+            size: std::mem::size_of::<cef_crate::KeyEvent>(),
+            type_: event_type,
+            modifiers: cef_modifiers,
+            windows_key_code,
+            native_key_code,
+            is_system_key: 0,
+            character: 0,
+            unmodified_character: 0,
+            focus_on_editable_field: 0,
+        };
+
+        host.send_key_event(Some(&key_event));
+
+        // For key down events with printable characters, also send CHAR event
+        if is_down {
+            if let ::window::KeyCode::Char(c) = key {
+                let char_event = cef_crate::KeyEvent {
+                    size: std::mem::size_of::<cef_crate::KeyEvent>(),
+                    type_: cef_crate::KeyEventType::CHAR,
+                    modifiers: cef_modifiers,
+                    windows_key_code: *c as i32,
+                    native_key_code: 0,
+                    is_system_key: 0,
+                    character: *c as u16,
+                    unmodified_character: *c as u16,
+                    focus_on_editable_field: 0,
+                };
+                host.send_key_event(Some(&char_event));
+            }
+        }
+
+        true
+    }
+
+    /// Send a composed string to the browser (for IME input).
+    pub fn send_composed_string(&self, s: &str, modifiers: ::window::Modifiers) -> bool {
+        let Some(host) = self.host() else {
+            return false;
+        };
+
+        use cef_crate::ImplBrowserHost;
+
+        let cef_modifiers = modifiers_to_cef_flags(modifiers);
+
+        // Send each character as a CHAR event
+        for c in s.chars() {
+            let char_event = cef_crate::KeyEvent {
+                size: std::mem::size_of::<cef_crate::KeyEvent>(),
+                type_: cef_crate::KeyEventType::CHAR,
+                modifiers: cef_modifiers,
+                windows_key_code: c as i32,
+                native_key_code: 0,
+                is_system_key: 0,
+                character: c as u16,
+                unmodified_character: c as u16,
+                focus_on_editable_field: 0,
+            };
+            host.send_key_event(Some(&char_event));
+        }
+
+        true
+    }
 }
 
 /// Internal render handler state
@@ -384,6 +472,163 @@ impl ClientBuilder {
     fn build(client: BrowserClient) -> Client {
         Self::new(client)
     }
+}
+
+// CEF event flag constants for keyboard/mouse modifiers
+pub const EVENTFLAG_SHIFT_DOWN: u32 = 1 << 1;
+pub const EVENTFLAG_CONTROL_DOWN: u32 = 1 << 2;
+pub const EVENTFLAG_ALT_DOWN: u32 = 1 << 3;
+pub const EVENTFLAG_COMMAND_DOWN: u32 = 1 << 7;
+
+/// Convert WezTerm KeyCode to Windows virtual key code (used by CEF).
+pub fn keycode_to_windows_vk(key: &::window::KeyCode) -> i32 {
+    use ::window::KeyCode as WK;
+    match key {
+        WK::Char(c) => {
+            match *c {
+                // Control characters
+                '\r' | '\n' => 0x0D, // VK_RETURN (Enter)
+                '\t' => 0x09,        // VK_TAB
+                '\u{08}' => 0x08,    // VK_BACK (Backspace)
+                '\u{7f}' => 0x2E,    // VK_DELETE
+                '\u{1b}' => 0x1B,    // VK_ESCAPE
+                ' ' => 0x20,         // VK_SPACE
+                // Punctuation
+                ',' => 0xBC,  // VK_OEM_COMMA
+                '.' => 0xBE,  // VK_OEM_PERIOD
+                ';' => 0xBA,  // VK_OEM_1
+                '/' => 0xBF,  // VK_OEM_2
+                '`' => 0xC0,  // VK_OEM_3
+                '[' => 0xDB,  // VK_OEM_4
+                '\\' => 0xDC, // VK_OEM_5
+                ']' => 0xDD,  // VK_OEM_6
+                '\'' => 0xDE, // VK_OEM_7
+                '-' => 0xBD,  // VK_OEM_MINUS
+                '=' => 0xBB,  // VK_OEM_PLUS
+                // Alphanumeric
+                c => {
+                    let c = c.to_ascii_uppercase();
+                    if c.is_ascii_alphanumeric() {
+                        c as i32
+                    } else {
+                        0
+                    }
+                }
+            }
+        }
+        WK::UpArrow => 0x26,
+        WK::DownArrow => 0x28,
+        WK::LeftArrow => 0x25,
+        WK::RightArrow => 0x27,
+        WK::Home => 0x24,
+        WK::End => 0x23,
+        WK::PageUp => 0x21,
+        WK::PageDown => 0x22,
+        WK::Insert => 0x2D,
+        WK::Function(1) => 0x70,
+        WK::Function(2) => 0x71,
+        WK::Function(3) => 0x72,
+        WK::Function(4) => 0x73,
+        WK::Function(5) => 0x74,
+        WK::Function(6) => 0x75,
+        WK::Function(7) => 0x76,
+        WK::Function(8) => 0x77,
+        WK::Function(9) => 0x78,
+        WK::Function(10) => 0x79,
+        WK::Function(11) => 0x7A,
+        WK::Function(12) => 0x7B,
+        WK::Function(_) => 0,
+        WK::Numpad(n) => 0x60 + (*n as i32), // VK_NUMPAD0 = 0x60
+        WK::Shift | WK::LeftShift | WK::RightShift => 0x10,
+        WK::Control | WK::LeftControl | WK::RightControl => 0x11,
+        WK::Alt | WK::LeftAlt | WK::RightAlt => 0x12,
+        WK::CapsLock => 0x14,
+        WK::NumLock => 0x90,
+        WK::ScrollLock => 0x91,
+        WK::Clear => 0x0C,
+        WK::Pause => 0x13,
+        WK::Print | WK::PrintScreen => 0x2C,
+        WK::Cancel => 0x03,
+        WK::Multiply => 0x6A,
+        WK::Add => 0x6B,
+        WK::Separator => 0x6C,
+        WK::Subtract => 0x6D,
+        WK::Decimal => 0x6E,
+        WK::Divide => 0x6F,
+        _ => 0,
+    }
+}
+
+/// Convert WezTerm KeyCode to native macOS key code.
+#[cfg(target_os = "macos")]
+pub fn keycode_to_native(key: &::window::KeyCode) -> i32 {
+    use ::window::KeyCode as WK;
+    match key {
+        WK::Char('a') | WK::Char('A') => 0x00,
+        WK::Char('s') | WK::Char('S') => 0x01,
+        WK::Char('d') | WK::Char('D') => 0x02,
+        WK::Char('f') | WK::Char('F') => 0x03,
+        WK::Char('h') | WK::Char('H') => 0x04,
+        WK::Char('g') | WK::Char('G') => 0x05,
+        WK::Char('z') | WK::Char('Z') => 0x06,
+        WK::Char('x') | WK::Char('X') => 0x07,
+        WK::Char('c') | WK::Char('C') => 0x08,
+        WK::Char('v') | WK::Char('V') => 0x09,
+        WK::Char('b') | WK::Char('B') => 0x0B,
+        WK::Char('q') | WK::Char('Q') => 0x0C,
+        WK::Char('w') | WK::Char('W') => 0x0D,
+        WK::Char('e') | WK::Char('E') => 0x0E,
+        WK::Char('r') | WK::Char('R') => 0x0F,
+        WK::Char('y') | WK::Char('Y') => 0x10,
+        WK::Char('t') | WK::Char('T') => 0x11,
+        WK::Char('o') | WK::Char('O') => 0x1F,
+        WK::Char('u') | WK::Char('U') => 0x20,
+        WK::Char('i') | WK::Char('I') => 0x22,
+        WK::Char('p') | WK::Char('P') => 0x23,
+        WK::Char('l') | WK::Char('L') => 0x25,
+        WK::Char('j') | WK::Char('J') => 0x26,
+        WK::Char('k') | WK::Char('K') => 0x28,
+        WK::Char('n') | WK::Char('N') => 0x2D,
+        WK::Char('m') | WK::Char('M') => 0x2E,
+        WK::Char('\r') | WK::Char('\n') => 0x24, // Enter
+        WK::Char('\t') => 0x30, // Tab
+        WK::Char(' ') => 0x31, // Space
+        WK::Char('\u{08}') => 0x33, // Backspace
+        WK::Char('\u{1b}') => 0x35, // Escape
+        WK::Home => 0x73,
+        WK::PageUp => 0x74,
+        WK::Char('\u{7f}') => 0x75, // Delete
+        WK::End => 0x77,
+        WK::PageDown => 0x79,
+        WK::LeftArrow => 0x7B,
+        WK::RightArrow => 0x7C,
+        WK::DownArrow => 0x7D,
+        WK::UpArrow => 0x7E,
+        _ => 0,
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn keycode_to_native(_key: &::window::KeyCode) -> i32 {
+    0
+}
+
+/// Convert WezTerm Modifiers to CEF modifier flags.
+pub fn modifiers_to_cef_flags(mods: ::window::Modifiers) -> u32 {
+    let mut flags = 0u32;
+    if mods.contains(::window::Modifiers::SHIFT) {
+        flags |= EVENTFLAG_SHIFT_DOWN;
+    }
+    if mods.contains(::window::Modifiers::CTRL) {
+        flags |= EVENTFLAG_CONTROL_DOWN;
+    }
+    if mods.contains(::window::Modifiers::ALT) {
+        flags |= EVENTFLAG_ALT_DOWN;
+    }
+    if mods.contains(::window::Modifiers::SUPER) {
+        flags |= EVENTFLAG_COMMAND_DOWN;
+    }
+    flags
 }
 
 /// Create a new CEF browser for the given URL.
