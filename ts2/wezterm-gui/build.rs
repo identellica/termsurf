@@ -200,8 +200,9 @@ END
                                     .join("Chromium Embedded Framework.framework");
 
                                 if cef_framework_src.exists() {
-                                    // Create Frameworks directory in target/{profile}/
-                                    let frameworks_dir = build_target_dir.join("Frameworks");
+                                    // Create Frameworks directory in target/ (not target/{profile}/)
+                                    // LibraryLoader expects ../Frameworks relative to exe at target/{profile}/
+                                    let frameworks_dir = repo_dir.join("target").join("Frameworks");
                                     let _ = std::fs::create_dir_all(&frameworks_dir);
 
                                     let cef_framework_link = frameworks_dir

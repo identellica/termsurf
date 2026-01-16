@@ -66,10 +66,10 @@ impl CefContext {
         {
             let exe_path = std::env::current_exe()?;
 
-            // Check if CEF framework exists - look in Frameworks/ relative to executable
-            // For development builds, build.rs creates a symlink at target/{profile}/Frameworks/
+            // Check if CEF framework exists - look in ../Frameworks/ relative to executable
+            // For development builds, build.rs creates a symlink at target/Frameworks/
             let framework_binary_path = exe_path.parent().and_then(|p| {
-                p.join("Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
+                p.join("../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
                     .canonicalize()
                     .ok()
             });

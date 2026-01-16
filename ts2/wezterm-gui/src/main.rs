@@ -852,12 +852,12 @@ fn main() {
             };
 
             // Check if CEF framework exists before trying to load it
-            // LibraryLoader expects: Frameworks/Chromium Embedded Framework.framework/...
-            // For development builds, build.rs creates a symlink at target/{profile}/Frameworks/
+            // LibraryLoader expects: ../Frameworks/Chromium Embedded Framework.framework/...
+            // For development builds, build.rs creates a symlink at target/Frameworks/
             let framework_path = exe_path
                 .parent()
                 .and_then(|p| {
-                    let path = p.join("Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework");
+                    let path = p.join("../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework");
                     eprintln!("[CEF] Looking for framework at: {:?}", path);
                     path.canonicalize().ok()
                 });
