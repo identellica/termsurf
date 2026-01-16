@@ -1473,3 +1473,36 @@ impl wezterm_term::DownloadHandler for MuxDownloader {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mux_notification_web_closed() {
+        // Verify WebClosed notification can be created and pattern matched
+        let notif = MuxNotification::WebClosed { pane_id: 42 };
+        match notif {
+            MuxNotification::WebClosed { pane_id } => {
+                assert_eq!(pane_id, 42);
+            }
+            _ => panic!("Expected WebClosed notification"),
+        }
+    }
+
+    #[test]
+    fn test_mux_notification_web_open() {
+        // Verify WebOpen notification (the counterpart to WebClosed)
+        let notif = MuxNotification::WebOpen {
+            pane_id: 123,
+            url: "https://example.com".to_string(),
+        };
+        match notif {
+            MuxNotification::WebOpen { pane_id, url } => {
+                assert_eq!(pane_id, 123);
+                assert_eq!(url, "https://example.com");
+            }
+            _ => panic!("Expected WebOpen notification"),
+        }
+    }
+}

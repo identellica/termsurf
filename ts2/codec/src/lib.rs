@@ -1281,4 +1281,34 @@ mod test {
             Pdu::decode(encoded.as_slice()).unwrap()
         );
     }
+
+    #[test]
+    fn test_web_closed_pdu_roundtrip() {
+        // Test that WebClosed PDU can be encoded and decoded correctly
+        let mut encoded = Vec::new();
+        Pdu::WebClosed(WebClosed { pane_id: 42 }).encode(&mut encoded, 0x99).unwrap();
+
+        let decoded = Pdu::decode(encoded.as_slice()).unwrap();
+        assert_eq!(decoded.serial, 0x99);
+        match decoded.pdu {
+            Pdu::WebClosed(wc) => assert_eq!(wc.pane_id, 42),
+            _ => panic!("Expected WebClosed PDU, got {:?}", decoded.pdu),
+        }
+    }
+
+    #[test]
+    fn test_web_closed_pdu_different_pane_ids() {
+        // Test various pane IDs to ensure proper serialization
+        for pane_id in [0, 1, 100, 65535, u64::MAX as usize] {
+            let original = WebClosed { pane_id };
+            let mut encoded = Vec::new();
+            Pdu::WebClosed(original).encode(&mut encoded, 0x01).unwrap();
+
+            let decoded = Pdu::decode(encoded.as_slice()).unwrap();
+            match decoded.pdu {
+                Pdu::WebClosed(wc) => assert_eq!(wc.pane_id, pane_id),
+                _ => panic!("Expected WebClosed PDU"),
+            }
+        }
+    }
 }
