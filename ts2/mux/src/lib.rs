@@ -95,6 +95,11 @@ pub enum MuxNotification {
         old_workspace: String,
         new_workspace: String,
     },
+    /// Request to open a web browser in a pane
+    WebOpen {
+        pane_id: PaneId,
+        url: String,
+    },
 }
 
 static SUB_ID: AtomicUsize = AtomicUsize::new(0);

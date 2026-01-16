@@ -200,6 +200,8 @@ impl GuiFrontEnd {
                     })
                     .detach();
                 }
+                // WebOpen is handled via TermWindowNotif
+                MuxNotification::WebOpen { .. } => {}
             }
             true
         });

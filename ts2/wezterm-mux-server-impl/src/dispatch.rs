@@ -204,6 +204,9 @@ where
             }
             Ok(Item::Notif(MuxNotification::ActiveWorkspaceChanged(_))) => {}
             Ok(Item::Notif(MuxNotification::Empty)) => {}
+            Ok(Item::Notif(MuxNotification::WebOpen { .. })) => {
+                // WebOpen is handled locally by the GUI, not forwarded to clients
+            }
             Err(err) => {
                 log::error!("process_async Err {}", err);
                 return Ok(());

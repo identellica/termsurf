@@ -407,6 +407,10 @@ pub struct TermWindow {
     pane_state: RefCell<HashMap<PaneId, PaneState>>,
     semantic_zones: HashMap<PaneId, SemanticZoneCache>,
 
+    /// Browser state for panes with CEF browser instances
+    #[cfg(feature = "cef")]
+    browser_states: RefCell<HashMap<PaneId, crate::cef::BrowserState>>,
+
     window_background: Vec<LoadedBackgroundLayer>,
 
     current_modifier_and_leds: (Modifiers, KeyboardLedStatus),
@@ -781,6 +785,8 @@ impl TermWindow {
             scheduled_animation: RefCell::new(None),
             allow_images: AllowImage::Yes,
             semantic_zones: HashMap::new(),
+            #[cfg(feature = "cef")]
+            browser_states: RefCell::new(HashMap::new()),
             ui_items: vec![],
             dragging: None,
             last_ui_item: None,
@@ -1315,6 +1321,14 @@ impl TermWindow {
                 | MuxNotification::ActiveWorkspaceChanged(_)
                 | MuxNotification::Empty
                 | MuxNotification::WindowCreated(_) => {}
+                #[cfg(feature = "cef")]
+                MuxNotification::WebOpen { pane_id, url } => {
+                    self.handle_web_open(pane_id, url, window);
+                }
+                #[cfg(not(feature = "cef"))]
+                MuxNotification::WebOpen { .. } => {
+                    log::warn!("WebOpen received but CEF feature is not enabled");
+                }
             },
             TermWindowNotif::EmitStatusUpdate => {
                 self.emit_status_event();
@@ -1525,7 +1539,8 @@ impl TermWindow {
             | MuxNotification::ActiveWorkspaceChanged(_)
             | MuxNotification::WorkspaceRenamed { .. }
             | MuxNotification::Empty
-            | MuxNotification::WindowWorkspaceChanged(_) => return true,
+            | MuxNotification::WindowWorkspaceChanged(_)
+            | MuxNotification::WebOpen { .. } => return true,
             MuxNotification::Alert {
                 alert: Alert::PaletteChanged { .. },
                 ..
@@ -3574,6 +3589,97 @@ impl TermWindow {
         }
         if let Some(window) = self.window.as_ref() {
             window.invalidate();
+        }
+    }
+
+    /// Handle the WebOpen notification to create a CEF browser for a pane
+    #[cfg(feature = "cef")]
+    fn handle_web_open(&mut self, pane_id: PaneId, url: String, window: &Window) {
+        use crate::cef::{create_browser, is_cef_available};
+
+        if !is_cef_available() {
+            log::warn!("WebOpen: CEF is not available");
+            return;
+        }
+
+        // Check if this pane already has a browser
+        if self.browser_states.borrow().contains_key(&pane_id) {
+            log::info!("WebOpen: pane {} already has a browser, navigating to {}", pane_id, url);
+            // TODO: Navigate existing browser instead of creating new one
+            return;
+        }
+
+        // Get the pane dimensions
+        let mux = Mux::get();
+        let pane = match mux.get_pane(pane_id) {
+            Some(pane) => pane,
+            None => {
+                log::error!("WebOpen: pane {} not found", pane_id);
+                return;
+            }
+        };
+
+        // Get render state to access wgpu device/queue
+        let render_state = match self.render_state.as_ref() {
+            Some(rs) => rs,
+            None => {
+                log::error!("WebOpen: render_state not available");
+                return;
+            }
+        };
+
+        // Get wgpu state from render context
+        use crate::renderstate::RenderContext;
+        let webgpu_state = match &render_state.context {
+            RenderContext::WebGpu(state) => state,
+            RenderContext::Glium(_) => {
+                log::error!("WebOpen: CEF requires WebGPU renderer, not OpenGL");
+                return;
+            }
+        };
+
+        // Get pane dimensions
+        let dims = pane.get_dimensions();
+        let width = dims.pixel_width as f32;
+        let height = dims.pixel_height as f32;
+        let device_scale_factor = self.dimensions.dpi as f32 / 96.0;
+
+        // Clone the wgpu device and queue for the browser
+        // Note: wgpu::Device can be cloned (it's an Arc internally)
+        let device = webgpu_state.device.clone();
+        let queue = (*webgpu_state.queue).clone();
+
+        // Create an invalidate callback that triggers a window repaint
+        let win = window.clone();
+        let invalidate_callback = std::sync::Arc::new(move || {
+            win.invalidate();
+        });
+
+        log::info!(
+            "WebOpen: Creating browser for pane {} at {}x{} scale={} url={}",
+            pane_id, width, height, device_scale_factor, url
+        );
+
+        match create_browser(
+            &url,
+            width,
+            height,
+            device_scale_factor,
+            device,
+            queue,
+            invalidate_callback,
+        ) {
+            Ok(Some(browser_state)) => {
+                log::info!("WebOpen: Browser created successfully for pane {}", pane_id);
+                self.browser_states.borrow_mut().insert(pane_id, browser_state);
+                window.invalidate();
+            }
+            Ok(None) => {
+                log::warn!("WebOpen: CEF browser creation returned None for pane {}", pane_id);
+            }
+            Err(err) => {
+                log::error!("WebOpen: Failed to create browser for pane {}: {}", pane_id, err);
+            }
         }
     }
 
