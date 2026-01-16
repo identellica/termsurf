@@ -504,6 +504,7 @@ pdu! {
     AdjustPaneSize: 62,
     WebOpen: 63,
     WebOpenResponse: 64,
+    WebClosed: 65,
 }
 
 impl Pdu {
@@ -887,6 +888,11 @@ pub struct WebOpen {
 #[derive(Deserialize, Serialize, PartialEq, Debug)]
 pub struct WebOpenResponse {
     pub message: String,
+}
+
+#[derive(Deserialize, Serialize, PartialEq, Debug)]
+pub struct WebClosed {
+    pub pane_id: PaneId,
 }
 
 #[derive(Deserialize, Serialize, PartialEq, Debug)]

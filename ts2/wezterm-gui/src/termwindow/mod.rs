@@ -1346,6 +1346,8 @@ impl TermWindow {
                 MuxNotification::WebOpen { .. } => {
                     log::warn!("WebOpen received but CEF feature is not enabled");
                 }
+                // WebClosed is sent by this GUI, so we don't need to handle it here
+                MuxNotification::WebClosed { .. } => {}
             },
             TermWindowNotif::EmitStatusUpdate => {
                 self.emit_status_event();
@@ -1557,7 +1559,8 @@ impl TermWindow {
             | MuxNotification::WorkspaceRenamed { .. }
             | MuxNotification::Empty
             | MuxNotification::WindowWorkspaceChanged(_)
-            | MuxNotification::WebOpen { .. } => return true,
+            | MuxNotification::WebOpen { .. }
+            | MuxNotification::WebClosed { .. } => return true,
             MuxNotification::Alert {
                 alert: Alert::PaletteChanged { .. },
                 ..
@@ -3697,6 +3700,25 @@ impl TermWindow {
             Err(err) => {
                 log::error!("WebOpen: Failed to create browser for pane {}: {}", pane_id, err);
             }
+        }
+    }
+
+    /// Close the CEF browser for a pane (e.g., when user presses Ctrl+C)
+    #[cfg(feature = "cef")]
+    pub fn close_browser_for_pane(&mut self, pane_id: PaneId) {
+        use ::cef::ImplBrowser;
+        use ::cef::ImplBrowserHost;
+
+        let browser_state = self.browser_states.borrow_mut().remove(&pane_id);
+        if let Some(browser_state) = browser_state {
+            log::info!("Closing browser for pane {}", pane_id);
+            // Close the CEF browser
+            if let Some(host) = browser_state.browser.host() {
+                host.close_browser(1); // force_close = 1
+            }
+            // Send notification that browser was closed
+            let mux = Mux::get();
+            mux.notify(mux::MuxNotification::WebClosed { pane_id });
         }
     }
 

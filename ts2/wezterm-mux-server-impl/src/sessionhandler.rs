@@ -1035,7 +1035,8 @@ impl SessionHandler {
             | Pdu::TabAddedToWindow { .. }
             | Pdu::GetPaneRenderableDimensionsResponse { .. }
             | Pdu::ErrorResponse { .. }
-            | Pdu::WebOpenResponse { .. } => {
+            | Pdu::WebOpenResponse { .. }
+            | Pdu::WebClosed { .. } => {
                 send_response(Err(anyhow!("expected a request, got {:?}", decoded.pdu)))
             }
         }

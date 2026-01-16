@@ -100,6 +100,10 @@ pub enum MuxNotification {
         pane_id: PaneId,
         url: String,
     },
+    /// Notification that a web browser was closed
+    WebClosed {
+        pane_id: PaneId,
+    },
 }
 
 static SUB_ID: AtomicUsize = AtomicUsize::new(0);

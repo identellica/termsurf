@@ -317,6 +317,12 @@ fn process_unilateral(
 
             return Ok(());
         }
+        Pdu::WebClosed(codec::WebClosed { pane_id }) => {
+            log::info!("Browser closed for pane {}", pane_id);
+            // The browser was closed - this is informational for now
+            // In the future, this could be used to notify waiting CLI commands
+            return Ok(());
+        }
         _ => {}
     }
 

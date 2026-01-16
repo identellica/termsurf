@@ -631,6 +631,18 @@ impl super::TermWindow {
             let pane_id = pane.pane_id();
             let has_browser = self.browser_states.borrow().contains_key(&pane_id);
             if has_browser {
+                // Check for Ctrl+C to close the browser
+                let is_ctrl_c = window_key.key_is_down
+                    && window_key.modifiers.contains(Modifiers::CTRL)
+                    && matches!(window_key.key, KeyCode::Char('c') | KeyCode::Char('C'));
+
+                if is_ctrl_c {
+                    // Close the browser
+                    self.close_browser_for_pane(pane_id);
+                    context.invalidate();
+                    return;
+                }
+
                 // Route key events to the browser
                 let browser_states = self.browser_states.borrow();
                 if let Some(browser_state) = browser_states.get(&pane_id) {
