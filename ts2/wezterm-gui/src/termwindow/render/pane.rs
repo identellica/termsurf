@@ -663,6 +663,35 @@ impl crate::TermWindow {
 
         let rect = euclid::rect(x, y, width, height);
 
+        // Check if browser size changed and notify CEF
+        {
+            let browser_states = self.browser_states.borrow();
+            if let Some(browser_state) = browser_states.get(&pane_id) {
+                let current_size = *browser_state.size.borrow();
+                // Use the actual pixel size (not including padding)
+                let browser_width = pos.width as f32 * cell_width;
+                let browser_height = pos.height as f32 * cell_height;
+
+                if (current_size.0 - browser_width).abs() > 1.0
+                    || (current_size.1 - browser_height).abs() > 1.0
+                {
+                    log::info!(
+                        "Browser size changed for pane {}: ({}, {}) -> ({}, {})",
+                        pane_id, current_size.0, current_size.1, browser_width, browser_height
+                    );
+                    // Update stored size
+                    *browser_state.size.borrow_mut() = (browser_width, browser_height);
+
+                    // Notify CEF of resize
+                    use ::cef::ImplBrowser;
+                    if let Some(host) = browser_state.browser.host() {
+                        use ::cef::ImplBrowserHost;
+                        host.was_resized();
+                    }
+                }
+            }
+        }
+
         // Draw a black background for the browser area
         let mut quad = self
             .filled_rectangle(
