@@ -141,6 +141,135 @@ impl crate::TermWindow {
             }
         }
 
+        // Render CEF browser textures
+        #[cfg(feature = "cef")]
+        {
+            let browser_targets = self.browser_render_targets.borrow().clone();
+            // Clear render targets for next frame
+            self.browser_render_targets.borrow_mut().clear();
+
+            for target in browser_targets {
+                let browser_states = self.browser_states.borrow();
+                if let Some(browser_state) = browser_states.get(&target.pane_id) {
+                    if let Some(ref bind_group) = *browser_state.texture_holder.borrow() {
+                        // Create vertices for a full-pane quad
+                        // Transform rect from window coords to shader coords (centered at origin)
+                        let half_width = self.dimensions.pixel_width as f32 / 2.0;
+                        let half_height = self.dimensions.pixel_height as f32 / 2.0;
+
+                        let left = target.rect.origin.x - half_width;
+                        let top = target.rect.origin.y - half_height;
+                        let right = left + target.rect.size.width;
+                        let bottom = top + target.rect.size.height;
+
+                        // Create simple textured quad vertices
+                        // Using the same Vertex struct as the main renderer
+                        use crate::quad::Vertex;
+                        use wgpu::util::DeviceExt;
+
+                        // Use IS_BG_IMAGE (2.0) for direct texture sampling
+                        let has_color = 2.0_f32;
+
+                        let vertices = [
+                            // Top-left
+                            Vertex {
+                                position: [left, top],
+                                tex: [0.0, 0.0],
+                                fg_color: [1.0, 1.0, 1.0, 1.0],
+                                alt_color: [0.0, 0.0, 0.0, 0.0],
+                                hsv: [0.0, 0.0, 0.0],
+                                has_color,
+                                mix_value: 0.0,
+                            },
+                            // Top-right
+                            Vertex {
+                                position: [right, top],
+                                tex: [1.0, 0.0],
+                                fg_color: [1.0, 1.0, 1.0, 1.0],
+                                alt_color: [0.0, 0.0, 0.0, 0.0],
+                                hsv: [0.0, 0.0, 0.0],
+                                has_color,
+                                mix_value: 0.0,
+                            },
+                            // Bottom-left
+                            Vertex {
+                                position: [left, bottom],
+                                tex: [0.0, 1.0],
+                                fg_color: [1.0, 1.0, 1.0, 1.0],
+                                alt_color: [0.0, 0.0, 0.0, 0.0],
+                                hsv: [0.0, 0.0, 0.0],
+                                has_color,
+                                mix_value: 0.0,
+                            },
+                            // Bottom-right
+                            Vertex {
+                                position: [right, bottom],
+                                tex: [1.0, 1.0],
+                                fg_color: [1.0, 1.0, 1.0, 1.0],
+                                alt_color: [0.0, 0.0, 0.0, 0.0],
+                                hsv: [0.0, 0.0, 0.0],
+                                has_color,
+                                mix_value: 0.0,
+                            },
+                        ];
+
+                        let indices: [u32; 6] = [0, 1, 2, 1, 3, 2];
+
+                        let vertex_buffer = webgpu.device.create_buffer_init(
+                            &wgpu::util::BufferInitDescriptor {
+                                label: Some("Browser Vertex Buffer"),
+                                contents: bytemuck::cast_slice(&vertices),
+                                usage: wgpu::BufferUsages::VERTEX,
+                            },
+                        );
+
+                        let index_buffer = webgpu.device.create_buffer_init(
+                            &wgpu::util::BufferInitDescriptor {
+                                label: Some("Browser Index Buffer"),
+                                contents: bytemuck::cast_slice(&indices),
+                                usage: wgpu::BufferUsages::INDEX,
+                            },
+                        );
+
+                        let uniforms = webgpu.create_uniform(ShaderUniform {
+                            foreground_text_hsb,
+                            milliseconds,
+                            projection,
+                        });
+
+                        let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                            label: Some("Browser Render Pass"),
+                            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                                view: &view,
+                                resolve_target: None,
+                                depth_slice: None,
+                                ops: wgpu::Operations {
+                                    load: wgpu::LoadOp::Load, // Blend over existing content
+                                    store: wgpu::StoreOp::Store,
+                                },
+                            })],
+                            ..Default::default()
+                        });
+
+                        render_pass.set_pipeline(&webgpu.render_pipeline);
+                        render_pass.set_bind_group(0, &uniforms, &[]);
+                        // Use browser texture for both linear and nearest (it's already processed)
+                        render_pass.set_bind_group(1, bind_group, &[]);
+                        render_pass.set_bind_group(2, bind_group, &[]);
+                        render_pass.set_vertex_buffer(0, vertex_buffer.slice(..));
+                        render_pass.set_index_buffer(index_buffer.slice(..), wgpu::IndexFormat::Uint32);
+                        render_pass.draw_indexed(0..6, 0, 0..1);
+
+                        log::trace!(
+                            "Rendered browser texture for pane {} at {:?}",
+                            target.pane_id,
+                            target.rect
+                        );
+                    }
+                }
+            }
+        }
+
         // submit will accept anything that implements IntoIter
         webgpu.queue.submit(std::iter::once(encoder.finish()));
         output.present();

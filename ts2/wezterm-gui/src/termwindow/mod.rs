@@ -206,6 +206,16 @@ pub struct PaneState {
     pub mouse_terminal_coords: Option<(ClickPosition, StableRowIndex)>,
 }
 
+/// Tracks a browser pane that needs to be rendered
+#[cfg(feature = "cef")]
+#[derive(Clone)]
+pub struct BrowserRenderTarget {
+    /// The pane ID for looking up the browser state
+    pub pane_id: PaneId,
+    /// Pixel position and size of the browser pane
+    pub rect: euclid::Rect<f32, ::window::PixelUnit>,
+}
+
 /// Data used when synchronously formatting pane and window titles
 #[derive(Debug, Clone)]
 pub struct TabInformation {
@@ -410,6 +420,11 @@ pub struct TermWindow {
     /// Browser state for panes with CEF browser instances
     #[cfg(feature = "cef")]
     browser_states: RefCell<HashMap<PaneId, crate::cef::BrowserState>>,
+
+    /// Tracks browser panes that need to be rendered this frame.
+    /// Populated during paint_pane(), consumed during call_draw_webgpu().
+    #[cfg(feature = "cef")]
+    browser_render_targets: RefCell<Vec<BrowserRenderTarget>>,
 
     window_background: Vec<LoadedBackgroundLayer>,
 
@@ -787,6 +802,8 @@ impl TermWindow {
             semantic_zones: HashMap::new(),
             #[cfg(feature = "cef")]
             browser_states: RefCell::new(HashMap::new()),
+            #[cfg(feature = "cef")]
+            browser_render_targets: RefCell::new(Vec::new()),
             ui_items: vec![],
             dragging: None,
             last_ui_item: None,
