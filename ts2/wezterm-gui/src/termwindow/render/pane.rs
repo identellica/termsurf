@@ -34,7 +34,11 @@ impl crate::TermWindow {
         pos: &PositionedPane,
         layers: &mut TripleLayerQuadAllocator,
     ) -> anyhow::Result<()> {
-        // Check if this pane has a CEF browser - if so, render browser texture instead
+        // Check if this pane has a CEF browser - if so, render browser texture instead.
+        // Note: When an overlay (launcher, search, etc.) is active, get_pos_panes_for_tab
+        // replaces the pane with the overlay pane, which has a different pane_id. This means
+        // the browser won't be found in browser_states and the overlay renders normally,
+        // effectively hiding the browser during overlay display. This is the desired behavior.
         #[cfg(feature = "cef")]
         {
             let pane_id = pos.pane.pane_id();
