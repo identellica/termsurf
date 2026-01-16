@@ -827,6 +827,69 @@ fn terminate_with_error(err: anyhow::Error) -> ! {
 }
 
 fn main() {
+    // CEF subprocess handling - MUST be first before any other initialization
+    #[cfg(feature = "cef")]
+    let _cef_loaded = 'cef_init: {
+        use cef::ImplCommandLine; // Required for has_switch method
+
+        // On macOS, load the CEF framework from the app bundle
+        #[cfg(target_os = "macos")]
+        let cef_loader = {
+            let exe_path = match std::env::current_exe() {
+                Ok(path) => path,
+                Err(_) => break 'cef_init false,
+            };
+
+            // Check if CEF framework exists before trying to load it
+            // LibraryLoader expects: ../Frameworks/Chromium Embedded Framework.framework/...
+            let framework_path = exe_path
+                .parent()
+                .and_then(|p| {
+                    p.join("../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
+                        .canonicalize()
+                        .ok()
+                });
+
+            if framework_path.is_none() {
+                // CEF framework not found - continue without CEF
+                // This is normal during development or when running unbundled
+                break 'cef_init false;
+            }
+
+            let loader = cef::library_loader::LibraryLoader::new(&exe_path, false);
+            if !loader.load() {
+                break 'cef_init false;
+            }
+            Some(loader)
+        };
+
+        // Check if this is a CEF subprocess (renderer, GPU, etc.)
+        let args = cef::args::Args::new();
+        if let Some(cmd) = args.as_cmd_line() {
+            let switch = cef::CefString::from("type");
+            let is_subprocess = cmd.has_switch(Some(&switch)) == 1;
+
+            if is_subprocess {
+                // This is a CEF subprocess - execute and exit
+                // Pass None for app - subprocesses don't need custom app handlers
+                let ret = cef::execute_process(
+                    Some(args.as_main_args()),
+                    None,
+                    std::ptr::null_mut(),
+                );
+                if ret >= 0 {
+                    std::process::exit(ret);
+                }
+            }
+        }
+
+        // Keep loader alive and indicate CEF is available
+        #[cfg(target_os = "macos")]
+        let _ = cef_loader;
+
+        true
+    };
+
     #[cfg(feature = "dhat-heap")]
     let _profiler = dhat::Profiler::new_heap();
 
