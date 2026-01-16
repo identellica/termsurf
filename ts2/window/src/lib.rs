@@ -15,6 +15,7 @@ pub mod connection;
 pub mod os;
 pub mod screen;
 mod spawn;
+pub use spawn::set_message_pump_hook;
 
 pub use raw_window_handle;
 

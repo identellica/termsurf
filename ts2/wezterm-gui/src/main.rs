@@ -34,6 +34,8 @@ use wezterm_gui_subcommands::*;
 use wezterm_mux_server_impl::update_mux_domains;
 use wezterm_toast_notification::*;
 
+#[cfg(feature = "cef")]
+mod cef;
 mod colorease;
 mod commands;
 mod customglyph;
@@ -830,7 +832,8 @@ fn main() {
     // CEF subprocess handling - MUST be first before any other initialization
     #[cfg(feature = "cef")]
     let _cef_loaded = 'cef_init: {
-        use cef::ImplCommandLine; // Required for has_switch method
+        // Import from external cef crate
+        use ::cef::{args::Args, execute_process, CefString, ImplCommandLine};
 
         // On macOS, load the CEF framework from the app bundle
         #[cfg(target_os = "macos")]
@@ -856,7 +859,7 @@ fn main() {
                 break 'cef_init false;
             }
 
-            let loader = cef::library_loader::LibraryLoader::new(&exe_path, false);
+            let loader = ::cef::library_loader::LibraryLoader::new(&exe_path, false);
             if !loader.load() {
                 break 'cef_init false;
             }
@@ -864,15 +867,15 @@ fn main() {
         };
 
         // Check if this is a CEF subprocess (renderer, GPU, etc.)
-        let args = cef::args::Args::new();
+        let args = Args::new();
         if let Some(cmd) = args.as_cmd_line() {
-            let switch = cef::CefString::from("type");
-            let is_subprocess = cmd.has_switch(Some(&switch)) == 1;
+            let switch = CefString::from("type");
+            let is_subprocess: bool = cmd.has_switch(Some(&switch)) == 1;
 
             if is_subprocess {
                 // This is a CEF subprocess - execute and exit
                 // Pass None for app - subprocesses don't need custom app handlers
-                let ret = cef::execute_process(
+                let ret = execute_process(
                     Some(args.as_main_args()),
                     None,
                     std::ptr::null_mut(),
@@ -888,6 +891,21 @@ fn main() {
         let _ = cef_loader;
 
         true
+    };
+
+    // Initialize CEF context (must happen after subprocess handling)
+    // The context is kept alive for the lifetime of the application
+    #[cfg(feature = "cef")]
+    let _cef_context = if _cef_loaded {
+        match crate::cef::CefContext::init() {
+            Ok(ctx) => ctx,
+            Err(err) => {
+                log::error!("Failed to initialize CEF context: {:#}", err);
+                None
+            }
+        }
+    } else {
+        None
     };
 
     #[cfg(feature = "dhat-heap")]

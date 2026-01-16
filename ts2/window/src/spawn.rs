@@ -16,6 +16,23 @@ lazy_static::lazy_static! {
     pub(crate) static ref SPAWN_QUEUE: Arc<SpawnQueue> = Arc::new(SpawnQueue::new().expect("failed to create SpawnQueue"));
 }
 
+/// Hook that gets called on each iteration of the main event loop.
+/// This is used by wezterm-gui to pump CEF messages when the cef feature is enabled.
+static MESSAGE_PUMP_HOOK: std::sync::Mutex<Option<fn()>> = std::sync::Mutex::new(None);
+
+/// Register a function to be called on each iteration of the main event loop.
+/// This is used for integrating external message loops (like CEF) with WezTerm's event loop.
+pub fn set_message_pump_hook(hook: fn()) {
+    *MESSAGE_PUMP_HOOK.lock().unwrap() = Some(hook);
+}
+
+/// Call the registered message pump hook, if any.
+fn call_message_pump_hook() {
+    if let Some(hook) = *MESSAGE_PUMP_HOOK.lock().unwrap() {
+        hook();
+    }
+}
+
 struct InstrumentedSpawnFunc {
     func: SpawnFunc,
     at: Instant,
@@ -222,6 +239,8 @@ impl SpawnQueue {
         if SPAWN_QUEUE.run() {
             Self::queue_wakeup();
         }
+        // Call external message pump hook (e.g., CEF message loop)
+        call_message_pump_hook();
     }
 
     fn queue_wakeup() {
