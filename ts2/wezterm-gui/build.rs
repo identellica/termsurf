@@ -169,8 +169,8 @@ END
             .join("Contents")
             .join("Info.plist");
         let build_target_dir = std::env::var("CARGO_TARGET_DIR")
-            .and_then(|s| Ok(std::path::PathBuf::from(s)))
-            .unwrap_or(repo_dir.join("target").join(profile));
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|_| repo_dir.join("target").join(&profile));
         let dest_plist = build_target_dir.join("Info.plist");
         println!("cargo:rerun-if-changed=assets/macos/WezTerm.app/Contents/Info.plist");
 
@@ -181,5 +181,54 @@ END
                 dest_plist.display()
             ))
             .unwrap();
+
+        // CEF framework symlink setup for development builds
+        // When the cef feature is enabled, create a symlink so CEF can find its resources
+        if std::env::var("CARGO_FEATURE_CEF").is_ok() {
+            // Find CEF framework by scanning the build directory for cef-dll-sys output
+            let build_dir = repo_dir.join("target").join(&profile).join("build");
+            if let Ok(entries) = std::fs::read_dir(&build_dir) {
+                for entry in entries.flatten() {
+                    let name = entry.file_name();
+                    let name_str = name.to_string_lossy();
+                    if name_str.starts_with("cef-dll-sys-") {
+                        // Check for CEF framework in out/cef_macos_aarch64/ or out/cef_macos_x86_64/
+                        let out_dir = entry.path().join("out");
+                        if let Ok(out_entries) = std::fs::read_dir(&out_dir) {
+                            for out_entry in out_entries.flatten() {
+                                let cef_framework_src = out_entry.path()
+                                    .join("Chromium Embedded Framework.framework");
+
+                                if cef_framework_src.exists() {
+                                    // Create Frameworks directory in target/{profile}/
+                                    let frameworks_dir = build_target_dir.join("Frameworks");
+                                    let _ = std::fs::create_dir_all(&frameworks_dir);
+
+                                    let cef_framework_link = frameworks_dir
+                                        .join("Chromium Embedded Framework.framework");
+
+                                    // Remove existing symlink/dir if present
+                                    let _ = std::fs::remove_file(&cef_framework_link);
+                                    let _ = std::fs::remove_dir_all(&cef_framework_link);
+
+                                    // Create symlink
+                                    #[cfg(unix)]
+                                    {
+                                        if std::os::unix::fs::symlink(&cef_framework_src, &cef_framework_link).is_ok() {
+                                            println!(
+                                                "cargo:warning=CEF framework symlinked: {} -> {}",
+                                                cef_framework_link.display(),
+                                                cef_framework_src.display()
+                                            );
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -835,39 +835,59 @@ fn main() {
         // Import from external cef crate
         use ::cef::{args::Args, execute_process, CefString, ImplCommandLine};
 
+        eprintln!("[CEF] Starting CEF initialization...");
+
         // On macOS, load the CEF framework from the app bundle
         #[cfg(target_os = "macos")]
         let cef_loader = {
             let exe_path = match std::env::current_exe() {
-                Ok(path) => path,
-                Err(_) => break 'cef_init false,
+                Ok(path) => {
+                    eprintln!("[CEF] Executable path: {:?}", path);
+                    path
+                }
+                Err(e) => {
+                    eprintln!("[CEF] Failed to get executable path: {:?}", e);
+                    break 'cef_init false;
+                }
             };
 
             // Check if CEF framework exists before trying to load it
-            // LibraryLoader expects: ../Frameworks/Chromium Embedded Framework.framework/...
+            // LibraryLoader expects: Frameworks/Chromium Embedded Framework.framework/...
+            // For development builds, build.rs creates a symlink at target/{profile}/Frameworks/
             let framework_path = exe_path
                 .parent()
                 .and_then(|p| {
-                    p.join("../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
-                        .canonicalize()
-                        .ok()
+                    let path = p.join("Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework");
+                    eprintln!("[CEF] Looking for framework at: {:?}", path);
+                    path.canonicalize().ok()
                 });
 
             if framework_path.is_none() {
                 // CEF framework not found - continue without CEF
                 // This is normal during development or when running unbundled
+                eprintln!("[CEF] Framework not found, disabling CEF");
                 break 'cef_init false;
             }
+            eprintln!("[CEF] Framework found at: {:?}", framework_path);
 
             let loader = ::cef::library_loader::LibraryLoader::new(&exe_path, false);
             if !loader.load() {
+                eprintln!("[CEF] Library loader failed");
                 break 'cef_init false;
             }
+            eprintln!("[CEF] Library loaded successfully");
             Some(loader)
         };
 
+        // Validate CEF API version (like osr example does)
+        eprintln!("[CEF] Checking API hash...");
+        let _ = ::cef::api_hash(::cef::sys::CEF_API_VERSION_LAST, 0);
+        eprintln!("[CEF] API hash check passed");
+
         // Check if this is a CEF subprocess (renderer, GPU, etc.)
+        eprintln!("[CEF] Creating Args...");
         let args = Args::new();
+        eprintln!("[CEF] Args created");
         if let Some(cmd) = args.as_cmd_line() {
             let switch = CefString::from("type");
             let is_subprocess: bool = cmd.has_switch(Some(&switch)) == 1;

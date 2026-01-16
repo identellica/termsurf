@@ -66,17 +66,33 @@ impl CefContext {
         {
             let exe_path = std::env::current_exe()?;
 
-            // Check if CEF framework exists
-            let framework_path = exe_path.parent().and_then(|p| {
-                p.join("../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
+            // Check if CEF framework exists - look in Frameworks/ relative to executable
+            // For development builds, build.rs creates a symlink at target/{profile}/Frameworks/
+            let framework_binary_path = exe_path.parent().and_then(|p| {
+                p.join("Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
                     .canonicalize()
                     .ok()
             });
 
-            if framework_path.is_none() {
-                log::info!("CEF framework not found - browser features disabled");
-                return Ok(None);
-            }
+            let framework_binary_path = match framework_binary_path {
+                Some(p) => p,
+                None => {
+                    log::info!("CEF framework not found - browser features disabled");
+                    return Ok(None);
+                }
+            };
+
+            // Derive paths from the framework binary location
+            // framework_binary_path = .../Chromium Embedded Framework.framework/Chromium Embedded Framework
+            // framework_dir = .../Chromium Embedded Framework.framework
+            // framework_parent = .../ (directory containing the .framework)
+            // resources_dir = .../Chromium Embedded Framework.framework/Resources
+            let framework_dir = framework_binary_path.parent().unwrap();
+            let framework_parent = framework_dir.parent().unwrap();
+            let resources_dir = framework_dir.join("Resources");
+
+            log::info!("CEF framework dir: {:?}", framework_dir);
+            log::info!("CEF resources dir: {:?}", resources_dir);
 
             // Load the CEF library
             let loader = cef_crate::library_loader::LibraryLoader::new(&exe_path, false);
@@ -85,7 +101,7 @@ impl CefContext {
                 return Ok(None);
             }
 
-            // Initialize CEF settings
+            // Initialize CEF settings with explicit paths for unbundled development
             let cache_path = Self::cache_path();
             let settings = cef_crate::Settings {
                 windowless_rendering_enabled: 1,
@@ -93,6 +109,12 @@ impl CefContext {
                 no_sandbox: 1,
                 cache_path: cache_path.to_string_lossy().as_ref().into(),
                 log_severity: cef_crate::LogSeverity::WARNING,
+                // Set explicit paths so CEF can find resources in unbundled mode
+                framework_dir_path: framework_parent.to_string_lossy().as_ref().into(),
+                resources_dir_path: resources_dir.to_string_lossy().as_ref().into(),
+                locales_dir_path: resources_dir.to_string_lossy().as_ref().into(),
+                // Use the main executable as the subprocess helper
+                browser_subprocess_path: exe_path.to_string_lossy().as_ref().into(),
                 ..Default::default()
             };
 
