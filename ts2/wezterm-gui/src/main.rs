@@ -65,10 +65,50 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 pub use selection::SelectionMode;
 pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DATA};
 
-// Minimal CEF reference to verify linking works
+// CEF initialization for TermSurf 2.0 browser integration
 #[cfg(all(target_os = "macos", feature = "cef"))]
-fn _cef_compiled() {
-    let _ = cef::api_hash;
+fn init_cef() -> Result<(), String> {
+    use cef::{args::Args, execute_process, initialize, library_loader, App, Settings};
+
+    let exe = std::env::current_exe().map_err(|e| format!("current_exe: {e}"))?;
+    let loader = library_loader::LibraryLoader::new(&exe, false);
+    if !loader.load() {
+        return Err("Failed to load CEF framework".into());
+    }
+    eprintln!("[CEF] Framework loaded");
+    log::info!("CEF framework loaded");
+
+    let args = Args::new();
+    let ret = execute_process(
+        Some(args.as_main_args()),
+        None::<&mut App>,
+        std::ptr::null_mut(),
+    );
+    if ret >= 0 {
+        std::process::exit(ret);
+    }
+    log::info!("CEF execute_process returned {ret}");
+
+    let settings = Settings {
+        windowless_rendering_enabled: 1,
+        external_message_pump: 1,
+        no_sandbox: 1,
+        ..Default::default()
+    };
+
+    if initialize(
+        Some(args.as_main_args()),
+        Some(&settings),
+        None::<&mut App>,
+        std::ptr::null_mut(),
+    ) != 1
+    {
+        return Err("CEF initialize failed".into());
+    }
+
+    eprintln!("[CEF] Initialized successfully");
+    log::info!("CEF initialized successfully");
+    Ok(())
 }
 
 #[derive(Debug, Parser)]
@@ -839,11 +879,21 @@ fn main() {
     config::designate_this_as_the_main_thread();
     config::assign_error_callback(mux::connui::show_configuration_error_message);
     notify_on_panic();
+
+    #[cfg(all(target_os = "macos", feature = "cef"))]
+    match init_cef() {
+        Ok(()) => {}
+        Err(e) => log::error!("CEF init failed: {e}"),
+    }
+
     if let Err(e) = run() {
         terminate_with_error(e);
     }
     Mux::shutdown();
     frontend::shutdown();
+
+    #[cfg(all(target_os = "macos", feature = "cef"))]
+    cef::shutdown();
 }
 
 fn maybe_show_configuration_error_window() {
