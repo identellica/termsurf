@@ -1,5 +1,24 @@
 # CEF Integration: Incremental Plan
 
+## Critical: Risk Monitoring
+
+**This plan includes known risks for each step.** As we execute each step, we
+must compare what actually happens against the anticipated risks.
+
+**If we encounter an error or behavior that is NOT listed in the known risks for
+that step, STOP IMMEDIATELY.** This indicates a fundamental gap in our
+understanding. We must:
+
+1. Document the unexpected issue
+2. Investigate the root cause
+3. Decide whether to revise the plan or scrap it entirely
+
+Do not proceed to the next step if an unanticipated issue occurs. The previous
+CEF integration attempt failed because we pushed forward despite unexpected
+errors, wasting an entire day. We will not repeat that mistake.
+
+---
+
 ## Overview
 
 **Two WezTerm.app locations:**
@@ -44,6 +63,20 @@ cargo build -p wezterm-gui --features cef
 
 - Build completes with no errors
 - Binary exists at `target/debug/wezterm-gui`
+
+**Known risks:**
+
+- **Low: Build time.** First build will download CEF (~400MB) and compile
+  `cef_dll_wrapper`. This can take 5-10 minutes. This is expected, not a
+  failure.
+- **Low: cmake/ninja missing.** If cmake or ninja isn't installed, the build
+  will fail with a clear error message. Fix: install them via homebrew.
+
+**Unanticipated issues (STOP if these occur):**
+
+- Linking errors mentioning CEF symbols
+- Rust compiler errors in cef crate code
+- Path resolution errors for the cef dependency
 
 ---
 
@@ -99,6 +132,17 @@ cargo build -p wezterm-gui --features cef
 - Both binaries exist:
   - `target/debug/wezterm-gui`
   - `target/debug/wezterm-cef-helper`
+
+**Known risks:**
+
+- **None identified.** This step should work if Step 1 succeeded. The helper
+  code is copied directly from the working cef-rs example.
+
+**Unanticipated issues (STOP if these occur):**
+
+- Import errors for cef types (Args, App, execute_process, library_loader)
+- Compiler errors in the helper code
+- Binary not being produced despite successful compilation
 
 ---
 
@@ -186,6 +230,22 @@ grep CFBundleExecutable target/release/WezTerm.app/Contents/Frameworks/*/Content
 - `grep MallocNanoZone` shows the key exists with value `0`
 - `grep CFBundleExecutable` shows `WezTerm Helper`, `WezTerm Helper (GPU)`, etc.
 
+**Known risks:**
+
+- **Low: sed command differences.** The sed commands assume the cef-osr
+  Info.plist format matches what we expect. If the format differs slightly, sed
+  may not make the replacements correctly. Mitigated by verifying with grep
+  commands in the test step.
+- **Low: ~200MB framework copy is slow.** The `cp -R` for the CEF framework will
+  take 10-30 seconds. This is expected.
+
+**Unanticipated issues (STOP if these occur):**
+
+- cef-osr.app doesn't exist or has different structure than expected
+- Permission errors copying files
+- sed commands corrupt the plist files (check with `plutil -lint` if unsure)
+- Framework copy fails partway through
+
 ---
 
 ## Step 4: Run Without CEF Init
@@ -202,6 +262,18 @@ grep CFBundleExecutable target/release/WezTerm.app/Contents/Frameworks/*/Content
 
 - WezTerm launches normally
 - Terminal works as expected
+
+**Known risks:**
+
+- **None identified.** WezTerm should run normally since we haven't added any
+  CEF code yet. The bundle structure is just a directory layout at this point.
+
+**Unanticipated issues (STOP if these occur):**
+
+- App crashes on launch (indicates bundle structure problem)
+- App won't start at all (check Console.app for crash logs)
+- "App is damaged" or Gatekeeper warnings (code signing issue - can bypass with
+  `xattr -cr` for testing)
 
 ---
 
@@ -274,6 +346,21 @@ RUST_LOG=info ./target/release/WezTerm.app/Contents/MacOS/wezterm-gui 2>&1 | gre
 - Log shows: `CEF initialized successfully`
 - WezTerm launches normally
 
+**Known risks:**
+
+- **Low: Message pump not being called.** We set `external_message_pump: 1` but
+  don't call `do_message_loop_work()`. For this MVP (just load CEF, don't use
+  it), this should be fine since we're not creating any browsers. But if CEF
+  tries to do background work, it might hang or behave unexpectedly.
+
+**Unanticipated issues (STOP if these occur):**
+
+- "Failed to load CEF framework" - indicates bundle path issue
+- "CEF initialize failed" - indicates settings or resource problem
+- Crash during initialization - check Console.app for details
+- `icudtl.dat not found` or similar resource errors - bundle structure is wrong
+- Helper processes spawning and crashing - helper bundle structure is wrong
+
 ---
 
 ## Step 6: Add CEF Shutdown
@@ -292,6 +379,18 @@ cef::shutdown();
 - Run app, then Cmd+Q to quit
 - Should exit cleanly with no crash
 
+**Known risks:**
+
+- **Low: Shutdown timing.** If `cef::shutdown()` is called while CEF is still
+  processing something, it could crash. Since we're not creating any browsers,
+  this should be safe.
+
+**Unanticipated issues (STOP if these occur):**
+
+- Crash on quit (check if it's in CEF shutdown or WezTerm's own cleanup)
+- Hang on quit (CEF waiting for something that never completes)
+- Error messages about CEF resources not being cleaned up
+
 ---
 
 ## Step 7: Automate Bundle Creation
@@ -308,16 +407,28 @@ rm -rf target/release/WezTerm.app
 ./target/release/WezTerm.app/Contents/MacOS/wezterm-gui
 ```
 
+**Known risks:**
+
+- **Medium: Script diverges from manual steps.** The script must exactly match
+  the manual commands from Step 3. Any difference could cause subtle failures.
+  Always verify script output matches what manual execution produced.
+
+**Unanticipated issues (STOP if these occur):**
+
+- Script produces different bundle structure than manual steps
+- Script fails on a command that worked manually
+- App behavior differs when launched from script-built bundle vs manual bundle
+
 ---
 
 ## Summary
 
-| Step | What               | Test                         | Pass                |
-| ---- | ------------------ | ---------------------------- | ------------------- |
-| 1    | Add CEF dependency | `cargo build --features cef` | Compiles            |
-| 2    | Add helper binary  | `cargo build --features cef` | Both binaries exist |
-| 3    | Manual bundle      | `ls Frameworks/`             | 6 items present     |
-| 4    | Run without CEF    | Launch app                   | WezTerm works       |
-| 5    | Add CEF init       | Check logs                   | "CEF initialized"   |
-| 6    | Add shutdown       | Quit app                     | Clean exit          |
-| 7    | Automate           | Run script                   | Same as step 5      |
+| Step | What               | Test                         | Pass                | Risk Level |
+| ---- | ------------------ | ---------------------------- | ------------------- | ---------- |
+| 1    | Add CEF dependency | `cargo build --features cef` | Compiles            | Low        |
+| 2    | Add helper binary  | `cargo build --features cef` | Both binaries exist | None       |
+| 3    | Manual bundle      | `ls Frameworks/` + grep      | 6 items + plists ok | Low        |
+| 4    | Run without CEF    | Launch app                   | WezTerm works       | None       |
+| 5    | Add CEF init       | Check logs                   | "CEF initialized"   | Low        |
+| 6    | Add shutdown       | Quit app                     | Clean exit          | Low        |
+| 7    | Automate           | Run script                   | Same as step 5      | Medium     |
