@@ -182,7 +182,8 @@ cef-osr.
 **Prerequisites:**
 
 - cef-osr bundle must exist at `/Users/ryan/dev/termsurf/cef-rs/cef-osr.app/`
-- If not, build it first: `cd /Users/ryan/dev/termsurf/cef-rs && cargo build -p cef-osr && cargo run -p bundle-cef-app -- cef-osr -o cef-osr.app`
+- If not, build it first:
+  `cd /Users/ryan/dev/termsurf/cef-rs && cargo build -p cef-osr && cargo run -p bundle-cef-app -- cef-osr -o cef-osr.app`
 
 **Actions:**
 
