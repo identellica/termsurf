@@ -52,7 +52,8 @@ composited with terminal content:
 |-----------|----------|---------|
 | `wezterm-gui` | `wezterm-gui/` | Main application, CEF init/shutdown |
 | `wezterm-cef-helper` | `wezterm-gui/src/bin/` | CEF subprocess handler |
-| `bundle-cef.sh` | `scripts/` | Creates signed macOS bundle |
+| `build-debug.sh` | `scripts/` | Build debug bundle with CEF |
+| `build-release.sh` | `scripts/` | Build release bundle with CEF |
 | `cef-rs` | `../cef-rs/` | Rust bindings for CEF |
 
 ## WezTerm Integration Code
@@ -186,21 +187,35 @@ required-features = ["cef"]
 
 ### Build with CEF
 
+**Debug build:**
 ```bash
-./scripts/bundle-cef.sh
+./scripts/build-debug.sh [--clean] [--open]
 ```
 
-This script:
-1. Builds `wezterm-gui` and `wezterm-cef-helper` with `--features cef`
-2. Creates bundle from `assets/macos/WezTerm.app` template
-3. Copies CEF framework (~200MB) from cef-osr.app
-4. Creates 5 helper app bundles (Helper, GPU, Renderer, Plugin, Alerts)
-5. Adds `MallocNanoZone=0` to Info.plist (required for CEF on macOS)
-6. Signs the bundle with ad-hoc signature
+**Release build:**
+```bash
+./scripts/build-release.sh [--clean] [--open]
+```
+
+Both scripts:
+1. Build `wezterm-gui` and `wezterm-cef-helper` with `--features cef`
+2. Create bundle from `assets/macos/WezTerm.app` template
+3. Copy CEF framework (~200MB) from cef-osr.app
+4. Create 5 helper app bundles (Helper, GPU, Renderer, Plugin, Alerts)
+5. Add `MallocNanoZone=0` to Info.plist (required for CEF on macOS)
+6. Sign the bundle with ad-hoc signature
+
+Flags:
+- `--clean` - Clear build caches before building
+- `--open` - Open the app after building
 
 ### Run
 
 ```bash
+# Debug
+./target/debug/WezTerm.app/Contents/MacOS/wezterm-gui
+
+# Release
 ./target/release/WezTerm.app/Contents/MacOS/wezterm-gui
 ```
 
