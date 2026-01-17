@@ -8,6 +8,61 @@ use smol::prelude::*;
 use smol::Async;
 use wezterm_uds::UnixStream;
 
+/// Result of attempting to send a PDU to a client
+enum SendResult {
+    /// PDU was sent successfully
+    Ok,
+    /// Client disconnected (BrokenPipe) - should exit gracefully
+    ClientDisconnected,
+}
+
+/// Send a PDU to the client, handling BrokenPipe gracefully.
+/// Returns SendResult::ClientDisconnected if the client has disconnected.
+async fn send_pdu<T>(stream: &mut Async<T>, pdu: Pdu) -> anyhow::Result<SendResult>
+where
+    T: std::io::Read + std::io::Write + std::fmt::Debug + async_io::IoSafe,
+{
+    match pdu.encode_async(stream, 0).await {
+        Ok(()) => {}
+        Err(err) => {
+            if is_broken_pipe(&err) {
+                return Ok(SendResult::ClientDisconnected);
+            }
+            return Err(err).context("encoding PDU to client");
+        }
+    }
+    match stream.flush().await {
+        Ok(()) => Ok(SendResult::Ok),
+        Err(err) if err.kind() == std::io::ErrorKind::BrokenPipe => {
+            Ok(SendResult::ClientDisconnected)
+        }
+        Err(err) => Err(err).context("flushing PDU to client"),
+    }
+}
+
+/// Check if an anyhow error is caused by a BrokenPipe
+fn is_broken_pipe(err: &anyhow::Error) -> bool {
+    // Check the error chain for a BrokenPipe io::Error
+    for cause in err.chain() {
+        if let Some(io_err) = cause.downcast_ref::<std::io::Error>() {
+            if io_err.kind() == std::io::ErrorKind::BrokenPipe {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+/// Macro to send a notification PDU and return early if client disconnected
+macro_rules! send_notification {
+    ($stream:expr, $pdu:expr) => {
+        match send_pdu($stream, $pdu).await? {
+            SendResult::Ok => {}
+            SendResult::ClientDisconnected => return Ok(()),
+        }
+    };
+}
+
 #[cfg(unix)]
 pub trait AsRawDesc: std::os::unix::io::AsRawFd + std::os::fd::AsFd {}
 #[cfg(windows)]
@@ -113,10 +168,10 @@ where
             }
             Ok(Item::Notif(MuxNotification::PaneAdded(_pane_id))) => {}
             Ok(Item::Notif(MuxNotification::PaneRemoved(pane_id))) => {
-                Pdu::PaneRemoved(codec::PaneRemoved { pane_id })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::PaneRemoved(codec::PaneRemoved { pane_id })
+                );
             }
             Ok(Item::Notif(MuxNotification::Alert { pane_id, alert })) => {
                 {
@@ -132,20 +187,20 @@ where
                 selection,
                 clipboard,
             })) => {
-                Pdu::SetClipboard(codec::SetClipboard {
-                    pane_id,
-                    clipboard,
-                    selection,
-                })
-                .encode_async(&mut stream, 0)
-                .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::SetClipboard(codec::SetClipboard {
+                        pane_id,
+                        clipboard,
+                        selection,
+                    })
+                );
             }
             Ok(Item::Notif(MuxNotification::TabAddedToWindow { tab_id, window_id })) => {
-                Pdu::TabAddedToWindow(codec::TabAddedToWindow { tab_id, window_id })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::TabAddedToWindow(codec::TabAddedToWindow { tab_id, window_id })
+                );
             }
             Ok(Item::Notif(MuxNotification::WindowRemoved(_window_id))) => {}
             Ok(Item::Notif(MuxNotification::WindowCreated(_window_id))) => {}
@@ -157,50 +212,50 @@ where
                         .map(|w| w.get_workspace().to_string())
                 };
                 if let Some(workspace) = workspace {
-                    Pdu::WindowWorkspaceChanged(codec::WindowWorkspaceChanged {
-                        window_id,
-                        workspace,
-                    })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                    stream.flush().await.context("flushing PDU to client")?;
+                    send_notification!(
+                        &mut stream,
+                        Pdu::WindowWorkspaceChanged(codec::WindowWorkspaceChanged {
+                            window_id,
+                            workspace,
+                        })
+                    );
                 }
             }
             Ok(Item::Notif(MuxNotification::PaneFocused(pane_id))) => {
-                Pdu::PaneFocused(codec::PaneFocused { pane_id })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::PaneFocused(codec::PaneFocused { pane_id })
+                );
             }
             Ok(Item::Notif(MuxNotification::TabResized(tab_id))) => {
-                Pdu::TabResized(codec::TabResized { tab_id })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::TabResized(codec::TabResized { tab_id })
+                );
             }
             Ok(Item::Notif(MuxNotification::TabTitleChanged { tab_id, title })) => {
-                Pdu::TabTitleChanged(codec::TabTitleChanged { tab_id, title })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::TabTitleChanged(codec::TabTitleChanged { tab_id, title })
+                );
             }
             Ok(Item::Notif(MuxNotification::WindowTitleChanged { window_id, title })) => {
-                Pdu::WindowTitleChanged(codec::WindowTitleChanged { window_id, title })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::WindowTitleChanged(codec::WindowTitleChanged { window_id, title })
+                );
             }
             Ok(Item::Notif(MuxNotification::WorkspaceRenamed {
                 old_workspace,
                 new_workspace,
             })) => {
-                Pdu::RenameWorkspace(codec::RenameWorkspace {
-                    old_workspace,
-                    new_workspace,
-                })
-                .encode_async(&mut stream, 0)
-                .await?;
-                stream.flush().await.context("flushing PDU to client")?;
+                send_notification!(
+                    &mut stream,
+                    Pdu::RenameWorkspace(codec::RenameWorkspace {
+                        old_workspace,
+                        new_workspace,
+                    })
+                );
             }
             Ok(Item::Notif(MuxNotification::ActiveWorkspaceChanged(_))) => {}
             Ok(Item::Notif(MuxNotification::Empty)) => {}
