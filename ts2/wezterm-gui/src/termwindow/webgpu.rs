@@ -34,6 +34,12 @@ pub struct WebGpuState {
     pub texture_nearest_sampler: wgpu::Sampler,
     pub texture_linear_sampler: wgpu::Sampler,
     pub handle: RawHandlePair,
+
+    // CEF browser overlay rendering
+    #[cfg(all(target_os = "macos", feature = "cef"))]
+    pub cef_render_pipeline: wgpu::RenderPipeline,
+    #[cfg(all(target_os = "macos", feature = "cef"))]
+    pub cef_bind_group_layout: wgpu::BindGroupLayout,
 }
 
 pub struct RawHandlePair {
@@ -496,6 +502,81 @@ impl WebGpuState {
             cache: None,
         });
 
+        // CEF browser overlay pipeline
+        #[cfg(all(target_os = "macos", feature = "cef"))]
+        let cef_shader = device.create_shader_module(wgpu::include_wgsl!("../cef_shader.wgsl"));
+
+        #[cfg(all(target_os = "macos", feature = "cef"))]
+        let cef_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("CEF Texture Bind Group Layout"),
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                        },
+                        count: None,
+                    },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                        count: None,
+                    },
+                ],
+            });
+
+        #[cfg(all(target_os = "macos", feature = "cef"))]
+        let cef_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("CEF Pipeline Layout"),
+                bind_group_layouts: &[&cef_bind_group_layout],
+                immediate_size: 0,
+            });
+
+        #[cfg(all(target_os = "macos", feature = "cef"))]
+        let cef_render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("CEF Render Pipeline"),
+            layout: Some(&cef_pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &cef_shader,
+                entry_point: Some("vs_main"),
+                buffers: &[], // No vertex buffer - we generate vertices in shader
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &cef_shader,
+                entry_point: Some("fs_main"),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format: config.format,
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::TriangleList,
+                strip_index_format: None,
+                front_face: wgpu::FrontFace::Ccw,
+                cull_mode: None,
+                polygon_mode: wgpu::PolygonMode::Fill,
+                unclipped_depth: false,
+                conservative: false,
+            },
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState {
+                count: 1,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+            multiview_mask: None,
+            cache: None,
+        });
+
         Ok(Self {
             adapter_info,
             downlevel_caps,
@@ -510,6 +591,10 @@ impl WebGpuState {
             texture_bind_group_layout,
             texture_nearest_sampler,
             texture_linear_sampler,
+            #[cfg(all(target_os = "macos", feature = "cef"))]
+            cef_render_pipeline,
+            #[cfg(all(target_os = "macos", feature = "cef"))]
+            cef_bind_group_layout,
         })
     }
 

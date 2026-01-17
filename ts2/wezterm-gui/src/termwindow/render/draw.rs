@@ -20,7 +20,7 @@ impl crate::TermWindow {
     fn call_draw_webgpu(&mut self) -> anyhow::Result<()> {
         use crate::termwindow::webgpu::WebGpuTexture;
 
-        let webgpu = self.webgpu.as_mut().unwrap();
+        let webgpu = self.webgpu.as_ref().unwrap();
         let render_state = self.render_state.as_ref().unwrap();
 
         let output = webgpu.surface.get_current_texture()?;
@@ -143,7 +143,85 @@ impl crate::TermWindow {
 
         // submit will accept anything that implements IntoIter
         webgpu.queue.submit(std::iter::once(encoder.finish()));
+
+        // Render CEF browser overlays on top of terminal content
+        #[cfg(all(target_os = "macos", feature = "cef"))]
+        self.render_cef_overlays(&output.texture, webgpu)?;
+
         output.present();
+
+        Ok(())
+    }
+
+    /// Render CEF browser overlays on top of the terminal content
+    #[cfg(all(target_os = "macos", feature = "cef"))]
+    fn render_cef_overlays(
+        &self,
+        output_texture: &wgpu::Texture,
+        webgpu: &crate::termwindow::webgpu::WebGpuState,
+    ) -> anyhow::Result<()> {
+        let browser_states = self.browser_states.borrow();
+        if browser_states.is_empty() {
+            return Ok(());
+        }
+
+        log::trace!("[CEF] render_cef_overlays: {} browser(s) active", browser_states.len());
+
+        let view = output_texture.create_view(&wgpu::TextureViewDescriptor::default());
+
+        for (pane_id, browser) in browser_states.iter() {
+            let Some(bind_group) = browser.get_texture_bind_group() else {
+                // No texture yet - CEF hasn't painted
+                log::trace!("[CEF] render_cef_overlays: pane {} has no texture yet", pane_id);
+                continue;
+            };
+            log::trace!("[CEF] render_cef_overlays: rendering pane {}", pane_id);
+
+            let pane_rect = browser.get_pane_rect();
+            if pane_rect.width <= 0.0 || pane_rect.height <= 0.0 {
+                continue;
+            }
+
+            let mut encoder = webgpu
+                .device
+                .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                    label: Some("CEF Overlay Encoder"),
+                });
+
+            {
+                let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    label: Some("CEF Overlay Pass"),
+                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                        view: &view,
+                        resolve_target: None,
+                        depth_slice: None,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Load, // Preserve existing content
+                            store: wgpu::StoreOp::Store,
+                        },
+                    })],
+                    ..Default::default()
+                });
+
+                render_pass.set_pipeline(&webgpu.cef_render_pipeline);
+                render_pass.set_bind_group(0, &bind_group, &[]);
+
+                // Set viewport to pane bounds
+                render_pass.set_viewport(
+                    pane_rect.x,
+                    pane_rect.y,
+                    pane_rect.width,
+                    pane_rect.height,
+                    0.0,
+                    1.0,
+                );
+
+                // Draw a single triangle that covers the viewport
+                render_pass.draw(0..3, 0..1);
+            }
+
+            webgpu.queue.submit(std::iter::once(encoder.finish()));
+        }
 
         Ok(())
     }

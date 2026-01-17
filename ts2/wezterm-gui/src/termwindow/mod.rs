@@ -3658,9 +3658,13 @@ impl TermWindow {
             self.close_browser_for_pane(pane_id);
         }
 
-        // Get wgpu device and queue from render state
-        let (device, queue) = match &self.webgpu {
-            Some(webgpu) => (webgpu.device.clone(), webgpu.queue.clone()),
+        // Get wgpu device, queue, and CEF bind group layout from render state
+        let (device, queue, cef_bind_group_layout) = match &self.webgpu {
+            Some(webgpu) => (
+                webgpu.device.clone(),
+                webgpu.queue.clone(),
+                webgpu.cef_bind_group_layout.clone(),
+            ),
             None => {
                 log::error!("[CEF] WebGPU not available, cannot create browser");
                 return;
@@ -3698,6 +3702,7 @@ impl TermWindow {
             height.max(100),
             &device,
             &queue,
+            &cef_bind_group_layout,
             invalidate_callback,
         ) {
             Ok(state) => {

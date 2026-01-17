@@ -28,6 +28,17 @@ pub struct BrowserState {
     pub texture_holder: TextureHolder,
     size: std::rc::Rc<RefCell<(u32, u32)>>,
     device_scale_factor: f32,
+    /// Stored pane rectangle for overlay rendering (in pixels)
+    pub pane_rect: RefCell<PaneRect>,
+}
+
+/// Rectangle describing the pane position and size in pixels
+#[derive(Clone, Copy, Debug, Default)]
+pub struct PaneRect {
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
 }
 
 impl BrowserState {
@@ -39,6 +50,7 @@ impl BrowserState {
         height: u32,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
+        bind_group_layout: &wgpu::BindGroupLayout,
         invalidate_callback: Arc<dyn Fn() + Send + Sync>,
     ) -> anyhow::Result<Self> {
         log::info!(
@@ -60,6 +72,7 @@ impl BrowserState {
             texture_holder: texture_holder.clone(),
             device: device.clone(),
             queue: queue.clone(),
+            bind_group_layout: bind_group_layout.clone(),
             device_scale_factor,
             invalidate_callback,
         };
@@ -108,7 +121,23 @@ impl BrowserState {
             texture_holder,
             size,
             device_scale_factor,
+            pane_rect: RefCell::new(PaneRect {
+                x: 0.0,
+                y: 0.0,
+                width: width as f32,
+                height: height as f32,
+            }),
         })
+    }
+
+    /// Update the pane rectangle for overlay rendering
+    pub fn set_pane_rect(&self, x: f32, y: f32, width: f32, height: f32) {
+        *self.pane_rect.borrow_mut() = PaneRect { x, y, width, height };
+    }
+
+    /// Get the current pane rectangle
+    pub fn get_pane_rect(&self) -> PaneRect {
+        *self.pane_rect.borrow()
     }
 
     /// Get the browser host for sending events
@@ -224,6 +253,7 @@ struct CefRenderHandler {
     texture_holder: TextureHolder,
     device: wgpu::Device,
     queue: wgpu::Queue,
+    bind_group_layout: wgpu::BindGroupLayout,
     device_scale_factor: f32,
     invalidate_callback: Arc<dyn Fn() + Send + Sync>,
 }
@@ -267,10 +297,8 @@ wrap_render_handler! {
             0
         }
 
-        #[cfg(all(
-            any(target_os = "macos", target_os = "windows", target_os = "linux"),
-            feature = "accelerated_osr"
-        ))]
+        // Accelerated OSR paint handler - uses shared GPU texture (IOSurface on macOS)
+        #[cfg(target_os = "macos")]
         fn on_accelerated_paint(
             &self,
             _browser: Option<&mut Browser>,
@@ -278,7 +306,11 @@ wrap_render_handler! {
             _dirty_rects: Option<&[Rect]>,
             info: Option<&cef::AcceleratedPaintInfo>,
         ) {
-            let Some(info) = info else { return };
+            log::info!("[CEF] on_accelerated_paint called");
+            let Some(info) = info else {
+                log::warn!("[CEF] on_accelerated_paint: no info provided");
+                return;
+            };
 
             if type_ != PaintElementType::default() {
                 return;
@@ -300,7 +332,7 @@ wrap_render_handler! {
                 }
             };
 
-            // Create sampler and bind group
+            // Create sampler and bind group using the stored layout
             let sampler = self.handler.device.create_sampler(&wgpu::SamplerDescriptor {
                 address_mode_u: wgpu::AddressMode::ClampToEdge,
                 address_mode_v: wgpu::AddressMode::ClampToEdge,
@@ -311,37 +343,12 @@ wrap_render_handler! {
                 ..Default::default()
             });
 
-            let texture_bind_group_layout =
-                self.handler
-                    .device
-                    .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                        label: Some("CEF Texture Bind Group Layout"),
-                        entries: &[
-                            wgpu::BindGroupLayoutEntry {
-                                binding: 0,
-                                visibility: wgpu::ShaderStages::FRAGMENT,
-                                ty: wgpu::BindingType::Texture {
-                                    multisampled: false,
-                                    view_dimension: wgpu::TextureViewDimension::D2,
-                                    sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                                },
-                                count: None,
-                            },
-                            wgpu::BindGroupLayoutEntry {
-                                binding: 1,
-                                visibility: wgpu::ShaderStages::FRAGMENT,
-                                ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                                count: None,
-                            },
-                        ],
-                    });
-
             let bind_group = self
                 .handler
                 .device
                 .create_bind_group(&wgpu::BindGroupDescriptor {
                     label: Some("CEF Texture Bind Group"),
-                    layout: &texture_bind_group_layout,
+                    layout: &self.handler.bind_group_layout,
                     entries: &[
                         wgpu::BindGroupEntry {
                             binding: 0,
@@ -361,15 +368,13 @@ wrap_render_handler! {
 
             // Store the bind group
             *self.handler.texture_holder.borrow_mut() = Some(bind_group);
+            log::info!("[CEF] on_accelerated_paint: texture bind group created successfully");
 
             // Signal that we need a redraw
             (self.handler.invalidate_callback)();
         }
 
-        #[cfg(all(
-            any(target_os = "macos", target_os = "windows", target_os = "linux"),
-            feature = "accelerated_osr"
-        ))]
+        // Software fallback paint handler - copies pixel buffer to GPU texture
         fn on_paint(
             &self,
             _browser: Option<&mut Browser>,
@@ -379,10 +384,12 @@ wrap_render_handler! {
             width: ::std::os::raw::c_int,
             height: ::std::os::raw::c_int,
         ) {
+            log::info!("[CEF] on_paint called (software fallback) {}x{}", width, height);
             // Software fallback path
             use wgpu::{Extent3d, TextureDescriptor, TextureDimension, TextureUsages};
 
             if buffer.is_null() || width <= 0 || height <= 0 {
+                log::warn!("[CEF] on_paint: invalid buffer or dimensions");
                 return;
             }
 
@@ -422,6 +429,7 @@ wrap_render_handler! {
                 texture_desc.size,
             );
 
+            // Create sampler and bind group using the stored layout
             let sampler = self.handler.device.create_sampler(&wgpu::SamplerDescriptor {
                 address_mode_u: wgpu::AddressMode::ClampToEdge,
                 address_mode_v: wgpu::AddressMode::ClampToEdge,
@@ -432,37 +440,12 @@ wrap_render_handler! {
                 ..Default::default()
             });
 
-            let texture_bind_group_layout =
-                self.handler
-                    .device
-                    .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                        label: Some("CEF Texture Bind Group Layout"),
-                        entries: &[
-                            wgpu::BindGroupLayoutEntry {
-                                binding: 0,
-                                visibility: wgpu::ShaderStages::FRAGMENT,
-                                ty: wgpu::BindingType::Texture {
-                                    multisampled: false,
-                                    view_dimension: wgpu::TextureViewDimension::D2,
-                                    sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                                },
-                                count: None,
-                            },
-                            wgpu::BindGroupLayoutEntry {
-                                binding: 1,
-                                visibility: wgpu::ShaderStages::FRAGMENT,
-                                ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                                count: None,
-                            },
-                        ],
-                    });
-
             let bind_group = self
                 .handler
                 .device
                 .create_bind_group(&wgpu::BindGroupDescriptor {
                     label: Some("CEF Texture Bind Group"),
-                    layout: &texture_bind_group_layout,
+                    layout: &self.handler.bind_group_layout,
                     entries: &[
                         wgpu::BindGroupEntry {
                             binding: 0,
@@ -481,6 +464,7 @@ wrap_render_handler! {
                 });
 
             *self.handler.texture_holder.borrow_mut() = Some(bind_group);
+            log::info!("[CEF] on_paint: texture bind group created successfully");
             (self.handler.invalidate_callback)();
         }
     }
