@@ -55,9 +55,9 @@ if [ -f "$REPO_DIR/assets/macos/WezTerm.app/Contents/Resources/terminal.icns" ];
     cp "$REPO_DIR/assets/macos/WezTerm.app/Contents/Resources/terminal.icns" "$APP_DIR/Contents/Resources/"
 fi
 
-# Symlink CEF framework (symlink for dev speed, deploy.sh does full copy for release)
-echo "Symlinking CEF framework"
-ln -s "$CEF_FRAMEWORK" "$APP_DIR/Contents/Frameworks/Chromium Embedded Framework.framework"
+# Copy CEF framework (CEF's bundle APIs don't follow symlinks properly)
+echo "Copying CEF framework (this may take a moment)..."
+cp -R "$CEF_FRAMEWORK" "$APP_DIR/Contents/Frameworks/Chromium Embedded Framework.framework"
 
 echo ""
 echo "Bundle created successfully: $APP_DIR"
