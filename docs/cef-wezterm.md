@@ -99,11 +99,14 @@ Called in `main()` after `notify_on_panic()`, before `run()`.
 ### CEF Shutdown
 
 ```rust
+// CEF must shut down BEFORE WezTerm's GUI infrastructure.
+// CEF shutdown triggers callbacks that require the GUI thread to still be active.
 #[cfg(all(target_os = "macos", feature = "cef"))]
 cef::shutdown();
 ```
 
-Called at the end of `main()` after `frontend::shutdown()`.
+Called in `main()` BEFORE `Mux::shutdown()` and `frontend::shutdown()`. Order matters -
+CEF's shutdown triggers callbacks that expect the GUI thread to still be active.
 
 ### Helper Binary (`wezterm-gui/src/bin/wezterm-cef-helper.rs`)
 
