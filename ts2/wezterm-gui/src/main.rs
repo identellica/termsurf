@@ -68,7 +68,7 @@ pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DAT
 // CEF initialization for TermSurf 2.0 browser integration
 #[cfg(all(target_os = "macos", feature = "cef"))]
 fn init_cef() -> Result<(), String> {
-    use cef::{args::Args, execute_process, initialize, library_loader, App, Settings};
+    use cef::{args::Args, execute_process, initialize, library_loader, api_hash, sys, App, Settings};
 
     let exe = std::env::current_exe().map_err(|e| format!("current_exe: {e}"))?;
     let loader = library_loader::LibraryLoader::new(&exe, false);
@@ -77,6 +77,9 @@ fn init_cef() -> Result<(), String> {
     }
     eprintln!("[CEF] Framework loaded");
     log::info!("CEF framework loaded");
+
+    // Configure CEF API version (required before creating App objects)
+    let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
 
     let args = Args::new();
     let ret = execute_process(
