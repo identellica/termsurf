@@ -204,6 +204,9 @@ where
             }
             Ok(Item::Notif(MuxNotification::ActiveWorkspaceChanged(_))) => {}
             Ok(Item::Notif(MuxNotification::Empty)) => {}
+            // WebOpen/WebClosed are handled by the GUI, not the server dispatcher
+            Ok(Item::Notif(MuxNotification::WebOpen { .. })) => {}
+            Ok(Item::Notif(MuxNotification::WebClosed { .. })) => {}
             Err(err) => {
                 log::error!("process_async Err {}", err);
                 return Ok(());

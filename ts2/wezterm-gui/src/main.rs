@@ -36,6 +36,8 @@ use wezterm_toast_notification::*;
 
 #[cfg(all(target_os = "macos", feature = "cef"))]
 mod cef_integration;
+#[cfg(all(target_os = "macos", feature = "cef"))]
+pub mod cef_browser;
 
 mod colorease;
 mod commands;
@@ -71,10 +73,12 @@ pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DAT
 // CEF initialization for TermSurf 2.0 browser integration
 #[cfg(all(target_os = "macos", feature = "cef"))]
 fn init_cef() -> Result<(), String> {
-    use cef::{api_hash, args::Args, execute_process, initialize, library_loader, sys, CefString, Settings};
+    use cef::args::Args;
+    use cef::library_loader::LibraryLoader;
+    use cef::{api_hash, execute_process, initialize, sys, CefString, Settings};
 
     let exe = std::env::current_exe().map_err(|e| format!("current_exe: {e}"))?;
-    let loader = library_loader::LibraryLoader::new(&exe, false);
+    let loader = LibraryLoader::new(&exe, false);
     if !loader.load() {
         return Err("Failed to load CEF framework".into());
     }

@@ -95,6 +95,13 @@ pub enum MuxNotification {
         old_workspace: String,
         new_workspace: String,
     },
+    WebOpen {
+        pane_id: PaneId,
+        url: String,
+    },
+    WebClosed {
+        pane_id: PaneId,
+    },
 }
 
 static SUB_ID: AtomicUsize = AtomicUsize::new(0);

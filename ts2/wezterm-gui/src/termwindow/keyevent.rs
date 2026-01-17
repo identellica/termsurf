@@ -602,6 +602,32 @@ impl super::TermWindow {
             None => return,
         };
 
+        // CEF browser key handling - intercept Ctrl+C to close browser
+        #[cfg(all(target_os = "macos", feature = "cef"))]
+        {
+            let pane_id = pane.pane_id();
+            if self.has_browser_for_pane(pane_id) {
+                // Check for Ctrl+C to close the browser
+                let is_ctrl_c = window_key.key_is_down
+                    && window_key.modifiers.contains(::window::Modifiers::CTRL)
+                    && matches!(
+                        &window_key.key,
+                        ::window::KeyCode::Char('c') | ::window::KeyCode::Char('C')
+                    );
+
+                if is_ctrl_c {
+                    log::info!("[CEF] Ctrl+C pressed, closing browser for pane {}", pane_id);
+                    self.close_browser_for_pane(pane_id);
+                    return;
+                }
+
+                // Forward other key events to the browser
+                // TODO: Implement full key event forwarding to CEF browser
+                // For now, consume all keys when browser is active
+                return;
+            }
+        }
+
         // The leader key is a kind of modal modifier key.
         // It is allowed to be active for up to the leader timeout duration,
         // after which it auto-deactivates.

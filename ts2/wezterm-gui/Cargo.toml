@@ -124,7 +124,7 @@ windows = { workspace=true, features = [
 ]}
 
 [target.'cfg(target_os = "macos")'.dependencies]
-cef = { path = "../../cef-rs/cef", optional = true }
+cef = { path = "../../cef-rs/cef", optional = true, features = ["accelerated_osr"] }
 core-foundation.workspace = true
 core-foundation-sys.workspace = true
 

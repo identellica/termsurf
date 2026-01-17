@@ -697,16 +697,24 @@ name = "cef"
 version = "143.7.0+143.0.14"
 dependencies = [
  "anyhow",
+ "ash",
  "cargo_metadata",
  "cef-dll-sys",
  "clap",
+ "libc",
  "libloading 0.9.0",
+ "metal",
+ "objc",
  "objc2",
+ "objc2-io-surface",
  "plist",
  "semver",
  "serde",
  "serde_json",
  "thiserror 2.0.17",
+ "tracing",
+ "wgpu",
+ "windows 0.62.2",
  "windows-sys 0.61.2",
 ]
 
@@ -4029,8 +4037,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "180788110936d59bab6bd83b6060ffdfffb3b922ba1396b312ae795e1de9d81d"
 dependencies = [
  "bitflags 2.10.0",
+ "libc",
  "objc2",
  "objc2-core-foundation",
+ "objc2-foundation",
 ]
 
 [[package]]

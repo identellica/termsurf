@@ -200,6 +200,8 @@ impl GuiFrontEnd {
                     })
                     .detach();
                 }
+                // WebOpen/WebClosed are handled by TermWindow
+                MuxNotification::WebOpen { .. } | MuxNotification::WebClosed { .. } => {}
             }
             true
         });

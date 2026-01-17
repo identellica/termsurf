@@ -34,6 +34,17 @@ impl crate::TermWindow {
         pos: &PositionedPane,
         layers: &mut TripleLayerQuadAllocator,
     ) -> anyhow::Result<()> {
+        // Check for CEF browser overlay - if present, skip terminal rendering
+        #[cfg(all(target_os = "macos", feature = "cef"))]
+        {
+            let pane_id = pos.pane.pane_id();
+            if self.has_browser_for_pane(pane_id) {
+                // Browser overlay is active - render a placeholder background
+                // TODO: Actually render the CEF texture here
+                return self.paint_browser_overlay(pos, layers);
+            }
+        }
+
         if self.config.use_box_model_render {
             return self.paint_pane_box_model(pos);
         }
@@ -685,5 +696,93 @@ impl crate::TermWindow {
             baseline: 1.0,
             content: ComputedElementContent::Children(vec![]),
         })
+    }
+
+    /// Paint a browser overlay for a pane with CEF content
+    #[cfg(all(target_os = "macos", feature = "cef"))]
+    fn paint_browser_overlay(
+        &mut self,
+        pos: &PositionedPane,
+        layers: &mut TripleLayerQuadAllocator,
+    ) -> anyhow::Result<()> {
+        use window::color::LinearRgba;
+
+        let config = self.config.clone();
+
+        let (padding_left, padding_top) = self.padding_left_top();
+
+        let tab_bar_height = if self.show_tab_bar {
+            self.tab_bar_pixel_height()
+                .context("tab_bar_pixel_height")?
+        } else {
+            0.
+        };
+        let top_bar_height = if self.config.tab_bar_at_bottom {
+            0.0
+        } else {
+            tab_bar_height
+        };
+
+        let border = self.get_os_border();
+        let top_pixel_y = top_bar_height + padding_top + border.top.get() as f32;
+
+        let cell_width = self.render_metrics.cell_size.width as f32;
+        let cell_height = self.render_metrics.cell_size.height as f32;
+
+        // Calculate the pane rectangle (same logic as paint_pane)
+        let background_rect = {
+            let (x, width_delta) = if pos.left == 0 {
+                (
+                    0.,
+                    padding_left + border.left.get() as f32 + (cell_width / 2.0),
+                )
+            } else {
+                (
+                    padding_left + border.left.get() as f32 - (cell_width / 2.0)
+                        + (pos.left as f32 * cell_width),
+                    cell_width,
+                )
+            };
+
+            let (y, height_delta) = if pos.top == 0 {
+                (
+                    (top_pixel_y - padding_top),
+                    padding_top + (cell_height / 2.0),
+                )
+            } else {
+                (
+                    top_pixel_y + (pos.top as f32 * cell_height) - (cell_height / 2.0),
+                    cell_height,
+                )
+            };
+            euclid::rect(
+                x,
+                y,
+                if pos.left + pos.width >= self.terminal_size.cols as usize {
+                    self.dimensions.pixel_width as f32 - x
+                } else {
+                    (pos.width as f32 * cell_width) + width_delta
+                },
+                if pos.top + pos.height >= self.terminal_size.rows as usize {
+                    self.dimensions.pixel_height as f32 - y
+                } else {
+                    (pos.height as f32 * cell_height) + height_delta as f32
+                },
+            )
+        };
+
+        // Draw a dark blue placeholder background for the browser
+        // TODO: Replace with actual CEF texture rendering
+        let browser_bg = LinearRgba::with_components(0.1, 0.1, 0.2, 1.0);
+        self.filled_rectangle(layers, 0, background_rect, browser_bg)
+            .context("filled_rectangle for browser overlay")?;
+
+        log::trace!(
+            "[CEF] Browser overlay painted for pane {} at {:?}",
+            pos.pane.pane_id(),
+            background_rect
+        );
+
+        Ok(())
     }
 }

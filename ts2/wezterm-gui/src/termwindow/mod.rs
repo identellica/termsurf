@@ -463,6 +463,10 @@ pub struct TermWindow {
     gl: Option<Rc<glium::backend::Context>>,
     webgpu: Option<Rc<WebGpuState>>,
     config_subscription: Option<config::ConfigSubscription>,
+
+    /// CEF browser states for web overlay panes
+    #[cfg(all(target_os = "macos", feature = "cef"))]
+    browser_states: RefCell<std::collections::HashMap<PaneId, crate::cef_browser::BrowserState>>,
 }
 
 impl TermWindow {
@@ -788,6 +792,8 @@ impl TermWindow {
             key_table_state: KeyTableState::default(),
             modal: RefCell::new(None),
             opengl_info: None,
+            #[cfg(all(target_os = "macos", feature = "cef"))]
+            browser_states: RefCell::new(std::collections::HashMap::new()),
         };
 
         let tw = Rc::new(RefCell::new(myself));
@@ -1314,7 +1320,17 @@ impl TermWindow {
                 | MuxNotification::WindowWorkspaceChanged(_)
                 | MuxNotification::ActiveWorkspaceChanged(_)
                 | MuxNotification::Empty
-                | MuxNotification::WindowCreated(_) => {}
+                | MuxNotification::WindowCreated(_)
+                | MuxNotification::WebClosed { .. } => {}
+                MuxNotification::WebOpen { pane_id, url } => {
+                    #[cfg(all(target_os = "macos", feature = "cef"))]
+                    self.handle_web_open(pane_id, url);
+                    #[cfg(not(all(target_os = "macos", feature = "cef")))]
+                    {
+                        let _ = (pane_id, url);
+                        log::warn!("WebOpen notification received but CEF is not enabled");
+                    }
+                }
             },
             TermWindowNotif::EmitStatusUpdate => {
                 self.emit_status_event();
@@ -1525,7 +1541,12 @@ impl TermWindow {
             | MuxNotification::ActiveWorkspaceChanged(_)
             | MuxNotification::WorkspaceRenamed { .. }
             | MuxNotification::Empty
-            | MuxNotification::WindowWorkspaceChanged(_) => return true,
+            | MuxNotification::WindowWorkspaceChanged(_)
+            | MuxNotification::WebClosed { .. } => return true,
+            // WebOpen should be forwarded to the window for handling
+            MuxNotification::WebOpen { .. } => {
+                // fall through to notify window
+            }
             MuxNotification::Alert {
                 alert: Alert::PaletteChanged { .. },
                 ..
@@ -3614,6 +3635,106 @@ impl TermWindow {
                 MuxPattern::CaseSensitiveString(first_line)
             }
         }
+    }
+}
+
+// CEF browser overlay methods
+#[cfg(all(target_os = "macos", feature = "cef"))]
+impl TermWindow {
+    /// Handle WebOpen notification - create a browser overlay for the pane
+    pub fn handle_web_open(&self, pane_id: PaneId, url: String) {
+        log::info!(
+            "[CEF] handle_web_open called for pane {} with URL: {}",
+            pane_id,
+            url
+        );
+
+        // Check if we already have a browser for this pane
+        if self.browser_states.borrow().contains_key(&pane_id) {
+            log::warn!(
+                "[CEF] Browser already exists for pane {}, closing existing browser",
+                pane_id
+            );
+            self.close_browser_for_pane(pane_id);
+        }
+
+        // Get wgpu device and queue from render state
+        let (device, queue) = match &self.webgpu {
+            Some(webgpu) => (webgpu.device.clone(), webgpu.queue.clone()),
+            None => {
+                log::error!("[CEF] WebGPU not available, cannot create browser");
+                return;
+            }
+        };
+
+        // Get pane dimensions
+        let (width, height) = {
+            let mux = Mux::get();
+            if let Some(pane) = mux.get_pane(pane_id) {
+                let dims = pane.get_dimensions();
+                (
+                    (dims.cols as f32 * self.render_metrics.cell_size.width as f32) as u32,
+                    (dims.viewport_rows as f32 * self.render_metrics.cell_size.height as f32) as u32,
+                )
+            } else {
+                log::error!("[CEF] Pane {} not found", pane_id);
+                return;
+            }
+        };
+
+        // Create invalidate callback to trigger window redraw
+        let window = self.window.clone();
+        let invalidate_callback = std::sync::Arc::new(move || {
+            if let Some(ref w) = window {
+                w.invalidate();
+            }
+        });
+
+        // Create browser state
+        match crate::cef_browser::BrowserState::new(
+            pane_id,
+            &url,
+            width.max(100),
+            height.max(100),
+            &device,
+            &queue,
+            invalidate_callback,
+        ) {
+            Ok(state) => {
+                self.browser_states.borrow_mut().insert(pane_id, state);
+                log::info!("[CEF] Browser created successfully for pane {}", pane_id);
+
+                // Trigger redraw
+                if let Some(ref w) = self.window {
+                    w.invalidate();
+                }
+            }
+            Err(e) => {
+                log::error!("[CEF] Failed to create browser for pane {}: {}", pane_id, e);
+            }
+        }
+    }
+
+    /// Close and remove the browser for a pane
+    pub fn close_browser_for_pane(&self, pane_id: PaneId) {
+        log::info!("[CEF] Closing browser for pane {}", pane_id);
+
+        // Remove browser state (Drop impl will close the browser)
+        self.browser_states.borrow_mut().remove(&pane_id);
+
+        // Notify mux that browser closed
+        let mux = Mux::get();
+        mux.notify(MuxNotification::WebClosed { pane_id });
+
+        // Trigger redraw
+        if let Some(ref w) = self.window {
+            w.invalidate();
+        }
+    }
+
+    /// Check if a pane has an active browser overlay
+    pub fn has_browser_for_pane(&self, pane_id: PaneId) -> bool {
+        self.browser_states.borrow().contains_key(&pane_id)
     }
 }
 
