@@ -257,7 +257,7 @@ See `../docs/cef.md` for detailed documentation of each fix.
 
 ## References
 
-- [cef-plan.md](cef-plan.md) - Detailed execution log of the integration steps
+- [../docs/cef-mvp.md](../docs/cef-mvp.md) - Detailed execution log of the integration steps
 - [../docs/cef.md](../docs/cef.md) - cef-rs modifications and validation
 - [../docs/termsurf2.md](../docs/termsurf2.md) - Overall TermSurf 2.0 architecture
 - [CEF Documentation](https://bitbucket.org/chromiumembedded/cef/wiki/Home)
