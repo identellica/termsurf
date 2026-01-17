@@ -56,7 +56,7 @@ errors, wasting an entire day. We will not repeat that mistake.
 
 ---
 
-## Step 1: Add CEF Dependency (Compile Only)
+## Step 1: Add CEF Dependency (Compile Only) ✅
 
 **Goal:** Verify CEF links correctly with wezterm-gui.
 
@@ -106,9 +106,16 @@ cargo build -p wezterm-gui --features cef
 - Rust compiler errors in cef crate code
 - Path resolution errors for the cef dependency
 
+**Results:**
+
+- ✅ Build completed in ~1 minute (CEF was already cached from previous attempts)
+- ✅ Binary exists at `target/debug/wezterm-gui` (170MB)
+- ✅ No linking errors
+- ✅ No unanticipated issues occurred
+
 ---
 
-## Step 2: Create Helper Binary (Compile Only)
+## Step 2: Create Helper Binary (Compile Only) ⬜
 
 **Goal:** Verify helper binary compiles.
 
@@ -174,7 +181,7 @@ cargo build -p wezterm-gui --features cef
 
 ---
 
-## Step 3: Manually Create Bundle
+## Step 3: Manually Create Bundle ⬜
 
 **Goal:** Create `target/release/WezTerm.app/` by copying from the template and
 cef-osr.
@@ -277,7 +284,7 @@ grep CFBundleExecutable target/release/WezTerm.app/Contents/Frameworks/*/Content
 
 ---
 
-## Step 4: Run Without CEF Init
+## Step 4: Run Without CEF Init ⬜
 
 **Goal:** Verify the bundle structure works before adding CEF code.
 
@@ -306,7 +313,7 @@ grep CFBundleExecutable target/release/WezTerm.app/Contents/Frameworks/*/Content
 
 ---
 
-## Step 5: Add CEF Loading Code
+## Step 5: Add CEF Loading Code ⬜
 
 **Goal:** Load and initialize CEF.
 
@@ -392,7 +399,7 @@ RUST_LOG=info ./target/release/WezTerm.app/Contents/MacOS/wezterm-gui 2>&1 | gre
 
 ---
 
-## Step 6: Add CEF Shutdown
+## Step 6: Add CEF Shutdown ⬜
 
 **Goal:** Clean shutdown.
 
@@ -422,7 +429,7 @@ cef::shutdown();
 
 ---
 
-## Step 7: Automate Bundle Creation
+## Step 7: Automate Bundle Creation ⬜
 
 **Goal:** Script the manual steps from Step 3.
 
@@ -452,12 +459,12 @@ rm -rf target/release/WezTerm.app
 
 ## Summary
 
-| Step | What               | Test                         | Pass                | Risk Level |
-| ---- | ------------------ | ---------------------------- | ------------------- | ---------- |
-| 1    | Add CEF dependency | `cargo build --features cef` | Compiles            | Low        |
-| 2    | Add helper binary  | `cargo build --features cef` | Both binaries exist | None       |
-| 3    | Manual bundle      | `ls Frameworks/` + grep      | 6 items + plists ok | Low        |
-| 4    | Run without CEF    | Launch app                   | WezTerm works       | None       |
-| 5    | Add CEF init       | Check logs                   | "CEF initialized"   | Low        |
-| 6    | Add shutdown       | Quit app                     | Clean exit          | Low        |
-| 7    | Automate           | Run script                   | Same as step 5      | Medium     |
+| Step | What               | Test                         | Pass                | Risk   | Status |
+| ---- | ------------------ | ---------------------------- | ------------------- | ------ | ------ |
+| 1    | Add CEF dependency | `cargo build --features cef` | Compiles            | Low    | ✅     |
+| 2    | Add helper binary  | `cargo build --features cef` | Both binaries exist | None   | ⬜     |
+| 3    | Manual bundle      | `ls Frameworks/` + grep      | 6 items + plists ok | Low    | ⬜     |
+| 4    | Run without CEF    | Launch app                   | WezTerm works       | None   | ⬜     |
+| 5    | Add CEF init       | Check logs                   | "CEF initialized"   | Low    | ⬜     |
+| 6    | Add shutdown       | Quit app                     | Clean exit          | Low    | ⬜     |
+| 7    | Automate           | Run script                   | Same as step 5      | Medium | ⬜     |
