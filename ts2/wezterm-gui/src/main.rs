@@ -65,6 +65,12 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 pub use selection::SelectionMode;
 pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DATA};
 
+// Minimal CEF reference to verify linking works
+#[cfg(all(target_os = "macos", feature = "cef"))]
+fn _cef_compiled() {
+    let _ = cef::api_hash;
+}
+
 #[derive(Debug, Parser)]
 #[command(
     about = "Wez's Terminal Emulator\nhttp://github.com/wezterm/wezterm",

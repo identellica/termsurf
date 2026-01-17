@@ -11,6 +11,7 @@ publish = false
 
 [features]
 default = ["vendored-fonts", "wayland"]
+cef = ["dep:cef"]
 wayland = ["window/wayland"]
 distro-defaults = ["config/distro-defaults"]
 vendor-nerd-font-symbols-font = ["wezterm-font/vendor-nerd-font-symbols"]
@@ -121,6 +122,9 @@ winapi = { workspace=true, features = [
 windows = { workspace=true, features = [
     "Win32_UI_Shell",
 ]}
+
+[target.'cfg(target_os = "macos")'.dependencies]
+cef = { path = "../../cef-rs/cef", optional = true }
 
 [dev-dependencies]
 benchmarking.workspace = true
