@@ -68,7 +68,7 @@ pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DAT
 // CEF initialization for TermSurf 2.0 browser integration
 #[cfg(all(target_os = "macos", feature = "cef"))]
 fn init_cef() -> Result<(), String> {
-    use cef::{args::Args, execute_process, initialize, library_loader, api_hash, sys, App, Settings};
+    use cef::{args::Args, execute_process, initialize, library_loader, api_hash, sys, App, CefString, Settings};
 
     let exe = std::env::current_exe().map_err(|e| format!("current_exe: {e}"))?;
     let loader = library_loader::LibraryLoader::new(&exe, false);
@@ -92,10 +92,16 @@ fn init_cef() -> Result<(), String> {
     }
     log::info!("CEF execute_process returned {ret}");
 
+    // Create CEF cache directory
+    let cef_cache = config::CACHE_DIR.join("cef");
+    let _ = std::fs::create_dir_all(&cef_cache);
+    let cache_path_str = cef_cache.to_string_lossy().to_string();
+
     let settings = Settings {
         windowless_rendering_enabled: 1,
         external_message_pump: 1,
         no_sandbox: 1,
+        root_cache_path: CefString::from(cache_path_str.as_str()),
         ..Default::default()
     };
 
