@@ -1,5 +1,33 @@
 # CEF Integration: Incremental Plan
 
+## Purpose
+
+We're trying to get CEF (Chromium Embedded Framework) to load inside WezTerm as
+the foundation for TermSurf 2.0.
+
+**The bigger picture:** TermSurf is a terminal emulator with browser/webview
+support. TermSurf 1.x uses WKWebView, which is macOS-only. TermSurf 2.0 uses CEF
+(Chromium) to enable cross-platform browser panes on Linux, Windows, and macOS.
+
+**Our immediate goal:** The absolute minimum - get CEF to build and load inside
+WezTerm with no errors. Not render a web page. Not integrate with the UI. Not do
+anything useful. Just:
+
+1. Compile with CEF linked in
+2. Load the CEF framework at runtime
+3. Initialize CEF successfully
+4. Shut down cleanly
+
+This proves CEF can coexist with WezTerm. Everything else builds on top of that
+foundation.
+
+**Why we're being so careful:** The previous attempt failed completely. We spent
+a day writing integration code without first verifying CEF could even load.
+We're now doing the simplest possible thing first - just load CEF - before
+writing any real integration code.
+
+---
+
 ## Critical: Risk Monitoring
 
 **This plan includes known risks for each step.** As we execute each step, we
