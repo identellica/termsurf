@@ -34,6 +34,9 @@ use wezterm_gui_subcommands::*;
 use wezterm_mux_server_impl::update_mux_domains;
 use wezterm_toast_notification::*;
 
+#[cfg(all(target_os = "macos", feature = "cef"))]
+mod cef_integration;
+
 mod colorease;
 mod commands;
 mod customglyph;
@@ -68,7 +71,7 @@ pub use termwindow::{set_window_class, set_window_position, TermWindow, ICON_DAT
 // CEF initialization for TermSurf 2.0 browser integration
 #[cfg(all(target_os = "macos", feature = "cef"))]
 fn init_cef() -> Result<(), String> {
-    use cef::{args::Args, execute_process, initialize, library_loader, api_hash, sys, App, CefString, Settings};
+    use cef::{api_hash, args::Args, execute_process, initialize, library_loader, sys, CefString, Settings};
 
     let exe = std::env::current_exe().map_err(|e| format!("current_exe: {e}"))?;
     let loader = library_loader::LibraryLoader::new(&exe, false);
@@ -81,10 +84,13 @@ fn init_cef() -> Result<(), String> {
     // Configure CEF API version (required before creating App objects)
     let _ = api_hash(sys::CEF_API_VERSION_LAST, 0);
 
+    // Create our App with BrowserProcessHandler for message pump integration
+    let mut app = cef_integration::create_app();
+
     let args = Args::new();
     let ret = execute_process(
         Some(args.as_main_args()),
-        None::<&mut App>,
+        Some(&mut app),
         std::ptr::null_mut(),
     );
     if ret >= 0 {
@@ -97,18 +103,32 @@ fn init_cef() -> Result<(), String> {
     let _ = std::fs::create_dir_all(&cef_cache);
     let cache_path_str = cef_cache.to_string_lossy().to_string();
 
+    // Compute path to helper binary
+    // exe is: .../WezTerm.app/Contents/MacOS/wezterm-gui
+    // helper is: .../WezTerm.app/Contents/Frameworks/WezTerm Helper.app/Contents/MacOS/WezTerm Helper
+    let helper_path = exe
+        .parent().unwrap() // MacOS
+        .parent().unwrap() // Contents
+        .join("Frameworks")
+        .join("WezTerm Helper.app")
+        .join("Contents")
+        .join("MacOS")
+        .join("WezTerm Helper");
+    let helper_path_str = helper_path.to_string_lossy().to_string();
+
     let settings = Settings {
         windowless_rendering_enabled: 1,
         external_message_pump: 1,
         no_sandbox: 1,
         root_cache_path: CefString::from(cache_path_str.as_str()),
+        browser_subprocess_path: CefString::from(helper_path_str.as_str()),
         ..Default::default()
     };
 
     if initialize(
         Some(args.as_main_args()),
         Some(&settings),
-        None::<&mut App>,
+        Some(&mut app),
         std::ptr::null_mut(),
     ) != 1
     {

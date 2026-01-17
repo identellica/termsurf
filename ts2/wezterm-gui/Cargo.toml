@@ -125,6 +125,8 @@ windows = { workspace=true, features = [
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cef = { path = "../../cef-rs/cef", optional = true }
+core-foundation.workspace = true
+core-foundation-sys.workspace = true
 
 [dev-dependencies]
 benchmarking.workspace = true

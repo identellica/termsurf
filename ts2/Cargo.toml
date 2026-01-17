@@ -69,6 +69,7 @@ color-funcs = { path = "lua-api-crates/color-funcs" }
 colorgrad = "0.6"
 config = { path = "config" }
 core-foundation = "=0.10.0"
+core-foundation-sys = "0.8"
 core-graphics = "=0.24.0"
 core-text = "=21.0.0"
 criterion = "0.5"

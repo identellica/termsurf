@@ -7122,6 +7122,8 @@ dependencies = [
  "codec",
  "colorgrad",
  "config",
+ "core-foundation 0.10.0",
+ "core-foundation-sys",
  "dhat",
  "dirs-next",
  "downcast-rs",

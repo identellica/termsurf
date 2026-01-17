@@ -78,15 +78,24 @@ fn init_cef() -> Result<(), String> {
         std::process::exit(ret);  // This is a subprocess, exit
     }
 
-    // Initialize CEF for browser process
+    // Create our App with BrowserProcessHandler for message pump integration
+    let mut app = cef_integration::create_app();
+
+    // ... execute_process for subprocesses ...
+
+    // Compute path to helper binary (required for CEF to find helpers)
+    let helper_path = exe.parent().unwrap().parent().unwrap()
+        .join("Frameworks/WezTerm Helper.app/Contents/MacOS/WezTerm Helper");
+
     let settings = Settings {
         windowless_rendering_enabled: 1,  // OSR mode
         external_message_pump: 1,         // We control the event loop
         no_sandbox: 1,                    // Required on macOS
+        browser_subprocess_path: CefString::from(helper_path.to_string_lossy().as_ref()),
         ..Default::default()
     };
 
-    if initialize(Some(args.as_main_args()), Some(&settings), None::<&mut App>, std::ptr::null_mut()) != 1 {
+    if initialize(Some(args.as_main_args()), Some(&settings), Some(&mut app), std::ptr::null_mut()) != 1 {
         return Err("CEF initialize failed".into());
     }
 
@@ -107,6 +116,27 @@ cef::shutdown();
 
 Called in `main()` BEFORE `Mux::shutdown()` and `frontend::shutdown()`. Order matters -
 CEF's shutdown triggers callbacks that expect the GUI thread to still be active.
+
+### CEF Integration Module (`wezterm-gui/src/cef_integration.rs`)
+
+CEF requires a message pump to process its internal work queue. When
+`external_message_pump: 1` is set, CEF calls our `on_schedule_message_pump_work`
+callback whenever it needs work processed:
+
+```rust
+wrap_browser_process_handler! {
+    struct WezTermBrowserProcessHandler;
+
+    impl BrowserProcessHandler {
+        fn on_schedule_message_pump_work(&self, delay_ms: i64) {
+            schedule_cef_work(delay_ms);
+        }
+    }
+}
+```
+
+We use `CFRunLoopTimer` to schedule `do_message_loop_work()` calls on the main
+thread, ensuring CEF's work is processed at the exact times it requests.
 
 ### Helper Binary (`wezterm-gui/src/bin/wezterm-cef-helper.rs`)
 
@@ -237,11 +267,11 @@ See `../docs/cef.md` for detailed documentation of each fix.
 - CEF framework loads successfully
 - CEF initializes with OSR settings
 - Clean shutdown on app exit
-- Helper processes spawn correctly
+- Helper processes spawn correctly (GPU, renderer, network, etc.)
+- Message pump integration via `BrowserProcessHandler` callback
 
 ### Not Yet Implemented
 - No browser pane creation
-- No message pump integration (`do_message_loop_work()` not called)
 - No texture import into WezTerm's render pipeline
 - No input routing to CEF browsers
 
@@ -253,10 +283,9 @@ See `../docs/cef.md` for detailed documentation of each fix.
 ## Next Steps
 
 1. **Create BrowserPane type** - New pane type that wraps a CEF browser
-2. **Message pump integration** - Call `do_message_loop_work()` in WezTerm's event loop
-3. **Texture compositing** - Import CEF textures into wgpu render pipeline
-4. **Input routing** - Send keyboard/mouse events to active browser pane
-5. **CLI integration** - `web` command to open browser panes
+2. **Texture compositing** - Import CEF textures into wgpu render pipeline
+3. **Input routing** - Send keyboard/mouse events to active browser pane
+4. **CLI integration** - `web` command to open browser panes
 
 ## References
 
