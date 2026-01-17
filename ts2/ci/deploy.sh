@@ -52,6 +52,14 @@ case $OSTYPE in
       fi
     done
 
+    # Include CEF framework if built with cef feature
+    CEF_FRAMEWORK=$(find $TARGET_DIR -path "*/cef-dll-sys-*/out/*/Chromium Embedded Framework.framework" -type d 2>/dev/null | head -1)
+    if [ -n "$CEF_FRAMEWORK" ]; then
+      echo "Including CEF framework from $CEF_FRAMEWORK"
+      mkdir -p $zipdir/WezTerm.app/Contents/Frameworks
+      cp -R "$CEF_FRAMEWORK" $zipdir/WezTerm.app/Contents/Frameworks/
+    fi
+
     set +x
     if [ -n "$MACOS_TEAM_ID" ] ; then
       MACOS_PW=$(echo $MACOS_CERT_PW | base64 --decode)
