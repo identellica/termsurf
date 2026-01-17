@@ -130,3 +130,8 @@ cef = { path = "../../cef-rs/cef", optional = true }
 benchmarking.workspace = true
 env_logger.workspace = true
 k9.workspace = true
+
+[[bin]]
+name = "wezterm-cef-helper"
+path = "src/bin/wezterm-cef-helper.rs"
+required-features = ["cef"]
