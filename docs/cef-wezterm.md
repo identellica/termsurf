@@ -257,8 +257,8 @@ See `../docs/cef.md` for detailed documentation of each fix.
 
 ## References
 
-- [../docs/cef-mvp.md](../docs/cef-mvp.md) - Detailed execution log of the integration steps
-- [../docs/cef.md](../docs/cef.md) - cef-rs modifications and validation
-- [../docs/termsurf2.md](../docs/termsurf2.md) - Overall TermSurf 2.0 architecture
+- [cef-mvp.md](cef-mvp.md) - Detailed execution log of the integration steps
+- [cef.md](cef.md) - cef-rs modifications and validation
+- [termsurf2.md](termsurf2.md) - Overall TermSurf 2.0 architecture
 - [CEF Documentation](https://bitbucket.org/chromiumembedded/cef/wiki/Home)
 - [cef-rs upstream](https://github.com/tauri-apps/cef-rs)
