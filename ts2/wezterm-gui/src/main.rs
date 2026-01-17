@@ -889,11 +889,14 @@ fn main() {
     if let Err(e) = run() {
         terminate_with_error(e);
     }
-    Mux::shutdown();
-    frontend::shutdown();
 
+    // CEF must shut down BEFORE WezTerm's GUI infrastructure.
+    // CEF shutdown triggers callbacks that require the GUI thread to still be active.
     #[cfg(all(target_os = "macos", feature = "cef"))]
     cef::shutdown();
+
+    Mux::shutdown();
+    frontend::shutdown();
 }
 
 fn maybe_show_configuration_error_window() {
