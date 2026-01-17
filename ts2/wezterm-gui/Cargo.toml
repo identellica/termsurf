@@ -13,7 +13,6 @@ publish = false
 default = ["vendored-fonts", "wayland"]
 wayland = ["window/wayland"]
 distro-defaults = ["config/distro-defaults"]
-cef = ["dep:cef"]
 vendor-nerd-font-symbols-font = ["wezterm-font/vendor-nerd-font-symbols"]
 vendor-jetbrains-font = ["wezterm-font/vendor-jetbrains"]
 vendor-roboto-font = ["wezterm-font/vendor-roboto"]
@@ -107,9 +106,6 @@ wezterm-toast-notification.workspace = true
 wgpu.workspace = true
 window-funcs.workspace = true
 window.workspace = true
-
-# CEF browser integration (optional)
-cef = { path = "../../cef-rs/cef", features = ["accelerated_osr"], optional = true }
 
 [target.'cfg(windows)'.dependencies]
 shared_library.workspace = true

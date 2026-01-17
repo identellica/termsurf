@@ -169,8 +169,8 @@ END
             .join("Contents")
             .join("Info.plist");
         let build_target_dir = std::env::var("CARGO_TARGET_DIR")
-            .map(std::path::PathBuf::from)
-            .unwrap_or_else(|_| repo_dir.join("target").join(&profile));
+            .and_then(|s| Ok(std::path::PathBuf::from(s)))
+            .unwrap_or(repo_dir.join("target").join(profile));
         let dest_plist = build_target_dir.join("Info.plist");
         println!("cargo:rerun-if-changed=assets/macos/WezTerm.app/Contents/Info.plist");
 

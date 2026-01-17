@@ -200,10 +200,6 @@ impl GuiFrontEnd {
                     })
                     .detach();
                 }
-                // WebOpen is handled via TermWindowNotif
-                MuxNotification::WebOpen { .. } => {}
-                // WebClosed is forwarded to clients by the mux server
-                MuxNotification::WebClosed { .. } => {}
             }
             true
         });

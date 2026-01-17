@@ -204,15 +204,6 @@ where
             }
             Ok(Item::Notif(MuxNotification::ActiveWorkspaceChanged(_))) => {}
             Ok(Item::Notif(MuxNotification::Empty)) => {}
-            Ok(Item::Notif(MuxNotification::WebOpen { .. })) => {
-                // WebOpen is handled locally by the GUI, not forwarded to clients
-            }
-            Ok(Item::Notif(MuxNotification::WebClosed { pane_id })) => {
-                Pdu::WebClosed(codec::WebClosed { pane_id })
-                    .encode_async(&mut stream, 0)
-                    .await?;
-                stream.flush().await.context("flushing PDU to client")?;
-            }
             Err(err) => {
                 log::error!("process_async Err {}", err);
                 return Ok(());

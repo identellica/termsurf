@@ -996,12 +996,8 @@ impl SessionHandler {
                                 .get_pane(pane_id)
                                 .ok_or_else(|| anyhow!("pane_id {} invalid", pane_id))?;
 
-                            // Send notification to GUI to open the browser
-                            mux.notify(mux::MuxNotification::WebOpen {
-                                pane_id,
-                                url: url.clone(),
-                            });
-
+                            // TODO: Implement actual web browser pane creation with CEF
+                            // For now, just return a success message
                             let message = format!("Opening {}", url);
                             Ok(Pdu::WebOpenResponse(WebOpenResponse { message }))
                         },
@@ -1035,8 +1031,7 @@ impl SessionHandler {
             | Pdu::TabAddedToWindow { .. }
             | Pdu::GetPaneRenderableDimensionsResponse { .. }
             | Pdu::ErrorResponse { .. }
-            | Pdu::WebOpenResponse { .. }
-            | Pdu::WebClosed { .. } => {
+            | Pdu::WebOpenResponse { .. } => {
                 send_response(Err(anyhow!("expected a request, got {:?}", decoded.pdu)))
             }
         }
